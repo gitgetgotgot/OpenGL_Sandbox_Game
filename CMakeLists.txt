@@ -1,44 +1,70 @@
 cmake_minimum_required(VERSION 3.30)
-project(OpenGL_2D_Game VERSION 1.0 LANGUAGES CXX)
+project(OpenGL_2D_Sandbox VERSION 1.0)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-#include(${CMAKE_BINARY_DIR}/conan_toolchain.cmake OPTIONAL)
+include(cmake/GameModule.cmake)
+include(cmake/ExternalLibs.cmake)
 
-file(GLOB_RECURSE SOURCES
-    "${PROJECT_SOURCE_DIR}/src/*.cpp"
-	"${PROJECT_SOURCE_DIR}/src/*.h"
+add_game_module(Audio)
+add_game_module(Core)
+add_game_module(Entities)
+add_game_module(Objects)
+add_game_module(Physics)
+add_game_module(Rendering)
+add_game_module(UI)
+add_game_module(IOSystem)
+add_game_module(Utility)
+
+file(GLOB_RECURSE MAIN_SOURCES
+    "${PROJECT_SOURCE_DIR}/src/main.cpp"
 )
+add_executable(${PROJECT_NAME} ${MAIN_SOURCES})
 
-add_executable(${PROJECT_NAME} ${SOURCES})
-
-find_package(SDL2 REQUIRED)
-find_package(SDL2_mixer REQUIRED)
-find_package(glad REQUIRED)
-find_package(glfw3 REQUIRED)
-find_package(glm REQUIRED)
-find_package(stb REQUIRED)
-
-target_link_libraries(${PROJECT_NAME}
-    PRIVATE
-		glad::glad
-        glfw
-        SDL2::SDL2
-        SDL2_mixer::SDL2_mixer
-        glm::glm
-        stb::stb
-)
+target_link_libraries(Rendering PUBLIC ExternalLibs)
+# add system OpenGL library to Rendering module
 if (WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE opengl32)
+    target_link_libraries(Rendering PUBLIC opengl32)
 elseif (APPLE)
-    find_library(OpenGL_LIBRARY OpenGL)
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenGL_LIBRARY})
-else()
+    target_link_libraries(Rendering PUBLIC "-framework OpenGL")
+else() # Linux and other
     find_package(OpenGL REQUIRED)
-    target_link_libraries(${PROJECT_NAME} PRIVATE OpenGL::GL)
+    target_link_libraries(Rendering PUBLIC OpenGL::GL)
 endif()
+# add glad.c to Rendering module
+target_sources(Rendering
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/Modules/Rendering/src/glad.c
+)
 
+target_link_libraries(Utility PUBLIC ExternalLibs)
+
+target_link_libraries(IOSystem PUBLIC ExternalLibs)
+target_link_libraries(IOSystem PUBLIC Utility)
+
+target_link_libraries(Audio PUBLIC ExternalLibs)
+
+target_link_libraries(Physics PUBLIC ExternalLibs)
+
+target_link_libraries(Objects PUBLIC Rendering)
+target_link_libraries(Objects PUBLIC IOSystem)
+target_link_libraries(Objects PUBLIC Audio)
+target_link_libraries(Objects PUBLIC Physics)
+
+target_link_libraries(Entities PUBLIC Objects)
+
+target_link_libraries(UI PUBLIC Entities)
+
+target_link_libraries(Core PUBLIC UI)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE Core)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${PROJECT_SOURCE_DIR}/SDL2.dll"
+        "${PROJECT_SOURCE_DIR}/SDL2_mixer.dll"
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>
+)
 
 set(GAME_DATA_DIRS
     Resources

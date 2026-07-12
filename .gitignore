@@ -1,1 +1,24 @@
+# Build directories
+out/
 build/
+
+# Visual Studio
+.vs/
+*.VC.db
+*.VC.opendb
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+build.ninja
+rules.ninja
+
+# Binaries
+*.exe
+*.dll
+*.lib
+*.pdb
+*.obj
+*.ilk

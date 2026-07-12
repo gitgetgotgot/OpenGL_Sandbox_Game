@@ -1,0 +1,25 @@
+float sd = texture(tex, texCoords).r;
+
+// расстояние от края (край ≈ 0.5)
+float dist = sd - 0.5;
+
+// антиалиасинг
+float edge = fwidth(sd);
+
+// заливка глифа
+float fill = smoothstep(-edge, edge, dist);
+
+// glow: чем ближе к краю — тем ярче
+float glowSize = 0.15;     // радиус свечения
+float glow = smoothstep(glowSize, 0.0, abs(dist));
+
+// цвет
+vec3 glyphColor = color.rgb;
+vec3 glowColor  = vec3(0.0, 1.0, 0.0); // зелёный glow
+
+vec3 finalColor = mix(glowColor, glyphColor, fill);
+
+// альфа
+float alpha = max(fill, glow);
+
+fragColor = vec4(finalColor, alpha);

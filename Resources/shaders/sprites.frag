@@ -6,30 +6,28 @@ struct ShaderLightingInfo {
 	float source_light_impact;
 };
 
-layout(std430) buffer SpriteLightsSSBO {
+layout(std430, binding = 1) buffer SpriteLightsSSBO {
     ShaderLightingInfo lightMap[];
 };
 
 out vec4 fragColor;
 
 in vec2 texCoord;
-in float texIndex;
 in vec2 globalCoord;
+in float dayRatio;
+flat in ivec2 worldSize;
 
-uniform sampler2D u_textures[2];
-uniform float day_ratio;
-uniform float blockSize;
-uniform ivec2 worldSize;
+layout (binding = 0) uniform sampler2D u_tex;
 
 vec3 getLightColor(vec2 worldPosition) {
-    ivec2 blockCoord = ivec2(worldPosition.xy / blockSize);
+    ivec2 blockCoord = ivec2(worldPosition.xy);
     int index = worldSize.x * blockCoord.y + blockCoord.x;
     return clamp(vec3(lightMap[index].r, lightMap[index].g, lightMap[index].b) * lightMap[index].global_light_impact, 0.0, 1.0);
 }
 
 ShaderLightingInfo getBilinearCustomLightInfo(vec2 worldPosition) {
-    ivec2 blockCoord = ivec2(floor(worldPosition.xy / blockSize));
-    vec2 frac = mod(worldPosition.xy, blockSize) / blockSize;
+    ivec2 blockCoord = ivec2(floor(worldPosition.xy));
+    vec2 frac = mod(worldPosition.xy, 1.0);
     float reducedPrecision = 0.2;
     frac = vec2(floor(frac.x / reducedPrecision + 0.5) * reducedPrecision, floor(frac.y / reducedPrecision + 0.5) * reducedPrecision);
 
@@ -77,17 +75,16 @@ ShaderLightingInfo getBilinearCustomLightInfo(vec2 worldPosition) {
 
 void main()
 {
-    int index = int(texIndex);
-    if(texture(u_textures[index], texCoord).a < 0.1) discard;
+    if(texture(u_tex, texCoord).a < 0.1) discard;
 
-    vec4 texColor = texture(u_textures[index], texCoord);
+    vec4 texColor = texture(u_tex, texCoord);
     vec3 color = texColor.rgb;
     float alpha = texColor.a;
 
-    float global_light_level = day_ratio;
-    float source_light_level = day_ratio;
+    float global_light_level = dayRatio;
+    float source_light_level = dayRatio;
     if (global_light_level < 0.02) global_light_level = 0.02;
-    if (int(globalCoord.y / blockSize) < worldSize.y * 0.68) {
+    if (int(globalCoord.y) < worldSize.y * 0.68) {
         global_light_level = 0.0;
         source_light_level = 0.0;
     }
@@ -99,5 +96,6 @@ void main()
     //add light color from source lights
     result += vec3(bilinearColor.r, bilinearColor.g, bilinearColor.b) * bilinearColor.source_light_impact * (1.0 - bilinearColor.global_light_impact * source_light_level) * color * alpha;
 
-    fragColor = clamp(vec4(result, alpha), 0.0, 1.0);
+    //fragColor = clamp(vec4(result, alpha), 0.0, 1.0);
+    fragColor = vec4(color, alpha);
 }

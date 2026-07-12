@@ -1,0 +1,17 @@
+float sd = texture(tex, texCoords).r;
+float edge = fwidth(sd);
+
+// глиф
+float fill = smoothstep(0.5 - edge, 0.5 + edge, sd);
+
+// обводка (мягкая)
+float outline = smoothstep(0.43 - edge, 0.43 + edge, sd)
+          - smoothstep(0.5 - edge, 0.5 + edge, sd);
+
+// цвет
+vec3 final_color = mix(vec3(0.0), color.rgb, fill);
+
+// альфа
+float alpha = max(fill, outline);
+
+fragColor = vec4(final_color, alpha);
