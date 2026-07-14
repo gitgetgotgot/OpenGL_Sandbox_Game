@@ -59,13 +59,6 @@ target_link_libraries(Core PUBLIC UI)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Core)
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${PROJECT_SOURCE_DIR}/SDL2.dll"
-        "${PROJECT_SOURCE_DIR}/SDL2_mixer.dll"
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>
-)
-
 set(GAME_DATA_DIRS
     Resources
     Saves

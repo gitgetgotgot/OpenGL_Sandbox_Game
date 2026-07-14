@@ -7,6 +7,7 @@
 #include <string>
 
 constexpr uint32_t MAX_UI_SPRITES_PER_DRAW = 1000;
+constexpr uint32_t MAX_TOOLTIP_TEXT_SIZE = 500;
 
 struct UI_Vertex2f {
 	UI_Vertex2f() {}
@@ -36,9 +37,13 @@ public:
 
 	void init_basic_inventory_slots_data();
 	void update_tooltip_data();
-	void place_text_to_buffer(std::string text, glm::vec2 left_bottom_pos, float height, glm::vec4 color);
+	void update_hotbar_active_slot();
+	//adds new text to buffer, returns length of added text based on height parameter
+	float place_text_to_buffer(const char* text, uint32_t text_size, glm::vec2 left_bottom_pos, float height, glm::vec4 color);
+	float place_text_to_tooltip_buffer(const char* text, uint32_t text_size, glm::vec2 left_bottom_pos, float height, glm::vec4 color);
+	void adjust_tooltip_text_pos(float dX, float dY);
+	void reset_text_buffer();
 	void update_items();
-	void update_items_text();
 private:
 	UI_Renderer() {}
 	~UI_Renderer() {}
@@ -48,12 +53,12 @@ private:
 	TextBufferBuilder text_builder;
 
 	std::unique_ptr<UBO> ui_ubo;
-	UI_UBO ubo_data;
+	UI_UBO ubo_data{};
 	std::unique_ptr<EBO> ebo;
 
 	std::unique_ptr<ShaderProgram> ui_shader;
-	std::unique_ptr<VAO> vao;
-	std::unique_ptr<VBO> vbo;
+	std::unique_ptr<VAO> slots_vao;
+	std::unique_ptr<VBO> slots_vbo;
 
 	std::unique_ptr<VAO> items_vao;
 	std::unique_ptr<VBO> items_vbo;
@@ -61,12 +66,17 @@ private:
 	std::unique_ptr<ShaderProgram> sdf_text_shader;
 	std::unique_ptr<VAO> text_vao;
 	std::unique_ptr<VBO> text_vbo;
+	std::unique_ptr<VAO> tooltip_text_vao;
+	std::unique_ptr<VBO> tooltip_text_vbo;
 
 	std::vector<UI_Vertex2f> basic_slot_vertices;
+	std::vector<UI_Vertex2f> active_hotbar_slot_vertices;
 	std::vector<UI_Vertex2f> chest_slot_vertices;
 	std::vector<UI_Vertex2f> tooltip_vertices;
 	std::vector<UI_Vertex2f> slot_items_vertices;
+	std::vector<UI_Vertex2f> chest_items_vertices;
 	std::vector<UI_Vertex2f> sdf_text_buffer;
+	std::vector<UI_Vertex2f> sdf_tooltip_text_buffer;
 
 	uint32_t current_slots_buffer_index_size = 0;
 	uint32_t current_slots_buffer_size = 0;
@@ -76,5 +86,7 @@ private:
 	uint32_t current_text_buffer_index_size = 0;
 	uint32_t current_text_buffer_size = 0;
 	uint32_t current_text_buffer_hotbar_index_size = 0;
+	uint32_t current_tooltip_text_index_size = 0;
 	float tooltip_frame_size = 0.02f;
+	float tooltip_text_height = 0.04f;
 };

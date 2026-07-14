@@ -2563,6 +2563,8 @@ void Game::init() {
 	spriteMgr->add_sprite(block_UV_size * 2.f, 0.f, block_UV_size * 2.f, block_UV_size * 2.f);
 	//chest slot
 	spriteMgr->add_sprite(block_UV_size * 4.f, 0.f, block_UV_size * 2.f, block_UV_size * 2.f);
+	//active hotbar slot
+	spriteMgr->add_sprite(block_UV_size * 6.f, 0.f, block_UV_size * 2.f, block_UV_size * 2.f);
 	//tooltip
 	spriteMgr->add_sprite(0.f, 0.f, pixel_UV_size * 4.f, pixel_UV_size * 4.f); //left bottom
 	spriteMgr->add_sprite(0.f, pixel_UV_size * 4.f, pixel_UV_size * 4.f, pixel_UV_size * 12.f); //left center
@@ -3026,7 +3028,7 @@ void Game::init() {
 
 	player.inventory.init();
 	for (int i = 0; i < 30; i++) {
-		uint16_t amount = rand() % 999;
+		uint16_t amount = rand() % 10000;
 		player.inventory.place_item(i, amount);
 	}
 
@@ -3037,8 +3039,9 @@ void Game::init() {
 	ui_renderer->init(&player);
 	ui_renderer->init_basic_inventory_slots_data();
 
+	player.inventory.items[73].item_id = 2;
+
 	//audio manager
-	//init_audio();
 
 	//openGL settings
 	glEnable(GL_BLEND);

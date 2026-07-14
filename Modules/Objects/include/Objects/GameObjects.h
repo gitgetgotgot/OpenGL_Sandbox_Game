@@ -621,23 +621,6 @@ public:
 	ObjectComponent* component = nullptr;
 };
 
-struct ActiveChest { //structure for the active chest that the player has opened/closed
-	bool isOpen = false;
-	InventorySlot* slot_pointer = nullptr;
-};
-
-struct ObjectInfoBox {
-	bool show_box = false;
-	glm::vec2 box_size{ 0.f, 0.f };
-	std::string box_string;
-	glm::vec2 starting_pos; //left upper corner
-	glm::vec4 text_color = { 1.f, 1.f, 1.f, 1.f };
-	float box_vertices[24] = { 0.f,0.f, 0.f,0.f,1.f,0.8f,    //0,1
-								0.f,0.f, 0.f,0.f,1.f,0.8f,    //6,7
-								0.f,0.f, 0.f,0.f,1.f,0.8f,    //12,13
-								0.f,0.f, 0.f,0.f,1.f,0.8f };  //18,19
-};
-
 struct EntityInfoText {
 	bool isActive = false;
 	std::string info;

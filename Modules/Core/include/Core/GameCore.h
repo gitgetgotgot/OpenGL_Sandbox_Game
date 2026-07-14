@@ -77,8 +77,6 @@ private:
 	
 	ActiveWeapon active_weapon;
 	ActiveBreakableObject active_breakable_object;
-	ActiveChest active_chest;
-	ObjectInfoBox object_info_box[2]; //one for object name from active slot and one for object that mouse cursor is pointing on
 	EntityInfoText entity_info_text;
 	short active_bar_slot = 0; //from 0 to 9
 

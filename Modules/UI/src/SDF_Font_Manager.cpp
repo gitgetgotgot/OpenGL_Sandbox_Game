@@ -36,12 +36,9 @@ void SDF_Font_Manager::load_main_sdf_font(const char* fontName) {
 	}
 	meta_file.close();
 
-	//uint32_t tex_id = TextureManager::get_Instance()->create_texture_from_data(sdf.data(), glyph_atlas_size, glyph_atlas_size, 1, false)->texture_id;
 	mainFontTexture.bind(1);
 	mainFontTexture.load_R8_texture_from_buffer(sdf.data(), glyph_atlas_size, glyph_atlas_size, false);
 	mainFontTexture.bind(1);
 
 	std::cout << "SDF Font loaded successfully" << std::endl;
-	std::cout << "Font ascender = " << mainFont.ascender << std::endl;
-	std::cout << "Font descender = " << mainFont.descender << std::endl;
 }

@@ -1,5 +1,6 @@
 #include <Objects/Inventory.h>
 #include <IOSystem/SystemContext.h>
+#include <iostream>
 
 void Inventory::init() {
 	inventory_slots_bounds.reserve(INVENTORY_SIZE);
@@ -16,7 +17,7 @@ void Inventory::update() {
 		if (SystemContext::mouse.wheel_offset != 0.0f) {
 			if (SystemContext::mouse.wheel_offset > 0 && current_active_hotbar_slot < hotbar_max_slot)
 				current_active_hotbar_slot++;
-			else if (current_active_hotbar_slot > 0)
+			else if (SystemContext::mouse.wheel_offset < 0 && current_active_hotbar_slot > 0)
 				current_active_hotbar_slot--;
 		}
 		return;
@@ -27,9 +28,22 @@ void Inventory::update() {
 		glm::vec4& bounds = inventory_slots_bounds[i];
 		if (
 			SystemContext::mouse.ortho_x_pos > bounds.x && SystemContext::mouse.ortho_x_pos < bounds.y &&
-			SystemContext::mouse.ortho_y_pos > bounds.z && SystemContext::mouse.ortho_y_pos < bounds.w && items[i].item_id
-			) {
-			tooltip_is_visible = true;
+			SystemContext::mouse.ortho_y_pos > bounds.z && SystemContext::mouse.ortho_y_pos < bounds.w
+			)
+		{
+			uint16_t item_id = items[i].item_id;
+			if (item_id > 0) {
+				if (cursor_item.item_id == 0) {
+					tooltip_is_visible = true;
+					tooltipData.item_name = ObjectsDB::objectInfo[item_id]->name;
+				}
+			}
+			if (SystemContext::mouse.lb_is_pressed()) {
+				process_slot_LB_click(i);
+			}
+			else if (SystemContext::mouse.rb_is_pressed()) {
+				process_slot_RB_click(i);
+			}
 			break;
 		}
 	}
@@ -41,6 +55,7 @@ void Inventory::update() {
 				SystemContext::mouse.ortho_y_pos > bounds.z && SystemContext::mouse.ortho_y_pos < bounds.w
 				) {
 				tooltip_is_visible = true;
+
 				break;
 			}
 		}
@@ -73,4 +88,55 @@ bool Inventory::place_item(uint16_t item_id, uint16_t& amount) {
 		}
 	}
 	return false;
+}
+
+void Inventory::process_slot_LB_click(uint32_t slot_id) {
+	InventorySlot& slot = items[slot_id];
+	//take item from slot if cursor is empty
+	if (cursor_item.item_id == 0) {
+		//stop if slot has no item
+		if (slot.item_id == 0) return;
+
+		cursor_item.item_id = slot.item_id;
+		cursor_item.amount = slot.amount;
+		slot.item_id = 0;
+		slot.amount = 0;
+	}
+	//place item to slot from cursor
+	else {
+		if (slot.item_id == 0) {
+			slot.item_id = cursor_item.item_id;
+			slot.amount = cursor_item.amount;
+			cursor_item.item_id = 0;
+			cursor_item.amount = 0;
+		}
+		else {
+			//cursor and slot have the same item
+			if (slot.item_id == cursor_item.item_id) {
+				slot.amount += cursor_item.amount;
+				if (slot.amount > MAX_STACK_COUNT) {
+					cursor_item.amount = slot.amount - MAX_STACK_COUNT;
+					slot.amount = MAX_STACK_COUNT;
+				}
+				else {
+					cursor_item.item_id = 0;
+					cursor_item.amount = 0;
+				}
+			}
+			//have different items
+			else {
+				uint16_t temp_id = slot.item_id;
+				uint16_t temp_amount = slot.amount;
+				slot.item_id = cursor_item.item_id;
+				slot.amount = cursor_item.amount;
+				cursor_item.item_id = temp_id;
+				cursor_item.amount = temp_amount;
+			}
+		}
+	}
+	should_update_base_items = true;
+}
+
+void Inventory::process_slot_RB_click(uint32_t slot_id) {
+
 }
