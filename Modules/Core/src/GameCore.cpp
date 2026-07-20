@@ -12,6 +12,7 @@
 
 bool Game::update() {
 	timeMgr.update();
+
 	SystemContext::mouse.get_mouse_ortho_coords(SystemContext::screen);
 
 	if (SystemContext::keyBoard.key_is_pressed(Key::KeyEscape)) {
@@ -134,14 +135,6 @@ bool Game::update() {
 	case inGame: {
 		game_render_state = Game_State::inGame;
 		
-		timeMgr.update_world_time();
-
-		if (keyStates[GLFW_KEY_ESCAPE]) {
-			game_update_state = Game_State::WorldIsSaving;
-			saving_the_world = true;
-			std::thread(&Game::exit_and_save_the_world_thread, this).detach();
-			return 1;
-		}
 		//move
 		playerXinc = 0.f;
 		playerYinc = 0.f;
@@ -182,93 +175,6 @@ bool Game::update() {
 				entitySystem->spawn_entity(9, glm::vec2(GameContext::PLAYER_LAST_POS.x + GameContext::BLOCK_SIZE * 10, GameContext::PLAYER_LAST_POS.y + GameContext::BLOCK_SIZE * 13));
 				entitySystem->spawn_entity(10, glm::vec2(GameContext::PLAYER_LAST_POS.x - GameContext::BLOCK_SIZE * 20, GameContext::PLAYER_LAST_POS.y + GameContext::BLOCK_SIZE * 9));
 			}
-		}
-
-		//inventory
-		if (keyStates[GLFW_KEY_E]) {
-			keyStates[GLFW_KEY_E] = false;
-			if (inventoryIsOpen || active_chest.isOpen) {
-				inventoryIsOpen = false;
-				active_chest.isOpen = false;
-				if (currently_moving_object.object.type) {
-					if (index_of_last_slot_picked < INVENTORY_SIZE - 40) {
-						//add object from curerntly moving object to inventory slot
-						inventory_array[index_of_last_slot_picked].object = ItemObject(currently_moving_object.object.type, currently_moving_object.object.id);
-						inventory_array[index_of_last_slot_picked].amount = currently_moving_object.amount;
-						//delete it from the currently moving object
-						currently_moving_object.object = ItemObject(None, 0);
-						currently_moving_object.amount = 0;
-					}
-					else {
-						//add object from curerntly moving object to inventory slot
-						active_chest.slot_pointer[index_of_last_slot_picked - (INVENTORY_SIZE - 40)].object = ItemObject(currently_moving_object.object.type, currently_moving_object.object.id);
-						active_chest.slot_pointer[index_of_last_slot_picked - (INVENTORY_SIZE - 40)].amount = currently_moving_object.amount;
-						//delete it from the currently moving object
-						currently_moving_object.object = ItemObject(None, 0);
-						currently_moving_object.amount = 0;
-					}
-				}
-				active_chest.slot_pointer = nullptr;
-			}
-			else {
-				inventoryIsOpen = true;
-				crafting_system.index_of_current_craft = 0;
-			}
-		}
-		//zoom [50% - 200%]
-		if (keyStates[GLFW_KEY_PAGE_UP]) {
-			keyStates[GLFW_KEY_PAGE_UP] = false;
-			if (camera.scaling < 2.0) {
-				camera.scaling += 0.25;
-				camera.scalingDx = ScreenWidth / 2 * (1 / camera.scaling) - ScreenWidth / 2;
-				camera.scalingDy = ScreenHeight / 2 * (1 / camera.scaling) - ScreenHeight / 2;
-				camera.rightBorderDx = -world_width * BLOCK_VISIBLE_SIZE + ScreenWidth + camera.scalingDx;
-				camera.topBorderDy = -world_height * BLOCK_VISIBLE_SIZE + ScreenHeight + camera.scalingDy;
-			}
-		}
-		if (keyStates[GLFW_KEY_PAGE_DOWN]) {
-			keyStates[GLFW_KEY_PAGE_DOWN] = false;
-			if (camera.scaling > 0.5) {
-				camera.scaling -= 0.25;
-				camera.scalingDx = ScreenWidth / 2 * (1 / camera.scaling) - ScreenWidth / 2;
-				camera.scalingDy = ScreenHeight / 2 * (1 / camera.scaling) - ScreenHeight / 2;
-				camera.rightBorderDx = -world_width * BLOCK_VISIBLE_SIZE + ScreenWidth + camera.scalingDx;
-				camera.topBorderDy = -world_height * BLOCK_VISIBLE_SIZE + ScreenHeight + camera.scalingDy;
-			}
-		}
-		if (!active_weapon.isActive) { //maybe should change this if
-			//scroll active slot in ui bar
-			if (mouse.wheelOffset != 0 && !inventoryIsOpen) {
-				if (mouse.wheelOffset > 0) {
-					active_bar_slot--;
-					if (active_bar_slot == -1) active_bar_slot = 9;
-				}
-				else {
-					active_bar_slot++;
-					if (active_bar_slot == 10) active_bar_slot = 0;
-				}
-			}
-			//or use numbers
-			if (keyStates[GLFW_KEY_0]) active_bar_slot = 9;
-			if (keyStates[GLFW_KEY_1]) active_bar_slot = 0;
-			if (keyStates[GLFW_KEY_2]) active_bar_slot = 1;
-			if (keyStates[GLFW_KEY_3]) active_bar_slot = 2;
-			if (keyStates[GLFW_KEY_4]) active_bar_slot = 3;
-			if (keyStates[GLFW_KEY_5]) active_bar_slot = 4;
-			if (keyStates[GLFW_KEY_6]) active_bar_slot = 5;
-			if (keyStates[GLFW_KEY_7]) active_bar_slot = 6;
-			if (keyStates[GLFW_KEY_8]) active_bar_slot = 7;
-			if (keyStates[GLFW_KEY_9]) active_bar_slot = 8;
-		}
-
-		if (keyStates[GLFW_KEY_T]) {
-			keyStates[GLFW_KEY_T] = false;
-			timeMgr.toggle_dayTime();
-		}
-
-		if (keyStates[GLFW_KEY_F]) {
-			keyStates[GLFW_KEY_F] = false;
-			toggle_Fullscreen(window);
 		}
 
 		//[[TEST]] crafting system
@@ -1024,635 +930,6 @@ bool Game::update() {
 			active_breakable_object.time_breaking = 0.f;
 		}
 
-		//change look of active slot in ui bar
-		if (!inventoryIsOpen)
-			recolor_active_bar_slot();
-
-		additional_slots = 0;
-		additional_sprites_slots = 0;
-		if (inventoryIsOpen) {
-			int offset = 264;
-			if (active_chest.isOpen) {
-				for (int i = 0; i < 160; i++) {
-					inventory_vert_buf[i + offset] = inv_chest_slots_buf[i];
-				}
-				additional_slots += 40;
-				offset += 160;
-			}
-			for (int i = 0; i < 20; i++) {
-				inventory_vert_buf[i + offset] = crafting_system.main_slots[i];
-			}
-			offset += 20;
-			additional_slots += 5;
-
-			crafting_system.available_crafts = get_available_crafts();
-			int crafts_available = crafting_system.available_crafts.size();
-			int SIZE = crafts_available * 4;
-			if (crafts_available > 0) {
-				if (crafting_system.index_of_current_craft >= crafts_available)
-					crafting_system.index_of_current_craft = crafts_available - 1;
-				//sprites in main slots
-				additional_sprites_slots++;
-				if (crafting_system.index_of_current_craft - 1 >= 0) {
-					additional_sprites_slots++;
-					if (crafting_system.index_of_current_craft - 2 >= 0)
-						additional_sprites_slots++;
-				}
-				if (crafting_system.index_of_current_craft + 1 < crafts_available) {
-					additional_sprites_slots++;
-					if (crafting_system.index_of_current_craft + 2 < crafts_available)
-						additional_sprites_slots++;
-				}
-				//change current craftable item in main slot with mouse wheel
-				if (mouse.mouseX >= crafting_system.main_slots[0].pos.x && mouse.mouseX <= crafting_system.main_slots[2].pos.x)
-					if (mouse.mouseY >= crafting_system.main_slots[0].pos.y && mouse.mouseY <= crafting_system.main_slots[1].pos.y)
-					{
-						if (mouse.wheelOffset != 0)
-							if (mouse.wheelOffset < 0) {
-								crafting_system.index_of_current_craft++;
-								if (crafting_system.index_of_current_craft == crafts_available)
-									crafting_system.index_of_current_craft = 0;
-							}
-							else {
-								crafting_system.index_of_current_craft--;
-								if (crafting_system.index_of_current_craft < 0)
-									crafting_system.index_of_current_craft = crafts_available - 1;
-							}
-					}
-				//calculate amount of sprites and slots for item to craft
-				int items_needed_size = craftable_items[crafting_system.available_crafts[crafting_system.index_of_current_craft]].items_needed.size() * 4;
-				for (int i = 0; i < items_needed_size; i++) {
-					inventory_vert_buf[i + offset] = crafting_system.needed_items_slots[i];
-				}
-				offset += items_needed_size;
-				additional_slots += items_needed_size / 4;
-				additional_sprites_slots += items_needed_size / 4;
-
-				//show all crafts available with helper slots (count amount of slots and sprites)
-				if (crafting_system.show_all_crafts) {
-					for (int i = 0; i < SIZE; i++) {
-						inventory_vert_buf[i + offset] = crafting_system.helper_slots[i];
-					}
-					additional_slots += crafts_available;
-					additional_sprites_slots += crafts_available;
-				}
-			}
-		}
-
-		inventory_vbo->bind_VBO();
-		if (active_chest.isOpen)
-			glBufferSubData(GL_ARRAY_BUFFER, 0, INVENTORY_SIZE * sizeof(ColorVertex2f) * 4, inventory_vert_buf);
-		else
-			glBufferSubData(GL_ARRAY_BUFFER, 0, (INVENTORY_SIZE - 40) * sizeof(ColorVertex2f) * 4, inventory_vert_buf);
-		//change back
-		reset_active_bar_slot();
-		object_info_box[0].show_box = false;
-		object_info_box[1].show_box = false;
-		//move objects in inventory
-		if (inventoryIsOpen) {
-			int size = INVENTORY_SIZE - 40 - CRAFTING_SLOTS;
-			for (int i = 0; i < size; i++) {  //0,1 6,7 12,13 18,19
-				if (mouse.mouseX >= inventory_vert_buf[i * 4].pos.x && mouse.mouseX <= inventory_vert_buf[i * 4 + 2].pos.x)
-					if (mouse.mouseY >= inventory_vert_buf[i * 4].pos.y && mouse.mouseY <= inventory_vert_buf[i * 4 + 1].pos.y) {
-						ObjectType type = inventory_array[i].object.type;
-						int id = inventory_array[i].object.id;
-
-						if (type && !currently_moving_object.object.type) {
-							update_item_info_box(type, id);
-						}
-						if (mouse.left_button) {
-							mouse.left_button = false;
-							if (currently_moving_object.object.type) { //if mouse holds an object
-								if (type) { //if there is an object in slot
-									if (id == currently_moving_object.object.id && item_is_stackable(id, type)) { //if the same id
-										int amount = inventory_array[i].amount + currently_moving_object.amount;
-										if (amount > 999) {
-											inventory_array[i].amount = 999;
-											currently_moving_object.amount = amount - 999;
-										}
-										else {
-											inventory_array[i].amount = amount;
-											currently_moving_object.object = ItemObject(None, 0);
-											currently_moving_object.amount = 0;
-										}
-										break;
-									}
-									else {  //if different id
-										int amount = inventory_array[i].amount;
-										//ObjectType type = inventory_array[i].object.get_type();
-										inventory_array[i].object = ItemObject(currently_moving_object.object.type, currently_moving_object.object.id);
-										inventory_array[i].amount = currently_moving_object.amount;
-										currently_moving_object.object = ItemObject(type, id);
-										currently_moving_object.amount = amount;
-										break;
-									}
-								}
-								else { //if there is no object in slot
-									//add object from currently moving object to inventory slot
-									inventory_array[i].object = ItemObject(currently_moving_object.object.type, currently_moving_object.object.id);
-									inventory_array[i].amount = currently_moving_object.amount;
-									//delete it from the currently moving object
-									currently_moving_object.object = ItemObject(None, 0);
-									currently_moving_object.amount = 0;
-									break;
-								}
-							}
-							else if (type) { //if mouse doesn't hold an object
-								//add object to currently moving object
-								currently_moving_object.object = ItemObject(type, id);
-								currently_moving_object.amount = inventory_array[i].amount;
-								//delete it from the inventory slot
-								inventory_array[i].object = ItemObject(None, 0);
-								inventory_array[i].amount = 0;
-								index_of_last_slot_picked = i;
-								break;
-							}
-						}
-						//manage objects in inventory (add one to another (if they are the same and it is allowed) or subdivide amount)
-						if (mouse.right_button) {
-							mouse.right_button = false;
-							if (type && id == currently_moving_object.object.id && item_is_stackable(id, type)) { //if there is an object
-								if (inventory_array[i].amount < 999) {
-									inventory_array[i].amount++;
-									currently_moving_object.amount--;
-									if (currently_moving_object.amount == 0) {
-										currently_moving_object.object = ItemObject(None, 0);
-									}
-								}
-								break;
-							}
-							else if (!type) { //if there is no object
-								inventory_array[i].object = ItemObject(currently_moving_object.object.type, currently_moving_object.object.id);
-								inventory_array[i].amount++;
-								currently_moving_object.amount--;
-								if (currently_moving_object.amount == 0) {
-									currently_moving_object.object = ItemObject(None, 0);
-								}
-								break;
-							}
-						}
-					}
-			}
-			if (active_chest.isOpen) { //if any chest is open right now
-				for (int i = size; i < INVENTORY_SIZE - CRAFTING_SLOTS; i++) //check each of 40 slots in chest, size here is exactly max size - 40
-					if (mouse.mouseX >= inventory_vert_buf[i * 4].pos.x && mouse.mouseX <= inventory_vert_buf[i * 4 + 2].pos.x)
-						if (mouse.mouseY >= inventory_vert_buf[i * 4].pos.y && mouse.mouseY <= inventory_vert_buf[i * 4 + 1].pos.y) {
-							ObjectType type = active_chest.slot_pointer[i - size].object.type;
-							int id = active_chest.slot_pointer[i - size].object.id;
-
-							if (type && !currently_moving_object.object.type) {
-								update_item_info_box(type, id);
-							}
-							if (mouse.left_button) {
-								mouse.left_button = false;
-								if (currently_moving_object.object.type) { //if mouse holds an object
-									if (type) { //if there is an object in slot
-										if (id == currently_moving_object.object.id && item_is_stackable(id, type)) { //if the same id
-											int amount = active_chest.slot_pointer[i - size].amount + currently_moving_object.amount;
-											if (amount > 999) {
-												active_chest.slot_pointer[i - size].amount = 999;
-												currently_moving_object.amount = amount - 999;
-											}
-											else {
-												active_chest.slot_pointer[i - size].amount = amount;
-												currently_moving_object.object = ItemObject(None, 0);
-												currently_moving_object.amount = 0;
-											}
-											break;
-										}
-										else {  //if different id
-											int amount = active_chest.slot_pointer[i - size].amount;
-											active_chest.slot_pointer[i - size].object = ItemObject(currently_moving_object.object.type, currently_moving_object.object.id);
-											active_chest.slot_pointer[i - size].amount = currently_moving_object.amount;
-											currently_moving_object.object = ItemObject(type, id);
-											currently_moving_object.amount = amount;
-											break;
-										}
-									}
-									else { //if there is no object in slot
-										//add object from currently moving object to inventory slot
-										active_chest.slot_pointer[i - size].object = ItemObject(currently_moving_object.object.type, currently_moving_object.object.id);
-										active_chest.slot_pointer[i - size].amount = currently_moving_object.amount;
-										//delete it from the currently moving object
-										currently_moving_object.object = ItemObject(None, 0);
-										currently_moving_object.amount = 0;
-										break;
-									}
-								}
-								else if (type) { //if mouse doesn't hold an object
-									//add object to currently moving object
-									currently_moving_object.object = ItemObject(type, id);
-									currently_moving_object.amount = active_chest.slot_pointer[i - size].amount;
-									//delete it from the inventory slot
-									active_chest.slot_pointer[i - size].object = ItemObject(None, 0);
-									active_chest.slot_pointer[i - size].amount = 0;
-									index_of_last_slot_picked = i;
-									break;
-								}
-							}
-							//manage objects in inventory (add one to another (if they are the same and it is allowed) or subdivide amount)
-							if (mouse.right_button) {
-								mouse.right_button = false;
-								if (type && id == currently_moving_object.object.id && item_is_stackable(id, type)) { //if there is an object
-									if (active_chest.slot_pointer[i - size].amount < 999) {
-										active_chest.slot_pointer[i - size].amount++;
-										currently_moving_object.amount--;
-										if (currently_moving_object.amount == 0) {
-											currently_moving_object.object = ItemObject(None, 0);
-										}
-									}
-									break;
-								}
-								else if (!type) { //if there is no object
-									active_chest.slot_pointer[i - size].object = ItemObject(currently_moving_object.object.type, currently_moving_object.object.id);
-									active_chest.slot_pointer[i - size].amount++;
-									currently_moving_object.amount--;
-									if (currently_moving_object.amount == 0) {
-										currently_moving_object.object = ItemObject(None, 0);
-									}
-									break;
-								}
-							}
-						}
-			}
-		}
-		else if (inventory_array[active_bar_slot].object.type && !currently_moving_object.object.type) { //if there is an object in active slot, then show its name
-			object_info_box[0].show_box = true;
-			//show info box about this object
-			object_info_box[0].box_string = "";
-			object_info_box[0].box_string += objectInfo[inventory_array[active_bar_slot].object.id]->name;
-			object_info_box[0].starting_pos = glm::vec2(ScreenWidth * 0.01, ScreenHeight * 0.985);
-		}
-
-		int array_size = 0;
-		int object_id;
-		ObjectType object_type;
-		buffer_size = 0;
-		Vertex2f* buffer_ptr;
-		inventory_text_size = 0;
-		if (inventoryIsOpen)
-			size = INVENTORY_SIZE - 40 - CRAFTING_SLOTS;
-		else
-			size = 10;
-		for (int i = 0; i < size; i++) {
-			if (inventory_array[i].object.type) {
-				array_size++;
-			}
-		}
-		if (active_chest.isOpen)
-			for (int i = size; i < INVENTORY_SIZE - CRAFTING_SLOTS; i++) {
-				if (active_chest.slot_pointer[i - size].object.type) array_size++;
-			}
-		if (currently_moving_object.object.type)
-			array_size++;
-		array_size += additional_sprites_slots;
-		inventory_index_size = array_size * 6;
-		int index = 0;
-		//fill buffer for inventory objects
-		buffer_ptr = inventory_obj_vert_buf;
-		float dX, dY; //adjust ratio of sprites
-		float X, Y;
-		for (int i = 0; i < size; i++) {
-			dX = 1.f, dY = 1.f;
-			if (!inventory_array[i].object.type) {
-				continue;
-			}
-			if (inventory_array[i].amount > 1) {
-				inventory_text_info[index * 3] = inventory_array[i].amount;
-				inventory_text_info[index * 3 + 1] = inventory_vert_buf[i * 4].pos.x;
-				inventory_text_info[index * 3 + 2] = inventory_vert_buf[i * 4].pos.y;
-				index++;
-				inventory_text_size++;
-			}
-			object_id = inventory_array[i].object.id;
-			object_type = inventory_array[i].object.type;
-			if (object_type == isComplexObject || object_type == isWeapon) {
-				float sizeX = objectInfo[object_id]->get_sizeX();
-				float sizeY = objectInfo[object_id]->get_sizeY();
-				if (sizeX > sizeY)
-					dY = sizeY / sizeX;
-				else
-					dX = sizeX / sizeY;
-			}
-			X = inventory_vert_buf[i * 4].pos.x + ScreenHeight * (0.005 + 0.04 * ((1.f - dX) / 2.f));
-			Y = inventory_vert_buf[i * 4].pos.y + ScreenHeight * (0.005 + 0.04 * ((1.f - dY) / 2.f));
-			tex_coords_ptr = objectInfo[object_id]->texture_coords;
-			buffer_ptr->pos = { X, Y };
-			buffer_ptr->UV = tex_coords_ptr[0];
-			buffer_ptr->tex_id = 0.f;
-			buffer_ptr++;
-			buffer_ptr->pos = { X, Y + ScreenHeight * 0.04 * dY };
-			buffer_ptr->UV = tex_coords_ptr[1];
-			buffer_ptr->tex_id = 0.f;
-			buffer_ptr++;
-			buffer_ptr->pos = { X + ScreenHeight * 0.04 * dX, Y + ScreenHeight * 0.04 * dY };
-			buffer_ptr->UV = tex_coords_ptr[2];
-			buffer_ptr->tex_id = 0.f;
-			buffer_ptr++;
-			buffer_ptr->pos = { X + ScreenHeight * 0.04 * dX, Y };
-			buffer_ptr->UV = tex_coords_ptr[3];
-			buffer_ptr->tex_id = 0.f;
-			buffer_ptr++;
-			buffer_size += 4;
-		}
-		if (active_chest.isOpen)
-			for (int i = size; i < INVENTORY_SIZE - CRAFTING_SLOTS; i++) {
-				dX = 1.f, dY = 1.f;
-				if (!active_chest.slot_pointer[i - size].object.type) {
-					continue;
-				}
-				if (active_chest.slot_pointer[i - size].amount > 1) {
-					inventory_text_info[index * 3] = active_chest.slot_pointer[i - size].amount;
-					inventory_text_info[index * 3 + 1] = inventory_vert_buf[i * 4].pos.x;
-					inventory_text_info[index * 3 + 2] = inventory_vert_buf[i * 4].pos.y;
-					index++;
-					inventory_text_size++;
-				}
-				object_id = active_chest.slot_pointer[i - size].object.id;
-				object_type = active_chest.slot_pointer[i - size].object.type;
-				if (object_type == isComplexObject || object_type == isWeapon) {
-					float sizeX = objectInfo[object_id]->get_sizeX();
-					float sizeY = objectInfo[object_id]->get_sizeY();
-					if (sizeX > sizeY)
-						dY = sizeY / sizeX;
-					else
-						dX = sizeX / sizeY;
-				}
-				X = inventory_vert_buf[i * 4].pos.x + ScreenHeight * (0.005 + 0.04 * ((1.f - dX) / 2.f));
-				Y = inventory_vert_buf[i * 4].pos.y + ScreenHeight * (0.005 + 0.04 * ((1.f - dY) / 2.f));
-				tex_coords_ptr = objectInfo[object_id]->texture_coords;
-				buffer_ptr->pos = { X, Y };
-				buffer_ptr->UV = tex_coords_ptr[0];
-				buffer_ptr->tex_id = 0.f;
-				buffer_ptr++;
-				buffer_ptr->pos = { X, Y + ScreenHeight * 0.04 * dY };
-				buffer_ptr->UV = tex_coords_ptr[1];
-				buffer_ptr->tex_id = 0.f;
-				buffer_ptr++;
-				buffer_ptr->pos = { X + ScreenHeight * 0.04 * dX, Y + ScreenHeight * 0.04 * dY };
-				buffer_ptr->UV = tex_coords_ptr[2];
-				buffer_ptr->tex_id = 0.f;
-				buffer_ptr++;
-				buffer_ptr->pos = { X + ScreenHeight * 0.04 * dX, Y };
-				buffer_ptr->UV = tex_coords_ptr[3];
-				buffer_ptr->tex_id = 0.f;
-				buffer_ptr++;
-				buffer_size += 4;
-			}
-		//add effects icons if player has them and inventory is closed
-		if (!inventoryIsOpen && player.effects.size()) {
-			int size = player.effects.size();
-			for (int i = 0; i < size; i++) {
-				X = inventory_vert_buf[(i + 10) * 4].pos.x;
-				Y = inventory_vert_buf[(i + 10) * 4].pos.y;
-				if (mouse.mouseX >= inventory_vert_buf[(i + 10) * 4].pos.x * 0.8 && mouse.mouseX <= inventory_vert_buf[(i + 10) * 4 + 2].pos.x * 0.8)
-					if (mouse.mouseY >= inventory_vert_buf[(i + 10) * 4].pos.y * 0.8 + ScreenHeight * 0.2f && mouse.mouseY <= inventory_vert_buf[(i + 10) * 4 + 1].pos.y * 0.8 + ScreenHeight * 0.2f) {
-						update_effect_info_box(player.effects[i]);
-					}
-				int effect_id = player.effects[i].id;
-				tex_coords_ptr = effects[effect_id]->sprite_coords;
-				buffer_ptr->pos = { X, Y };
-				buffer_ptr->UV = tex_coords_ptr[0];
-				buffer_ptr->tex_id = 0.f;
-				buffer_ptr++;
-				buffer_ptr->pos = { X, Y + ScreenHeight * 0.05 };
-				buffer_ptr->UV = tex_coords_ptr[1];
-				buffer_ptr->tex_id = 0.f;
-				buffer_ptr++;
-				buffer_ptr->pos = { X + ScreenHeight * 0.05, Y + ScreenHeight * 0.05 };
-				buffer_ptr->UV = tex_coords_ptr[2];
-				buffer_ptr->tex_id = 0.f;
-				buffer_ptr++;
-				buffer_ptr->pos = { X + ScreenHeight * 0.05, Y };
-				buffer_ptr->UV = tex_coords_ptr[3];
-				buffer_ptr->tex_id = 0.f;
-				buffer_ptr++;
-				buffer_size += 4;
-				inventory_index_size += 6;
-			}
-		}
-		//add additional slots and sprites for crafting system and manage them
-		if (inventoryIsOpen) {
-			float X, Y;
-			float dX = 1.f, dY = 1.f; //to adjust ratio for complex sprites
-			int id = crafting_system.available_crafts[crafting_system.index_of_current_craft];
-			int needed_sprites_size = craftable_items[id].items_needed.size();
-			for (int i = 0; i < needed_sprites_size; i++) {
-				dX = 1.f, dY = 1.f;
-				if (craftable_items[id].items_needed[i].amount > 1) {
-					inventory_text_info[index * 3] = craftable_items[id].items_needed[i].amount;
-					inventory_text_info[index * 3 + 1] = crafting_system.needed_items_slots[i * 4].pos.x;
-					inventory_text_info[index * 3 + 2] = crafting_system.needed_items_slots[i * 4].pos.y;
-					index++;
-					inventory_text_size++;
-				}
-				object_type = objectInfo[object_id]->objectType;
-				if (object_type == isComplexObject || object_type == isWeapon) {
-					float sizeX = objectInfo[object_id]->get_sizeX();
-					float sizeY = objectInfo[object_id]->get_sizeY();
-					if (sizeX > sizeY)
-						dY = sizeY / sizeX;
-					else
-						dX = sizeX / sizeY;
-				}
-				object_id = craftable_items[id].items_needed[i].id;
-				
-				X = crafting_system.needed_items_slots[i * 4].pos.x + ScreenHeight * (0.005 + 0.04 * ((1.f - dX) / 2.f));
-				Y = crafting_system.needed_items_slots[i * 4].pos.y + ScreenHeight * (0.005 + 0.04 * ((1.f - dY) / 2.f));
-				if (mouse.mouseX >= X && mouse.mouseX <= X + ScreenHeight * 0.04 &&
-					mouse.mouseY >= Y && mouse.mouseY <= Y + ScreenHeight * 0.04)
-					update_item_info_box(objectInfo[object_id]->objectType, object_id);
-
-				tex_coords_ptr = objectInfo[object_id]->texture_coords;
-				buffer_ptr->pos = { X, Y };
-				buffer_ptr->UV = tex_coords_ptr[0];
-				buffer_ptr->tex_id = 0.f;
-				buffer_ptr++;
-				buffer_ptr->pos = { X, Y + ScreenHeight * 0.04 * dY };
-				buffer_ptr->UV = tex_coords_ptr[1];
-				buffer_ptr->tex_id = 0.f;
-				buffer_ptr++;
-				buffer_ptr->pos = { X + ScreenHeight * 0.04 * dX, Y + ScreenHeight * 0.04 * dY };
-				buffer_ptr->UV = tex_coords_ptr[2];
-				buffer_ptr->tex_id = 0.f;
-				buffer_ptr++;
-				buffer_ptr->pos = { X + ScreenHeight * 0.04 * dX, Y };
-				buffer_ptr->UV = tex_coords_ptr[3];
-				buffer_ptr->tex_id = 0.f;
-				buffer_ptr++;
-				buffer_size += 4;
-			}
-			//add items in mains slots
-			if (craftable_items[id].craftable_amount > 1) {
-				inventory_text_info[index * 3] = craftable_items[id].craftable_amount;
-				inventory_text_info[index * 3 + 1] = crafting_system.main_slots[0].pos.x;
-				inventory_text_info[index * 3 + 2] = crafting_system.main_slots[0].pos.y;
-				index++;
-				inventory_text_size++;
-			}
-			object_id = craftable_items[id].item_id;
-			dX = 1.f, dY = 1.f;
-			object_type = objectInfo[object_id]->objectType;
-			if (object_type == isComplexObject || object_type == isWeapon) {
-				float sizeX = objectInfo[object_id]->get_sizeX();
-				float sizeY = objectInfo[object_id]->get_sizeY();
-				if (sizeX > sizeY)
-					dY = sizeY / sizeX;
-				else
-					dX = sizeX / sizeY;
-			}
-			X = crafting_system.main_slots[0].pos.x + ScreenHeight * (0.005 + 0.04 * ((1.f - dX) / 2.f));
-			Y = crafting_system.main_slots[0].pos.y + ScreenHeight * (0.005 + 0.04 * ((1.f - dY) / 2.f));
-			if (mouse.mouseX >= X && mouse.mouseX <= X + ScreenHeight * 0.065 &&
-				mouse.mouseY >= Y && mouse.mouseY <= Y + ScreenHeight * 0.065)
-			{
-				update_item_info_box(objectInfo[object_id]->objectType, object_id);
-				if (mouse.left_button) {
-					mouse.left_button = false;
-					craft_item(id);
-				}
-			}
-			tex_coords_ptr = objectInfo[object_id]->texture_coords;
-			buffer_ptr->pos = { X, Y };
-			buffer_ptr->UV = tex_coords_ptr[0];
-			buffer_ptr->tex_id = 0.f;
-			buffer_ptr++;
-			buffer_ptr->pos = { X, Y + ScreenHeight * 0.06 * dY };
-			buffer_ptr->UV = tex_coords_ptr[1];
-			buffer_ptr->tex_id = 0.f;
-			buffer_ptr++;
-			buffer_ptr->pos = { X + ScreenHeight * 0.06 * dX, Y + ScreenHeight * 0.06 * dY };
-			buffer_ptr->UV = tex_coords_ptr[2];
-			buffer_ptr->tex_id = 0.f;
-			buffer_ptr++;
-			buffer_ptr->pos = { X + ScreenHeight * 0.06 * dX, Y };
-			buffer_ptr->UV = tex_coords_ptr[3];
-			buffer_ptr->tex_id = 0.f;
-			buffer_ptr++;
-			buffer_size += 4;
-
-			needed_sprites_size = crafting_system.available_crafts.size();
-			if (crafting_system.index_of_current_craft - 1 >= 0) {
-				update_main_crafting_slot(4, crafting_system.index_of_current_craft - 1, index, buffer_ptr);
-				if (crafting_system.index_of_current_craft - 2 >= 0) {
-					update_main_crafting_slot(8, crafting_system.index_of_current_craft - 2, index, buffer_ptr);
-				}
-			}
-			if (crafting_system.index_of_current_craft + 1 < needed_sprites_size) {
-				update_main_crafting_slot(12, crafting_system.index_of_current_craft + 1, index, buffer_ptr);
-				if (crafting_system.index_of_current_craft + 2 < needed_sprites_size) {
-					update_main_crafting_slot(16, crafting_system.index_of_current_craft + 2, index, buffer_ptr);
-				}
-			}
-
-			//add helper sprites if needed
-			if (crafting_system.show_all_crafts) {
-				for (int i = 0; i < needed_sprites_size; i++) {
-					dX = 1.f, dY = 1.f;
-					id = crafting_system.available_crafts[i];
-					if (craftable_items[id].craftable_amount > 1) {
-						inventory_text_info[index * 3] = craftable_items[id].craftable_amount;
-						inventory_text_info[index * 3 + 1] = crafting_system.helper_slots[i * 4].pos.x;
-						inventory_text_info[index * 3 + 2] = crafting_system.helper_slots[i * 4].pos.y;
-						index++;
-						inventory_text_size++;
-					}
-					object_id = craftable_items[id].item_id;
-					object_type = objectInfo[object_id]->objectType;
-					if (object_type == isComplexObject || object_type == isWeapon) {
-						float sizeX = objectInfo[object_id]->get_sizeX();
-						float sizeY = objectInfo[object_id]->get_sizeY();
-						if (sizeX > sizeY)
-							dY = sizeY / sizeX;
-						else
-							dX = sizeX / sizeY;
-					}
-					X = crafting_system.helper_slots[i * 4].pos.x + ScreenHeight * (0.005 + 0.04 * ((1.f - dX) / 2.f));
-					Y = crafting_system.helper_slots[i * 4].pos.y + ScreenHeight * (0.005 + 0.04 * ((1.f - dY) / 2.f));
-					if (mouse.mouseX >= X && mouse.mouseX <= X + ScreenHeight * 0.04 &&
-						mouse.mouseY >= Y && mouse.mouseY <= Y + ScreenHeight * 0.04)
-					{
-						if (mouse.left_button) {
-							mouse.left_button = false;
-							crafting_system.index_of_current_craft = i;
-						}
-						update_item_info_box(objectInfo[object_id]->objectType, object_id);
-					}
-					tex_coords_ptr = objectInfo[object_id]->texture_coords;
-					buffer_ptr->pos = { X, Y };
-					buffer_ptr->UV = tex_coords_ptr[0];
-					buffer_ptr->tex_id = 0.f;
-					buffer_ptr++;
-					buffer_ptr->pos = { X, Y + ScreenHeight * 0.04 * dY };
-					buffer_ptr->UV = tex_coords_ptr[1];
-					buffer_ptr->tex_id = 0.f;
-					buffer_ptr++;
-					buffer_ptr->pos = { X + ScreenHeight * 0.04 * dX, Y + ScreenHeight * 0.04 * dY };
-					buffer_ptr->UV = tex_coords_ptr[2];
-					buffer_ptr->tex_id = 0.f;
-					buffer_ptr++;
-					buffer_ptr->pos = { X + ScreenHeight * 0.04 * dX, Y };
-					buffer_ptr->UV = tex_coords_ptr[3];
-					buffer_ptr->tex_id = 0.f;
-					buffer_ptr++;
-					buffer_size += 4;
-				}
-			}
-		}
-		if (currently_moving_object.object.type) {
-			dX = 1.f, dY = 1.f;
-			if (currently_moving_object.amount > 1) {
-				inventory_text_info[index * 3] = currently_moving_object.amount;
-				inventory_text_info[index * 3 + 1] = mouse.mouseX - ScreenHeight * 0.0275;
-				inventory_text_info[index * 3 + 2] = mouse.mouseY - ScreenHeight * 0.0275;
-				inventory_text_size++;
-			}
-
-			float X = mouse.mouseX - ScreenHeight * 0.02;
-			float Y = mouse.mouseY - ScreenHeight * 0.02;
-			object_id = currently_moving_object.object.id;
-			object_type = currently_moving_object.object.type;
-			if (object_type == isComplexObject || object_type == isWeapon) {
-				float sizeX = objectInfo[object_id]->get_sizeX();
-				float sizeY = objectInfo[object_id]->get_sizeY();
-				if (sizeX > sizeY)
-					dY = sizeY / sizeX;
-				else
-					dX = sizeX / sizeY;
-			}
-			tex_coords_ptr = objectInfo[object_id]->texture_coords;
-			buffer_ptr->pos = { X, Y };
-			buffer_ptr->UV = tex_coords_ptr[0];
-			buffer_ptr->tex_id = 0.f;
-			buffer_ptr++;
-			buffer_ptr->pos = { X, Y + ScreenHeight * 0.04 * dY };
-			buffer_ptr->UV = tex_coords_ptr[1];
-			buffer_ptr->tex_id = 0.f;
-			buffer_ptr++;
-			buffer_ptr->pos = { X + ScreenHeight * 0.04 * dX, Y + ScreenHeight * 0.04 * dY };
-			buffer_ptr->UV = tex_coords_ptr[2];
-			buffer_ptr->tex_id = 0.f;
-			buffer_ptr++;
-			buffer_ptr->pos = { X + ScreenHeight * 0.04 * dX, Y };
-			buffer_ptr->UV = tex_coords_ptr[3];
-			buffer_ptr->tex_id = 0.f;
-			buffer_size += 4;
-		}
-		inventory_objects_vbo->bind_VBO();
-		glBufferSubData(GL_ARRAY_BUFFER, 0, buffer_size * sizeof(Vertex2f), inventory_obj_vert_buf);
-
-		//calculate the borders of current area to be drawn based on the camera(player) position
-		int player_X = (ScreenWidth / 2 - camera.dX) / BLOCK_VISIBLE_SIZE;
-		int player_Y = (ScreenHeight / 2 - camera.dY) / BLOCK_VISIBLE_SIZE;
-		int leftX = player_X - 25 * (1 / camera.scaling); //25 blocks to both sides on oX
-		int rightX = player_X + 26 * (1 / camera.scaling);
-		int bottomY = player_Y - 15 * (1 / camera.scaling); //15 blocks to both sides on oY
-		int topY = player_Y + 16 * (1 / camera.scaling);
-		if (leftX < 0) leftX = 0;
-		if (rightX > world_width ) rightX = world_width;
-		if (bottomY < 0) bottomY = 0;
-		if (topY > world_height ) topY = world_height;
-
 		//break or put objects and walls, use weapons, tools, etc. with mouse left button
 		if (mouse.left_button && inventory_array[active_bar_slot].object.type) {
 			ObjectType type = inventory_array[active_bar_slot].object.type;
@@ -1934,193 +1211,6 @@ bool Game::update() {
 			}
 		}
 
-		//fill the buffer for drawing objects within the visible area
-		index_size = 0;
-		buffer_size = 0;
-		buffer_ptr = sprite_vertices_buffer;
-		X = leftX * BLOCK_VISIBLE_SIZE, Y;
-
-		//firstly update sprite buffer for visible walls on the camera
-		for (int i = leftX; i < rightX; i++) {
-			Y = bottomY * BLOCK_VISIBLE_SIZE;
-			for (int j = bottomY; j < topY; j++) {
-				//render wall if it exists there and is visible
-				if (sprites_Array[i][j].wall_id && sprites_Array[i][j].wall_is_visible) {
-					object_id = sprites_Array[i][j].wall_id;
-					tex_coords_ptr = objectInfo[object_id]->texture_coords;
-					buffer_ptr->pos = { X - BLOCK_VISIBLE_SIZE / 2, Y - BLOCK_VISIBLE_SIZE / 2 };
-					buffer_ptr->UV = tex_coords_ptr[0];
-					buffer_ptr->tex_id = 0.f;
-					buffer_ptr++;
-
-					buffer_ptr->pos = { X - BLOCK_VISIBLE_SIZE / 2, Y + BLOCK_VISIBLE_SIZE * 1.5 };
-					buffer_ptr->UV = tex_coords_ptr[1];
-					buffer_ptr->tex_id = 0.f;
-					buffer_ptr++;
-
-					buffer_ptr->pos = { X + BLOCK_VISIBLE_SIZE * 1.5, Y + BLOCK_VISIBLE_SIZE * 1.5 };
-					buffer_ptr->UV = tex_coords_ptr[2];
-					buffer_ptr->tex_id = 0.f;
-					buffer_ptr++;
-
-					buffer_ptr->pos = { X + BLOCK_VISIBLE_SIZE * 1.5, Y - BLOCK_VISIBLE_SIZE / 2 };
-					buffer_ptr->UV = tex_coords_ptr[3];
-					buffer_ptr->tex_id = 0.f;
-					buffer_ptr++;
-
-					buffer_size += 4;
-					index_size += 6;
-				}
-				Y += BLOCK_VISIBLE_SIZE;
-			}
-			X += BLOCK_VISIBLE_SIZE;
-		}
-		//secondly update buffer for all visible objects on the camera
-		X = leftX * BLOCK_VISIBLE_SIZE;
-		for (int i = leftX; i < rightX; i++) {
-			Y = bottomY * BLOCK_VISIBLE_SIZE;
-			for (int j = bottomY; j < topY; j++) {
-				if (!sprites_Array[i][j].object.object_type || sprites_Array[i][j].object.object_type == isCompObjPart) { //no object in this slot
-					if (sprites_Array[i][j].wall_id) { //skip if there is a wall
-						Y += BLOCK_VISIBLE_SIZE;
-						continue;
-					}
-					tex_coords_ptr = objectInfo[0]->texture_coords;
-					buffer_ptr->pos = { X, Y };
-					buffer_ptr->UV = tex_coords_ptr[0];
-					buffer_ptr->tex_id = 0.f;
-					buffer_ptr++;
-
-					buffer_ptr->pos = { X, Y + BLOCK_VISIBLE_SIZE };
-					buffer_ptr->UV = tex_coords_ptr[1];
-					buffer_ptr->tex_id = 0.f;
-					buffer_ptr++;
-
-					buffer_ptr->pos = { X + BLOCK_VISIBLE_SIZE, Y + BLOCK_VISIBLE_SIZE };
-					buffer_ptr->UV = tex_coords_ptr[2];
-					buffer_ptr->tex_id = 0.f;
-					buffer_ptr++;
-
-					buffer_ptr->pos = { X + BLOCK_VISIBLE_SIZE, Y };
-					buffer_ptr->UV = tex_coords_ptr[3];
-					buffer_ptr->tex_id = 0.f;
-					buffer_ptr++;
-					buffer_size += 4;
-					index_size += 6;
-					Y += BLOCK_VISIBLE_SIZE;
-					continue;
-				}
-				if (sprites_Array[i][j].object.object_type == isBlock) {  //simple object
-					object_id = sprites_Array[i][j].object.object_id;
-					if (objectInfo[object_id]->get_block_type() == isTreeTop) {
-						tex_coords_ptr = objectInfo[object_id]->texture_coords;
-						buffer_ptr->pos = { X - BLOCK_VISIBLE_SIZE, Y };
-						buffer_ptr->UV = tex_coords_ptr[0];
-						buffer_ptr->tex_id = 0.f;
-						buffer_ptr++;
-
-						buffer_ptr->pos = { X - BLOCK_VISIBLE_SIZE, Y + BLOCK_VISIBLE_SIZE * 3 };
-						buffer_ptr->UV = tex_coords_ptr[1];
-						buffer_ptr->tex_id = 0.f;
-						buffer_ptr++;
-
-						buffer_ptr->pos = { X + BLOCK_VISIBLE_SIZE * 2, Y + BLOCK_VISIBLE_SIZE * 3 };
-						buffer_ptr->UV = tex_coords_ptr[2];
-						buffer_ptr->tex_id = 0.f;
-						buffer_ptr++;
-
-						buffer_ptr->pos = { X + BLOCK_VISIBLE_SIZE * 2, Y };
-						buffer_ptr->UV = tex_coords_ptr[3];
-						buffer_ptr->tex_id = 0.f;
-						buffer_ptr++;
-					}
-					else {
-						tex_coords_ptr = objectInfo[object_id]->texture_coords;
-						buffer_ptr->pos = { X, Y };
-						buffer_ptr->UV = tex_coords_ptr[0];
-						buffer_ptr->tex_id = 0.f;
-						buffer_ptr++;
-
-						buffer_ptr->pos = { X, Y + BLOCK_VISIBLE_SIZE };
-						buffer_ptr->UV = tex_coords_ptr[1];
-						buffer_ptr->tex_id = 0.f;
-						buffer_ptr++;
-
-						buffer_ptr->pos = { X + BLOCK_VISIBLE_SIZE, Y + BLOCK_VISIBLE_SIZE };
-						buffer_ptr->UV = tex_coords_ptr[2];
-						buffer_ptr->tex_id = 0.f;
-						buffer_ptr++;
-
-						buffer_ptr->pos = { X + BLOCK_VISIBLE_SIZE, Y };
-						buffer_ptr->UV = tex_coords_ptr[3];
-						buffer_ptr->tex_id = 0.f;
-						buffer_ptr++;
-					}
-				}
-				else {  //or complex object
-					object_id = sprites_Array[i][j].object.object_id;
-					tex_coords_ptr = objectInfo[object_id]->texture_coords;
-					buffer_ptr->pos = { X, Y };
-					buffer_ptr->UV = tex_coords_ptr[0];
-					buffer_ptr->tex_id = 0.f;
-					buffer_ptr++;
-
-					buffer_ptr->pos = { X, Y + BLOCK_VISIBLE_SIZE * objectInfo[object_id]->get_sizeY()};
-					buffer_ptr->UV = tex_coords_ptr[1];
-					buffer_ptr->tex_id = 0.f;
-					buffer_ptr++;
-
-					buffer_ptr->pos = { X + BLOCK_VISIBLE_SIZE * objectInfo[object_id]->get_sizeX(), Y + BLOCK_VISIBLE_SIZE * objectInfo[object_id]->get_sizeY()};
-					buffer_ptr->UV = tex_coords_ptr[2];
-					buffer_ptr->tex_id = 0.f;
-					buffer_ptr++;
-
-					buffer_ptr->pos = { X + BLOCK_VISIBLE_SIZE * objectInfo[object_id]->get_sizeX(), Y };
-					buffer_ptr->UV = tex_coords_ptr[3];
-					buffer_ptr->tex_id = 0.f;
-					buffer_ptr++;
-				}
-
-				buffer_size += 4;
-				index_size += 6;
-				Y += BLOCK_VISIBLE_SIZE;
-			}
-			X += BLOCK_VISIBLE_SIZE;
-		}
-		int dropped_items_size = dropped_items.size();
-		buffer_size += 4 * dropped_items_size;
-		index_size += 6 * dropped_items_size;
-		for (int i = 0; i < dropped_items_size; i++) {
-			float w = dropped_items[i].hitbox.size.x;
-			float h = dropped_items[i].hitbox.size.y;
-			object_id = dropped_items[i].id;
-			X = dropped_items[i].hitbox.center.x - w * 0.5f;
-			Y = dropped_items[i].hitbox.center.y - h * 0.5f;
-
-			tex_coords_ptr = objectInfo[object_id]->texture_coords;
-			buffer_ptr->pos = { X, Y };
-			buffer_ptr->UV = tex_coords_ptr[0];
-			buffer_ptr->tex_id = 0.f;
-			buffer_ptr++;
-
-			buffer_ptr->pos = { X, Y + h };
-			buffer_ptr->UV = tex_coords_ptr[1];
-			buffer_ptr->tex_id = 0.f;
-			buffer_ptr++;
-
-			buffer_ptr->pos = { X + w, Y + h };
-			buffer_ptr->UV = tex_coords_ptr[2];
-			buffer_ptr->tex_id = 0.f;
-			buffer_ptr++;
-
-			buffer_ptr->pos = { X + w, Y };
-			buffer_ptr->UV = tex_coords_ptr[3];
-			buffer_ptr->tex_id = 0.f;
-			buffer_ptr++;
-		}
-		sprite_vbo_p->bind_VBO();
-		glBufferSubData(GL_ARRAY_BUFFER, 0, buffer_size * sizeof(Vertex2f), sprite_vertices_buffer);
-
 		return 1;
 	}
 	}*/
@@ -2368,6 +1458,7 @@ void Game::input_end_frame() {
 	SystemContext::mouse.wheel_offset = 0;
 	SystemContext::mouse.delta_x = 0;
 	SystemContext::mouse.delta_y = 0;
+	SystemContext::mouse.overlapped_by_UI_layer = false;
 
 	for (int i = 0; i <= GLFW_KEY_LAST; i++) {
 		SystemContext::keyBoard.keyStatesPrev[i] = SystemContext::keyBoard.keyStatesCurr[i];
@@ -2379,7 +1470,7 @@ void Game::input_end_frame() {
 void Game::toggle_Fullscreen() {
 	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-	
+
 	if (glfwGetWindowMonitor(window) == nullptr) {
 		// Switch to full screen
 		glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
@@ -2389,6 +1480,9 @@ void Game::toggle_Fullscreen() {
 		glfwSetWindowMonitor(window, nullptr, 100, 100, 1920, 1080, GLFW_DONT_CARE);
 	}
 }
+
+#define ADD_OBJECT_INFO(pointer) \
+	ObjectsDB::objectInfo.emplace_back((pointer));
 
 void Game::init() {
 	srand(time(NULL));
@@ -2404,121 +1498,119 @@ void Game::init() {
 	atlas_texture.bind(0);
 
 	spriteMgr = SpriteManager::get_instance();
-	ObjectsDB::objectInfo.reserve(101);
-	ObjectsDB::objectInfo.resize(101);
+	ObjectsDB::objectInfo.reserve(102);
 
-	//fill blocks (simple objects) info
-	ObjectsDB::objectInfo[0] = std::make_unique<BlockInfo>("air", isSolidBlock, 0, 0, false, false);
-	ObjectsDB::objectInfo[1] = std::make_unique<BlockInfo>("Stone", isSolidBlock, 1, 1, true, false);
-	ObjectsDB::objectInfo[2] = std::make_unique<BlockInfo>("Dirt", isSolidBlock, 1, 2, true, false);
-	ObjectsDB::objectInfo[3] = std::make_unique<BlockInfo>("Grass Dirt", isSolidBlock, 1, 3, true, false);
-	ObjectsDB::objectInfo[4] = std::make_unique<BlockInfo>("Sand", isSolidBlock, 1, 4, true, false);
-	ObjectsDB::objectInfo[5] = std::make_unique<BlockInfo>("Oak", isWood, 1, 5, false, false);
-	ObjectsDB::objectInfo[6] = std::make_unique<BlockInfo>("Oak Planks", isSolidBlock, 1, 6, true, false);
-	ObjectsDB::objectInfo[7] = std::make_unique<BlockInfo>("Crimson Stone", isSolidBlock, 1, 7, true, false);
-	ObjectsDB::objectInfo[8] = std::make_unique<BlockInfo>("Corrupted Stone", isSolidBlock, 1, 8, true, false);
-	ObjectsDB::objectInfo[9] = std::make_unique<BlockInfo>("Copper Ore", isSolidBlock, 1, 9, true, false);
-	ObjectsDB::objectInfo[10] = std::make_unique<BlockInfo>("Iron Ore", isSolidBlock, 1, 10, true, false);
-	ObjectsDB::objectInfo[11] = std::make_unique<BlockInfo>("Gold Ore", isSolidBlock, 1, 11, true, false);
-	ObjectsDB::objectInfo[12] = std::make_unique<BlockInfo>("Water", isLiquid, 1, 12, false, false);
-	ObjectsDB::objectInfo[13] = std::make_unique<BlockInfo>("Snow", isSolidBlock, 1, 13, true, false);
-	ObjectsDB::objectInfo[14] = std::make_unique<BlockInfo>("Ice", isSolidBlock, 1, 14, true, false);
-	ObjectsDB::objectInfo[15] = std::make_unique<BlockInfo>("Snow Grass Dirt", isSolidBlock, 1, 15, true, false);
-	ObjectsDB::objectInfo[16] = std::make_unique<BlockInfo>("Crimson Grass Dirt", isSolidBlock, 1, 16, true, false);
-	ObjectsDB::objectInfo[17] = std::make_unique<BlockInfo>("Corrupted Grass Dirt", isSolidBlock, 1, 17, true, false);
-	ObjectsDB::objectInfo[18] = std::make_unique<BlockInfo>("Grass", isGrass, 1, 18, false, false);
-	ObjectsDB::objectInfo[19] = std::make_unique<BlockInfo>("Corrupted Grass", isGrass, 1, 19, false, false);
-	ObjectsDB::objectInfo[20] = std::make_unique<BlockInfo>("Crimson Grass", isGrass, 1, 20, false, false);
-	ObjectsDB::objectInfo[21] = std::make_unique<BlockInfo>("Day Flower", isFlower, 1, 21, false, false);
-	ObjectsDB::objectInfo[22] = std::make_unique<BlockInfo>("Torch", isTorch, 1, 22, false, false, 0, 1);
-	ObjectsDB::objectInfo[23] = std::make_unique<BlockInfo>("Torch(l)", isTorch, 1, 22, false, false, 0, 1);
-	ObjectsDB::objectInfo[24] = std::make_unique<BlockInfo>("Torch(r)", isTorch, 1, 22, false, false, 0, 1);
-	ObjectsDB::objectInfo[25] = std::make_unique<BlockInfo>("Ice Torch", isTorch, 1, 25, false, false, 0, 2);
-	ObjectsDB::objectInfo[26] = std::make_unique<BlockInfo>("Ice Torch(l)", isTorch, 1, 25, false, false, 0, 2);
-	ObjectsDB::objectInfo[27] = std::make_unique<BlockInfo>("Ice Torch(r)", isTorch, 1, 25, false, false, 0, 2);
-	ObjectsDB::objectInfo[28] = std::make_unique<BlockInfo>("Oak Platform", isPlatform, 1.f, 28, false, true);
-	ObjectsDB::objectInfo[29] = std::make_unique<BlockInfo>("Oak Platform(l)", isPlatform, 1.f, 28, false, true);
-	ObjectsDB::objectInfo[30] = std::make_unique<BlockInfo>("Oak Platform(r)", isPlatform, 1.f, 28, false, true);
-	ObjectsDB::objectInfo[31] = std::make_unique<BlockInfo>("Oak Top", isTreeTop, 1, 5, false, false);
+	//fill simple blocks info
+	/*000*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(ObjectType::None, "Air"));
+	/*001*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(ObjectType::isCompObjPart, "CompObjPart"));
+	/*002*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Stone", isSolidBlock, 1, 2, true, false));
+	/*003*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Dirt", isSolidBlock, 1, 3, true, false));
+	/*004*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Grass Dirt", isSolidBlock, 1, 4, true, false));
+	/*005*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Sand", isSolidBlock, 1, 5, true, false));
+	/*006*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Oak", isWood, 1, 6, false, false));
+	/*007*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Oak Planks", isSolidBlock, 1, 7, true, false));
+	/*008*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Crimson Stone", isSolidBlock, 1, 8, true, false));
+	/*009*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Corrupted Stone", isSolidBlock, 1, 9, true, false));
+	/*010*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Copper Ore", isSolidBlock, 1, 10, true, false));
+	/*011*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Iron Ore", isSolidBlock, 1, 11, true, false));
+	/*012*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Gold Ore", isSolidBlock, 1, 12, true, false));
+	/*013*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Water", isLiquid, 1, 13, false, false));
+	/*014*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Snow", isSolidBlock, 1, 14, true, false));
+	/*015*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Ice", isSolidBlock, 1, 15, true, false));
+	/*016*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Snow Grass Dirt", isSolidBlock, 1, 16, true, false));
+	/*017*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Crimson Grass Dirt", isSolidBlock, 1, 17, true, false));
+	/*018*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Corrupted Grass Dirt", isSolidBlock, 1, 18, true, false));
+	/*019*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Grass", isGrass, 1, 19, false, false));
+	/*020*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Corrupted Grass", isGrass, 1, 20, false, false));
+	/*021*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Crimson Grass", isGrass, 1, 21, false, false));
+	/*022*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Day Flower", isFlower, 1, 22, false, false));
+	/*023*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Torch", isTorch, 1, 23, false, false, 0, 1));
+	/*024*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Torch(l)", isTorch, 1, 23, false, false, 0, 1));
+	/*025*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Torch(r)", isTorch, 1, 23, false, false, 0, 1));
+	/*026*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Ice Torch", isTorch, 1, 26, false, false, 0, 2));
+	/*027*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Ice Torch(l)", isTorch, 1, 26, false, false, 0, 2));
+	/*028*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Ice Torch(r)", isTorch, 1, 26, false, false, 0, 2));
+	/*029*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Oak Platform", isPlatform, 1.f, 29, false, true));
+	/*030*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Oak Platform(l)", isPlatform, 1.f, 29, false, true));
+	/*031*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Oak Platform(r)", isPlatform, 1.f, 29, false, true));
+	/*032*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Oak Top", isTreeTop, 1, 6, false, false));
 	//fill walls info
-	ObjectsDB::objectInfo[32] = std::make_unique<ObjectInfo>("Stone Wall");
-	ObjectsDB::objectInfo[33] = std::make_unique<ObjectInfo>("Dirt Wall");
-	ObjectsDB::objectInfo[34] = std::make_unique<ObjectInfo>("Oak Wall");
-	ObjectsDB::objectInfo[35] = std::make_unique<ObjectInfo>("Crimson Wall");
-	ObjectsDB::objectInfo[36] = std::make_unique<ObjectInfo>("Corrupted Wall");
-	ObjectsDB::objectInfo[37] = std::make_unique<ObjectInfo>("Snow Wall");
+	/*033*/ ADD_OBJECT_INFO(std::make_unique<WallInfo>("Stone Wall", 1.0f, 33));
+	/*034*/ ADD_OBJECT_INFO(std::make_unique<WallInfo>("Dirt Wall", 1.0f, 34));
+	/*035*/ ADD_OBJECT_INFO(std::make_unique<WallInfo>("Oak Wall", 1.0f, 35));
+	/*036*/ ADD_OBJECT_INFO(std::make_unique<WallInfo>("Crimson Wall", 1.0f, 36));
+	/*037*/ ADD_OBJECT_INFO(std::make_unique<WallInfo>("Corrupted Wall", 1.0f, 37));
+	/*038*/ ADD_OBJECT_INFO(std::make_unique<WallInfo>("Snow Wall", 1.0f, 38));
 	//fill complex objects info
-	ObjectsDB::objectInfo[38] = std::make_unique<ComplexObjectInfo>("Workbench", isWorkbench, 1, 38, 2, 1, false, true);
-	ObjectsDB::objectInfo[39] = std::make_unique<ComplexObjectInfo>("Furnace", isFurnace, 1, 39, 3, 2, false, false, 0, 3);
-	ObjectsDB::objectInfo[40] = std::make_unique<ComplexObjectInfo>("Anvil", isAnvil, 1, 40, 2, 1, false, false);
-	ObjectsDB::objectInfo[41] = std::make_unique<ComplexObjectInfo>("Oak Table", isTable, 1, 41, 3, 2, false, false);
-	ObjectsDB::objectInfo[42] = std::make_unique<ComplexObjectInfo>("Oak Chair", isChair, 1, 42, 1, 2, false, false); //points to the left side
-	ObjectsDB::objectInfo[43] = std::make_unique<ComplexObjectInfo>("Oak Chair", isChair, 1, 42, 1, 2, false, false); //points to the right side
-	ObjectsDB::objectInfo[44] = std::make_unique<ComplexObjectInfo>("Oak Door", isDoor, 1, 44, 1, 3, true, false); //closed
-	ObjectsDB::objectInfo[45] = std::make_unique<ComplexObjectInfo>("Oak Door", isDoor, 1, 44, 2, 3, false, false); //opened to the left side
-	ObjectsDB::objectInfo[46] = std::make_unique<ComplexObjectInfo>("Oak Door", isDoor, 1, 44, 2, 3, false, false); //opened to the right side
-	ObjectsDB::objectInfo[47] = std::make_unique<ComplexObjectInfo>("Chest", isChest, 1, 47, 2, 2, false, false);
+	/*039*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Workbench", isWorkbench, 1, 38, 2, 1, false, true));
+	/*040*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Furnace", isFurnace, 1, 39, 3, 2, false, false, 0, 3));
+	/*041*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Anvil", isAnvil, 1, 40, 2, 1, false, false));
+	/*042*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Oak Table", isTable, 1, 41, 3, 2, false, false));
+	/*043*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Oak Chair", isChair, 1, 42, 1, 2, false, false)); //points to the left side
+	/*044*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Oak Chair", isChair, 1, 42, 1, 2, false, false)); //points to the right side
+	/*045*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Oak Door", isDoor, 1, 44, 1, 3, true, false)); //closed
+	/*046*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Oak Door", isDoor, 1, 44, 2, 3, false, false)); //opened to the left side
+	/*047*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Oak Door", isDoor, 1, 44, 2, 3, false, false)); //opened to the right side
+	/*048*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Chest", isChest, 1, 47, 2, 2, false, false));
 	//fill weapons info
-	ObjectsDB::objectInfo[48] = std::make_unique<InstrumentalWeaponInfo>("Copper Pickaxe", isPickaxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3);
-	ObjectsDB::objectInfo[49] = std::make_unique<InstrumentalWeaponInfo>("Copper Axe", isAxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3);
-	ObjectsDB::objectInfo[50] = std::make_unique<WeaponInfo>("Copper Dagger", isDagger, 3, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3);
-	ObjectsDB::objectInfo[51] = std::make_unique<WeaponInfo>("Copper Sword", isSword, 4, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3);
-	ObjectsDB::objectInfo[52] = std::make_unique<InstrumentalWeaponInfo>("Copper Hammer", isHammer, 1.f, 2, 0.5f, 1.f, 0.f, -1, 2.f, 2.f, 5.f, false, 3);
-	ObjectsDB::objectInfo[53] = std::make_unique<WeaponInfo>("Copper Bow", isBow, 3, 0.f, 15.f, 1.f, -1, 1.5f, 1.5f, 5.f, false, 0);
-
-	ObjectsDB::objectInfo[54] = std::make_unique<InstrumentalWeaponInfo>("Iron Pickaxe", isPickaxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3);
-	ObjectsDB::objectInfo[55] = std::make_unique<InstrumentalWeaponInfo>("Iron Axe", isAxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3);
-	ObjectsDB::objectInfo[56] = std::make_unique<WeaponInfo>("Iron Dagger", isDagger, 3, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3);
-	ObjectsDB::objectInfo[57] = std::make_unique<WeaponInfo>("Iron Sword", isSword, 4, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3);
-	ObjectsDB::objectInfo[58] = std::make_unique<InstrumentalWeaponInfo>("Iron Hammer", isHammer, 1.f, 2, 0.5f, 1.f, 0.f, -1, 2.f, 2.f, 5.f, false, 3);
-	ObjectsDB::objectInfo[59] = std::make_unique<WeaponInfo>("Iron Bow", isBow, 3, 0.f, 15.f, 1.f, -1, 1.5f, 1.5f, 5.f, false, 0);
-
-	ObjectsDB::objectInfo[60] = std::make_unique<InstrumentalWeaponInfo>("Golden Pickaxe", isPickaxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3);
-	ObjectsDB::objectInfo[61] = std::make_unique<InstrumentalWeaponInfo>("Golden Axe", isAxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3);
-	ObjectsDB::objectInfo[62] = std::make_unique<WeaponInfo>("Golden Dagger", isDagger, 3, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3);
-	ObjectsDB::objectInfo[63] = std::make_unique<WeaponInfo>("Golden Sword", isSword, 4, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3);
-	ObjectsDB::objectInfo[64] = std::make_unique<InstrumentalWeaponInfo>("Golden Hammer", isHammer, 1.f, 2, 0.5f, 1.f, 0.f, -1, 2.f, 2.f, 5.f, false, 3);
-	ObjectsDB::objectInfo[65] = std::make_unique<WeaponInfo>("Golden Bow", isBow, 3, 0.f, 30.f, 0.25f, -1, 1.5f, 1.5f, 5.f, false, 0);
+	/*049*/ ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Copper Pickaxe", isPickaxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*050*/ ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Copper Axe", isAxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*051*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Copper Dagger", isDagger, 3, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*052*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Copper Sword", isSword, 4, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*053*/ ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Copper Hammer", isHammer, 1.f, 2, 0.5f, 1.f, 0.f, -1, 2.f, 2.f, 5.f, false, 3));
+	/*054*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Copper Bow", isBow, 3, 0.f, 15.f, 1.f, -1, 1.5f, 1.5f, 5.f, false, 0));
+	/*055*/ ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Iron Pickaxe", isPickaxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*056*/ ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Iron Axe", isAxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*057*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Iron Dagger", isDagger, 3, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*058*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Iron Sword", isSword, 4, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*059*/ ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Iron Hammer", isHammer, 1.f, 2, 0.5f, 1.f, 0.f, -1, 2.f, 2.f, 5.f, false, 3));
+	/*060*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Iron Bow", isBow, 3, 0.f, 15.f, 1.f, -1, 1.5f, 1.5f, 5.f, false, 0));
+	/*061*/ ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Golden Pickaxe", isPickaxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*062*/ ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Golden Axe", isAxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*063*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Golden Dagger", isDagger, 3, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*064*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Golden Sword", isSword, 4, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*065*/ ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Golden Hammer", isHammer, 1.f, 2, 0.5f, 1.f, 0.f, -1, 2.f, 2.f, 5.f, false, 3));
+	/*066*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Golden Bow", isBow, 3, 0.f, 30.f, 0.25f, -1, 1.5f, 1.5f, 5.f, false, 0));
 	//fill coin info
-	ObjectsDB::objectInfo[66] = std::make_unique<ObjectInfo>(isCoin, "Copper Coin");
-	ObjectsDB::objectInfo[67] = std::make_unique<ObjectInfo>(isCoin, "Silver Coin");
-	ObjectsDB::objectInfo[68] = std::make_unique<ObjectInfo>(isCoin, "Gold Coin");
-	ObjectsDB::objectInfo[69] = std::make_unique<ObjectInfo>(isCoin, "Platinum Coin");
+	/*067*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isCoin, "Copper Coin"));
+	/*068*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isCoin, "Silver Coin"));
+	/*069*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isCoin, "Gold Coin"));
+	/*070*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isCoin, "Platinum Coin"));
 	//fill materials info
-	ObjectsDB::objectInfo[70] = std::make_unique<ObjectInfo>(isMaterial, "Copper Ingot");
-	ObjectsDB::objectInfo[71] = std::make_unique<ObjectInfo>(isMaterial, "Iron Ingot");
-	ObjectsDB::objectInfo[72] = std::make_unique<ObjectInfo>(isMaterial, "Gold Ingot");
-	ObjectsDB::objectInfo[73] = std::make_unique<ObjectInfo>(isMaterial, "Gel");
+	/*071*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isMaterial, "Copper Ingot"));
+	/*072*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isMaterial, "Iron Ingot"));
+	/*073*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isMaterial, "Gold Ingot"));
+	/*074*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isMaterial, "Gel"));
 	//fill ammo info
-	ObjectsDB::objectInfo[74] = std::make_unique<AmmoInfo>("Wooden Arrow", isArrow, 5, 1.5f, 1.5f, 0);
-	ObjectsDB::objectInfo[75] = std::make_unique<AmmoInfo>("Flaming Arrow", isArrow, 7, 1.5f, 1.5f, 1, 1, 5);
-	ObjectsDB::objectInfo[76] = std::make_unique<AmmoInfo>("Frostburn Arrow", isArrow, 9, 1.5f, 1.5f, 2, 2, 6);
-	ObjectsDB::objectInfo[77] = std::make_unique<AmmoInfo>("Jester's Arrow", isArrow, 10, 1.5f, 1.5f, 3, 0, 7);
-	ObjectsDB::objectInfo[78] = std::make_unique<AmmoInfo>("Unholy Arrow", isArrow, 14, 1.5f, 1.5f, 4, 0, 8);
-	ObjectsDB::objectInfo[79] = std::make_unique<AmmoInfo>("Hellfire Arrow", isArrow, 16, 1.5f, 1.5f, 5, 0, 9);
+	/*075*/ ADD_OBJECT_INFO(std::make_unique<AmmoInfo>("Wooden Arrow", isArrow, 5, 1.5f, 1.5f, 0));
+	/*076*/ ADD_OBJECT_INFO(std::make_unique<AmmoInfo>("Flaming Arrow", isArrow, 7, 1.5f, 1.5f, 1, 1, 5));
+	/*077*/ ADD_OBJECT_INFO(std::make_unique<AmmoInfo>("Frostburn Arrow", isArrow, 9, 1.5f, 1.5f, 2, 2, 6));
+	/*078*/ ADD_OBJECT_INFO(std::make_unique<AmmoInfo>("Jester's Arrow", isArrow, 10, 1.5f, 1.5f, 3, 0, 7));
+	/*079*/ ADD_OBJECT_INFO(std::make_unique<AmmoInfo>("Unholy Arrow", isArrow, 14, 1.5f, 1.5f, 4, 0, 8));
+	/*080*/ ADD_OBJECT_INFO(std::make_unique<AmmoInfo>("Hellfire Arrow", isArrow, 16, 1.5f, 1.5f, 5, 0, 9));
 
-	ObjectsDB::objectInfo[80] = std::make_unique<ComplexObjectInfo>("Life Crystal", isLyfeCrystal, 1, 80, 2, 2, false, false, 3, 4);
-	ObjectsDB::objectInfo[81] = std::make_unique<BlockInfo>("Glass", isGlass, 0, 81, true, false);
-	ObjectsDB::objectInfo[82] = std::make_unique<BlockInfo>("Mushroom", isFlower, 0, 82, false, false);
-	ObjectsDB::objectInfo[83] = std::make_unique<BlockInfo>("Bottle", isBottle, 0, 83, false, false);
-	ObjectsDB::objectInfo[84] = std::make_unique<BlockInfo>("Bottle of water", isBottle, 0, 84, false, false);
-	ObjectsDB::objectInfo[85] = std::make_unique<ObjectInfo>(isMaterial, "Lens");
-	ObjectsDB::objectInfo[86] = std::make_unique<ObjectInfo>(isMaterial, "Fallen Star");
-	ObjectsDB::objectInfo[87] = std::make_unique<ObjectInfo>(isConsumable, "Mana Crystal", 4, 0);
-	ObjectsDB::objectInfo[88] = std::make_unique<ObjectInfo>(isPotion, "Healing Potion", 5, 0);
-	ObjectsDB::objectInfo[89] = std::make_unique<ObjectInfo>(isPotion, "Speed Potion", 6, 0);
-	ObjectsDB::objectInfo[90] = std::make_unique<ObjectInfo>(isPotion, "Defense Potion", 7, 0);
-	ObjectsDB::objectInfo[91] = std::make_unique<ObjectInfo>(isPotion, "Regeneration Potion", 8, 0);
-	ObjectsDB::objectInfo[92] = std::make_unique<ObjectInfo>(isPotion, "Better Healing Potion", 9, 0);
+	/*081*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Life Crystal", isLyfeCrystal, 1, 80, 2, 2, false, false, 3, 4));
+	/*082*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Glass", isGlass, 0, 81, true, false));
+	/*083*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Mushroom", isFlower, 0, 82, false, false));
+	/*084*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Bottle", isBottle, 0, 83, false, false));
+	/*085*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Bottle of water", isBottle, 0, 84, false, false));
+	/*086*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isMaterial, "Lens"));
+	/*087*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isMaterial, "Fallen Star"));
+	/*088*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isConsumable, "Mana Crystal", 4, 0));
+	/*089*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isPotion, "Healing Potion", 5, 0));
+	/*090*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isPotion, "Speed Potion", 6, 0));
+	/*091*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isPotion, "Defense Potion", 7, 0));
+	/*092*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isPotion, "Regeneration Potion", 8, 0));
+	/*093*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isPotion, "Better Healing Potion", 9, 0));
 
-	ObjectsDB::objectInfo[93] = std::make_unique<MagicalWeaponInfo>("Magic wand", isMagical, 5, 5, 0.f, 5.f, 1.f, 0, 1.5f, 1.5f, 5.f, false, 11);
-	ObjectsDB::objectInfo[94] = std::make_unique<WeaponInfo>("Shuriken", isThrowable, 10, 0.f, 10.f, 0.5f, 13, 1.5f, 1.5f, 5.f, true, 3);
-	ObjectsDB::objectInfo[95] = std::make_unique<WeaponInfo>("Throwing knife", isThrowable, 5, 0.f, 10.f, 0.5f, 14, 1.5f, 1.5f, 5.f, false, 3);
-	ObjectsDB::objectInfo[96] = std::make_unique<MagicalWeaponInfo>("Game.cpp", isMagical, 0, 0, 0.f, 10.f, 0.5f, 11, 1.5f, 1.5f, 0.f, false, 14);
-	ObjectsDB::objectInfo[97] = std::make_unique<AmmoInfo>("Bullet", isBullet, 7, 1.f, 1.f, 12, 0, 10);
-	ObjectsDB::objectInfo[98] = std::make_unique<WeaponInfo>("Pistol", isGun, 20, 0.f, 20.f, 0.5f, 0, 2.f, 1.f, 10.f, false, 12);
-	ObjectsDB::objectInfo[99] = std::make_unique<WeaponInfo>("Shotgun", isShotgun, 15, 0.f, 20.f, 1.f, 0, 2.f, 1.f, 10.f, false, 13);
-	ObjectsDB::objectInfo[100] = std::make_unique<WeaponInfo>("Trident", isSword, 15, 0.25f, 1.5f, 0.f, 0, 2.5f, 2.5f, 10.f, false, 3);
+	/*094*/ ADD_OBJECT_INFO(std::make_unique<MagicalWeaponInfo>("Magic wand", isMagical, 5, 5, 0.f, 5.f, 1.f, 0, 1.5f, 1.5f, 5.f, false, 11));
+	/*095*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Shuriken", isThrowable, 10, 0.f, 10.f, 0.5f, 13, 1.5f, 1.5f, 5.f, true, 3));
+	/*096*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Throwing knife", isThrowable, 5, 0.f, 10.f, 0.5f, 14, 1.5f, 1.5f, 5.f, false, 3));
+	/*097*/ ADD_OBJECT_INFO(std::make_unique<MagicalWeaponInfo>("Game.cpp", isMagical, 0, 0, 0.f, 10.f, 0.5f, 11, 1.5f, 1.5f, 0.f, false, 14));
+	/*098*/ ADD_OBJECT_INFO(std::make_unique<AmmoInfo>("Bullet", isBullet, 7, 1.f, 1.f, 12, 0, 10));
+	/*099*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Pistol", isGun, 20, 0.f, 20.f, 0.5f, 0, 2.f, 1.f, 10.f, false, 12));
+	/*100*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Shotgun", isShotgun, 15, 0.f, 20.f, 1.f, 0, 2.f, 1.f, 10.f, false, 13));
+	/*101*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Trident", isSword, 15, 0.25f, 1.5f, 0.f, 0, 2.5f, 2.5f, 10.f, false, 3));
 
 	//effect and light components
 	compsMgr = ComponentsManager::get_instance();
@@ -2565,6 +1657,12 @@ void Game::init() {
 	spriteMgr->add_sprite(block_UV_size * 4.f, 0.f, block_UV_size * 2.f, block_UV_size * 2.f);
 	//active hotbar slot
 	spriteMgr->add_sprite(block_UV_size * 6.f, 0.f, block_UV_size * 2.f, block_UV_size * 2.f);
+	//craft slot
+	spriteMgr->add_sprite(block_UV_size * 8.f, 0.f, block_UV_size * 2.f, block_UV_size * 2.f);
+	//craft slots border 1
+	spriteMgr->add_sprite(block_UV_size * 10.f, 0.f, block_UV_size * 4.f, block_UV_size);
+	//craft slots border 2
+	spriteMgr->add_sprite(block_UV_size * 10.f, block_UV_size, block_UV_size * 4.f, block_UV_size);
 	//tooltip
 	spriteMgr->add_sprite(0.f, 0.f, pixel_UV_size * 4.f, pixel_UV_size * 4.f); //left bottom
 	spriteMgr->add_sprite(0.f, pixel_UV_size * 4.f, pixel_UV_size * 4.f, pixel_UV_size * 12.f); //left center
@@ -2581,69 +1679,69 @@ void Game::init() {
 		int yTex = i / 28;
 		int xTex = i % 28;
 		spriteMgr->add_sprite_bordered((float)xTex, (float)yTex, 1.0f, 1.0f);
-		ObjectsDB::objectInfo[i + 1]->sprite_id = spriteMgr->get_last_index();
+		ObjectsDB::objectInfo[i + 2]->sprite_id = spriteMgr->get_last_index();
 	}
 
 	//oak tree top
 	spriteMgr->add_sprite_bordered(5.f, 8.f, 3.f, 3.f);
-	ObjectsDB::objectInfo[31]->sprite_id = spriteMgr->get_last_index();
+	ObjectsDB::objectInfo[32]->sprite_id = spriteMgr->get_last_index();
 
 	for (int i = 0; i < 6; i++) { //walls
 		spriteMgr->add_sprite_bordered((float)i, 3.f, 2.f, 2.f);
-		ObjectsDB::objectInfo[i + 32]->sprite_id = spriteMgr->get_last_index();
+		ObjectsDB::objectInfo[i + 33]->sprite_id = spriteMgr->get_last_index();
 	}
 
 	//complex objects texture coords
 	//workbench
 	spriteMgr->add_sprite_bordered(0.f, 5.f, 2.f, 1.f);
-	ObjectsDB::objectInfo[38]->sprite_id = spriteMgr->get_last_index();
+	ObjectsDB::objectInfo[39]->sprite_id = spriteMgr->get_last_index();
 	
 	//furnace
 	spriteMgr->add_sprite_bordered(2.f, 5.f, 3.f, 2.f);
-	ObjectsDB::objectInfo[39]->sprite_id = spriteMgr->get_last_index();
+	ObjectsDB::objectInfo[40]->sprite_id = spriteMgr->get_last_index();
 	
 	//anvil
 	spriteMgr->add_sprite_bordered(5.f, 5.f, 2.f, 1.f);
-	ObjectsDB::objectInfo[40]->sprite_id = spriteMgr->get_last_index();
+	ObjectsDB::objectInfo[41]->sprite_id = spriteMgr->get_last_index();
 	
 	//table
 	spriteMgr->add_sprite_bordered(7.f, 5.f, 3.f, 2.f);
-	ObjectsDB::objectInfo[41]->sprite_id = spriteMgr->get_last_index();
+	ObjectsDB::objectInfo[42]->sprite_id = spriteMgr->get_last_index();
 	
 	//chair(to left)
 	spriteMgr->add_sprite_bordered(10.f, 5.f, 1.f, 2.f);
-	ObjectsDB::objectInfo[42]->sprite_id = spriteMgr->get_last_index();
+	ObjectsDB::objectInfo[43]->sprite_id = spriteMgr->get_last_index();
 	
 	//chair(to right)
 	spriteMgr->add_sprite_bordered(11.f, 5.f, 1.f, 2.f);
-	ObjectsDB::objectInfo[43]->sprite_id = spriteMgr->get_last_index();
+	ObjectsDB::objectInfo[44]->sprite_id = spriteMgr->get_last_index();
 	
 	//door(closed)
 	spriteMgr->add_sprite_bordered(4.f, 8.f, 1.f, 3.f);
-	ObjectsDB::objectInfo[44]->sprite_id = spriteMgr->get_last_index();
+	ObjectsDB::objectInfo[45]->sprite_id = spriteMgr->get_last_index();
 	
 	//door(to left)
 	spriteMgr->add_sprite_bordered(0.f, 8.f, 2.f, 3.f);
-	ObjectsDB::objectInfo[45]->sprite_id = spriteMgr->get_last_index();
+	ObjectsDB::objectInfo[46]->sprite_id = spriteMgr->get_last_index();
 	
 	//door(to right)
 	spriteMgr->add_sprite_bordered(2.f, 8.f, 2.f, 3.f);
-	ObjectsDB::objectInfo[46]->sprite_id = spriteMgr->get_last_index();
+	ObjectsDB::objectInfo[47]->sprite_id = spriteMgr->get_last_index();
 	
 	//chest
 	spriteMgr->add_sprite_bordered(12.f, 5.f, 2.f, 2.f);
-	ObjectsDB::objectInfo[47]->sprite_id = spriteMgr->get_last_index();
+	ObjectsDB::objectInfo[48]->sprite_id = spriteMgr->get_last_index();
 	
 	//life crystal
 	spriteMgr->add_sprite_bordered(16.f, 5.f, 2.f, 2.f);
-	ObjectsDB::objectInfo[80]->sprite_id = spriteMgr->get_last_index();
+	ObjectsDB::objectInfo[81]->sprite_id = spriteMgr->get_last_index();
 	
 	//weapons, coins and materials
 	for (int i = 0; i < 26; i++) {
 		int yTex = i / 32;
 		int xTex = i % 32;
 		spriteMgr->add_sprite(block_UV_size * xTex, 1.0 - block_UV_size * (9 + yTex) - block_UV_size, block_UV_size, block_UV_size);
-		ObjectsDB::objectInfo[i + 48]->sprite_id = spriteMgr->get_last_index();
+		ObjectsDB::objectInfo[i + 49]->sprite_id = spriteMgr->get_last_index();
 	}
 
 	//ammo
@@ -2652,25 +1750,25 @@ void Game::init() {
 			block_UV_size * 26 + 0.6875 * block_UV_size * i + 0.03125 * block_UV_size,
 			1.0 - block_UV_size * 9 - block_UV_size, block_UV_size, block_UV_size
 		);
-		ObjectsDB::objectInfo[i + 74]->sprite_id = spriteMgr->get_last_index();
+		ObjectsDB::objectInfo[i + 75]->sprite_id = spriteMgr->get_last_index();
 	}
 
 	for (int i = 0; i < 14; i++) { //items after ammo
 		spriteMgr->add_sprite(block_UV_size * i, 1.0 - block_UV_size * 10.f - block_UV_size, block_UV_size, block_UV_size);
-		ObjectsDB::objectInfo[i + 83]->sprite_id = spriteMgr->get_last_index();
+		ObjectsDB::objectInfo[i + 84]->sprite_id = spriteMgr->get_last_index();
 	}
 
 	//bullet texture
 	spriteMgr->add_sprite(block_UV_size * 18.f, 1.0 - block_UV_size * 10.f - block_UV_size, block_UV_size, block_UV_size);
-	ObjectsDB::objectInfo[97]->sprite_id = spriteMgr->get_last_index();
+	ObjectsDB::objectInfo[98]->sprite_id = spriteMgr->get_last_index();
 	
 	//pistol texture
 	spriteMgr->add_sprite(block_UV_size * 16.f, 1.0 - block_UV_size * 10.f - block_UV_size, block_UV_size * 2.f, block_UV_size);
-	ObjectsDB::objectInfo[98]->sprite_id = spriteMgr->get_last_index();
+	ObjectsDB::objectInfo[99]->sprite_id = spriteMgr->get_last_index();
 	
 	//shotgun texture
 	spriteMgr->add_sprite(block_UV_size * 20.f, 1.0 - block_UV_size * 10 - block_UV_size, block_UV_size * 2.f, block_UV_size);
-	ObjectsDB::objectInfo[99]->sprite_id = spriteMgr->get_last_index();
+	ObjectsDB::objectInfo[100]->sprite_id = spriteMgr->get_last_index();
 	
 	/*
 	//ambient objects
@@ -2889,148 +1987,17 @@ void Game::init() {
 	dropped_items.reserve(1000);
 	damage_text.reserve(100);
 
-	/*
-	//projection and view matrices
-	viewMatrix = glm::mat4(1.f);
-	projectionMatrix = glm::ortho(-SystemContext::screen.ratio, SystemContext::screen.ratio, -1.f, 1.f);
-
-	//shader programs
-	//
-	ambient_sprite_SP_ptr = new ShaderProgram("Resources/shaders/ambient sprites.vert", "Resources/shaders/ambient sprites.frag");
-	//different shader program for ui sprites, that are not affected by world lighting
-	UI_sprite_SP_ptr = new ShaderProgram("Resources/shaders/ui sprites.vert", "Resources/shaders/ui sprites.frag");
-
-	spriteLightMapSSBO = new SSBO();
-	//spriteLightMapSSBO->set_data(nullptr, sizeof(ShaderLightingInfo) * world_width * world_height, GL_DYNAMIC_DRAW);
-	spriteLightMapSSBO->set_persistent_storage_data(nullptr, sizeof(ShaderLightingInfo) * world_width * world_height);
-	lightMap_data = static_cast<ShaderLightingInfo*>(glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(ShaderLightingInfo) * world_width * world_height, GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT));
-
-	sprite_ambient_ssbo_p = new SSBO();
-	sprite_ambient_ssbo_p->set_data(nullptr, sizeof(SpriteData) * 20, GL_DYNAMIC_DRAW);
-	ambient_sprite_SP_ptr->activate_shader();
-	ambient_sprite_SP_ptr->set_ssbo("SSBO", *sprite_ambient_ssbo_p, 3);
-
-	//init inventory slots
-	init_inventory_buffer();
-
-	//init color shader program
-	color_ui_SP = new ShaderProgram("Resources/shaders/color.vert", "Resources/shaders/color.frag");
-	color_ui_SP->activate_shader();
-	color_ui_SP->set_Uniform_Mat4("projectionMatrix", projectionMatrix);
-	color_ui_SP->set_Uniform_Mat4("modelMatrix", glm::mat4(1.f));
-
-	//init VAO, VBO, EBO for ui elements(that use color SP)
-	ui_elements_vao = new VAO;
-	ui_elements_vao->bind_VAO();
-	ui_elements_vbo = new VBO;
-	ui_elements_vbo->set_data(nullptr, MAX_UI_COLOR_ELEMENTS * sizeof(ColorVertex2f) * 4, GL_DYNAMIC_DRAW);
-	ui_elements_ebo = new EBO;
-	ui_elements_ebo->set_data(sprite_index_buffer, MAX_UI_COLOR_ELEMENTS * 6 * sizeof(GLuint), GL_STATIC_DRAW);
-	ui_elements_vao->link_Attribute(*ui_elements_vbo, 0, 2, GL_FLOAT, 6 * sizeof(float), (void*)0);
-	ui_elements_vao->link_Attribute(*ui_elements_vbo, 1, 4, GL_FLOAT, 6 * sizeof(float), (void*)(2 * sizeof(float)));
-
-	//init inventory VAO, VBO, EBO for slots(color SP) and objects(sprites SP)
-	inventory_vao = new VAO();
-	inventory_vao->bind_VAO();
-	inventory_vbo = new VBO();
-	inventory_vbo->set_data(nullptr, INVENTORY_SIZE * sizeof(ColorVertex2f) * 4, GL_DYNAMIC_DRAW);
-	inventory_ebo = new EBO();
-	inventory_ebo->set_data(sprite_index_buffer, INVENTORY_SIZE * 6 * sizeof(GLuint), GL_STATIC_DRAW);
-	inventory_vao->link_Attribute(*inventory_vbo, 0, 2, GL_FLOAT, 6 * sizeof(GLfloat), (void*)0);
-	inventory_vao->link_Attribute(*inventory_vbo, 1, 4, GL_FLOAT, 6 * sizeof(GLfloat), (void*)(2*sizeof(float)));
-	inventory_vao->unbind_VAO();
-	inventory_vbo->unbind_VBO();
-	inventory_ebo->unbind_EBO();
-
-	inventory_objects_vao = new VAO();
-	inventory_objects_vao->bind_VAO();
-	inventory_objects_vbo = new VBO();
-	inventory_objects_vbo->set_data(nullptr, INVENTORY_SIZE * 4 * sizeof(Vertex2f), GL_DYNAMIC_DRAW);
-	inventory_objects_ebo = new EBO();
-	inventory_objects_ebo->set_data(sprite_index_buffer, INVENTORY_SIZE * 6 * sizeof(GLuint), GL_STATIC_DRAW);
-	inventory_objects_vao->link_Attribute(*inventory_objects_vbo, 0, 2, GL_FLOAT, sizeof(Vertex2f), (void*)0);
-	inventory_objects_vao->link_Attribute(*inventory_objects_vbo, 1, 2, GL_FLOAT, sizeof(Vertex2f), (void*)(2 * sizeof(float)));
-	inventory_objects_vao->link_Attribute(*inventory_objects_vbo, 2, 1, GL_FLOAT, sizeof(Vertex2f), (void*)(4 * sizeof(float)));
-	inventory_objects_vao->unbind_VAO();
-	inventory_objects_vbo->unbind_VBO();
-	inventory_objects_ebo->unbind_EBO();
-
-	for (int i = 0; i < 10; i++) {
-		inventory_array[i].object = ItemObject(isBlock, 1 + rand() % 24);
-		inventory_array[i].amount = rand() % 901;
-	}
-	for (int i = 20; i < 26; i++) {
-		inventory_array[i].object = ItemObject(isWeapon, i + 28);
-		inventory_array[i].amount = 1;
-	}
-	inventory_array[26].object = ItemObject(isWall, 32); //stone wall
-	inventory_array[26].amount = 500;
-	inventory_array[27].object = ItemObject(isBlock, 31); //tree top
-	inventory_array[27].amount = 200;
-	inventory_array[28].object = ItemObject(isBlock, 22); //torch
-	inventory_array[28].amount = 200;
-	inventory_array[29].object = ItemObject(isBlock, 25); //ice torch
-	inventory_array[29].amount = 200;
-	inventory_array[30].object = ItemObject(isBlock, 28); //platform
-	inventory_array[30].amount = 200;
-	inventory_array[31].object = ItemObject(isBlock, 6); //oak planks
-	inventory_array[31].amount = 900;
-	inventory_array[32].object = ItemObject(isCoin, 68); //gold coin
-	inventory_array[32].amount = 77;
-	inventory_array[33].object = ItemObject(isAmmo, 74); //arrow
-	inventory_array[33].amount = 500;
-	inventory_array[34].object = ItemObject(isAmmo, 75); //flaming arrow
-	inventory_array[34].amount = 500;
-	inventory_array[35].object = ItemObject(isAmmo, 76); //ice flaming arrow
-	inventory_array[35].amount = 500;
-	inventory_array[36].object = ItemObject(isAmmo, 77); //arrow
-	inventory_array[36].amount = 500;
-	inventory_array[37].object = ItemObject(isAmmo, 78); //flaming arrow
-	inventory_array[37].amount = 500;
-	inventory_array[38].object = ItemObject(isAmmo, 79); //ice flaming arrow
-	inventory_array[38].amount = 500;
-	inventory_array[39].object = ItemObject(isWeapon, 63); //golden sword
-	inventory_array[39].amount = 1;
-	inventory_array[40].object = ItemObject(isComplexObject, 80); //life crystal
-	inventory_array[40].amount = 50;
-	inventory_array[41].object = ItemObject(isConsumable, 87); //mana crystal
-	inventory_array[41].amount = 50;
-	inventory_array[42].object = ItemObject(isPotion, 88); //healing potion
-	inventory_array[42].amount = 50;
-	inventory_array[43].object = ItemObject(isPotion, 89); //defense
-	inventory_array[43].amount = 50;
-	inventory_array[44].object = ItemObject(isPotion, 90); //speed
-	inventory_array[44].amount = 50;
-	inventory_array[45].object = ItemObject(isPotion, 91); //regen
-	inventory_array[45].amount = 50;
-	inventory_array[46].object = ItemObject(isWeapon, 60); //golden pickaxe
-	inventory_array[46].amount = 1;
-
-	inventory_array[10].object = ItemObject(isWeapon, 93); //magic wand
-	inventory_array[10].amount = 1;
-	inventory_array[11].object = ItemObject(isWeapon, 96); //Game.cpp
-	inventory_array[11].amount = 1;
-	inventory_array[12].object = ItemObject(isAmmo, 97); //bullets
-	inventory_array[12].amount = 500;
-	inventory_array[13].object = ItemObject(isWeapon, 98); //pistol
-	inventory_array[13].amount = 1;
-	inventory_array[14].object = ItemObject(isWeapon, 99); //shotgun
-	inventory_array[14].amount = 1;
-	inventory_array[15].object = ItemObject(isWeapon, 94); //shuriken
-	inventory_array[15].amount = 300;
-	inventory_array[16].object = ItemObject(isWeapon, 95); //throwing knofe
-	inventory_array[16].amount = 300;
-	inventory_array[17].object = ItemObject(isWeapon, 100); //trident
-	inventory_array[17].amount = 1;
-	inventory_array[18].object = ItemObject(isWeapon, 65); //golden bow
-	inventory_array[18].amount = 1;
-	*/
-
 	player.inventory.init();
-	for (int i = 0; i < 30; i++) {
+	for (int i = 2; i < 31; i++) {
 		uint16_t amount = rand() % 10000;
 		player.inventory.place_item(i, amount);
 	}
+	for (int i = 39; i < 49; i++) {
+		uint16_t amount = rand() % 10;
+		player.inventory.place_item(i, amount);
+	}
+	uint16_t amount = 1;
+	player.inventory.place_item(49, amount); //copper pickaxe
 
 	world = std::make_unique<World>();
 	world->init(&player);
@@ -3038,8 +2005,6 @@ void Game::init() {
 	ui_renderer = UI_Renderer::get_instance();
 	ui_renderer->init(&player);
 	ui_renderer->init_basic_inventory_slots_data();
-
-	player.inventory.items[73].item_id = 2;
 
 	//audio manager
 

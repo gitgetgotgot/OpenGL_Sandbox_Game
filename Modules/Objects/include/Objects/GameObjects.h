@@ -452,6 +452,17 @@ private:
 	float sky_stars_speed = 0.25f; //quarter block per second
 };*/
 
+class WallInfo : public ObjectInfo {
+public:
+	WallInfo(std::string name, float toughness, uint16_t drop_object_id) :
+		ObjectInfo(ObjectType::isWall, name), toughness{ toughness }, drop_id{ drop_object_id } {}
+	float get_wall_toughness() const { return toughness; }
+	uint16_t get_wall_drop_id() const { return drop_id; }
+private:
+	float toughness = 1.0f;
+	uint16_t drop_id;
+};
+
 class BlockInfo : public ObjectInfo {
 public:
 	BlockInfo(

@@ -37,13 +37,13 @@ public:
 
 	void init_basic_inventory_slots_data();
 	void update_tooltip_data();
+	void update_cursor_item();
 	void update_hotbar_active_slot();
 	//adds new text to buffer, returns length of added text based on height parameter
-	float place_text_to_buffer(const char* text, uint32_t text_size, glm::vec2 left_bottom_pos, float height, glm::vec4 color);
-	float place_text_to_tooltip_buffer(const char* text, uint32_t text_size, glm::vec2 left_bottom_pos, float height, glm::vec4 color);
+	float place_text_to_buffer(std::vector<UI_Vertex2f>& buffer, const char* text, uint32_t text_size, glm::vec2 left_bottom_pos, float height, glm::vec4 color);
 	void adjust_tooltip_text_pos(float dX, float dY);
-	void reset_text_buffer();
 	void update_items();
+	void update_craft_slots();
 private:
 	UI_Renderer() {}
 	~UI_Renderer() {}
@@ -57,36 +57,63 @@ private:
 	std::unique_ptr<EBO> ebo;
 
 	std::unique_ptr<ShaderProgram> ui_shader;
+	//slots vbo is used for base slots and tooltip
 	std::unique_ptr<VAO> slots_vao;
 	std::unique_ptr<VBO> slots_vbo;
-
+	std::unique_ptr<VAO> craft_slots_vao;
+	std::unique_ptr<VBO> craft_slots_vbo;
+	//items vbo is used for items and cursor item
 	std::unique_ptr<VAO> items_vao;
 	std::unique_ptr<VBO> items_vbo;
 
 	std::unique_ptr<ShaderProgram> sdf_text_shader;
+	//text vbo is used for items text and tooltip or cursor item text
 	std::unique_ptr<VAO> text_vao;
 	std::unique_ptr<VBO> text_vbo;
-	std::unique_ptr<VAO> tooltip_text_vao;
-	std::unique_ptr<VBO> tooltip_text_vbo;
 
-	std::vector<UI_Vertex2f> basic_slot_vertices;
-	std::vector<UI_Vertex2f> active_hotbar_slot_vertices;
-	std::vector<UI_Vertex2f> chest_slot_vertices;
-	std::vector<UI_Vertex2f> tooltip_vertices;
-	std::vector<UI_Vertex2f> slot_items_vertices;
-	std::vector<UI_Vertex2f> chest_items_vertices;
-	std::vector<UI_Vertex2f> sdf_text_buffer;
-	std::vector<UI_Vertex2f> sdf_tooltip_text_buffer;
+	std::vector<UI_Vertex2f> basic_slot_buffer;
+	std::vector<UI_Vertex2f> active_hotbar_slot_buffer;
+	std::vector<UI_Vertex2f> chest_slot_buffer;
+	std::vector<UI_Vertex2f> craft_slot_buffer;
+	std::vector<UI_Vertex2f> craft_borders_buffer;
+	std::vector<UI_Vertex2f> helper_craft_slot_buffer;
+	std::vector<UI_Vertex2f> tooltip_buffer;
 
-	uint32_t current_slots_buffer_index_size = 0;
-	uint32_t current_slots_buffer_size = 0;
-	uint32_t current_items_buffer_index_size = 0;
-	uint32_t current_items_buffer_size = 0;
-	uint32_t current_items_buffer_hotbar_index_size = 0;
-	uint32_t current_text_buffer_index_size = 0;
-	uint32_t current_text_buffer_size = 0;
-	uint32_t current_text_buffer_hotbar_index_size = 0;
-	uint32_t current_tooltip_text_index_size = 0;
+	std::vector<UI_Vertex2f> basic_items_buffer;
+	std::vector<UI_Vertex2f> chest_items_buffer;
+	std::vector<UI_Vertex2f> cursor_item_buffer;
+
+	std::vector<UI_Vertex2f> basic_text_buffer;
+	std::vector<UI_Vertex2f> chest_text_buffer;
+	std::vector<UI_Vertex2f> tooltip_text_buffer;
+	std::vector<UI_Vertex2f> cursor_item_text_buffer;
+
+	uint32_t slots_INDEX_SIZE = 0;
+	uint32_t base_slots_INDEX_SIZE = 0;
+	uint32_t slots_VERTEX_SIZE = 0;
+	static uint32_t tooltip_slots_INDEX_SIZE;
+	uint32_t craft_slots_INDEX_SIZE = 0;
+	uint32_t helper_slots_INDEX_SIZE = 0;
+
+	uint32_t items_INDEX_SIZE = 0;
+	uint32_t items_hotbar_INDEX_SIZE = 0;
+	uint32_t items_VERTEX_SIZE = 0;
+	uint32_t chest_items_INDEX_SIZE = 0;
+	uint32_t chest_items_VERTEX_SIZE = 0;
+	uint32_t TOTAL_ITEMS_INDEX_SIZE = 0;
+	uint32_t TOTAL_ITEMS_VERTEX_SIZE = 0;
+
+	uint32_t text_INDEX_SIZE = 0;
+	uint32_t text_hotbar_INDEX_SIZE = 0;
+	uint32_t text_VERTEX_SIZE = 0;
+	uint32_t chest_text_INDEX_SIZE = 0;
+	uint32_t chest_text_VERTEX_SIZE = 0;
+	uint32_t TOTAL_TEXT_INDEX_SIZE = 0;
+	uint32_t TOTAL_TEXT_VERTEX_SIZE = 0;
+
+	uint32_t tooltip_text_INDEX_SIZE = 0;
+	uint32_t cursor_text_INDEX_SIZE = 0;
+
 	float tooltip_frame_size = 0.02f;
 	float tooltip_text_height = 0.04f;
 };

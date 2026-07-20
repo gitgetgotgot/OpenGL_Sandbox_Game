@@ -123,11 +123,12 @@ public:
 class Mouse {
 public:
     double x_pos = 0, y_pos = 0;
+    double last_x_pos = 0, last_y_pos = 0;
     float ortho_x_pos = 0, ortho_y_pos = 0;
     int world_x_pos = 0, world_y_pos = 0;
-    double last_x_pos = 0, last_y_pos = 0;
     float delta_x = 0, delta_y = 0;
     float wheel_offset = 0;
+    bool overlapped_by_UI_layer = false;
     void get_mouse_ortho_coords(Screen& screen) {
         ortho_x_pos = ((x_pos / screen.width) * 2.f - 1.f) * screen.ratio;
         ortho_y_pos = (y_pos / screen.height) * 2.f - 1.f;

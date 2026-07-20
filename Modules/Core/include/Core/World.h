@@ -37,8 +37,8 @@ public:
 	void process_RB_click();
 	void process_scrollwheel();
 
-	void place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id);
-	void destroy_tile(uint32_t world_x, uint32_t world_y);
+	bool place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id);
+	bool destroy_tile(uint32_t world_x, uint32_t world_y);
 
 	void generate_world_data();
 	void save_world_data_in_file(const char* filePath);

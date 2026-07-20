@@ -132,15 +132,14 @@ void World::update() {
 		main_player_ptr->inventory.toggle_inventory();
 	main_player_ptr->inventory.update();
 
-	if (SystemContext::keyBoard.key_is_pressed(Key::KeyC))
-		main_player_ptr->inventory.has_open_chest = !main_player_ptr->inventory.has_open_chest;
-
-	if (SystemContext::mouse.lb_is_pressed())
-		process_LB_click();
-	if (SystemContext::mouse.rb_is_pressed())
-		process_RB_click();
-	if (SystemContext::mouse.wheel_offset != 0.0f)
-		process_scrollwheel();
+	if (!SystemContext::mouse.overlapped_by_UI_layer) {
+		if (SystemContext::mouse.lb_is_pressed())
+			process_LB_click();
+		if (SystemContext::mouse.rb_is_pressed())
+			process_RB_click();
+		if (SystemContext::mouse.wheel_offset != 0.0f)
+			process_scrollwheel();
+	}
 }
 
 void World::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
@@ -169,14 +168,12 @@ void World::update_chunks(uint32_t& camera_chunk_x, uint32_t& camera_chunk_y) {
 	int move_x_dir = 0, move_y_dir = 0;
 
 	if (camera_chunk_x_pos_changed) {
-		std::cout << "Chunk X pos changed: current X pos = " << camera_chunk_x << std::endl;
 		if (camera_chunk_x > last_chunk_x && camera_chunk_x == current_buffer_x_max) { //right
 			current_buffer_x_max++;
 			if (current_buffer_x_max > MAX_CHUNK_X) {
 				current_buffer_x_max = MAX_CHUNK_X;
 			}
 			else {
-				std::cout << "Uploading buffer column of 4 chunks on the right side.." << std::endl;
 				//load chunks
 				move_x_dir = 1;
 				current_buffer_x_min++;
@@ -188,7 +185,6 @@ void World::update_chunks(uint32_t& camera_chunk_x, uint32_t& camera_chunk_y) {
 				current_buffer_x_min = 0;
 			}
 			else {
-				std::cout << "Uploading buffer column of 4 chunks on the left side.." << std::endl;
 				//load chunks
 				move_x_dir = -1;
 				current_buffer_x_max--;
@@ -197,14 +193,12 @@ void World::update_chunks(uint32_t& camera_chunk_x, uint32_t& camera_chunk_y) {
 		last_chunk_x = camera_chunk_x;
 	}
 	if (camera_chunk_y_pos_changed) {
-		std::cout << "Chunk Y pos changed: current Y pos = " << camera_chunk_y << std::endl;
 		if (camera_chunk_y > last_chunk_y && camera_chunk_y == current_buffer_y_max) { //top
 			current_buffer_y_max++;
 			if (current_buffer_y_max > MAX_CHUNK_Y) {
 				current_buffer_y_max = MAX_CHUNK_Y;
 			}
 			else {
-				std::cout << "Uploading buffer row of 4 chunks on the top side.." << std::endl;
 				//load chunks
 				move_y_dir = 1;
 				current_buffer_y_min++;
@@ -216,7 +210,6 @@ void World::update_chunks(uint32_t& camera_chunk_x, uint32_t& camera_chunk_y) {
 				current_buffer_y_min = 0;
 			}
 			else {
-				std::cout << "Uploading buffer row of 4 chunks on the bottom side.." << std::endl;
 				//load chunks
 				move_y_dir = -1;
 				current_buffer_y_max--;
@@ -353,22 +346,105 @@ void World::load_chunk_buffers(int x_move, int y_move) {
 }
 
 void World::process_LB_click() {
-	destroy_tile(SystemContext::mouse.world_x_pos, SystemContext::mouse.world_y_pos);
+	uint16_t active_item_id = main_player_ptr->inventory.get_active_item_id();
+	if (active_item_id == 0) return; //do nothing if player is holding nothing
+
+	ObjectInfo& active_item_info = *ObjectsDB::objectInfo[active_item_id];
+	switch (active_item_info.objectType) {
+	case ObjectType::isBlock: {
+		place_tile(SystemContext::mouse.world_x_pos, SystemContext::mouse.world_y_pos, active_item_id);
+		break;
+	}
+	case ObjectType::isComplexObject: {
+		place_tile(SystemContext::mouse.world_x_pos, SystemContext::mouse.world_y_pos, active_item_id);
+		break;
+	}
+	case ObjectType::isWeapon: {
+		WeaponType weapon_type = active_item_info.get_weapon_type();
+		if (weapon_type == WeaponType::isPickaxe) {
+			destroy_tile(SystemContext::mouse.world_x_pos, SystemContext::mouse.world_y_pos);
+		}
+		break;
+	}
+	case ObjectType::isConsumable: {
+
+		break;
+	}
+	case ObjectType::isPotion: {
+
+		break;
+	}
+	}
 }
 
 void World::process_RB_click() {
-	place_tile(SystemContext::mouse.world_x_pos, SystemContext::mouse.world_y_pos, 80);
+	uint32_t slot_index = SystemContext::mouse.world_y_pos * width + SystemContext::mouse.world_x_pos;
+	WorldSlot* slot = &world_slots[slot_index];
+
+	if (slot->tile_id == 0) return; //no tile -> no interaction
+
+	if (slot->tile_id == 1) { //complex object part -> get main part
+		auto it = object_components.find(slot_index);
+		if (it == object_components.end()) return; //this shouldn't happen, but ok
+		uint32_t main_part_x = it->second->get_column();
+		uint32_t main_part_y = it->second->get_line();
+		slot_index = main_part_y * width + main_part_x; //get main slot index
+		slot = &world_slots[slot_index]; //slot ptr now points on the main object part
+	}
+
+	ObjectInfo& slot_info = *ObjectsDB::objectInfo[slot->tile_id];
+	if (slot_info.objectType == ObjectType::isComplexObject) { //complex object -> can be interactable
+		ComplexObjectType type = slot_info.get_comp_obj_type();
+		if (type == ComplexObjectType::isChest) {
+			std::cout << "Interacted with chest" << std::endl;
+			main_player_ptr->inventory.open_chest(object_components[slot_index]->get_chest_slots());
+		}
+		else if (type == ComplexObjectType::isDoor) {
+			std::cout << "Interacted with door" << std::endl;
+		}
+	}
 }
 
 void World::process_scrollwheel() {
 
 }
 
-void World::place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id) {
-	if (tile_id == 0) return; //don't place air
+bool World::place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id) {
 	WorldSlot& slot = world_slots[world_y * width + world_x];
-	if (slot.tile_id != 0) return; //slot already has tile
+	if (slot.tile_id != 0) return false; //slot already has tile
+	std::unique_ptr<ObjectInfo>& object_info = ObjectsDB::objectInfo[tile_id];
+	if (object_info->objectType == ObjectType::isComplexObject) {
+		int obj_width = object_info->get_sizeX();
+		int obj_height = object_info->get_sizeY();
+		int max_x = world_x + obj_width;
+		int max_y = world_y + obj_height;
+		for (int x = world_x; x < max_x; x++) {
+			for (int y = world_y; y < max_y; y++) {
+				if (world_slots[y * width + x].tile_id != 0) {
+					return false; //not enough space to place complex object
+				}
+			}
+		}
+		int main_part_index = world_y * width + world_x;
+		for (int x = world_x; x < max_x; x++) {
+			for (int y = world_y; y < max_y; y++) {
+				int comp_obj_part_index = y * width + x;
+				if (comp_obj_part_index == main_part_index) continue;
+				world_slots[y * width + x].tile_id = 1; //place complex object parts with coords of main part
+				object_components.emplace(comp_obj_part_index, std::make_unique<ComplexObjectPartComponent>(world_x, world_y));
+			}
+		}
+		ComplexObjectType type = object_info->get_comp_obj_type();
+		if (type == ComplexObjectType::isChest) {
+			object_components.emplace(main_part_index, std::make_unique<ChestComponent>());
+		}
+		else if (type == ComplexObjectType::isDoor) {
+			object_components.emplace(main_part_index, std::make_unique<DoorComponent>(0));
+		}
+	}
 	slot.tile_id = tile_id;
+
+	//update chunk buffer if placed tile is in visible chunks buffer
 	uint32_t chunk_x = uint32_t(world_x / CHUNK_SIZE);
 	uint32_t chunk_y = uint32_t(world_y / CHUNK_SIZE);
 	if (chunk_x >= current_buffer_x_min && chunk_x <= current_buffer_x_max &&
@@ -383,7 +459,6 @@ void World::place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id) {
 		uint32_t tile_chunk_y = world_y - chunk_y * CHUNK_SIZE;
 		uint32_t tile_index = (tile_chunk_x * CHUNK_SIZE + tile_chunk_y) * 4;
 
-		std::unique_ptr<ObjectInfo>& object_info = ObjectsDB::objectInfo[slot.tile_id];
 		glm::vec2* uv_ptr = spriteMgr->get_sprite(object_info->sprite_id).UV;
 
 		if (object_info->objectType == ObjectType::isBlock) {
@@ -403,12 +478,43 @@ void World::place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id) {
 		buffer.vbo->update_data(vertices.data(), sizeof(Vertex2f) * vertices.size());
 		buffer.index_count += 6;
 	}
+
+	return true;
 }
 
-void World::destroy_tile(uint32_t world_x, uint32_t world_y) {
-	WorldSlot& slot = world_slots[world_y * width + world_x];
-	if (slot.tile_id == 0) return; //slot already has no tile
-	slot.tile_id = 0;
+bool World::destroy_tile(uint32_t world_x, uint32_t world_y) {
+	uint32_t slot_index = world_y * width + world_x;
+	WorldSlot* slot = &world_slots[slot_index];
+	if (slot->tile_id == 0) return false; //slot already has no tile
+	
+	if (slot->tile_id == 1) { //complex object part -> get main part
+		std::cout << "Trying to destroy complex object part..." << std::endl;
+		auto it = object_components.find(slot_index);
+		if (it == object_components.end()) return false; //this shouldn't happen, but ok
+		world_x = it->second->get_column();
+		world_y = it->second->get_line();
+		slot_index = world_y * width + world_x; //get main slot index
+		slot = &world_slots[slot_index]; //slot ptr now points on the main object part
+	}
+
+	ObjectInfo& slot_info = *ObjectsDB::objectInfo[slot->tile_id];
+	if (slot_info.objectType == ObjectType::isComplexObject) {
+		int obj_width = slot_info.get_sizeX();
+		int obj_height = slot_info.get_sizeY();
+		int max_x = world_x + obj_width;
+		int max_y = world_y + obj_height;
+		uint32_t index;
+		for (int x = world_x; x < max_x; x++) {
+			for (int y = world_y; y < max_y; y++) {
+				index = y * width + x;
+				world_slots[index].tile_id = 0;
+				object_components.erase(index); //remove all object parts and main part component (if exists)
+			}
+		}
+
+	}
+	slot->tile_id = 0;
+
 	uint32_t chunk_x = uint32_t(world_x / CHUNK_SIZE);
 	uint32_t chunk_y = uint32_t(world_y / CHUNK_SIZE);
 	if (chunk_x >= current_buffer_x_min && chunk_x <= current_buffer_x_max &&
@@ -430,6 +536,7 @@ void World::destroy_tile(uint32_t world_x, uint32_t world_y) {
 		buffer.vbo->update_data(vertices.data(), sizeof(Vertex2f) * vertices.size());
 		buffer.index_count -= 6;
 	}
+	return true;
 }
 
 void World::generate_world_data() {
@@ -440,13 +547,13 @@ void World::generate_world_data() {
 		//int point = 891 + sin(0.1 * i) * 20;
 		int point = 899 + sin(i * 0.05) * 1;
 		for (; j < point; j++) {  //stone layer
-			world_slots[j * width + i].tile_id = 1;
+			world_slots[j * width + i].tile_id = 2;
 		}
 		while (j < point + 8) { //dirt layer
-			world_slots[j * width + i].tile_id = 2;
+			world_slots[j * width + i].tile_id = 3;
 			j++;
 		}
-		world_slots[j * width + i].tile_id = 3; //dirt with grass
+		world_slots[j * width + i].tile_id = 4; //dirt with grass
 	}
 	//generate some kind of desert on either left or right side of the map
 	bool desertIsOnLeft = rand() % 2;
@@ -463,7 +570,7 @@ void World::generate_world_data() {
 	for (int i = left_biome_border; i < right_biome_border; i++) {
 		int point = 904 + sin(3.14159 * value / 180.) * 15;
 		for (int j = 600; j < point; j++) {
-			world_slots[j * width + i].tile_id = 4;
+			world_slots[j * width + i].tile_id = 5;
 		}
 		value += 180 / 420.f;
 	}
@@ -475,15 +582,15 @@ void World::generate_world_data() {
 		int point = 829 + (cos(3.14159 * value / 180.) + 1) * 80;
 		int j = point - 40;
 		for (; j < point; j++) {  //place sand
-			world_slots[j * width + i].tile_id = 4;
+			world_slots[j * width + i].tile_id = 5;
 		}
 		while (j <= 905) {  //place water
-			world_slots[j * width + i].tile_id = 12;
+			world_slots[j * width + i].tile_id = 13;
 			j++;
 		}
 		while (j <= 907) {  //remove redundant blocks
 			if (world_slots[j * width + i].tile_id > 0) {
-				if (world_slots[j * width + i].tile_id != 4) {
+				if (world_slots[j * width + i].tile_id != 5) {
 					world_slots[j * width + i].tile_id = 0;
 				}
 			}
@@ -494,7 +601,7 @@ void World::generate_world_data() {
 	for (int i = right_biome_border - 20; i < right_biome_border; i++) { //make straigh place for 20 blocks after the ocean
 		int point = 908;
 		for (int j = point - 40; j < point; j++) {
-			world_slots[j * width + i].tile_id = 4;
+			world_slots[j * width + i].tile_id = 5;
 		}
 	}
 	right_biome_border = width - 1;
@@ -504,15 +611,15 @@ void World::generate_world_data() {
 		int point = 829 + (cos(3.14159 * value / 180.) + 1) * 80;
 		int j = point - 40;
 		for (; j < point; j++) {  //place sand
-			world_slots[j * width + i].tile_id = 4;
+			world_slots[j * width + i].tile_id = 5;
 		}
 		while (j <= 905) {  //place water
-			world_slots[j * width + i].tile_id = 12;
+			world_slots[j * width + i].tile_id = 13;
 			j++;
 		}
 		while (j <= 907) {  //remove redundant blocks
 			if (world_slots[j * width + i].tile_id > 0) {
-				if (world_slots[j * width + i].tile_id != 4) {
+				if (world_slots[j * width + i].tile_id != 5) {
 					world_slots[j * width + i].tile_id = 0;
 				}
 			}
@@ -523,7 +630,7 @@ void World::generate_world_data() {
 	for (int i = left_biome_border - 20; i < left_biome_border; i++) { //make straigh place for 20 blocks after the ocean
 		int point = 908;
 		for (int j = point - 40; j < point; j++) {
-			world_slots[j * width + i].tile_id = 4;
+			world_slots[j * width + i].tile_id = 5;
 		}
 	}
 }
