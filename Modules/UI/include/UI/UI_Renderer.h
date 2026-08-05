@@ -36,6 +36,7 @@ public:
 	void render(std::unique_ptr<OpenGL_Renderer>& renderer);
 
 	void init_basic_inventory_slots_data();
+	void init_icons_base_vertices();
 	void update_tooltip_data();
 	void update_cursor_item();
 	void update_hotbar_active_slot();
@@ -44,6 +45,7 @@ public:
 	void adjust_tooltip_text_pos(float dX, float dY);
 	void update_items();
 	void update_craft_slots();
+	void update_icons();
 private:
 	UI_Renderer() {}
 	~UI_Renderer() {}
@@ -63,28 +65,40 @@ private:
 	std::unique_ptr<VAO> craft_slots_vao;
 	std::unique_ptr<VBO> craft_slots_vbo;
 	//items vbo is used for items and cursor item
+	std::unique_ptr<VAO> icons_vao;
+	std::unique_ptr<VBO> icons_vbo;
 	std::unique_ptr<VAO> items_vao;
 	std::unique_ptr<VBO> items_vbo;
+	std::unique_ptr<VAO> craft_items_vao;
+	std::unique_ptr<VBO> craft_items_vbo;
 
 	std::unique_ptr<ShaderProgram> sdf_text_shader;
 	//text vbo is used for items text and tooltip or cursor item text
 	std::unique_ptr<VAO> text_vao;
 	std::unique_ptr<VBO> text_vbo;
+	std::unique_ptr<VAO> craft_text_vao;
+	std::unique_ptr<VBO> craft_text_vbo;
 
 	std::vector<UI_Vertex2f> basic_slot_buffer;
 	std::vector<UI_Vertex2f> active_hotbar_slot_buffer;
 	std::vector<UI_Vertex2f> chest_slot_buffer;
-	std::vector<UI_Vertex2f> craft_slot_buffer;
 	std::vector<UI_Vertex2f> craft_borders_buffer;
+	std::vector<UI_Vertex2f> craft_slot_buffer;
+	std::vector<UI_Vertex2f> craft_info_slot_buffer;
 	std::vector<UI_Vertex2f> helper_craft_slot_buffer;
 	std::vector<UI_Vertex2f> tooltip_buffer;
+	std::vector<UI_Vertex2f> icons_buffer;
 
 	std::vector<UI_Vertex2f> basic_items_buffer;
 	std::vector<UI_Vertex2f> chest_items_buffer;
+	std::vector<UI_Vertex2f> craft_items_buffer;
+	std::vector<UI_Vertex2f> craft_info_items_buffer;
+	std::vector<UI_Vertex2f> craft_helper_items_buffer;
 	std::vector<UI_Vertex2f> cursor_item_buffer;
 
 	std::vector<UI_Vertex2f> basic_text_buffer;
 	std::vector<UI_Vertex2f> chest_text_buffer;
+	std::vector<UI_Vertex2f> craft_text_buffer;
 	std::vector<UI_Vertex2f> tooltip_text_buffer;
 	std::vector<UI_Vertex2f> cursor_item_text_buffer;
 
@@ -93,11 +107,16 @@ private:
 	uint32_t slots_VERTEX_SIZE = 0;
 	static uint32_t tooltip_slots_INDEX_SIZE;
 	uint32_t craft_slots_INDEX_SIZE = 0;
+	uint32_t craft_info_slots_INDEX_SIZE = 0;
 	uint32_t helper_slots_INDEX_SIZE = 0;
+	uint32_t icons_INDEX_SIZE = 0;
 
 	uint32_t items_INDEX_SIZE = 0;
 	uint32_t items_hotbar_INDEX_SIZE = 0;
 	uint32_t items_VERTEX_SIZE = 0;
+	uint32_t craft_items_INDEX_SIZE = 0;
+	uint32_t craft_info_items_INDEX_SIZE = 0;
+	uint32_t craft_helper_items_INDEX_SIZE = 0;
 	uint32_t chest_items_INDEX_SIZE = 0;
 	uint32_t chest_items_VERTEX_SIZE = 0;
 	uint32_t TOTAL_ITEMS_INDEX_SIZE = 0;
@@ -110,6 +129,7 @@ private:
 	uint32_t chest_text_VERTEX_SIZE = 0;
 	uint32_t TOTAL_TEXT_INDEX_SIZE = 0;
 	uint32_t TOTAL_TEXT_VERTEX_SIZE = 0;
+	uint32_t craft_text_INDEX_SIZE = 0;
 
 	uint32_t tooltip_text_INDEX_SIZE = 0;
 	uint32_t cursor_text_INDEX_SIZE = 0;

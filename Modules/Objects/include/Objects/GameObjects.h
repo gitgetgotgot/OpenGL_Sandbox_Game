@@ -7,11 +7,28 @@
 #include <vector>
 #include <Physics/Colliders.h>
 
-enum ObjectType : uint8_t { None, isBlock, isWall, isComplexObject, isCompObjPart, isWeapon, isAmmo, isArmor, isMaterial, isCoin, isAccessory, isConsumable, isPotion };
-enum BlockType { isSolidBlock, isWood, isTreeTop, isPlatform, isTorch, isLiquid, isGrass, isFlower, isGlass, isBottle };
-enum ComplexObjectType { isWorkbench, isFurnace, isChest, isDoor, isTable, isChair, isAnvil, isLamp, isChandelier, isLyfeCrystal };
-enum WeaponType { isPickaxe, isSword, isDagger, isAxe, isHammer, isGun, isShotgun, isBow, isThrowable, isSpear, isMagical };
-enum AmmoType { isArrow, isBullet, isMagicBall };
+//Object Class Types: {
+// Base = 0, Block = 1, Complex = 2, Weapon = 3, InstrumentalWeapon = 4, MagicalWeapon = 5, Ammo = 6, Wall = 7
+// }
+enum ObjectType : uint8_t {
+	None = 0, isBlock = 1, isWall = 2, isComplexObject = 3, isCompObjPart = 4, isWeapon = 5, isAmmo = 6, isArmor = 7, isMaterial = 8,
+	isCoin = 9, isAccessory = 10, isConsumable = 11, isPotion = 12
+};
+enum BlockType : uint8_t {
+	isSolidBlock = 0, isWood = 1, isTreeTop = 2, isPlatform = 3, isTorch = 4, isLiquid = 5, isGrass = 6, isPlant = 7, isGlass = 8,
+	isBottle = 9
+};
+enum ComplexObjectType : uint8_t {
+	isWorkbench = 0, isFurnace = 1, isChest = 2, isDoor = 3, isTable = 4, isChair = 5, isAnvil = 6, isLamp = 7, isChandelier = 8,
+	isLyfeCrystal = 9
+};
+enum WeaponType : uint8_t {
+	isPickaxe = 0, isSword = 1, isDagger = 2, isAxe = 3, isHammer = 4, isGun = 5, isShotgun = 6, isBow = 7, isThrowable = 8,
+	isSpear = 9, isMagical = 10
+};
+enum AmmoType : uint8_t {
+	isArrow = 0, isBullet = 1, isMagicBall = 2
+};
 
 struct SpriteData {
 	glm::mat4 modelMatrix;
@@ -19,10 +36,7 @@ struct SpriteData {
 	float light_level = 1.f, opacity = 1.f; //light level and opacity are from 0.0 to 1.0 (can be used for weather system)
 	float padding[2]{};
 };
-struct ColorVertex2f {
-	glm::vec2 pos;
-	glm::vec4 color;
-};
+
 struct ShaderLightingInfo {
 	float r, g, b;
 	float global_light_impact;
@@ -35,6 +49,11 @@ struct WorldSlot {
 	uint16_t tile_id = 0;
 	uint8_t wall_id = 0;
 	uint8_t flags = 0;
+};
+
+struct InventorySlot {
+	uint16_t item_id = 0;
+	uint16_t amount = 0;
 };
 
 struct Universal_UBO_Data {
@@ -272,36 +291,12 @@ public:
 		objectType{ type }, name{ name }, effect_comp_id{ effect_comp_id }, light_comp_id{ light_comp_id } {}
 	virtual ~ObjectInfo() {}
 
-	virtual BlockType get_block_type() const { return isSolidBlock; }
-	virtual float get_toughness() const { return 0.f; }
-	virtual int get_drop_object_id() const { return 0; }
-	virtual bool allow_collision() const { return 0; }
-	virtual bool allow_bottom_collision() const { return 0; }
-	//for complex objects and weapons
-	virtual float get_sizeX() const { return 0.f; }
-	virtual float get_sizeY() const { return 0.f; }
-
-	virtual ComplexObjectType get_comp_obj_type() const { return isWorkbench; }
-
-	virtual WeaponType get_weapon_type() const { return isPickaxe; }
-	virtual int get_weapon_usable_audio_id() const { return 3; }
-	virtual int get_damage() const { return 0; }
-	virtual float get_speed_factor() const { return 0.f; }
-	virtual float get_hit_cd() const { return 0.f; }
-	virtual float get_crit_chance() const { return 0.f; }
-	virtual bool is_stackable() const { return 0; }
-	virtual float get_instrument_power() const { return 0.f; }
-	virtual int get_weapon_proj_id() const { return 0; }
-	virtual float get_weapon_proj_cd() const { return 0.f; }
-	virtual int get_weapon_mana_cost() const { return 0; }
-
-	virtual AmmoType get_ammo_type() const { return isArrow; }
-
-	virtual int get_entity_id() const { return 0; }
 	//main info
 	ObjectType objectType = None;
 	std::string name;
+	bool isMaterial = false;
 	uint32_t sprite_id = 0;
+
 	//usable components (if ID = 0 then no component is used)
 	uint32_t effect_comp_id = 0;
 	uint32_t light_comp_id = 0;
@@ -309,14 +304,12 @@ public:
 
 class ObjectsDB {
 public:
-	//objects info: 32 blocks, 6 complex objects, 10 weapons, 1 wall, 3 ammo, 3 coins, 4 materials
 	inline static std::vector<std::unique_ptr<ObjectInfo>> objectInfo;
 };
 
 struct AmbientObject {
 	glm::vec2 sprite_size;
 	glm::vec2 position;
-	float tex_slot_id = 0.f;
 };
 /*class AmbientController {
 public:
@@ -456,93 +449,76 @@ class WallInfo : public ObjectInfo {
 public:
 	WallInfo(std::string name, float toughness, uint16_t drop_object_id) :
 		ObjectInfo(ObjectType::isWall, name), toughness{ toughness }, drop_id{ drop_object_id } {}
-	float get_wall_toughness() const { return toughness; }
-	uint16_t get_wall_drop_id() const { return drop_id; }
-private:
+
 	float toughness = 1.0f;
-	uint16_t drop_id;
+	uint16_t drop_id = 0;
 };
 
 class BlockInfo : public ObjectInfo {
 public:
 	BlockInfo(
-		std::string name, BlockType type, float toughness, int drop_obj_id, bool collision,
-		bool bottomCollision, uint32_t effect_comp_id = 0, uint32_t light_comp_id = 0
+		std::string name, BlockType type, float toughness, uint16_t drop_obj_id, bool collision,
+		bool platform_collision, uint32_t effect_comp_id = 0, uint32_t light_comp_id = 0
 	) :
 		ObjectInfo(isBlock, name, effect_comp_id, light_comp_id), type{ type }, toughness{ toughness },
-		drop_object_id{ drop_obj_id }, allowCollision{ collision }, allowBottomCollision{ bottomCollision } {}
-	float get_toughness() const override { return toughness; }
-	int get_drop_object_id() const override { return drop_object_id; }
-	bool allow_collision() const override { return allowCollision; }
-	bool allow_bottom_collision() const override { return allowBottomCollision; }
-	BlockType get_block_type() const override { return type; }
-private:
-	BlockType type;
+		drop_id{ drop_obj_id }, collision{ collision }, platform_collision{ platform_collision } {}
+
+	BlockType type = BlockType::isSolidBlock;
 	float toughness = 1;
-	int drop_object_id;
-	bool allowCollision;
-	bool allowBottomCollision;
+	uint16_t drop_id = 0;
+	bool collision = false;
+	bool platform_collision = false; //object behaves like a platform with only one direction collision
 };
 
 class ComplexObjectInfo : public BlockInfo {
 public:
-	//it doesn't matter what type of block is used for the BlockInfo constructor here, so it's just isSolidBlock
+	//it doesn't matter what type of BlockType is used for the BlockInfo constructor here, so it's just isSolidBlock
 	ComplexObjectInfo(
-		std::string name, ComplexObjectType type, float toughness, int drop_obj_id, float blWidth,
-		float blHeight, bool collision, bool bottomCollision, uint32_t effect_comp_id = 0, uint32_t light_comp_id = 0
+		std::string name, ComplexObjectType type, float toughness, uint16_t drop_obj_id, float blWidth,
+		float blHeight, bool collision, bool platform_collision, uint32_t effect_comp_id = 0, uint32_t light_comp_id = 0
 	) :
-		BlockInfo(name, isSolidBlock, toughness, drop_obj_id, collision, bottomCollision, effect_comp_id, light_comp_id),
+		BlockInfo(name, isSolidBlock, toughness, drop_obj_id, collision, platform_collision, effect_comp_id, light_comp_id),
 		blocksWidth{ blWidth }, type{ type }, blocksHeight{ blHeight } {
 		objectType = isComplexObject;
+		float max_size = blWidth > blHeight ? blWidth : blHeight;
+		size_ratio_normalized.x = blWidth / max_size;
+		size_ratio_normalized.y = blHeight / max_size;
 	}
-	float get_sizeX() const override { return blocksWidth; }
-	float get_sizeY() const override { return blocksHeight; }
-	ComplexObjectType get_comp_obj_type() const override { return type; }
-private:
+
 	ComplexObjectType type;
 	float blocksWidth, blocksHeight;
+	glm::vec2 size_ratio_normalized;
 };
 
 class WeaponInfo : public ObjectInfo {
 public:
 	WeaponInfo(std::string name, WeaponType type, int dmg, float hit_cd, float spd_factor, float proj_cd, int proj_id, float sizeX, float sizeY, float crit_chance, bool isStackable, int use_sound_id) :
 		ObjectInfo(name), type{ type }, damage{ dmg }, hit_cd{ hit_cd }, speed_factor{ spd_factor }, projectile_cd{ proj_cd }, projectile_id{ proj_id },
-		sizeX{sizeX}, sizeY{sizeY}, crit_chance{crit_chance}, isStackable{isStackable}, use_sound_id{use_sound_id} {
+		size_x{sizeX}, sizeY{sizeY}, crit_chance{crit_chance}, isStackable{isStackable}, use_sound_id{use_sound_id} {
 		objectType = isWeapon;
 	}
-	WeaponType get_weapon_type() const { return type; }
-	int get_damage() const override { return damage; }
-	float get_speed_factor() const override { return speed_factor; }
-	float get_hit_cd() const override { return hit_cd; }
-	float get_sizeX() const override { return sizeX; }
-	float get_sizeY() const override { return sizeY; }
-	float get_crit_chance() const override { return crit_chance; }
-	bool is_stackable() const override { return isStackable; }
-	int get_weapon_usable_audio_id() const override { return use_sound_id; }
-	int get_weapon_proj_id() const override { return projectile_id; }
-	float get_weapon_proj_cd() const override { return projectile_cd; }
-private:
+
 	WeaponType type;
 	int damage;
+	float size_x = 1.f;
+	float size_y = 1.f;
+	float crit_chance = 0.f;
+	bool isStackable = false;
+	float speed = 1.f; //speed of weapon in blocks per second (speed of swinging, starting speed of arrow or bullet, speed of throwable weapons, etc.)
+	int use_sound_id = 0;
 	float hit_cd = 0.5f; //cd for each enemy that was hit by this weapon
-	float speed_factor = 1.f; //speed of weapon (speed of swinging, starting speed of arrow or bullet, speed of throwable weapons, etc.)
 	float projectile_cd = 1.f; //cd for shooting projectiles (from any kind of weapon if it has this ability)
 	int projectile_id = -1; //if it's a sword with projectiles, magic weapon or throwable weapon, etc. (-1 means no projectile)
-	float sizeX;
-	float sizeY;
-	float crit_chance;
-	bool isStackable = false;
-	int use_sound_id = 0;
-};
+};  
 class InstrumentalWeaponInfo : public WeaponInfo {
 public:
 	InstrumentalWeaponInfo(std::string name, WeaponType type, float power, int dmg, float hit_cd, float spd_factor, float proj_cd, int proj_id, float sizeX, float sizeY, float crit_chance, bool isStackable, int use_sound_id) :
 		WeaponInfo(name, type, dmg, hit_cd, spd_factor, proj_cd, proj_id, sizeX, sizeY, crit_chance, isStackable, use_sound_id) {
 		this->power = power;
 	}
-	float get_instrument_power() const override { return power; }
-private:
-	float power;
+
+	float power = 1.0f;
+	float range = 1.0f;
 };
 class MagicalWeaponInfo : public WeaponInfo {
 public:
@@ -564,8 +540,8 @@ public:
 		damage{ dmg }, sizeX{ sizeX }, sizeY{ sizeY }, entity_id{ entity_id } {}
 	AmmoType get_ammo_type() const override { return type; }
 	int get_damage() const override { return damage; }
-	float get_sizeX() const override { return sizeX; }
-	float get_sizeY() const override { return sizeY; }
+	float get_size_x() const override { return sizeX; }
+	float get_size_y() const override { return sizeY; }
 	int get_entity_id() const override { return entity_id; }
 private:
 	AmmoType type;
@@ -575,11 +551,7 @@ private:
 	float sizeY;
 };
 
-//OBJECT CLASSES WITH COMPONENT STRUCTURE
-struct InventorySlot {
-	uint16_t item_id = 0;
-	uint16_t amount = 0;
-};
+//OBJECT COMPONENTS
 class ObjectComponent {
 public:
 	virtual ~ObjectComponent() {}
@@ -685,30 +657,4 @@ struct ActiveBreakableObject {
 	int column, line;
 	float time_to_break = 1.0f; //default
 	float time_breaking = 0.5f;
-};
-
-enum CraftingCondition { Nothing, Workbench, Furnace, Anvil, Table };
-struct CraftingPair {
-	int id = 0, amount = 0;
-};
-struct CraftableItem {
-	CraftableItem() {}
-	CraftableItem(int item_id, int amount, CraftingCondition condition, std::vector<CraftingPair> items_needed) :
-		item_id{ item_id }, craftable_amount{ amount }, condition{ condition }, items_needed{ items_needed } {}
-	int item_id = 0; //id of item that is craftable
-	int craftable_amount = 0; //amount of this item per one craft
-	std::vector<CraftingPair> items_needed;
-	CraftingCondition condition = Nothing; //specific condition (be near the workbench, etc.)
-};
-
-struct CraftingSystem {
-	bool is_near_workbench = false;
-	bool is_near_furnace = false;
-	bool is_near_anvil = false;
-	std::vector<int> available_crafts; //contains all crafts available at the moment
-	bool show_all_crafts = false; //show all crafts available in slots (more comfortable)
-	ColorVertex2f helper_slots[70 * 4]; //maximum 70 slots
-	ColorVertex2f main_slots[5 * 4]; //main array where the first is crafting slot, where item can be taken(crafted), other just for other available crafts(near the item in first slot in available_crafts)
-	ColorVertex2f needed_items_slots[10 * 4]; //max is currently 10
-	int index_of_current_craft = 0; //index of craft that is currently in the first main slot
 };

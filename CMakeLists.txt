@@ -16,10 +16,7 @@ add_game_module(UI)
 add_game_module(IOSystem)
 add_game_module(Utility)
 
-file(GLOB_RECURSE MAIN_SOURCES
-    "${PROJECT_SOURCE_DIR}/src/main.cpp"
-)
-add_executable(${PROJECT_NAME} ${MAIN_SOURCES})
+add_executable(${PROJECT_NAME} "${PROJECT_SOURCE_DIR}/src/main.cpp")
 
 target_link_libraries(Rendering PUBLIC ExternalLibs)
 # add system OpenGL library to Rendering module

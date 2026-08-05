@@ -23,6 +23,7 @@ public:
 	//init
 	void init_open_gl();
 	void init_input();
+	void load_items_data_JSON();
 	/*void init_inventory_buffer();
 	void init_audio();
 	//inventory
@@ -68,17 +69,11 @@ public:
 private:
 	GLFWwindow* window;
 
-	const int MAX_CRAFTS_AVAILABLE = 12;
-	bool collisionIsOn = true;
-	//camera(Player) values
-	float playerXinc = 0.f, playerYinc = 0.f;
 	Player player;
-	//inventory
 	
 	ActiveWeapon active_weapon;
 	ActiveBreakableObject active_breakable_object;
 	EntityInfoText entity_info_text;
-	short active_bar_slot = 0; //from 0 to 9
 
 	//Ambient objects
 	//AmbientController ambientController;
@@ -86,14 +81,13 @@ private:
 	Effects::EffectsManager* effectsManager = nullptr;
 	//Components manager
 	ComponentsManager* compsMgr = nullptr;
+	//Crafting
+	CraftingSystem* craft_sys = nullptr;
 	//Particles
 	ParticlesManager* particlesMgr = nullptr;
 	ParticleSystem* particlesSystem = nullptr;
 	//Entities
 	EntitySystem* entitySystem = nullptr;
-	//Recipes
-	CraftableItem craftable_items[50];
-	CraftingSystem crafting_system;
 	//Game Time
 	TimeManager timeMgr;
 	//Main camera
@@ -116,20 +110,7 @@ private:
 	//ui
 	UI_Renderer* ui_renderer = nullptr;
 
-	//
-	//Smart_ptr<ShaderProgram> ambient_sprite_SP_ptr;
-	//Smart_ptr<ShaderProgram> UI_sprite_SP_ptr;
-	//
-	//Smart_ptr<SSBO> sprite_ambient_ssbo_p;
-	//Smart_ptr<SSBO> spriteLightMapSSBO;
-
-	//
-
 	SpriteData ambient_sprite_buf[20]; //20 ambient sprites
-
-	int entities_count = 0;
-	int index_size = 0;
-	int buffer_size = 0;
 
 	//save the world info in file in specific interval, for the safety :)
 	int auto_save_interval = 120; //120 seconds

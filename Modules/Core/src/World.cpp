@@ -255,8 +255,8 @@ void World::load_chunk_buffer(uint32_t chunk_world_x, uint32_t chunk_world_y, ui
 				vertices.add(Vertex2f{ glm::vec2(x + 1, y), uv_ptr[3] }, base_index + 3);
 			}
 			else if (object_info->objectType == ObjectType::isComplexObject) {
-				float x_size = object_info->get_sizeX();
-				float y_size = object_info->get_sizeY();
+				float x_size = object_info->get_size_x();
+				float y_size = object_info->get_size_y();
 				vertices.add(Vertex2f{ glm::vec2(x, y), uv_ptr[0] }, base_index);
 				vertices.add(Vertex2f{ glm::vec2(x, y + y_size), uv_ptr[1] }, base_index + 1);
 				vertices.add(Vertex2f{ glm::vec2(x + x_size, y + y_size), uv_ptr[2] }, base_index + 2);
@@ -352,11 +352,13 @@ void World::process_LB_click() {
 	ObjectInfo& active_item_info = *ObjectsDB::objectInfo[active_item_id];
 	switch (active_item_info.objectType) {
 	case ObjectType::isBlock: {
-		place_tile(SystemContext::mouse.world_x_pos, SystemContext::mouse.world_y_pos, active_item_id);
+		bool success = place_tile(SystemContext::mouse.world_x_pos, SystemContext::mouse.world_y_pos, active_item_id);
+		if (success) main_player_ptr->inventory.spend_active_item();
 		break;
 	}
 	case ObjectType::isComplexObject: {
-		place_tile(SystemContext::mouse.world_x_pos, SystemContext::mouse.world_y_pos, active_item_id);
+		bool success = place_tile(SystemContext::mouse.world_x_pos, SystemContext::mouse.world_y_pos, active_item_id);
+		if (success) main_player_ptr->inventory.spend_active_item();
 		break;
 	}
 	case ObjectType::isWeapon: {
@@ -414,8 +416,8 @@ bool World::place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id) {
 	if (slot.tile_id != 0) return false; //slot already has tile
 	std::unique_ptr<ObjectInfo>& object_info = ObjectsDB::objectInfo[tile_id];
 	if (object_info->objectType == ObjectType::isComplexObject) {
-		int obj_width = object_info->get_sizeX();
-		int obj_height = object_info->get_sizeY();
+		int obj_width = object_info->get_size_x();
+		int obj_height = object_info->get_size_y();
 		int max_x = world_x + obj_width;
 		int max_y = world_y + obj_height;
 		for (int x = world_x; x < max_x; x++) {
@@ -468,8 +470,8 @@ bool World::place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id) {
 			vertices.add(Vertex2f{ glm::vec2(world_x + 1, world_y), uv_ptr[3] }, tile_index + 3);
 		}
 		else if (object_info->objectType == ObjectType::isComplexObject) {
-			float x_size = object_info->get_sizeX();
-			float y_size = object_info->get_sizeY();
+			float x_size = object_info->get_size_x();
+			float y_size = object_info->get_size_y();
 			vertices.add(Vertex2f{ glm::vec2(world_x, world_y), uv_ptr[0] }, tile_index);
 			vertices.add(Vertex2f{ glm::vec2(world_x, world_y + y_size), uv_ptr[1] }, tile_index + 1);
 			vertices.add(Vertex2f{ glm::vec2(world_x + x_size, world_y + y_size), uv_ptr[2] }, tile_index + 2);
@@ -499,8 +501,8 @@ bool World::destroy_tile(uint32_t world_x, uint32_t world_y) {
 
 	ObjectInfo& slot_info = *ObjectsDB::objectInfo[slot->tile_id];
 	if (slot_info.objectType == ObjectType::isComplexObject) {
-		int obj_width = slot_info.get_sizeX();
-		int obj_height = slot_info.get_sizeY();
+		int obj_width = slot_info.get_size_x();
+		int obj_height = slot_info.get_size_y();
 		int max_x = world_x + obj_width;
 		int max_y = world_y + obj_height;
 		uint32_t index;

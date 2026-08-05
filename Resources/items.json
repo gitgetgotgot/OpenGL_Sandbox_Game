@@ -1,0 +1,830 @@
+[
+  {
+    "id": 0,
+    "type": "Base",
+    "sub_type": "None",
+    "name": "Air"
+  },
+  {
+    "id": 1,
+    "type": "Base",
+    "sub_type": "isCompObjPart",
+    "name": "CompObjPart"
+  },
+  {
+    "id": 2,
+    "type": "Block",
+    "sub_type": "isSolidBlock",
+    "name": "Stone",
+    "toughness": 1,
+    "drop_id": 2,
+    "collision": true
+  },
+  {
+    "id": 3,
+    "type": "Block",
+    "sub_type": "isSolidBlock",
+    "name": "Dirt",
+    "toughness": 1,
+    "drop_id": 3,
+    "collision": true
+  },
+  {
+    "id": 4,
+    "type": "Block",
+    "sub_type": "isSolidBlock",
+    "name": "Grass Dirt",
+    "toughness": 1,
+    "drop_id": 4,
+    "collision": true
+  },
+  {
+    "id": 5,
+    "type": "Block",
+    "sub_type": "isSolidBlock",
+    "name": "Sand",
+    "toughness": 1,
+    "drop_id": 5,
+    "collision": true
+  },
+  {
+    "id": 6,
+    "type": "Block",
+    "sub_type": "isWood",
+    "name": "Oak",
+    "toughness": 1,
+    "drop_id": 6,
+    "collision": false
+  },
+  {
+    "id": 7,
+    "type": "Block",
+    "sub_type": "isSolidBlock",
+    "name": "Oak Planks",
+    "toughness": 1,
+    "drop_id": 7,
+    "collision": true
+  },
+  {
+    "id": 8,
+    "type": "Block",
+    "sub_type": "isSolidBlock",
+    "name": "Crimson Stone",
+    "toughness": 1,
+    "drop_id": 8,
+    "collision": true
+  },
+  {
+    "id": 9,
+    "type": "Block",
+    "sub_type": "isSolidBlock",
+    "name": "Corrupted Stone",
+    "toughness": 1,
+    "drop_id": 9,
+    "collision": true
+  },
+  {
+    "id": 10,
+    "type": "Block",
+    "sub_type": "isSolidBlock",
+    "name": "Copper Ore",
+    "toughness": 1,
+    "drop_id": 10,
+    "collision": true
+  },
+  {
+    "id": 11,
+    "type": "Block",
+    "sub_type": "isSolidBlock",
+    "name": "Iron Ore",
+    "toughness": 1,
+    "drop_id": 11,
+    "collision": true
+  },
+  {
+    "id": 12,
+    "type": "Block",
+    "sub_type": "isSolidBlock",
+    "name": "Gold Ore",
+    "toughness": 1,
+    "drop_id": 12,
+    "collision": true
+  },
+  {
+    "id": 13,
+    "type": "Block",
+    "sub_type": "isLiquid",
+    "name": "Water",
+    "toughness": 1,
+    "drop_id": 0,
+    "collision": false
+  },
+  {
+    "id": 14,
+    "type": "Block",
+    "sub_type": "isSolidBlock",
+    "name": "Snow",
+    "toughness": 1,
+    "drop_id": 14,
+    "collision": true
+  },
+  {
+    "id": 15,
+    "type": "Block",
+    "sub_type": "isSolidBlock",
+    "name": "Ice",
+    "toughness": 1,
+    "drop_id": 15,
+    "collision": true
+  },
+  {
+    "id": 16,
+    "type": "Block",
+    "sub_type": "isSolidBlock",
+    "name": "Snow Grass Dirt",
+    "toughness": 1,
+    "drop_id": 16,
+    "collision": true
+  },
+  {
+    "id": 17,
+    "type": "Block",
+    "sub_type": "isSolidBlock",
+    "name": "Crimson Grass Dirt",
+    "toughness": 1,
+    "drop_id": 17,
+    "collision": true
+  },
+  {
+    "id": 18,
+    "type": "Block",
+    "sub_type": "isSolidBlock",
+    "name": "Corrupted Grass Dirt",
+    "toughness": 1,
+    "drop_id": 18,
+    "collision": true
+  },
+  {
+    "id": 19,
+    "type": "Block",
+    "sub_type": "isGrass",
+    "name": "Grass",
+    "toughness": 1,
+    "drop_id": 19,
+    "collision": false
+  },
+  {
+    "id": 20,
+    "type": "Block",
+    "sub_type": "isGrass",
+    "name": "Corrupted Grass",
+    "toughness": 1,
+    "drop_id": 20,
+    "collision": false
+  },
+  {
+    "id": 21,
+    "type": "Block",
+    "sub_type": "isGrass",
+    "name": "Crimson Grass",
+    "toughness": 1,
+    "drop_id": 21,
+    "collision": false
+  },
+  {
+    "id": 22,
+    "type": "Block",
+    "sub_type": "isPlant",
+    "name": "Day Flower",
+    "toughness": 1,
+    "drop_id": 22,
+    "collision": false
+  },
+  {
+    "id": 23,
+    "type": "Block",
+    "sub_type": "isTorch",
+    "name": "Torch",
+    "toughness": 1,
+    "drop_id": 23,
+    "collision": false,
+    "light_id": 1
+  },
+  {
+    "id": 24,
+    "type": "Block",
+    "sub_type": "isTorch",
+    "name": "Torch(L)",
+    "toughness": 1,
+    "drop_id": 23,
+    "collision": false,
+    "light_id": 1
+  },
+  {
+    "id": 25,
+    "type": "Block",
+    "sub_type": "isTorch",
+    "name": "Torch(R)",
+    "toughness": 1,
+    "drop_id": 23,
+    "collision": false,
+    "light_id": 1
+  },
+  {
+    "id": 26,
+    "type": "Block",
+    "sub_type": "isTorch",
+    "name": "Ice Torch",
+    "toughness": 1,
+    "drop_id": 26,
+    "collision": false,
+    "light_id": 2
+  },
+  {
+    "id": 27,
+    "type": "Block",
+    "sub_type": "isTorch",
+    "name": "Ice Torch(L)",
+    "toughness": 1,
+    "drop_id": 26,
+    "collision": false,
+    "light_id": 2
+  },
+  {
+    "id": 28,
+    "type": "Block",
+    "sub_type": "isTorch",
+    "name": "Ice Torch(R)",
+    "toughness": 1,
+    "drop_id": 26,
+    "collision": false,
+    "light_id": 2
+  },
+  {
+    "id": 29,
+    "type": "Block",
+    "sub_type": "isGlass",
+    "name": "Glass",
+    "toughness": 1,
+    "drop_id": 29,
+    "collision": true
+  },
+  {
+    "id": 30,
+    "type": "Block",
+    "sub_type": "isPlatform",
+    "name": "Oak Platform",
+    "toughness": 1,
+    "drop_id": 30,
+    "collision": false,
+    "platform_collision": true
+  },
+  {
+    "id": 31,
+    "type": "Block",
+    "sub_type": "isPlatform",
+    "name": "Oak Platform(L)",
+    "toughness": 1,
+    "drop_id": 30,
+    "collision": false,
+    "platform_collision": true
+  },
+  {
+    "id": 32,
+    "type": "Block",
+    "sub_type": "isPlatform",
+    "name": "Oak Platform(R)",
+    "toughness": 1,
+    "drop_id": 30,
+    "collision": false,
+    "platform_collision": true
+  },
+  {
+    "id": 33,
+    "type": "Block",
+    "sub_type": "isPlant",
+    "name": "Mushroom",
+    "toughness": 1,
+    "drop_id": 33,
+    "collision": false
+  },
+  {
+    "id": 34,
+    "type": "Block",
+    "sub_type": "isPlant",
+    "name": "Glowing Mushroom",
+    "toughness": 1,
+    "drop_id": 34,
+    "collision": false
+  },
+  {
+    "id": 35,
+    "type": "Block",
+    "sub_type": "isSolidBlock",
+    "name": "Hardened Sand",
+    "toughness": 1,
+    "drop_id": 35,
+    "collision": true
+  },
+
+  {
+    "id": 36,
+    "type": "Wall",
+    "name": "Stone Wall",
+    "toughness": 1,
+    "drop_id": 36
+  },
+  {
+    "id": 37,
+    "type": "Wall",
+    "name": "Dirt Wall",
+    "toughness": 1,
+    "drop_id": 37
+  },
+  {
+    "id": 38,
+    "type": "Wall",
+    "name": "Oak Wall",
+    "toughness": 1,
+    "drop_id": 38
+  },
+  {
+    "id": 39,
+    "type": "Wall",
+    "name": "Crimson Wall",
+    "toughness": 1,
+    "drop_id": 39
+  },
+  {
+    "id": 40,
+    "type": "Wall",
+    "name": "Corrupted Wall",
+    "toughness": 1,
+    "drop_id": 40
+  },
+  {
+    "id": 41,
+    "type": "Wall",
+    "name": "Snow Wall",
+    "toughness": 1,
+    "drop_id": 41
+  },
+  {
+    "id": 42,
+    "type": "Wall",
+    "name": "Sand Wall",
+    "toughness": 1,
+    "drop_id": 42
+  },
+
+  {
+    "id": 43,
+    "type": "Complex",
+    "sub_type": 0,
+    "name": "Workbench",
+    "toughness": 1,
+    "drop_id": 43,
+    "width": 2,
+    "height": 1,
+    "platform_collision": true
+  },
+  {
+    "id": 44,
+    "type": "Complex",
+    "sub_type": 1,
+    "name": "Furnace",
+    "toughness": 1,
+    "drop_id": 44,
+    "width": 3,
+    "height": 2
+  },
+  {
+    "id": 45,
+    "type": "Complex",
+    "sub_type": 6,
+    "name": "Anvil",
+    "toughness": 1,
+    "drop_id": 45,
+    "width": 2,
+    "height": 1
+  },
+  {
+    "id": 46,
+    "type": "Complex",
+    "sub_type": 4,
+    "name": "Oak Table",
+    "toughness": 1,
+    "drop_id": 46,
+    "width": 3,
+    "height": 2
+  },
+  {
+    "id": 47,
+    "type": "Complex",
+    "sub_type": 5,
+    "name": "Oak Chair",
+    "toughness": 1,
+    "drop_id": 47,
+    "width": 1,
+    "height": 2
+  },
+  {
+    "id": 48,
+    "type": "Complex",
+    "sub_type": 5,
+    "name": "Oak Chair(R)",
+    "toughness": 1,
+    "drop_id": 48,
+    "width": 1,
+    "height": 2
+  },
+  {
+    "id": 49,
+    "type": "Complex",
+    "sub_type": 2,
+    "name": "Chest",
+    "toughness": 1,
+    "drop_id": 49,
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": 50,
+    "type": "Complex",
+    "sub_type": 2,
+    "name": "ChestOpen",
+    "toughness": 1,
+    "drop_id": 49,
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": 51,
+    "type": "Complex",
+    "sub_type": 9,
+    "name": "Life Crystal",
+    "toughness": 1,
+    "drop_id": 51,
+    "width": 2,
+    "height": 2,
+    "effect_id": 3,
+    "light_id": 4
+  },
+  {
+    "id": 52,
+    "type": "Complex",
+    "sub_type": 3,
+    "name": "Oak Door",
+    "toughness": 1,
+    "drop_id": 52,
+    "width": 2,
+    "height": 3
+  },
+  {
+    "id": 53,
+    "type": "Complex",
+    "sub_type": 3,
+    "name": "Oak Door(R)",
+    "toughness": 1,
+    "drop_id": 52,
+    "width": 2,
+    "height": 3
+  },
+  {
+    "id": 54,
+    "type": "Complex",
+    "sub_type": 3,
+    "name": "Oak Door(C)",
+    "toughness": 1,
+    "drop_id": 52,
+    "width": 1,
+    "height": 3,
+    "collision": true
+  },
+  {
+    "id": 55,
+    "type": "Block",
+    "sub_type": 2,
+    "name": "Oak Tree Top",
+    "toughness": 1,
+    "drop_id": 55
+  },
+  {
+    "id": 56,
+    "type": "Block",
+    "sub_type": 2,
+    "name": "Oak Branch(R)",
+    "toughness": 1,
+    "drop_id": 56
+  },
+  {
+    "id": 57,
+    "type": "Block",
+    "sub_type": 2,
+    "name": "Oak Branch(L)",
+    "toughness": 1,
+    "drop_id": 57
+  },
+
+  {
+    "id": 58,
+    "type": 4,
+    "sub_type": 0,
+    "name": "Copper Pickaxe",
+    "power": 1,
+    "range": 5,
+    "dmg": 1,
+    "speed": 1,
+    "size_x": 1.5,
+    "size_y": 1.5,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3
+  },
+  {
+    "id": 59,
+    "type": 4,
+    "sub_type": 3,
+    "name": "Copper Axe",
+    "power": 1,
+    "range": 5,
+    "dmg": 1,
+    "speed": 1,
+    "size_x": 1.5,
+    "size_y": 1.5,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3
+  },
+  {
+    "id": 60,
+    "type": 3,
+    "sub_type": 2,
+    "name": "Copper Dagger",
+    "dmg": 3,
+    "speed": 1,
+    "size_x": 1.5,
+    "size_y": 1.5,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3
+  },
+  {
+    "id": 61,
+    "type": 3,
+    "sub_type": 1,
+    "name": "Copper Sword",
+    "dmg": 4,
+    "speed": 1,
+    "size_x": 1.5,
+    "size_y": 1.5,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3
+  },
+  {
+    "id": 62,
+    "type": 4,
+    "sub_type": 4,
+    "name": "Copper Hammer",
+    "power": 1,
+    "range": 5,
+    "dmg": 1,
+    "speed": 1,
+    "size_x": 1.5,
+    "size_y": 1.5,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3
+  },
+  {
+    "id": 63,
+    "type": 3,
+    "sub_type": 7,
+    "name": "Copper Bow",
+    "dmg": 3,
+    "speed": 1,
+    "size_x": 1.5,
+    "size_y": 1.5,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3
+  },
+  {
+    "id": 64,
+    "type": 4,
+    "sub_type": 0,
+    "name": "Iron Pickaxe",
+    "power": 1,
+    "range": 5,
+    "dmg": 1,
+    "speed": 1,
+    "size_x": 1.5,
+    "size_y": 1.5,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3
+  },
+  {
+    "id": 65,
+    "type": 4,
+    "sub_type": 3,
+    "name": "Iron Axe",
+    "power": 1,
+    "range": 5,
+    "dmg": 1,
+    "speed": 1,
+    "size_x": 1.5,
+    "size_y": 1.5,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3
+  },
+  {
+    "id": 66,
+    "type": 3,
+    "sub_type": 2,
+    "name": "Iron Dagger",
+    "dmg": 3,
+    "speed": 1,
+    "size_x": 1.5,
+    "size_y": 1.5,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3
+  },
+  {
+    "id": 67,
+    "type": 3,
+    "sub_type": 1,
+    "name": "Iron Sword",
+    "dmg": 4,
+    "speed": 1,
+    "size_x": 1.5,
+    "size_y": 1.5,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3
+  },
+  {
+    "id": 68,
+    "type": 4,
+    "sub_type": 4,
+    "name": "Iron Hammer",
+    "power": 1,
+    "range": 5,
+    "dmg": 1,
+    "speed": 1,
+    "size_x": 1.5,
+    "size_y": 1.5,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3
+  },
+  {
+    "id": 69,
+    "type": 3,
+    "sub_type": 7,
+    "name": "Iron Bow",
+    "dmg": 3,
+    "speed": 1,
+    "size_x": 1.5,
+    "size_y": 1.5,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3
+  },
+  {
+    "id": 70,
+    "type": 4,
+    "sub_type": 0,
+    "name": "Golden Pickaxe",
+    "power": 1,
+    "range": 5,
+    "dmg": 1,
+    "speed": 1,
+    "size_x": 1.5,
+    "size_y": 1.5,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3
+  },
+  {
+    "id": 71,
+    "type": 4,
+    "sub_type": 3,
+    "name": "Golden Axe",
+    "power": 1,
+    "range": 5,
+    "dmg": 1,
+    "speed": 1,
+    "size_x": 1.5,
+    "size_y": 1.5,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3
+  },
+  {
+    "id": 72,
+    "type": 3,
+    "sub_type": 2,
+    "name": "Golden Dagger",
+    "dmg": 3,
+    "speed": 1,
+    "size_x": 1.5,
+    "size_y": 1.5,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3
+  },
+  {
+    "id": 73,
+    "type": 3,
+    "sub_type": 1,
+    "name": "Golden Sword",
+    "dmg": 4,
+    "speed": 1,
+    "size_x": 1.5,
+    "size_y": 1.5,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3
+  },
+  {
+    "id": 74,
+    "type": 4,
+    "sub_type": 4,
+    "name": "Golden Hammer",
+    "power": 1,
+    "range": 5,
+    "dmg": 1,
+    "speed": 1,
+    "size_x": 1.5,
+    "size_y": 1.5,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3
+  },
+  {
+    "id": 75,
+    "type": 3,
+    "sub_type": 7,
+    "name": "Golden Bow",
+    "dmg": 3,
+    "speed": 1,
+    "size_x": 1.5,
+    "size_y": 1.5,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3
+  },
+
+  {
+    "id": 76,
+    "type": 0,
+    "sub_type": 9,
+    "name": "Copper Coin"
+  },
+  {
+    "id": 77,
+    "type": 0,
+    "sub_type": 9,
+    "name": "Silver Coin"
+  },
+  {
+    "id": 78,
+    "type": 0,
+    "sub_type": 9,
+    "name": "Gold Coin"
+  },
+  {
+    "id": 79,
+    "type": 0,
+    "sub_type": 9,
+    "name": "Platinum Coin"
+  },
+  {
+    "id": 80,
+    "type": 0,
+    "sub_type": 8,
+    "name": "Copper Ingot"
+  },
+  {
+    "id": 81,
+    "type": 0,
+    "sub_type": 8,
+    "name": "Iron Ingot"
+  },
+  {
+    "id": 82,
+    "type": 0,
+    "sub_type": 8,
+    "name": "Gold Ingot"
+  },
+  {
+    "id": 83,
+    "type": 0,
+    "sub_type": 8,
+    "name": "Gel"
+  }
+]

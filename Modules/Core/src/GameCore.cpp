@@ -9,6 +9,7 @@
 #include <filesystem>
 #include <thread>
 #include <glm/gtx/string_cast.hpp>
+#include <json/json.hpp>
 
 bool Game::update() {
 	timeMgr.update();
@@ -1059,7 +1060,7 @@ bool Game::update() {
 					else if (inventory_array[active_bar_slot].object.type == isComplexObject) {
 						bool enoughSpace = true;
 						object_id = inventory_array[active_bar_slot].object.id;
-						int width = column + objectInfo[object_id]->get_sizeX(), height = line + objectInfo[object_id]->get_sizeY();
+						int width = column + objectInfo[object_id]->get_size_x(), height = line + objectInfo[object_id]->get_size_y();
 						//check if enough space to put the object
 						for (int i = column; i < width; i++)
 							for (int j = line; j < height; j++) {
@@ -1082,7 +1083,7 @@ bool Game::update() {
 										sprites_Array[i][j].object = GameObject(isCompObjPart, 0, new ComplexObjectPartComponent(column, line));
 								}
 							if (objectInfo[object_id]->emitsLight) {
-								update_lighting(glm::vec2((column + objectInfo[object_id]->get_sizeX() * 0.5f) * BLOCK_VISIBLE_SIZE, (line + objectInfo[object_id]->get_sizeY() * 0.5f) * BLOCK_VISIBLE_SIZE),
+								update_lighting(glm::vec2((column + objectInfo[object_id]->get_size_x() * 0.5f) * BLOCK_VISIBLE_SIZE, (line + objectInfo[object_id]->get_size_y() * 0.5f) * BLOCK_VISIBLE_SIZE),
 									objectInfo[object_id]->light_color, objectInfo[object_id]->light_radius * BLOCK_VISIBLE_SIZE, true);
 							}
 
@@ -1142,13 +1143,13 @@ bool Game::update() {
 							if (player.looks_at_left) {  //open to left
 								if (!sprites_Array[column - 1][line].object.object_type && !sprites_Array[column - 1][line + 1].object.object_type &&
 									!sprites_Array[column - 1][line + 2].object.object_type) {  //if enough space, then can open the door
-									int width = column + objectInfo[object_id]->get_sizeX(), height = line + objectInfo[object_id]->get_sizeY();
+									int width = column + objectInfo[object_id]->get_size_x(), height = line + objectInfo[object_id]->get_size_y();
 									for (int i = column; i < width; i++)
 										for (int j = line; j < height; j++) {
 											sprites_Array[i][j].object = GameObject(None, 0);
 										}
 									column--;
-									width = column + objectInfo[object_id + 1]->get_sizeX(), height = line + objectInfo[object_id + 1]->get_sizeY();
+									width = column + objectInfo[object_id + 1]->get_size_x(), height = line + objectInfo[object_id + 1]->get_size_y();
 									sprites_Array[column][line].object = GameObject(isComplexObject, object_id + 1, new DoorComponent(1));
 									for (int i = column; i < width; i++)
 										for (int j = line; j < height; j++) {
@@ -1160,12 +1161,12 @@ bool Game::update() {
 							else {  //open to right
 								if (!sprites_Array[column + 1][line].object.object_type && !sprites_Array[column + 1][line + 1].object.object_type &&
 									!sprites_Array[column + 1][line + 2].object.object_type) {  //if enough space, then can open the door
-									int width = column + objectInfo[object_id]->get_sizeX(), height = line + objectInfo[object_id]->get_sizeY();
+									int width = column + objectInfo[object_id]->get_size_x(), height = line + objectInfo[object_id]->get_size_y();
 									for (int i = column; i < width; i++)
 										for (int j = line; j < height; j++) {
 											sprites_Array[i][j].object = GameObject(None, 0);;
 										}
-									width = column + objectInfo[object_id + 2]->get_sizeX(), height = line + objectInfo[object_id + 2]->get_sizeY();
+									width = column + objectInfo[object_id + 2]->get_size_x(), height = line + objectInfo[object_id + 2]->get_size_y();
 									sprites_Array[column][line].object = GameObject(isComplexObject, object_id + 2, new DoorComponent(2));
 									for (int i = column; i < width; i++)
 										for (int j = line; j < height; j++) {
@@ -1178,13 +1179,13 @@ bool Game::update() {
 							
 						}
 						else if (door_state == 1) {  //close to right
-							int width = column + objectInfo[object_id]->get_sizeX(), height = line + objectInfo[object_id]->get_sizeY();
+							int width = column + objectInfo[object_id]->get_size_x(), height = line + objectInfo[object_id]->get_size_y();
 							for (int i = column; i < width; i++)
 								for (int j = line; j < height; j++) {
 									sprites_Array[i][j].object = GameObject(None, 0);
 								}
 							column++;
-							width = column + objectInfo[object_id - 1]->get_sizeX(), height = line + objectInfo[object_id - 1]->get_sizeY();
+							width = column + objectInfo[object_id - 1]->get_size_x(), height = line + objectInfo[object_id - 1]->get_size_y();
 							sprites_Array[column][line].object = GameObject(isComplexObject, object_id - 1, new DoorComponent(0));
 							for (int i = column; i < width; i++)
 								for (int j = line; j < height; j++) {
@@ -1193,12 +1194,12 @@ bool Game::update() {
 								}
 						}
 						else {  //close to left
-							int width = column + objectInfo[object_id]->get_sizeX(), height = line + objectInfo[object_id]->get_sizeY();
+							int width = column + objectInfo[object_id]->get_size_x(), height = line + objectInfo[object_id]->get_size_y();
 							for (int i = column; i < width; i++)
 								for (int j = line; j < height; j++) {
 									sprites_Array[i][j].object = GameObject(None, 0);
 								}
-							width = column + objectInfo[object_id - 2]->get_sizeX(), height = line + objectInfo[object_id - 2]->get_sizeY();
+							width = column + objectInfo[object_id - 2]->get_size_x(), height = line + objectInfo[object_id - 2]->get_size_y();
 							sprites_Array[column][line].object = GameObject(isComplexObject, object_id - 2, new DoorComponent(0));
 							for (int i = column; i < width; i++)
 								for (int j = line; j < height; j++) {
@@ -1500,87 +1501,89 @@ void Game::init() {
 	spriteMgr = SpriteManager::get_instance();
 	ObjectsDB::objectInfo.reserve(102);
 
+	load_items_data_JSON();
+
 	//fill simple blocks info
-	/*000*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(ObjectType::None, "Air"));
-	/*001*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(ObjectType::isCompObjPart, "CompObjPart"));
-	/*002*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Stone", isSolidBlock, 1, 2, true, false));
-	/*003*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Dirt", isSolidBlock, 1, 3, true, false));
-	/*004*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Grass Dirt", isSolidBlock, 1, 4, true, false));
-	/*005*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Sand", isSolidBlock, 1, 5, true, false));
-	/*006*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Oak", isWood, 1, 6, false, false));
-	/*007*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Oak Planks", isSolidBlock, 1, 7, true, false));
-	/*008*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Crimson Stone", isSolidBlock, 1, 8, true, false));
-	/*009*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Corrupted Stone", isSolidBlock, 1, 9, true, false));
-	/*010*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Copper Ore", isSolidBlock, 1, 10, true, false));
-	/*011*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Iron Ore", isSolidBlock, 1, 11, true, false));
-	/*012*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Gold Ore", isSolidBlock, 1, 12, true, false));
-	/*013*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Water", isLiquid, 1, 13, false, false));
-	/*014*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Snow", isSolidBlock, 1, 14, true, false));
-	/*015*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Ice", isSolidBlock, 1, 15, true, false));
-	/*016*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Snow Grass Dirt", isSolidBlock, 1, 16, true, false));
-	/*017*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Crimson Grass Dirt", isSolidBlock, 1, 17, true, false));
-	/*018*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Corrupted Grass Dirt", isSolidBlock, 1, 18, true, false));
-	/*019*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Grass", isGrass, 1, 19, false, false));
-	/*020*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Corrupted Grass", isGrass, 1, 20, false, false));
-	/*021*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Crimson Grass", isGrass, 1, 21, false, false));
-	/*022*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Day Flower", isFlower, 1, 22, false, false));
-	/*023*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Torch", isTorch, 1, 23, false, false, 0, 1));
-	/*024*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Torch(l)", isTorch, 1, 23, false, false, 0, 1));
-	/*025*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Torch(r)", isTorch, 1, 23, false, false, 0, 1));
-	/*026*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Ice Torch", isTorch, 1, 26, false, false, 0, 2));
-	/*027*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Ice Torch(l)", isTorch, 1, 26, false, false, 0, 2));
-	/*028*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Ice Torch(r)", isTorch, 1, 26, false, false, 0, 2));
-	/*029*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Oak Platform", isPlatform, 1.f, 29, false, true));
-	/*030*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Oak Platform(l)", isPlatform, 1.f, 29, false, true));
-	/*031*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Oak Platform(r)", isPlatform, 1.f, 29, false, true));
-	/*032*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Oak Top", isTreeTop, 1, 6, false, false));
+	/*000*/ //ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(ObjectType::None, "Air"));
+	/*001*/ //ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(ObjectType::isCompObjPart, "CompObjPart"));
+	/*002*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Stone", isSolidBlock, 1, 2, true, false));
+	/*003*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Dirt", isSolidBlock, 1, 3, true, false));
+	/*004*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Grass Dirt", isSolidBlock, 1, 4, true, false));
+	/*005*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Sand", isSolidBlock, 1, 5, true, false));
+	/*006*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Oak", isWood, 1, 6, false, false));
+	/*007*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Oak Planks", isSolidBlock, 1, 7, true, false));
+	/*008*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Crimson Stone", isSolidBlock, 1, 8, true, false));
+	/*009*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Corrupted Stone", isSolidBlock, 1, 9, true, false));
+	/*010*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Copper Ore", isSolidBlock, 1, 10, true, false));
+	/*011*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Iron Ore", isSolidBlock, 1, 11, true, false));
+	/*012*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Gold Ore", isSolidBlock, 1, 12, true, false));
+	/*013*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Water", isLiquid, 1, 13, false, false));
+	/*014*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Snow", isSolidBlock, 1, 14, true, false));
+	/*015*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Ice", isSolidBlock, 1, 15, true, false));
+	/*016*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Snow Grass Dirt", isSolidBlock, 1, 16, true, false));
+	/*017*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Crimson Grass Dirt", isSolidBlock, 1, 17, true, false));
+	/*018*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Corrupted Grass Dirt", isSolidBlock, 1, 18, true, false));
+	/*019*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Grass", isGrass, 1, 19, false, false));
+	/*020*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Corrupted Grass", isGrass, 1, 20, false, false));
+	/*021*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Crimson Grass", isGrass, 1, 21, false, false));
+	/*022*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Day Flower", isPlant, 1, 22, false, false));
+	/*023*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Torch", isTorch, 1, 23, false, false, 0, 1));
+	/*024*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Torch(l)", isTorch, 1, 23, false, false, 0, 1));
+	/*025*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Torch(r)", isTorch, 1, 23, false, false, 0, 1));
+	/*026*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Ice Torch", isTorch, 1, 26, false, false, 0, 2));
+	/*027*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Ice Torch(l)", isTorch, 1, 26, false, false, 0, 2));
+	/*028*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Ice Torch(r)", isTorch, 1, 26, false, false, 0, 2));
+	/*029*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Oak Platform", isPlatform, 1.f, 29, false, true));
+	/*030*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Oak Platform(l)", isPlatform, 1.f, 29, false, true));
+	/*031*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Oak Platform(r)", isPlatform, 1.f, 29, false, true));
+	/*032*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Oak Top", isTreeTop, 1, 6, false, false));
 	//fill walls info
-	/*033*/ ADD_OBJECT_INFO(std::make_unique<WallInfo>("Stone Wall", 1.0f, 33));
-	/*034*/ ADD_OBJECT_INFO(std::make_unique<WallInfo>("Dirt Wall", 1.0f, 34));
-	/*035*/ ADD_OBJECT_INFO(std::make_unique<WallInfo>("Oak Wall", 1.0f, 35));
-	/*036*/ ADD_OBJECT_INFO(std::make_unique<WallInfo>("Crimson Wall", 1.0f, 36));
-	/*037*/ ADD_OBJECT_INFO(std::make_unique<WallInfo>("Corrupted Wall", 1.0f, 37));
-	/*038*/ ADD_OBJECT_INFO(std::make_unique<WallInfo>("Snow Wall", 1.0f, 38));
+	/*033*/ //ADD_OBJECT_INFO(std::make_unique<WallInfo>("Stone Wall", 1.0f, 33));
+	/*034*/ //ADD_OBJECT_INFO(std::make_unique<WallInfo>("Dirt Wall", 1.0f, 34));
+	/*035*/ //ADD_OBJECT_INFO(std::make_unique<WallInfo>("Oak Wall", 1.0f, 35));
+	/*036*/ //ADD_OBJECT_INFO(std::make_unique<WallInfo>("Crimson Wall", 1.0f, 36));
+	/*037*/ //ADD_OBJECT_INFO(std::make_unique<WallInfo>("Corrupted Wall", 1.0f, 37));
+	/*038*/ //ADD_OBJECT_INFO(std::make_unique<WallInfo>("Snow Wall", 1.0f, 38));
 	//fill complex objects info
-	/*039*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Workbench", isWorkbench, 1, 38, 2, 1, false, true));
-	/*040*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Furnace", isFurnace, 1, 39, 3, 2, false, false, 0, 3));
-	/*041*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Anvil", isAnvil, 1, 40, 2, 1, false, false));
-	/*042*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Oak Table", isTable, 1, 41, 3, 2, false, false));
-	/*043*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Oak Chair", isChair, 1, 42, 1, 2, false, false)); //points to the left side
-	/*044*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Oak Chair", isChair, 1, 42, 1, 2, false, false)); //points to the right side
-	/*045*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Oak Door", isDoor, 1, 44, 1, 3, true, false)); //closed
-	/*046*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Oak Door", isDoor, 1, 44, 2, 3, false, false)); //opened to the left side
-	/*047*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Oak Door", isDoor, 1, 44, 2, 3, false, false)); //opened to the right side
-	/*048*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Chest", isChest, 1, 47, 2, 2, false, false));
+	/*039*/ //ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Workbench", isWorkbench, 1, 38, 2, 1, false, true));
+	/*040*/ //ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Furnace", isFurnace, 1, 39, 3, 2, false, false, 0, 3));
+	/*041*/ //ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Anvil", isAnvil, 1, 40, 2, 1, false, false));
+	/*042*/ //ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Oak Table", isTable, 1, 41, 3, 2, false, false));
+	/*043*/ //ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Oak Chair", isChair, 1, 42, 1, 2, false, false)); //points to the left side
+	/*044*/ //ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Oak Chair", isChair, 1, 42, 1, 2, false, false)); //points to the right side
+	/*045*/ //ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Oak Door", isDoor, 1, 44, 1, 3, true, false)); //closed
+	/*046*/ //ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Oak Door", isDoor, 1, 44, 2, 3, false, false)); //opened to the left side
+	/*047*/ //ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Oak Door", isDoor, 1, 44, 2, 3, false, false)); //opened to the right side
+	/*048*/ //ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Chest", isChest, 1, 47, 2, 2, false, false));
 	//fill weapons info
-	/*049*/ ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Copper Pickaxe", isPickaxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
-	/*050*/ ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Copper Axe", isAxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
-	/*051*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Copper Dagger", isDagger, 3, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
-	/*052*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Copper Sword", isSword, 4, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
-	/*053*/ ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Copper Hammer", isHammer, 1.f, 2, 0.5f, 1.f, 0.f, -1, 2.f, 2.f, 5.f, false, 3));
-	/*054*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Copper Bow", isBow, 3, 0.f, 15.f, 1.f, -1, 1.5f, 1.5f, 5.f, false, 0));
-	/*055*/ ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Iron Pickaxe", isPickaxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
-	/*056*/ ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Iron Axe", isAxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
-	/*057*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Iron Dagger", isDagger, 3, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
-	/*058*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Iron Sword", isSword, 4, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
-	/*059*/ ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Iron Hammer", isHammer, 1.f, 2, 0.5f, 1.f, 0.f, -1, 2.f, 2.f, 5.f, false, 3));
-	/*060*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Iron Bow", isBow, 3, 0.f, 15.f, 1.f, -1, 1.5f, 1.5f, 5.f, false, 0));
-	/*061*/ ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Golden Pickaxe", isPickaxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
-	/*062*/ ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Golden Axe", isAxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
-	/*063*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Golden Dagger", isDagger, 3, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
-	/*064*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Golden Sword", isSword, 4, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
-	/*065*/ ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Golden Hammer", isHammer, 1.f, 2, 0.5f, 1.f, 0.f, -1, 2.f, 2.f, 5.f, false, 3));
-	/*066*/ ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Golden Bow", isBow, 3, 0.f, 30.f, 0.25f, -1, 1.5f, 1.5f, 5.f, false, 0));
+	/*049*/ //ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Copper Pickaxe", isPickaxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*050*/ //ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Copper Axe", isAxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*051*/ //ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Copper Dagger", isDagger, 3, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*052*/ //ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Copper Sword", isSword, 4, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*053*/ //ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Copper Hammer", isHammer, 1.f, 2, 0.5f, 1.f, 0.f, -1, 2.f, 2.f, 5.f, false, 3));
+	/*054*/ //ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Copper Bow", isBow, 3, 0.f, 15.f, 1.f, -1, 1.5f, 1.5f, 5.f, false, 0));
+	/*055*/ //ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Iron Pickaxe", isPickaxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*056*/ //ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Iron Axe", isAxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*057*/ //ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Iron Dagger", isDagger, 3, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*058*/ //ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Iron Sword", isSword, 4, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*059*/ //ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Iron Hammer", isHammer, 1.f, 2, 0.5f, 1.f, 0.f, -1, 2.f, 2.f, 5.f, false, 3));
+	/*060*/ //ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Iron Bow", isBow, 3, 0.f, 15.f, 1.f, -1, 1.5f, 1.5f, 5.f, false, 0));
+	/*061*/ //ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Golden Pickaxe", isPickaxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*062*/ //ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Golden Axe", isAxe, 1.f, 1, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*063*/ //ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Golden Dagger", isDagger, 3, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*064*/ //ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Golden Sword", isSword, 4, 0.5f, 1.f, 0.f, -1, 1.5f, 1.5f, 5.f, false, 3));
+	/*065*/ //ADD_OBJECT_INFO(std::make_unique<InstrumentalWeaponInfo>("Golden Hammer", isHammer, 1.f, 2, 0.5f, 1.f, 0.f, -1, 2.f, 2.f, 5.f, false, 3));
+	/*066*/ //ADD_OBJECT_INFO(std::make_unique<WeaponInfo>("Golden Bow", isBow, 3, 0.f, 30.f, 0.25f, -1, 1.5f, 1.5f, 5.f, false, 0));
 	//fill coin info
-	/*067*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isCoin, "Copper Coin"));
-	/*068*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isCoin, "Silver Coin"));
-	/*069*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isCoin, "Gold Coin"));
-	/*070*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isCoin, "Platinum Coin"));
+	/*067*/ //ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isCoin, "Copper Coin"));
+	/*068*/ //ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isCoin, "Silver Coin"));
+	/*069*/ //ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isCoin, "Gold Coin"));
+	/*070*/ //ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isCoin, "Platinum Coin"));
 	//fill materials info
-	/*071*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isMaterial, "Copper Ingot"));
-	/*072*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isMaterial, "Iron Ingot"));
-	/*073*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isMaterial, "Gold Ingot"));
-	/*074*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isMaterial, "Gel"));
+	/*071*/ //ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isMaterial, "Copper Ingot"));
+	/*072*/ //ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isMaterial, "Iron Ingot"));
+	/*073*/ //ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isMaterial, "Gold Ingot"));
+	/*074*/ //ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isMaterial, "Gel"));
 	//fill ammo info
 	/*075*/ ADD_OBJECT_INFO(std::make_unique<AmmoInfo>("Wooden Arrow", isArrow, 5, 1.5f, 1.5f, 0));
 	/*076*/ ADD_OBJECT_INFO(std::make_unique<AmmoInfo>("Flaming Arrow", isArrow, 7, 1.5f, 1.5f, 1, 1, 5));
@@ -1589,9 +1592,9 @@ void Game::init() {
 	/*079*/ ADD_OBJECT_INFO(std::make_unique<AmmoInfo>("Unholy Arrow", isArrow, 14, 1.5f, 1.5f, 4, 0, 8));
 	/*080*/ ADD_OBJECT_INFO(std::make_unique<AmmoInfo>("Hellfire Arrow", isArrow, 16, 1.5f, 1.5f, 5, 0, 9));
 
-	/*081*/ ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Life Crystal", isLyfeCrystal, 1, 80, 2, 2, false, false, 3, 4));
-	/*082*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Glass", isGlass, 0, 81, true, false));
-	/*083*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Mushroom", isFlower, 0, 82, false, false));
+	/*081*/ //ADD_OBJECT_INFO(std::make_unique<ComplexObjectInfo>("Life Crystal", isLyfeCrystal, 1, 80, 2, 2, false, false, 3, 4));
+	/*082*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Glass", isGlass, 0, 81, true, false));
+	/*083*/ //ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Mushroom", isPlant, 0, 82, false, false));
 	/*084*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Bottle", isBottle, 0, 83, false, false));
 	/*085*/ ADD_OBJECT_INFO(std::make_unique<BlockInfo>("Bottle of water", isBottle, 0, 84, false, false));
 	/*086*/ ADD_OBJECT_INFO(std::make_unique<ObjectInfo>(isMaterial, "Lens"));
@@ -1673,6 +1676,14 @@ void Game::init() {
 	spriteMgr->add_sprite(pixel_UV_size * 28.f, 0.f, pixel_UV_size * 4.f, pixel_UV_size * 4.f); //right bottom
 	spriteMgr->add_sprite(pixel_UV_size * 28.f, pixel_UV_size * 4.f, pixel_UV_size * 4.f, pixel_UV_size * 12.f); //right center
 	spriteMgr->add_sprite(pixel_UV_size * 28.f, pixel_UV_size * 16.f, pixel_UV_size * 4.f, pixel_UV_size * 4.f); //right top
+	//Heart sprites
+	spriteMgr->add_sprite(block_UV_size * 14.f, 0.f, block_UV_size * 2.f, block_UV_size * 2.f); //full heart
+	spriteMgr->add_sprite(block_UV_size * 16.f, 0.f, block_UV_size * 2.f, block_UV_size * 2.f); //half heart
+	spriteMgr->add_sprite(block_UV_size * 18.f, 0.f, block_UV_size * 2.f, block_UV_size * 2.f); //empty heart
+	//Mana sprites
+	spriteMgr->add_sprite(block_UV_size * 20.f, 0.f, block_UV_size * 2.f, block_UV_size * 2.f); //full star
+	spriteMgr->add_sprite(block_UV_size * 22.f, 0.f, block_UV_size * 2.f, block_UV_size * 2.f); //half star
+	spriteMgr->add_sprite(block_UV_size * 24.f, 0.f, block_UV_size * 2.f, block_UV_size * 2.f); //empty star
 
 	//blocks
 	for (int i = 0; i < 30; i++) {
@@ -1803,22 +1814,6 @@ void Game::init() {
 	spriteMgr->add_sprite(0.f, 3.f * block_UV_size, block_UV_size * 16.f, block_UV_size * 9.f);
 	ambientController.sprites[4] = spriteMgr->get_last_index();
 	*/
-
-	//craftable items info
-	craftable_items[0] = CraftableItem(38, 1, Nothing, std::vector<CraftingPair>{CraftingPair{ 6, 15 }}); //workbench
-	craftable_items[1] = CraftableItem(28, 2, Nothing, std::vector<CraftingPair>{CraftingPair{ 6, 1 }}); //2 oak platforms
-	craftable_items[2] = CraftableItem(22, 3, Nothing, std::vector<CraftingPair>{CraftingPair{ 6, 1 }, CraftingPair{ 73, 1 }}); //3 torches
-	craftable_items[3] = CraftableItem(25, 3, Nothing, std::vector<CraftingPair>{CraftingPair{ 14, 1 }, CraftingPair{ 22, 3 }}); //3 ice torches
-	craftable_items[4] = CraftableItem(39, 1, Workbench, std::vector<CraftingPair>{CraftingPair{ 1, 20 }, CraftingPair{ 22, 3 }, CraftingPair{ 6, 4 }}); //furnace
-	craftable_items[5] = CraftableItem(40, 1, Workbench, std::vector<CraftingPair>{CraftingPair{ 71, 5 }}); //anvil
-
-	craftable_items[6] = CraftableItem(70, 1, Furnace, std::vector<CraftingPair>{CraftingPair{ 9, 3 }}); //copper ingot
-	craftable_items[7] = CraftableItem(71, 1, Furnace, std::vector<CraftingPair>{CraftingPair{ 10, 3 }}); //iron ingot
-	craftable_items[8] = CraftableItem(72, 1, Furnace, std::vector<CraftingPair>{CraftingPair{ 11, 4 }}); //gold ingot
-
-	craftable_items[9] = CraftableItem(74, 25, Workbench, std::vector<CraftingPair>{CraftingPair{ 6, 1 }, CraftingPair{ 1, 1 }}); //wooden arrow
-	craftable_items[10] = CraftableItem(75, 10, Nothing, std::vector<CraftingPair>{CraftingPair{ 74, 10 }, CraftingPair{22, 1}}); //flaming arrow
-	craftable_items[11] = CraftableItem(76, 10, Nothing, std::vector<CraftingPair>{CraftingPair{ 74, 10 }, CraftingPair{25, 1}}); //frostburn arrow
 
 	//player info
 	//standing pos
@@ -1982,6 +1977,23 @@ void Game::init() {
 	spriteMgr->add_sprite(15.f * block_UV_size, 1.0 - block_UV_size * 6 - block_UV_size, block_UV_size, block_UV_size);
 	particlesMgr->add_particle_info((uint32_t)spriteMgr->get_last_index(), 13); //frostburn light
 
+	//Crafting info
+	craft_sys = CraftingSystem::get_instance();
+	craft_sys->add(39, 1, CraftCondition::c_NOTHING, std::vector<CraftingPair>{CraftingPair{ 7, 15 }}); //workbench
+	craft_sys->add(29, 2, CraftCondition::c_NOTHING, std::vector<CraftingPair>{CraftingPair{ 7, 1 }}); //2 oak platforms
+	craft_sys->add(23, 3, CraftCondition::c_NOTHING, std::vector<CraftingPair>{CraftingPair{ 7, 1 }, CraftingPair{ 74, 1 }}); //3 torches
+	craft_sys->add(26, 3, CraftCondition::c_NOTHING, std::vector<CraftingPair>{CraftingPair{ 15, 1 }, CraftingPair{ 23, 3 }}); //3 ice torches
+	craft_sys->add(40, 1, CraftCondition::c_WORKBENCH, std::vector<CraftingPair>{CraftingPair{ 2, 20 }, CraftingPair{ 23, 3 }, CraftingPair{ 7, 4 }}); //furnace
+	craft_sys->add(41, 1, CraftCondition::c_WORKBENCH, std::vector<CraftingPair>{CraftingPair{ 72, 5 }}); //anvil
+	
+	craft_sys->add(71, 1, CraftCondition::c_FURNACE, std::vector<CraftingPair>{CraftingPair{ 10, 3 }}); //copper ingot
+	craft_sys->add(72, 1, CraftCondition::c_FURNACE, std::vector<CraftingPair>{CraftingPair{ 11, 3 }}); //iron ingot
+	craft_sys->add(73, 1, CraftCondition::c_FURNACE, std::vector<CraftingPair>{CraftingPair{ 12, 4 }}); //gold ingot
+	
+	craft_sys->add(75, 25, CraftCondition::c_WORKBENCH, std::vector<CraftingPair>{CraftingPair{ 7, 1 }, CraftingPair{ 2, 1 }}); //wooden arrow
+	craft_sys->add(76, 10, CraftCondition::c_NOTHING, std::vector<CraftingPair>{CraftingPair{ 75, 10 }, CraftingPair{ 23, 1 }}); //flaming arrow
+	craft_sys->add(77, 10, CraftCondition::c_NOTHING, std::vector<CraftingPair>{CraftingPair{ 75, 10 }, CraftingPair{ 26, 1 }}); //frostburn arrow
+
 	//reserve memory for objects
 	
 	dropped_items.reserve(1000);
@@ -1998,6 +2010,11 @@ void Game::init() {
 	}
 	uint16_t amount = 1;
 	player.inventory.place_item(49, amount); //copper pickaxe
+	player.inventory.place_item(74, amount); //gel
+
+	player.inventory.update_crafts();
+	player.inventory.update_dynamic_craft_slots_items();
+	player.inventory.current_player_flags = (uint32_t)CraftCondition::c_WORKBENCH;
 
 	world = std::make_unique<World>();
 	world->init(&player);
@@ -2005,6 +2022,8 @@ void Game::init() {
 	ui_renderer = UI_Renderer::get_instance();
 	ui_renderer->init(&player);
 	ui_renderer->init_basic_inventory_slots_data();
+	ui_renderer->init_icons_base_vertices();
+	ui_renderer->update_items();
 
 	//audio manager
 
@@ -2024,6 +2043,11 @@ void Game::main_loop() {
 
 		input_end_frame();
 	}
+}
+
+void Game::uninit() {
+	glfwDestroyWindow(window);
+	glfwTerminate();
 }
 
 void Game::init_open_gl() {
@@ -2053,7 +2077,59 @@ void Game::init_input() {
 	InputHandler::setGLFWwindowCallbacks(window);
 }
 
-void Game::uninit() {
-	glfwDestroyWindow(window);
-	glfwTerminate();
+void Game::load_items_data_JSON() {
+	std::ifstream items_file("Resources/items.json");
+	nlohmann::json json;
+	items_file >> json;
+	
+	for (auto& item : json) {
+		uint32_t id = item["id"];
+		std::string name = item["name"];
+		uint32_t type_id = item["type"];
+		uint32_t sub_type_id = item["sub_type"];
+		switch (type_id) {
+		case 0: //Base Object
+			ObjectsDB::objectInfo[id] = std::make_unique<ObjectInfo>((ObjectType)sub_type_id, name);
+			break;
+		case 1: //Block
+			float toughness = item["toughness"]; uint16_t drop_id = item["drop_id"];
+			bool collision = false, platform_collision = false;
+			uint32_t effect_id = 0, light_id = 0;
+			if (item.contains("collision")) collision = item["collision"];
+			if (item.contains("platform_collision")) platform_collision = item["platform_collision"];
+			if (item.contains("effect_id")) effect_id = item["effect_id"];
+			if (item.contains("light_id")) light_id = item["light_id"];
+			ObjectsDB::objectInfo[id] = std::make_unique<BlockInfo>(
+				name, (BlockType)sub_type_id, toughness, drop_id, collision, platform_collision, effect_id, light_id);
+			break;
+		case 2: //Complex
+			float toughness = item["toughness"]; uint16_t drop_id = item["drop_id"];
+			float width_blocks = item["width"], height_blocks = item["height"];
+			bool collision = false, platform_collision = false;
+			uint32_t effect_id = 0, light_id = 0;
+			if (item.contains("collision")) collision = item["collision"];
+			if (item.contains("platform_collision")) platform_collision = item["platform_collision"];
+			if (item.contains("effect_id")) effect_id = item["effect_id"];
+			if (item.contains("light_id")) light_id = item["light_id"];
+			ObjectsDB::objectInfo[id] = std::make_unique<ComplexObjectInfo>(
+				name, (ComplexObjectType)sub_type_id, toughness, drop_id, width_blocks, height_blocks, collision, platform_collision, effect_id, light_id);
+			break;
+		case 3: //Weapon
+
+			break;
+		case 4: //Instrumental Weapon
+
+			break;
+		case 5: //Magical Weapon
+
+			break;
+		case 6: //Ammo
+
+			break;
+		case 7: //Wall
+			float toughness = item["toughness"]; uint16_t drop_id = item["drop_id"];
+			ObjectsDB::objectInfo[id] = std::make_unique<WallInfo>(name, toughness, drop_id);
+			break;
+		}
+	}
 }
