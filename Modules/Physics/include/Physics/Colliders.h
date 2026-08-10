@@ -17,7 +17,14 @@ struct Collider_2D_OBB {
 	void update_transform();
 };
 
-enum CollisionType : uint8_t { NONE, LEFT, RIGHT, TOP, BOTTOM, CORNER };
+enum CollisionType : uint8_t {
+	NONE	= 0,
+	LEFT	= 1 << 0,
+	RIGHT	= 1 << 1,
+	TOP		= 1 << 2,
+	BOTTOM	= 1 << 3,
+	CORNER	= 1 << 4
+};
 
 namespace Collisions {
 

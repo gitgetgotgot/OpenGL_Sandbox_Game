@@ -3,6 +3,14 @@
 #include <glm/glm.hpp>
 
 namespace GameMath {
+	inline bool mouse_intersection(glm::vec2 left_bottom_pos, glm::vec2 size, glm::vec2 mouse_pos) {
+		glm::vec2 right_top_pos = left_bottom_pos + size;
+		return
+			mouse_pos.x > left_bottom_pos.x &&
+			mouse_pos.x < right_top_pos.x &&
+			mouse_pos.y > left_bottom_pos.y &&
+			mouse_pos.y < right_top_pos.y;
+	}
 	//translation with pivot (0, 0)
 	inline glm::mat4 build_2D_TRS(const glm::vec2& center, const glm::vec2& size, const float& rotation_angle) {
 		glm::mat4 mat(1.f);

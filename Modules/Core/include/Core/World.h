@@ -5,6 +5,11 @@
 #include <unordered_map>
 
 struct Vertex2f {
+	Vertex2f() {}
+	Vertex2f(float pX, float pY, float UVx, float UVy) {
+		pos.x = pX; pos.y = pY;
+		UV.x = UVx; UV.y = UVy;
+	}
 	glm::vec2 pos;
 	glm::vec2 UV;
 };

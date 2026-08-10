@@ -12,12 +12,7 @@ public:
 		this->effect_comp_id = effect_comp_id;
 		this->light_comp_id = light_comp_id;
 	}
-	int get_ammo_item_id() const override { return ammo_item_id; }
-	uint32_t* get_sprites_ids() override { return &sprite_id; }
-	int get_dmg() const override { return DMG; }
-	int get_proj_max_enemy_hits() const override { return max_enemy_hits; }
-	bool proj_uses_gravity() const override { return affected_by_gravity; }
-private:
+
 	ProjectileType type;
 	int ammo_item_id; //if projectile can be an item
 	int DMG;
@@ -32,12 +27,12 @@ public:
 	GravityProjectile(int entity_id, float speedX, float speedY, float flying_angle, float center_x, float center_y, glm::vec2 spriteSize, int DMG, int max_enemy_hits, bool isCrit, float spriteAdjustmentAngle) :
 		EntityBase(entity_id), speedX{ speedX }, speedY{ speedY }, flying_angle{ flying_angle }, DMG{ DMG }, isCrit{ isCrit }, max_enemy_hits_available{ max_enemy_hits }, sprite_adjustment_angle{ spriteAdjustmentAngle } {
 		hitbox.center = { center_x, center_y };
-		sprite_center_point = hitbox.center;
-		this->sprite_size = spriteSize;
+		//sprite_center_point = hitbox.center;
+		//this->sprite_size = spriteSize;
 		if (spriteAdjustmentAngle > 0.f) Yadjustment = 0.2f;
 		else Yadjustment = 0.8f;
 	}
-	void update_entity(float deltaTime) override {
+	void update_entity(float deltaTime) {
 		/*
 		float dx, dy;
 		//calculate dX
@@ -63,10 +58,7 @@ public:
 		hitbox.center = sprite_center_point;
 		*/
 	}
-	void update_model() override {}
-	int get_proj_dmg() const override { return DMG; }
-	bool dmg_is_crit() const override { return isCrit; }
-	bool update_proj_hits_counter() override {
+	bool update_proj_hits_counter() {
 		max_enemy_hits_available--;
 		if (max_enemy_hits_available == 0) return false;
 		return true;
@@ -80,43 +72,4 @@ private:
 	int max_enemy_hits_available;
 	float sprite_adjustment_angle;
 	float Yadjustment;
-};
-
-class LinearProjectile : public EntityBase {
-public:
-	LinearProjectile(int entity_id, float speedX, float speedY, float flying_angle, float center_x, float center_y, glm::vec2 spriteSize, int DMG, int max_enemy_hits, bool isCrit) :
-		EntityBase(entity_id), speedX{ speedX }, speedY{ speedY }, flying_angle{ flying_angle }, DMG{ DMG }, isCrit{ isCrit }, max_enemy_hits_available{ max_enemy_hits } {
-		hitbox.center = { center_x, center_y };
-		sprite_center_point = hitbox.center;
-		this->sprite_size = spriteSize;
-	}
-	void update_entity(float deltaTime) override {
-		/*
-		//sprite
-		hitbox.center.x += speedX * deltaTime;
-		hitbox.center.y += speedY * deltaTime;
-		sprite_center_point = hitbox.center;
-		matModel = glm::mat4(1.f);
-		matModel = glm::translate(matModel, glm::vec3(hitbox.center.x, hitbox.center.y, 0.f));
-		matModel = glm::rotate(matModel, flying_angle, glm::vec3(0.f, 0.f, 1.f));
-		matModel = glm::translate(matModel, glm::vec3(-block_size * sprite_size.x / 2, -block_size * sprite_size.y / 2, 0.f));
-		matModel = glm::scale(matModel, glm::vec3(block_size * sprite_size.x, block_size * sprite_size.y, 0.f));
-		//hitbox
-		hitbox.size = { block_size * sprite_size.x * 0.3f, block_size * sprite_size.x * 0.3f };
-		*/
-	}
-	void update_model() override {}
-	int get_proj_dmg() const override { return DMG; }
-	bool dmg_is_crit() const override { return isCrit; }
-	bool update_proj_hits_counter() override {
-		max_enemy_hits_available--;
-		if (max_enemy_hits_available == 0) return false;
-		return true;
-	}
-private:
-	float speedX, speedY;
-	float flying_angle;
-	int DMG;
-	bool isCrit;
-	int max_enemy_hits_available;
 };

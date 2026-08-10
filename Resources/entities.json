@@ -1,0 +1,28 @@
+[
+  {
+    "id": 0,
+    "name": "Slime",
+    "type": 0,
+    "mob_type": 0,
+    "enemy_type": 0,
+    "move_type": 0,
+    "HP": 20.0,
+    "DEF": 0.0,
+    "DMG": 5.0,
+    "speed_x": 2.0,
+    "speed_y": 5.0,
+    "sprite_w": 2.0,
+    "sprite_h": 2.0,
+    "hitbox_w": 2.0,
+    "hitbox_h": 2.0,
+    "drop": [
+      {
+        "item_id": 2,
+        "chance": 50.0,
+        "min": 2,
+        "max": 2
+      }
+    ],
+    "animator_id": 0
+  }
+]

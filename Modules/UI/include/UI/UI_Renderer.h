@@ -12,7 +12,16 @@ constexpr uint32_t MAX_TOOLTIP_TEXT_SIZE = 500;
 struct UI_Vertex2f {
 	UI_Vertex2f() {}
 	UI_Vertex2f(glm::vec2 pos, glm::vec2 UV) : pos{ pos }, UV{ UV } {}
+	UI_Vertex2f(float pX, float pY, float UVx, float UVy) {
+		pos.x = pX; pos.y = pY;
+		UV.x = UVx; UV.y = UVy;
+	}
 	UI_Vertex2f(glm::vec2 pos, glm::vec2 UV, glm::vec4 color) : pos{ pos }, UV{ UV }, color{ color } {}
+	UI_Vertex2f(float pX, float pY, float UVx, float UVy, glm::vec4 color) {
+		pos.x = pX; pos.y = pY;
+		UV.x = UVx; UV.y = UVy;
+		this->color = color;
+	}
 	glm::vec2 pos{ 0.0f };
 	glm::vec2 UV{ 0.0f };
 	glm::vec4 color{ 1.0f };
@@ -41,7 +50,12 @@ public:
 	void update_cursor_item();
 	void update_hotbar_active_slot();
 	//adds new text to buffer, returns length of added text based on height parameter
-	float place_text_to_buffer(std::vector<UI_Vertex2f>& buffer, const char* text, uint32_t text_size, glm::vec2 left_bottom_pos, float height, glm::vec4 color);
+	float place_text_to_buffer(
+		std::vector<UI_Vertex2f>& buffer,
+		const char* text, uint32_t text_size,
+		float lb_x, float lb_y, float height,
+		glm::vec4 color = glm::vec4(1.0f)
+	);
 	void adjust_tooltip_text_pos(float dX, float dY);
 	void update_items();
 	void update_craft_slots();

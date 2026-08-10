@@ -23,7 +23,11 @@ public:
 	//init
 	void init_open_gl();
 	void init_input();
+	void load_sprites_JSON();
 	void load_items_data_JSON();
+	void load_entities_data_JSON();
+	void load_animations_data_JSON();
+
 	/*void init_inventory_buffer();
 	void init_audio();
 	//inventory
@@ -38,7 +42,7 @@ public:
 	void update_effect_info_box(Effects::Effect& effect);
 	void use_item_with_effect(int inventory_slot);
 	void apply_player_effect(Effects::Effect effect);
-	void apply_entity_effect(Effects::Effect effect, EntityStats& stats);
+	void apply_entity_effect(Effects::Effect effect, MobStats& stats);
 	//weapons
 	void activate_weapon(WeaponType type);
 	bool shoot_arrow(int weapon_id);

@@ -261,40 +261,40 @@ void UI_Renderer::init_basic_inventory_slots_data() {
 	float Ypos = 0.83f;
 	float slot_size = 0.1f;
 	float border_width, border_height;
-	glm::vec2* uv_ptr = spriteMgr->get_sprite(1).UV;
+	Sprite* sprite = &spriteMgr->get_sprite(1);
 
 	auto add_slot_to_buffer = [&]() {
-		basic_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos, Ypos), uv_ptr[0] });
-		basic_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos, Ypos + slot_size), uv_ptr[1] });
-		basic_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos + slot_size, Ypos + slot_size), uv_ptr[2] });
-		basic_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos + slot_size, Ypos), uv_ptr[3] });
+		basic_slot_buffer.emplace_back(Xpos, Ypos,							sprite->U0, sprite->V0);
+		basic_slot_buffer.emplace_back(Xpos, Ypos + slot_size,				sprite->U0, sprite->V0 + sprite->H);
+		basic_slot_buffer.emplace_back(Xpos + slot_size, Ypos + slot_size,	sprite->U0 + sprite->W, sprite->V0 + sprite->H);
+		basic_slot_buffer.emplace_back(Xpos + slot_size, Ypos,				sprite->U0 + sprite->W, sprite->V0);
 		main_player_ptr->inventory.add_basic_slot_bounds(Xpos, Xpos + slot_size, Ypos, Ypos + slot_size);
 	};
 	auto add_chest_slot_to_buffer = [&]() {
-		chest_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos, Ypos), uv_ptr[0] });
-		chest_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos, Ypos + slot_size), uv_ptr[1] });
-		chest_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos + slot_size, Ypos + slot_size), uv_ptr[2] });
-		chest_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos + slot_size, Ypos), uv_ptr[3] });
+		chest_slot_buffer.emplace_back(Xpos, Ypos, sprite->U0, sprite->V0);
+		chest_slot_buffer.emplace_back(Xpos, Ypos + slot_size, sprite->U0, sprite->V0 + sprite->H);
+		chest_slot_buffer.emplace_back(Xpos + slot_size, Ypos + slot_size, sprite->U0 + sprite->W, sprite->V0 + sprite->H);
+		chest_slot_buffer.emplace_back(Xpos + slot_size, Ypos, sprite->U0 + sprite->W, sprite->V0);
 		main_player_ptr->inventory.add_chest_slot_bounds(Xpos, Xpos + slot_size, Ypos, Ypos + slot_size);
 	};
 	auto add_helper_slot_to_buffer = [&]() {
-		helper_craft_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos, Ypos), uv_ptr[0] });
-		helper_craft_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos, Ypos + slot_size), uv_ptr[1] });
-		helper_craft_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos + slot_size, Ypos + slot_size), uv_ptr[2] });
-		helper_craft_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos + slot_size, Ypos), uv_ptr[3] });
+		helper_craft_slot_buffer.emplace_back(Xpos, Ypos, sprite->U0, sprite->V0);
+		helper_craft_slot_buffer.emplace_back(Xpos, Ypos + slot_size, sprite->U0, sprite->V0 + sprite->H);
+		helper_craft_slot_buffer.emplace_back(Xpos + slot_size, Ypos + slot_size, sprite->U0 + sprite->W, sprite->V0 + sprite->H);
+		helper_craft_slot_buffer.emplace_back(Xpos + slot_size, Ypos, sprite->U0 + sprite->W, sprite->V0);
 		main_player_ptr->inventory.add_helper_slot_bounds(Xpos, Xpos + slot_size, Ypos, Ypos + slot_size);
 		};
 	auto add_craft_border_to_buffer = [&]() {
-		craft_borders_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos, Ypos), uv_ptr[0] });
-		craft_borders_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos, Ypos + border_height), uv_ptr[1] });
-		craft_borders_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos + border_width, Ypos + border_height), uv_ptr[2] });
-		craft_borders_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos + border_width, Ypos), uv_ptr[3] });
+		craft_borders_buffer.emplace_back(Xpos, Ypos, sprite->U0, sprite->V0);
+		craft_borders_buffer.emplace_back(Xpos, Ypos + slot_size, sprite->U0, sprite->V0 + sprite->H);
+		craft_borders_buffer.emplace_back(Xpos + slot_size, Ypos + slot_size, sprite->U0 + sprite->W, sprite->V0 + sprite->H);
+		craft_borders_buffer.emplace_back(Xpos + slot_size, Ypos, sprite->U0 + sprite->W, sprite->V0);
 		};
 	auto add_craft_info_slot_to_buffer = [&]() {
-		craft_info_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos, Ypos), uv_ptr[0] });
-		craft_info_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos, Ypos + slot_size), uv_ptr[1] });
-		craft_info_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos + slot_size, Ypos + slot_size), uv_ptr[2] });
-		craft_info_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos + slot_size, Ypos), uv_ptr[3] });
+		craft_info_slot_buffer.emplace_back(Xpos, Ypos, sprite->U0, sprite->V0);
+		craft_info_slot_buffer.emplace_back(Xpos, Ypos + slot_size, sprite->U0, sprite->V0 + sprite->H);
+		craft_info_slot_buffer.emplace_back(Xpos + slot_size, Ypos + slot_size, sprite->U0 + sprite->W, sprite->V0 + sprite->H);
+		craft_info_slot_buffer.emplace_back(Xpos + slot_size, Ypos, sprite->U0 + sprite->W, sprite->V0);
 		main_player_ptr->inventory.add_craft_info_slot_bounds(Xpos, Xpos + slot_size, Ypos, Ypos + slot_size);
 		};
 
@@ -331,7 +331,7 @@ void UI_Renderer::init_basic_inventory_slots_data() {
 	}
 	
 	//40 slots for chests (used with inventory when any chest is open by the player)
-	uv_ptr = spriteMgr->get_sprite(2).UV;
+	sprite = &spriteMgr->get_sprite(2);
 	Ypos = 0.83f - 0.11 * 5.f;
 	for (int i = 0; i < 4; i++) {
 		Xpos = -SystemContext::screen.ratio * 0.97f;
@@ -345,7 +345,7 @@ void UI_Renderer::init_basic_inventory_slots_data() {
 	slots_vbo->update_data(chest_slot_buffer.data(), chest_slot_buffer.size() * sizeof(UI_Vertex2f), basic_slot_buffer.size() * sizeof(UI_Vertex2f));
 	
 	//15 slots for craft info slots
-	uv_ptr = spriteMgr->get_sprite(1).UV;
+	sprite = &spriteMgr->get_sprite(1);
 	Ypos = 0.83f - 0.11 * 10.f + 0.005f - 0.14f * 2.f;
 	for (int i = 0; i < 3; i++) {
 		Xpos = -SystemContext::screen.ratio * 0.97f + 0.2f;
@@ -372,10 +372,10 @@ void UI_Renderer::init_basic_inventory_slots_data() {
 	Xpos = -SystemContext::screen.ratio * 0.97f - 0.03f;
 	Ypos = 0.83f - 0.11 * 10.f + 0.125f;
 	border_width = 0.28f; border_height = 0.07f;
-	uv_ptr = spriteMgr->get_sprite(5).UV;
+	sprite = &spriteMgr->get_sprite(5);
 	add_craft_border_to_buffer();
 	Ypos -= 0.14f * 5.5f;
-	uv_ptr = spriteMgr->get_sprite(6).UV;
+	sprite = &spriteMgr->get_sprite(6);
 	add_craft_border_to_buffer();
 	craft_slots_vbo->update_data(craft_borders_buffer.data(), craft_borders_buffer.size() * sizeof(UI_Vertex2f));
 }
@@ -384,13 +384,13 @@ void UI_Renderer::init_icons_base_vertices() {
 	float Xpos;
 	float Ypos = 0.9f;
 	float icon_size = 0.06f;
-	glm::vec2* uv_ptr = spriteMgr->get_sprite(16).UV;
+	Sprite* sprite = &spriteMgr->get_sprite(16);
 
 	auto add_icon_to_buffer = [&]() {
-		icons_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos, Ypos), uv_ptr[0] });
-		icons_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos, Ypos + icon_size), uv_ptr[1] });
-		icons_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos + icon_size, Ypos + icon_size), uv_ptr[2] });
-		icons_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos + icon_size, Ypos), uv_ptr[3] });
+		icons_buffer.emplace_back(Xpos, Ypos, sprite->U0, sprite->V0);
+		icons_buffer.emplace_back(Xpos, Ypos + icon_size, sprite->U0, sprite->V0 + sprite->H);
+		icons_buffer.emplace_back(Xpos + icon_size, Ypos + icon_size, sprite->U0 + sprite->W, sprite->V0 + sprite->H);
+		icons_buffer.emplace_back(Xpos + icon_size, Ypos, sprite->U0 + sprite->W, sprite->V0);
 		};
 
 	//hearts vertices
@@ -405,7 +405,7 @@ void UI_Renderer::init_icons_base_vertices() {
 	//mana stars vertices
 	Xpos = SystemContext::screen.ratio * 0.95f;
 	Ypos = 0.9f;
-	uv_ptr = spriteMgr->get_sprite(19).UV;
+	sprite = &spriteMgr->get_sprite(19);
 	for (int i = 0; i < 10; i++) {
 		add_icon_to_buffer();
 		Ypos -= 0.061f;
@@ -414,14 +414,14 @@ void UI_Renderer::init_icons_base_vertices() {
 
 void UI_Renderer::update_tooltip_data() {
 	TooltipData& tooltip_data = main_player_ptr->inventory.tooltipData;
-	ObjectInfo& item_info = *ObjectsDB::objectInfo[tooltip_data.item_id];
+	ObjectInfo* item_info = ObjectsDB::objectInfo[tooltip_data.item_id].get();
 	float x0 = 0.f, y0 = 0.f, x1 = 0.f, y1 = 0.f;
 	float inner_height = tooltip_frame_size; //y offset
-	float inner_width;
+	float inner_width = 0.0f;
 	glm::vec2 text_pos(tooltip_frame_size, tooltip_frame_size * 2.f); //positions of text are going from top to bottom
 
 	auto add_info_text = [&](const char* text, uint32_t text_size, glm::vec4 color = glm::vec4(1.0f)) {
-		float text_ortho_length = place_text_to_buffer(tooltip_text_buffer, text, text_size, text_pos, tooltip_text_height, color);
+		float text_ortho_length = place_text_to_buffer(tooltip_text_buffer, text, text_size, text_pos.x, text_pos.y, tooltip_text_height, color);
 		inner_width = text_ortho_length > inner_width ? text_ortho_length : inner_width;
 		tooltip_text_INDEX_SIZE += text_size * 6;
 		text_pos.y -= tooltip_text_height * 1.1f;
@@ -430,33 +430,33 @@ void UI_Renderer::update_tooltip_data() {
 	//update tooltip text
 	tooltip_text_buffer.clear();
 	tooltip_text_INDEX_SIZE = 0;
-	switch (item_info.objectType) {
+	switch (item_info->objectType) {
 	case ObjectType::isBlock:
 		text_pos.y += tooltip_text_height * 1.1f;
 		inner_height += tooltip_text_height * 1.1f * 2;
-		add_info_text(item_info.name.c_str(), item_info.name.size());
+		add_info_text(item_info->name.c_str(), item_info->name.size());
 		add_info_text("Can be placed", 13);
 		break;
 	case ObjectType::isComplexObject:
 		text_pos.y += tooltip_text_height * 1.1f;
 		inner_height += tooltip_text_height * 1.1f * 2;
-		add_info_text(item_info.name.c_str(), item_info.name.size());
+		add_info_text(item_info->name.c_str(), item_info->name.size());
 		add_info_text("Can be placed", 13);
 		break;
 	case ObjectType::isWeapon:
 		text_pos.y += tooltip_text_height * 1.1f * 2;
 		inner_height += tooltip_text_height * 1.1f * 3;
-		add_info_text(item_info.name.c_str(), item_info.name.size(), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
-		text_builder.add_int(item_info.get_damage()).add_text(" damage");
+		add_info_text(item_info->name.c_str(), item_info->name.size(), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
+		text_builder.add_int(static_cast<WeaponInfo*>(item_info)->damage).add_text(" damage");
 		add_info_text(text_builder.data(), text_builder.size());
 		text_builder.reset();
-		text_builder.add_int(item_info.get_crit_chance()).add_text("% crit chance");
+		text_builder.add_int(static_cast<WeaponInfo*>(item_info)->crit_chance).add_text("% crit chance");
 		add_info_text(text_builder.data(), text_builder.size());
 		text_builder.reset();
 		break;
 	default:
 		inner_height += tooltip_text_height * 1.1f;
-		add_info_text(item_info.name.c_str(), item_info.name.size());
+		add_info_text(item_info->name.c_str(), item_info->name.size());
 		break;
 	}
 	inner_width += tooltip_frame_size; //x offset
@@ -471,51 +471,51 @@ void UI_Renderer::update_tooltip_data() {
 	//update tooltip background
 	tooltip_buffer.clear();
 	int first_sprite_id = 7;
-	glm::vec2* uv_ptr = nullptr;
+	Sprite* sprite = nullptr;
 
 	auto add_tooltip_part_to_buffer = [&]() {
-		tooltip_buffer.emplace_back(UI_Vertex2f{ glm::vec2(x0, y0), uv_ptr[0] });
-		tooltip_buffer.emplace_back(UI_Vertex2f{ glm::vec2(x0, y1), uv_ptr[1] });
-		tooltip_buffer.emplace_back(UI_Vertex2f{ glm::vec2(x1, y1), uv_ptr[2] });
-		tooltip_buffer.emplace_back(UI_Vertex2f{ glm::vec2(x1, y0), uv_ptr[3] });
+		tooltip_buffer.emplace_back(x0, y0, sprite->U0, sprite->V0);
+		tooltip_buffer.emplace_back(x0, y1, sprite->U0, sprite->V0 + sprite->H);
+		tooltip_buffer.emplace_back(x1, y1, sprite->U0 + sprite->W, sprite->V0 + sprite->H);
+		tooltip_buffer.emplace_back(x1, y0, sprite->U0 + sprite->W, sprite->V0);
 	};
 	//left bottom
-	uv_ptr = spriteMgr->get_sprite(first_sprite_id++).UV;
+	sprite = &spriteMgr->get_sprite(first_sprite_id++);
 	x0 = start_x; x1 = x0 + tooltip_frame_size;
 	y0 = start_y; y1 = y0 + tooltip_frame_size;
 	add_tooltip_part_to_buffer();
 	//left center
-	uv_ptr = spriteMgr->get_sprite(first_sprite_id++).UV;
+	sprite = &spriteMgr->get_sprite(first_sprite_id++);
 	y0 = y1; y1 += inner_height;
 	add_tooltip_part_to_buffer();
 	//left top
-	uv_ptr = spriteMgr->get_sprite(first_sprite_id++).UV;
+	sprite = &spriteMgr->get_sprite(first_sprite_id++);
 	y0 = y1; y1 += tooltip_frame_size;
 	add_tooltip_part_to_buffer();
 	//center bottom
-	uv_ptr = spriteMgr->get_sprite(first_sprite_id++).UV;
+	sprite = &spriteMgr->get_sprite(first_sprite_id++);
 	x0 = x1; x1 += inner_width;
 	y0 = start_y; y1 = y0 + tooltip_frame_size;
 	add_tooltip_part_to_buffer();
 	//center
-	uv_ptr = spriteMgr->get_sprite(first_sprite_id++).UV;
+	sprite = &spriteMgr->get_sprite(first_sprite_id++);
 	y0 = y1; y1 += inner_height;
 	add_tooltip_part_to_buffer();
 	//center top
-	uv_ptr = spriteMgr->get_sprite(first_sprite_id++).UV;
+	sprite = &spriteMgr->get_sprite(first_sprite_id++);
 	y0 = y1; y1 += tooltip_frame_size;
 	add_tooltip_part_to_buffer();
 	//right bottom
-	uv_ptr = spriteMgr->get_sprite(first_sprite_id++).UV;
+	sprite = &spriteMgr->get_sprite(first_sprite_id++);
 	x0 = x1; x1 += tooltip_frame_size;
 	y0 = start_y; y1 = y0 + tooltip_frame_size;
 	add_tooltip_part_to_buffer();
 	//right center
-	uv_ptr = spriteMgr->get_sprite(first_sprite_id++).UV;
+	sprite = &spriteMgr->get_sprite(first_sprite_id++);
 	y0 = y1; y1 += inner_height;
 	add_tooltip_part_to_buffer();
 	//right top
-	uv_ptr = spriteMgr->get_sprite(first_sprite_id).UV;
+	sprite = &spriteMgr->get_sprite(first_sprite_id++);
 	y0 = y1; y1 += tooltip_frame_size;
 	add_tooltip_part_to_buffer();
 
@@ -528,8 +528,8 @@ void UI_Renderer::update_cursor_item() {
 	float start_y = SystemContext::mouse.ortho_y_pos - item_size * 0.5f;
 	InventorySlot& cursor_slot = main_player_ptr->inventory.cursor_item;
 
-	ObjectInfo& obj_info = *ObjectsDB::objectInfo[cursor_slot.item_id];
-	glm::vec2* uv_ptr = spriteMgr->get_sprite(obj_info.sprite_id).UV;
+	ObjectInfo* obj_info = ObjectsDB::objectInfo[cursor_slot.item_id].get();
+	Sprite* sprite = &spriteMgr->get_sprite(obj_info->sprite_id);
 	
 	cursor_text_INDEX_SIZE = 0;
 	cursor_item_text_buffer.clear();
@@ -538,24 +538,22 @@ void UI_Renderer::update_cursor_item() {
 		text_builder.add_int(cursor_slot.amount);
 		text_size = text_builder.size();
 		cursor_text_INDEX_SIZE = text_size * 6;
-		place_text_to_buffer(cursor_item_text_buffer, text_builder.data(), text_builder.size(), glm::vec2(start_x - 0.0175f, start_y - 0.0125f), 0.035f, glm::vec4(1.0f));
+		place_text_to_buffer(cursor_item_text_buffer, text_builder.data(), text_builder.size(), start_x - 0.0175f, start_y - 0.0125f, 0.035f);
 		text_builder.reset();
 		text_vbo->update_data(cursor_item_text_buffer.data(), cursor_item_text_buffer.size() * sizeof(UI_Vertex2f), TOTAL_TEXT_VERTEX_SIZE * sizeof(UI_Vertex2f));
 	}
 
 	cursor_item_buffer.clear();
 	float sizeX = item_size, sizeY = item_size;
-	if (obj_info.objectType == ObjectType::isComplexObject) {
-		glm::vec2 size_ratio = obj_info.get_norm_size_ratio();
-		start_x += (1.0f - size_ratio.x) * item_size * 0.5f;
-		start_y += (1.0f - size_ratio.y) * item_size * 0.5f;
-		sizeX *= size_ratio.x;
-		sizeY *= size_ratio.y;
-	}
-	cursor_item_buffer.emplace_back(UI_Vertex2f{ glm::vec2(start_x, start_y), uv_ptr[0] });
-	cursor_item_buffer.emplace_back(UI_Vertex2f{ glm::vec2(start_x, start_y + sizeY), uv_ptr[1] });
-	cursor_item_buffer.emplace_back(UI_Vertex2f{ glm::vec2(start_x + sizeX, start_y + sizeY), uv_ptr[2] });
-	cursor_item_buffer.emplace_back(UI_Vertex2f{ glm::vec2(start_x + sizeX, start_y), uv_ptr[3] });
+	glm::vec2& size_ratio = sprite->ratio;
+	start_x += (1.0f - size_ratio.x) * item_size * 0.5f;
+	start_y += (1.0f - size_ratio.y) * item_size * 0.5f;
+	sizeX *= size_ratio.x;
+	sizeY *= size_ratio.y;
+	cursor_item_buffer.emplace_back(start_x, start_y,					sprite->U0, sprite->V0);
+	cursor_item_buffer.emplace_back(start_x, start_y + sizeY,			sprite->U0, sprite->V0 + sprite->H);
+	cursor_item_buffer.emplace_back(start_x + sizeX, start_y + sizeY,	sprite->U0 + sprite->W, sprite->V0 + sprite->H);
+	cursor_item_buffer.emplace_back(start_x + sizeX, start_y,			sprite->U0 + sprite->W, sprite->V0);
 	items_vbo->update_data(cursor_item_buffer.data(), cursor_item_buffer.size() * sizeof(UI_Vertex2f), TOTAL_ITEMS_VERTEX_SIZE * sizeof(UI_Vertex2f));
 }
 
@@ -564,11 +562,11 @@ void UI_Renderer::update_hotbar_active_slot() {
 	float y = 0.825f;
 	float x = -SystemContext::screen.ratio * 0.97f + 0.11f * main_player_ptr->inventory.current_active_hotbar_slot - 0.005f;
 	float slot_size = 0.11f;
-	glm::vec2* uv_ptr = spriteMgr->get_sprite(3).UV;
-	active_hotbar_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(x, y), uv_ptr[0] });
-	active_hotbar_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(x, y + slot_size), uv_ptr[1] });
-	active_hotbar_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(x + slot_size, y + slot_size), uv_ptr[2] });
-	active_hotbar_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(x + slot_size, y), uv_ptr[3] });
+	Sprite* sprite = &spriteMgr->get_sprite(3);
+	active_hotbar_slot_buffer.emplace_back(x, y, sprite->U0, sprite->V0);
+	active_hotbar_slot_buffer.emplace_back(x, y + slot_size, sprite->U0, sprite->V0 + sprite->H);
+	active_hotbar_slot_buffer.emplace_back(x + slot_size, y + slot_size, sprite->U0 + sprite->W, sprite->V0 + sprite->H);
+	active_hotbar_slot_buffer.emplace_back(x + slot_size, y, sprite->U0 + sprite->W, sprite->V0);
 
 	slots_vbo->update_data(active_hotbar_slot_buffer.data(), active_hotbar_slot_buffer.size() * sizeof(UI_Vertex2f), slots_VERTEX_SIZE * sizeof(UI_Vertex2f));
 
@@ -579,16 +577,15 @@ void UI_Renderer::update_hotbar_active_slot() {
 	if (active_item_id != 0) {
 		ObjectInfo& item_info = *ObjectsDB::objectInfo[active_item_id];
 		place_text_to_buffer(tooltip_text_buffer, item_info.name.c_str(), item_info.name.size(),
-			glm::vec2(-SystemContext::screen.ratio * 0.97f, 0.945f), tooltip_text_height, glm::vec4(1.0f));
+			-SystemContext::screen.ratio * 0.97f, 0.945f, tooltip_text_height);
 		text_vbo->update_data(tooltip_text_buffer.data(), tooltip_text_buffer.size() * sizeof(UI_Vertex2f), TOTAL_TEXT_VERTEX_SIZE * sizeof(UI_Vertex2f));
 		tooltip_text_INDEX_SIZE = item_info.name.size() * 6;
 	}
 }
 
-float UI_Renderer::place_text_to_buffer(std::vector<UI_Vertex2f>& buffer, const char* text, uint32_t text_size, glm::vec2 left_bottom_pos, float height, glm::vec4 color) {
-	float start_x = left_bottom_pos.x;
-	float start_y = left_bottom_pos.y - sdf_font_manager.mainFont.descender * height;
-	float glyph_width, glyph_height;
+float UI_Renderer::place_text_to_buffer(std::vector<UI_Vertex2f>& buffer, const char* text, uint32_t text_size, float lb_x, float lb_y, float height, glm::vec4 color) {
+	float start_x = lb_x;
+	float start_y = lb_y - sdf_font_manager.mainFont.descender * height;
 	float x0, x1, y0, y1;
 	float x_offset = 0;
 
@@ -598,10 +595,10 @@ float UI_Renderer::place_text_to_buffer(std::vector<UI_Vertex2f>& buffer, const 
 		x1 = x0 + glyph.width_normalized * height;
 		y0 = start_y + (glyph.bearingY_normalized - glyph.height_normalized) * height;
 		y1 = y0 + glyph.height_normalized * height;
-		buffer.emplace_back(UI_Vertex2f{ glm::vec2(x0, y0), glm::vec2(glyph.U0, glyph.V0), color });
-		buffer.emplace_back(UI_Vertex2f{ glm::vec2(x0, y1), glm::vec2(glyph.U0, glyph.V1), color });
-		buffer.emplace_back(UI_Vertex2f{ glm::vec2(x1, y1), glm::vec2(glyph.U1, glyph.V1), color });
-		buffer.emplace_back(UI_Vertex2f{ glm::vec2(x1, y0), glm::vec2(glyph.U1, glyph.V0), color });
+		buffer.emplace_back(UI_Vertex2f(x0, y0, glyph.U0, glyph.V0, color));
+		buffer.emplace_back(UI_Vertex2f(x0, y1, glyph.U0, glyph.V1, color));
+		buffer.emplace_back(UI_Vertex2f(x1, y1, glyph.U1, glyph.V1, color));
+		buffer.emplace_back(UI_Vertex2f(x1, y0, glyph.U1, glyph.V0, color));
 		x_offset += height * glyph.advance_normalized;
 	}
 	return x_offset;
@@ -630,25 +627,23 @@ void UI_Renderer::update_items() {
 	Inventory& inv = main_player_ptr->inventory;
 
 	if (inv.should_update_base_items || inv.should_update_chest_items) {
-		glm::vec2* uv_ptr;
+		Sprite* sprite;
 		float item_size = 0.075f;
 		float x, y;
 		uint32_t text_size;
 		bool should_update_buffer = false;
 
-		auto add_item_to_buffer = [&](std::vector<UI_Vertex2f>& buffer, ObjectInfo& item_info) {
+		auto add_item_to_buffer = [&](std::vector<UI_Vertex2f>& buffer, ObjectInfo* item_info) {
 			float sizeX = item_size, sizeY = item_size;
-			if (item_info.objectType == ObjectType::isComplexObject) {
-				glm::vec2 size_ratio = item_info.get_norm_size_ratio();
-				x += (1.0f - size_ratio.x) * item_size * 0.5f;
-				y += (1.0f - size_ratio.y) * item_size * 0.5f;
-				sizeX *= size_ratio.x;
-				sizeY *= size_ratio.y;
-			}
-			buffer.emplace_back(UI_Vertex2f{ glm::vec2(x, y), uv_ptr[0] });
-			buffer.emplace_back(UI_Vertex2f{ glm::vec2(x, y + sizeY), uv_ptr[1] });
-			buffer.emplace_back(UI_Vertex2f{ glm::vec2(x + sizeX, y + sizeY), uv_ptr[2] });
-			buffer.emplace_back(UI_Vertex2f{ glm::vec2(x + sizeX, y), uv_ptr[3] });
+			glm::vec2& size_ratio = sprite->ratio;
+			x += (1.0f - size_ratio.x) * item_size * 0.5f;
+			y += (1.0f - size_ratio.y) * item_size * 0.5f;
+			sizeX *= size_ratio.x;
+			sizeY *= size_ratio.y;
+			buffer.emplace_back(x, y, sprite->U0, sprite->V0);
+			buffer.emplace_back(x, y + sizeY, sprite->U0, sprite->V0 + sprite->H);
+			buffer.emplace_back(x + sizeX, y + sizeY, sprite->U0 + sprite->W, sprite->V0 + sprite->H);
+			buffer.emplace_back(x + sizeX, y, sprite->U0 + sprite->W, sprite->V0);
 			};
 
 		if (main_player_ptr->inventory.should_update_base_items) {
@@ -663,17 +658,17 @@ void UI_Renderer::update_items() {
 				if (slot.item_id == 0) continue;
 
 				ObjectInfo& obj_info = *ObjectsDB::objectInfo[slot.item_id];
-				uv_ptr = spriteMgr->get_sprite(obj_info.sprite_id).UV;
+				sprite = &spriteMgr->get_sprite(obj_info.sprite_id);
 
 				glm::vec4& slot_borders = main_player_ptr->inventory.slots_bounds[i];
 				x = slot_borders.x + 0.0125f;
 				y = slot_borders.z + 0.0125f;
-				add_item_to_buffer(basic_items_buffer, obj_info);
+				add_item_to_buffer(basic_items_buffer, &obj_info);
 
 				if (slot.amount > 1) {
 					text_builder.add_int((int)slot.amount);
 					text_size = text_builder.size();
-					place_text_to_buffer(basic_text_buffer, text_builder.data(), text_size, glm::vec2(slot_borders.x - 0.005f, slot_borders.z), 0.035, glm::vec4(1.0f));
+					place_text_to_buffer(basic_text_buffer, text_builder.data(), text_size, slot_borders.x - 0.005f, slot_borders.z, 0.035);
 					text_builder.reset();
 				}
 
@@ -700,17 +695,17 @@ void UI_Renderer::update_items() {
 				if (slot.item_id == 0) continue;
 
 				ObjectInfo& obj_info = *ObjectsDB::objectInfo[slot.item_id];
-				uv_ptr = spriteMgr->get_sprite(obj_info.sprite_id).UV;
+				sprite = &spriteMgr->get_sprite(obj_info.sprite_id);
 
 				glm::vec4& slot_borders = main_player_ptr->inventory.chest_slots_bounds[i];
 				x = slot_borders.x + 0.0125f;
 				y = slot_borders.z + 0.0125f;
-				add_item_to_buffer(chest_items_buffer, obj_info);
+				add_item_to_buffer(chest_items_buffer, &obj_info);
 
 				if (slot.amount > 1) {
 					text_builder.add_int((int)slot.amount);
 					text_size = text_builder.size();
-					place_text_to_buffer(chest_text_buffer, text_builder.data(), text_size, glm::vec2(slot_borders.x - 0.005f, slot_borders.z), 0.035, glm::vec4(1.0f));
+					place_text_to_buffer(chest_text_buffer, text_builder.data(), text_size, slot_borders.x - 0.005f, slot_borders.z, 0.035);
 					text_builder.reset();
 				}
 			}
@@ -744,26 +739,24 @@ void UI_Renderer::update_craft_slots() {
 	if (main_player_ptr->inventory.current_crafts_available == 0) return;
 
 	float Xpos, Ypos, slot_size;
-	glm::vec2* uv_ptr = spriteMgr->get_sprite(4).UV;
+	Sprite* sprite = &spriteMgr->get_sprite(4);
 	auto add_slot_to_buffer = [&]() {
-		craft_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos, Ypos), uv_ptr[0] });
-		craft_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos, Ypos + slot_size), uv_ptr[1] });
-		craft_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos + slot_size, Ypos + slot_size), uv_ptr[2] });
-		craft_slot_buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos + slot_size, Ypos), uv_ptr[3] });
+		craft_slot_buffer.emplace_back(Xpos, Ypos, sprite->U0, sprite->V0);
+		craft_slot_buffer.emplace_back(Xpos, Ypos + slot_size, sprite->U0, sprite->V0 + sprite->H);
+		craft_slot_buffer.emplace_back(Xpos + slot_size, Ypos + slot_size, sprite->U0 + sprite->W, sprite->V0 + sprite->H);
+		craft_slot_buffer.emplace_back(Xpos + slot_size, Ypos, sprite->U0 + sprite->W, sprite->V0);
 	};
-	auto add_item_to_buffer = [&](std::vector<UI_Vertex2f>& buffer, ObjectInfo& item_info) {
+	auto add_item_to_buffer = [&](std::vector<UI_Vertex2f>& buffer, ObjectInfo* item_info) {
 		float sizeX = slot_size, sizeY = slot_size;
-		if (item_info.objectType == ObjectType::isComplexObject) {
-			glm::vec2 size_ratio = item_info.get_norm_size_ratio();
-			Xpos += (1.0f - size_ratio.x) * slot_size * 0.5f;
-			Ypos += (1.0f - size_ratio.y) * slot_size * 0.5f;
-			sizeX *= size_ratio.x;
-			sizeY *= size_ratio.y;
-		}
-		buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos, Ypos), uv_ptr[0] });
-		buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos, Ypos + sizeY), uv_ptr[1] });
-		buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos + sizeX, Ypos + sizeY), uv_ptr[2] });
-		buffer.emplace_back(UI_Vertex2f{ glm::vec2(Xpos + sizeX, Ypos), uv_ptr[3] });
+		glm::vec2& size_ratio = sprite->ratio;
+		Xpos += (1.0f - size_ratio.x) * slot_size * 0.5f;
+		Ypos += (1.0f - size_ratio.y) * slot_size * 0.5f;
+		sizeX *= size_ratio.x;
+		sizeY *= size_ratio.y;
+		buffer.emplace_back(Xpos, Ypos, sprite->U0, sprite->V0);
+		buffer.emplace_back(Xpos, Ypos + sizeY, sprite->U0, sprite->V0 + sprite->H);
+		buffer.emplace_back(Xpos + sizeX, Ypos + sizeY, sprite->U0 + sprite->W, sprite->V0 + sprite->H);
+		buffer.emplace_back(Xpos + sizeX, Ypos, sprite->U0 + sprite->W, sprite->V0);
 	};
 
 	craft_slot_buffer.clear();
@@ -783,13 +776,13 @@ void UI_Renderer::update_craft_slots() {
 		slot_size = slot.current_size;
 		Xpos = slot.current_pos.x - slot_size * 0.5f;
 		Ypos = slot.current_pos.y - slot_size * 0.5f;
-		uv_ptr = spriteMgr->get_sprite(4).UV;
+		sprite = &spriteMgr->get_sprite(4);
 		add_slot_to_buffer();
 
 		if (slot.item_data.amount > 1) {
 			text_builder.add_int((int)slot.item_data.amount);
 			text_size = text_builder.size();
-			place_text_to_buffer(craft_text_buffer, text_builder.data(), text_size, glm::vec2(Xpos, Ypos), slot_size * 0.35f, glm::vec4(1.0f));
+			place_text_to_buffer(craft_text_buffer, text_builder.data(), text_size, Xpos, Ypos, slot_size * 0.35f);
 			text_builder.reset();
 			craft_text_INDEX_SIZE += 6 * text_size;
 		}
@@ -800,8 +793,8 @@ void UI_Renderer::update_craft_slots() {
 
 		if (slot.item_data.item_id > 1) {
 			ObjectInfo& item_info = *ObjectsDB::objectInfo[slot.item_data.item_id];
-			uv_ptr = spriteMgr->get_sprite(item_info.sprite_id).UV;
-			add_item_to_buffer(craft_items_buffer, item_info);
+			sprite = &spriteMgr->get_sprite(item_info.sprite_id);
+			add_item_to_buffer(craft_items_buffer, &item_info);
 			craft_items_INDEX_SIZE += 6;
 		}
 	}
@@ -844,12 +837,12 @@ void UI_Renderer::update_craft_slots() {
 			slot_size = 0.1f;
 			CraftingPair& craft_pair = craftable_item.items_needed[i];
 			ObjectInfo& item_info = *ObjectsDB::objectInfo[craft_pair.item_id];
-			uv_ptr = spriteMgr->get_sprite(item_info.sprite_id).UV;
+			sprite = &spriteMgr->get_sprite(item_info.sprite_id);
 
 			if (craft_pair.amount > 1) {
 				text_builder.add_int((int)craft_pair.amount);
 				text_size = text_builder.size();
-				place_text_to_buffer(craft_text_buffer, text_builder.data(), text_size, glm::vec2(Xpos, Ypos), slot_size * 0.35f, glm::vec4(1.0f));
+				place_text_to_buffer(craft_text_buffer, text_builder.data(), text_size, Xpos, Ypos, slot_size * 0.35f);
 				text_builder.reset();
 				craft_text_INDEX_SIZE += 6 * text_size;
 			}
@@ -857,7 +850,7 @@ void UI_Renderer::update_craft_slots() {
 			Xpos += 0.0125f;
 			Ypos += 0.0125f;
 			slot_size = 0.075f;
-			add_item_to_buffer(craft_info_items_buffer, item_info);
+			add_item_to_buffer(craft_info_items_buffer, &item_info);
 		}
 		craft_items_vbo->update_data(
 			craft_info_items_buffer.data(),
@@ -879,8 +872,8 @@ void UI_Renderer::update_craft_slots() {
 			Xpos = left_bottom_vertex.pos.x + offset;
 			Ypos = left_bottom_vertex.pos.y + offset;
 			ObjectInfo& item_info = *ObjectsDB::objectInfo[main_player_ptr->inventory.get_craft_item(i).item_id];
-			uv_ptr = spriteMgr->get_sprite(item_info.sprite_id).UV;
-			add_item_to_buffer(craft_helper_items_buffer, item_info);
+			sprite = &spriteMgr->get_sprite(item_info.sprite_id);
+			add_item_to_buffer(craft_helper_items_buffer, &item_info);
 		}
 		craft_items_vbo->update_data(
 			craft_helper_items_buffer.data(),

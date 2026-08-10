@@ -245,22 +245,22 @@ void World::load_chunk_buffer(uint32_t chunk_world_x, uint32_t chunk_world_y, ui
 				continue;
 			}
 			//add tile sprite data
-			std::unique_ptr<ObjectInfo>& object_info = ObjectsDB::objectInfo[slot->tile_id];
-			uv_ptr = spriteMgr->get_sprite(object_info->sprite_id).UV;
-			
+			ObjectInfo* object_info = ObjectsDB::objectInfo[slot->tile_id].get();
+			Sprite& sprite = spriteMgr->get_sprite(object_info->sprite_id);
+
 			if (object_info->objectType == ObjectType::isBlock) {
-				vertices.add(Vertex2f{ glm::vec2(x, y), uv_ptr[0] }, base_index);
-				vertices.add(Vertex2f{ glm::vec2(x, y + 1), uv_ptr[1] }, base_index + 1);
-				vertices.add(Vertex2f{ glm::vec2(x + 1, y + 1), uv_ptr[2] }, base_index + 2);
-				vertices.add(Vertex2f{ glm::vec2(x + 1, y), uv_ptr[3] }, base_index + 3);
+				vertices.add(Vertex2f(x, y,					sprite.U0, sprite.V0),							base_index	  );
+				vertices.add(Vertex2f(x, y + 1.0f,			sprite.U0, sprite.V0 + sprite.H),				base_index + 1);
+				vertices.add(Vertex2f(x + 1.0f, y + 1.0f,	sprite.U0 + sprite.W, sprite.V0 + sprite.H),	base_index + 2);
+				vertices.add(Vertex2f(x + 1.0f, y,			sprite.U0 + sprite.W, sprite.V0),				base_index + 3);
 			}
 			else if (object_info->objectType == ObjectType::isComplexObject) {
-				float x_size = object_info->get_size_x();
-				float y_size = object_info->get_size_y();
-				vertices.add(Vertex2f{ glm::vec2(x, y), uv_ptr[0] }, base_index);
-				vertices.add(Vertex2f{ glm::vec2(x, y + y_size), uv_ptr[1] }, base_index + 1);
-				vertices.add(Vertex2f{ glm::vec2(x + x_size, y + y_size), uv_ptr[2] }, base_index + 2);
-				vertices.add(Vertex2f{ glm::vec2(x + x_size, y), uv_ptr[3] }, base_index + 3);
+				float x_size = static_cast<ComplexObjectInfo*>(object_info)->blocks_width;
+				float y_size = static_cast<ComplexObjectInfo*>(object_info)->blocks_height;
+				vertices.add(Vertex2f(x, y,						sprite.U0, sprite.V0),							base_index	  );
+				vertices.add(Vertex2f(x, y + y_size,			sprite.U0, sprite.V0 + sprite.H),				base_index + 1);
+				vertices.add(Vertex2f(x + x_size, y + y_size,	sprite.U0 + sprite.W, sprite.V0 + sprite.H),	base_index + 2);
+				vertices.add(Vertex2f(x + x_size, y,			sprite.U0 + sprite.W, sprite.V0),				base_index + 3);
 			}
 			base_index += 4;
 		}
@@ -349,8 +349,8 @@ void World::process_LB_click() {
 	uint16_t active_item_id = main_player_ptr->inventory.get_active_item_id();
 	if (active_item_id == 0) return; //do nothing if player is holding nothing
 
-	ObjectInfo& active_item_info = *ObjectsDB::objectInfo[active_item_id];
-	switch (active_item_info.objectType) {
+	ObjectInfo* active_item_info = ObjectsDB::objectInfo[active_item_id].get();
+	switch (active_item_info->objectType) {
 	case ObjectType::isBlock: {
 		bool success = place_tile(SystemContext::mouse.world_x_pos, SystemContext::mouse.world_y_pos, active_item_id);
 		if (success) main_player_ptr->inventory.spend_active_item();
@@ -362,7 +362,7 @@ void World::process_LB_click() {
 		break;
 	}
 	case ObjectType::isWeapon: {
-		WeaponType weapon_type = active_item_info.get_weapon_type();
+		WeaponType weapon_type = static_cast<WeaponInfo*>(active_item_info)->type;
 		if (weapon_type == WeaponType::isPickaxe) {
 			destroy_tile(SystemContext::mouse.world_x_pos, SystemContext::mouse.world_y_pos);
 		}
@@ -394,9 +394,9 @@ void World::process_RB_click() {
 		slot = &world_slots[slot_index]; //slot ptr now points on the main object part
 	}
 
-	ObjectInfo& slot_info = *ObjectsDB::objectInfo[slot->tile_id];
-	if (slot_info.objectType == ObjectType::isComplexObject) { //complex object -> can be interactable
-		ComplexObjectType type = slot_info.get_comp_obj_type();
+	ObjectInfo* slot_info = ObjectsDB::objectInfo[slot->tile_id].get();
+	if (slot_info->objectType == ObjectType::isComplexObject) { //complex object -> can be interactable
+		ComplexObjectType type = static_cast<ComplexObjectInfo*>(slot_info)->complex_type;
 		if (type == ComplexObjectType::isChest) {
 			std::cout << "Interacted with chest" << std::endl;
 			main_player_ptr->inventory.open_chest(object_components[slot_index]->get_chest_slots());
@@ -414,10 +414,10 @@ void World::process_scrollwheel() {
 bool World::place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id) {
 	WorldSlot& slot = world_slots[world_y * width + world_x];
 	if (slot.tile_id != 0) return false; //slot already has tile
-	std::unique_ptr<ObjectInfo>& object_info = ObjectsDB::objectInfo[tile_id];
+	ObjectInfo* object_info = ObjectsDB::objectInfo[tile_id].get();
 	if (object_info->objectType == ObjectType::isComplexObject) {
-		int obj_width = object_info->get_size_x();
-		int obj_height = object_info->get_size_y();
+		int obj_width = static_cast<ComplexObjectInfo*>(object_info)->blocks_width;
+		int obj_height = static_cast<ComplexObjectInfo*>(object_info)->blocks_height;
 		int max_x = world_x + obj_width;
 		int max_y = world_y + obj_height;
 		for (int x = world_x; x < max_x; x++) {
@@ -436,7 +436,7 @@ bool World::place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id) {
 				object_components.emplace(comp_obj_part_index, std::make_unique<ComplexObjectPartComponent>(world_x, world_y));
 			}
 		}
-		ComplexObjectType type = object_info->get_comp_obj_type();
+		ComplexObjectType type = static_cast<ComplexObjectInfo*>(object_info)->complex_type;
 		if (type == ComplexObjectType::isChest) {
 			object_components.emplace(main_part_index, std::make_unique<ChestComponent>());
 		}
@@ -461,21 +461,21 @@ bool World::place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id) {
 		uint32_t tile_chunk_y = world_y - chunk_y * CHUNK_SIZE;
 		uint32_t tile_index = (tile_chunk_x * CHUNK_SIZE + tile_chunk_y) * 4;
 
-		glm::vec2* uv_ptr = spriteMgr->get_sprite(object_info->sprite_id).UV;
+		Sprite& sprite = spriteMgr->get_sprite(object_info->sprite_id);
 
 		if (object_info->objectType == ObjectType::isBlock) {
-			vertices.add(Vertex2f{ glm::vec2(world_x, world_y), uv_ptr[0] }, tile_index);
-			vertices.add(Vertex2f{ glm::vec2(world_x, world_y + 1), uv_ptr[1] }, tile_index + 1);
-			vertices.add(Vertex2f{ glm::vec2(world_x + 1, world_y + 1), uv_ptr[2] }, tile_index + 2);
-			vertices.add(Vertex2f{ glm::vec2(world_x + 1, world_y), uv_ptr[3] }, tile_index + 3);
+			vertices.add(Vertex2f(world_x, world_y,					sprite.U0, sprite.V0						), tile_index	 );
+			vertices.add(Vertex2f(world_x, world_y + 1.0f,			sprite.U0, sprite.V0 + sprite.H				), tile_index + 1);
+			vertices.add(Vertex2f(world_x + 1.0f, world_y + 1.0f,	sprite.U0 + sprite.W, sprite.V0 + sprite.H	), tile_index + 2);
+			vertices.add(Vertex2f(world_x + 1.0f, world_y,			sprite.U0 + sprite.W, sprite.V0				), tile_index + 3);
 		}
 		else if (object_info->objectType == ObjectType::isComplexObject) {
-			float x_size = object_info->get_size_x();
-			float y_size = object_info->get_size_y();
-			vertices.add(Vertex2f{ glm::vec2(world_x, world_y), uv_ptr[0] }, tile_index);
-			vertices.add(Vertex2f{ glm::vec2(world_x, world_y + y_size), uv_ptr[1] }, tile_index + 1);
-			vertices.add(Vertex2f{ glm::vec2(world_x + x_size, world_y + y_size), uv_ptr[2] }, tile_index + 2);
-			vertices.add(Vertex2f{ glm::vec2(world_x + x_size, world_y), uv_ptr[3] }, tile_index + 3);
+			float x_size = static_cast<ComplexObjectInfo*>(object_info)->blocks_width;
+			float y_size = static_cast<ComplexObjectInfo*>(object_info)->blocks_height;
+			vertices.add(Vertex2f(world_x, world_y,						sprite.U0, sprite.V0),							tile_index	  );
+			vertices.add(Vertex2f(world_x, world_y + y_size,			sprite.U0, sprite.V0 + sprite.H),				tile_index + 1);
+			vertices.add(Vertex2f(world_x + x_size, world_y + y_size,	sprite.U0 + sprite.W, sprite.V0 + sprite.H),	tile_index + 2);
+			vertices.add(Vertex2f(world_x + x_size, world_y,			sprite.U0 + sprite.W, sprite.V0),				tile_index + 3);
 		}
 		buffer.vbo->update_data(vertices.data(), sizeof(Vertex2f) * vertices.size());
 		buffer.index_count += 6;
@@ -499,10 +499,10 @@ bool World::destroy_tile(uint32_t world_x, uint32_t world_y) {
 		slot = &world_slots[slot_index]; //slot ptr now points on the main object part
 	}
 
-	ObjectInfo& slot_info = *ObjectsDB::objectInfo[slot->tile_id];
-	if (slot_info.objectType == ObjectType::isComplexObject) {
-		int obj_width = slot_info.get_size_x();
-		int obj_height = slot_info.get_size_y();
+	ObjectInfo* slot_info = ObjectsDB::objectInfo[slot->tile_id].get();
+	if (slot_info->objectType == ObjectType::isComplexObject) {
+		int obj_width = static_cast<ComplexObjectInfo*>(slot_info)->blocks_width;
+		int obj_height = static_cast<ComplexObjectInfo*>(slot_info)->blocks_height;
 		int max_x = world_x + obj_width;
 		int max_y = world_y + obj_height;
 		uint32_t index;
@@ -664,7 +664,7 @@ void World::save_world_data_in_file(const char* filePath) {
 			}
 			else if (obj_info->objectType == isComplexObject) {
 				ObjectComponent* obj_comp = object_components[index].get();
-				ComplexObjectType complexType = obj_info->get_comp_obj_type();
+				ComplexObjectType complexType = static_cast<ComplexObjectInfo*>(obj_info)->complex_type;
 				if (complexType == isDoor) {
 					uint8_t door_state = obj_comp->get_door_state();
 					write.write(reinterpret_cast<const char*>(&door_state), sizeof(uint8_t));

@@ -8,7 +8,7 @@
 #include <Physics/Colliders.h>
 
 //Object Class Types: {
-// Base = 0, Block = 1, Complex = 2, Weapon = 3, InstrumentalWeapon = 4, MagicalWeapon = 5, Ammo = 6, Wall = 7
+// Base = 0, Block = 1, Complex = 2, Wall = 3, Weapon = 4, InstrumentalWeapon = 5, MagicalWeapon = 6, Ammo = 7
 // }
 enum ObjectType : uint8_t {
 	None = 0, isBlock = 1, isWall = 2, isComplexObject = 3, isCompObjPart = 4, isWeapon = 5, isAmmo = 6, isArmor = 7, isMaterial = 8,
@@ -23,7 +23,7 @@ enum ComplexObjectType : uint8_t {
 	isLyfeCrystal = 9
 };
 enum WeaponType : uint8_t {
-	isPickaxe = 0, isSword = 1, isDagger = 2, isAxe = 3, isHammer = 4, isGun = 5, isShotgun = 6, isBow = 7, isThrowable = 8,
+	isPickaxe = 0, isSword = 1, isPiercing = 2, isAxe = 3, isHammer = 4, isGun = 5, isShotgun = 6, isBow = 7, isThrowable = 8,
 	isSpear = 9, isMagical = 10
 };
 enum AmmoType : uint8_t {
@@ -339,10 +339,10 @@ public:
 			sky_stars[5].position.x -= ScreenWidth * 0.5;
 		}
 		for (int i = 0; i < 6; i++) {
-			ptr->tex_coords[0] = tex[0];
-			ptr->tex_coords[1] = tex[1];
-			ptr->tex_coords[2] = tex[2];
-			ptr->tex_coords[3] = tex[3];
+			ptr->tex_UV[0] = tex[0];
+			ptr->tex_UV[1] = tex[1];
+			ptr->tex_UV[2] = tex[2];
+			ptr->tex_UV[3] = tex[3];
 			ptr->opacity = stars_opacity;
 			matModel = glm::mat4(1.f);
 			matModel = glm::translate(matModel, glm::vec3(sky_stars[i].position.x, sky_stars[i].position.y, 0.f));
@@ -362,10 +362,10 @@ public:
 		if (dayRatio < 0.02) dayRatio = 0.02;
 		tex = texture_coords[3];
 		for (int i = 0; i < 3; i++) {
-			ptr->tex_coords[0] = tex[0];
-			ptr->tex_coords[1] = tex[1];
-			ptr->tex_coords[2] = tex[2];
-			ptr->tex_coords[3] = tex[3];
+			ptr->tex_UV[0] = tex[0];
+			ptr->tex_UV[1] = tex[1];
+			ptr->tex_UV[2] = tex[2];
+			ptr->tex_UV[3] = tex[3];
 			ptr->light_level = dayRatio;
 			matModel = glm::mat4(1.f);
 			matModel = glm::translate(matModel, glm::vec3(far_clouds[i].position.x, ScreenHeight - ScreenWidth * 0.13f, 0.f));
@@ -377,10 +377,10 @@ public:
 		if (isDay) {
 			chooseMoon = true;
 			tex = texture_coords[0];
-			ptr->tex_coords[0] = tex[0];
-			ptr->tex_coords[1] = tex[1];
-			ptr->tex_coords[2] = tex[2];
-			ptr->tex_coords[3] = tex[3];
+			ptr->tex_UV[0] = tex[0];
+			ptr->tex_UV[1] = tex[1];
+			ptr->tex_UV[2] = tex[2];
+			ptr->tex_UV[3] = tex[3];
 			glm::mat4 matModel(1.f);
 			matModel = glm::translate(matModel, glm::vec3(ScreenWidth / 2, -ScreenHeight * 0.55, 0.f));
 			matModel = glm::rotate(matModel, glm::radians(40.f - cycleTime * (80.f / dayTime)), glm::vec3(0.f, 0.f, 1.f));
@@ -394,10 +394,10 @@ public:
 				moon_index = rand() % 2;
 			}
 			tex = texture_coords[1 + moon_index];
-			ptr->tex_coords[0] = tex[0];
-			ptr->tex_coords[1] = tex[1];
-			ptr->tex_coords[2] = tex[2];
-			ptr->tex_coords[3] = tex[3];
+			ptr->tex_UV[0] = tex[0];
+			ptr->tex_UV[1] = tex[1];
+			ptr->tex_UV[2] = tex[2];
+			ptr->tex_UV[3] = tex[3];
 			glm::mat4 matModel(1.f);
 			matModel = glm::translate(matModel, glm::vec3(ScreenWidth / 2, -ScreenHeight * 0.55, 0.f));
 			matModel = glm::rotate(matModel, glm::radians(40.f - cycleTime * (80.f / dayTime)), glm::vec3(0.f, 0.f, 1.f));
@@ -414,20 +414,20 @@ public:
 			clouds[0].position.x += ScreenWidth;
 			clouds[1].position.x += ScreenWidth;
 		}
-		ptr->tex_coords[0] = tex[0];
-		ptr->tex_coords[1] = tex[1];
-		ptr->tex_coords[2] = tex[2];
-		ptr->tex_coords[3] = tex[3];
+		ptr->tex_UV[0] = tex[0];
+		ptr->tex_UV[1] = tex[1];
+		ptr->tex_UV[2] = tex[2];
+		ptr->tex_UV[3] = tex[3];
 		ptr->light_level = dayRatio;
 		matModel = glm::mat4(1.f);
 		matModel = glm::translate(matModel, glm::vec3(clouds[0].position.x, ScreenHeight - ScreenWidth * 0.125f, 0.f));
 		matModel = glm::scale(matModel, glm::vec3(ScreenWidth, ScreenWidth * 0.125f, 0.f));
 		ptr->modelMatrix = matModel;
 		ptr++;
-		ptr->tex_coords[0] = tex[0];
-		ptr->tex_coords[1] = tex[1];
-		ptr->tex_coords[2] = tex[2];
-		ptr->tex_coords[3] = tex[3];
+		ptr->tex_UV[0] = tex[0];
+		ptr->tex_UV[1] = tex[1];
+		ptr->tex_UV[2] = tex[2];
+		ptr->tex_UV[3] = tex[3];
 		ptr->light_level = dayRatio;
 		matModel = glm::mat4(1.f);
 		matModel = glm::translate(matModel, glm::vec3(clouds[1].position.x, ScreenHeight - ScreenWidth * 0.125f, 0.f));
@@ -474,81 +474,70 @@ class ComplexObjectInfo : public BlockInfo {
 public:
 	//it doesn't matter what type of BlockType is used for the BlockInfo constructor here, so it's just isSolidBlock
 	ComplexObjectInfo(
-		std::string name, ComplexObjectType type, float toughness, uint16_t drop_obj_id, float blWidth,
-		float blHeight, bool collision, bool platform_collision, uint32_t effect_comp_id = 0, uint32_t light_comp_id = 0
+		std::string name, ComplexObjectType type, float toughness, uint16_t drop_obj_id, float blocks_width,
+		float blocks_height, bool collision, bool platform_collision, uint32_t effect_comp_id = 0, uint32_t light_comp_id = 0
 	) :
 		BlockInfo(name, isSolidBlock, toughness, drop_obj_id, collision, platform_collision, effect_comp_id, light_comp_id),
-		blocksWidth{ blWidth }, type{ type }, blocksHeight{ blHeight } {
+		blocks_width{ blocks_width }, complex_type{ type }, blocks_height{ blocks_height } {
 		objectType = isComplexObject;
-		float max_size = blWidth > blHeight ? blWidth : blHeight;
-		size_ratio_normalized.x = blWidth / max_size;
-		size_ratio_normalized.y = blHeight / max_size;
 	}
 
-	ComplexObjectType type;
-	float blocksWidth, blocksHeight;
-	glm::vec2 size_ratio_normalized;
+	ComplexObjectType complex_type;
+	float blocks_width, blocks_height;
 };
 
 class WeaponInfo : public ObjectInfo {
 public:
-	WeaponInfo(std::string name, WeaponType type, int dmg, float hit_cd, float spd_factor, float proj_cd, int proj_id, float sizeX, float sizeY, float crit_chance, bool isStackable, int use_sound_id) :
-		ObjectInfo(name), type{ type }, damage{ dmg }, hit_cd{ hit_cd }, speed_factor{ spd_factor }, projectile_cd{ proj_cd }, projectile_id{ proj_id },
-		size_x{sizeX}, sizeY{sizeY}, crit_chance{crit_chance}, isStackable{isStackable}, use_sound_id{use_sound_id} {
-		objectType = isWeapon;
-	}
+	WeaponInfo(std::string name, WeaponType type, int dmg, float sizeX, float sizeY, float crit_chance, float speed, bool is_stackable,
+		uint32_t use_sound_id, uint32_t proj_id = 0, float proj_cd = 0) :
+		ObjectInfo(ObjectType::isWeapon, name), type{ type }, damage{ dmg }, size_x{ sizeX }, size_y{ sizeY }, crit_chance{ crit_chance },
+		speed{ speed }, is_stackable{ is_stackable }, use_sound_id{ use_sound_id }, projectile_id{ proj_id }, projectile_cd{ proj_cd } {}
 
 	WeaponType type;
 	int damage;
 	float size_x = 1.f;
 	float size_y = 1.f;
 	float crit_chance = 0.f;
-	bool isStackable = false;
-	float speed = 1.f; //speed of weapon in blocks per second (speed of swinging, starting speed of arrow or bullet, speed of throwable weapons, etc.)
-	int use_sound_id = 0;
-	float hit_cd = 0.5f; //cd for each enemy that was hit by this weapon
-	float projectile_cd = 1.f; //cd for shooting projectiles (from any kind of weapon if it has this ability)
-	int projectile_id = -1; //if it's a sword with projectiles, magic weapon or throwable weapon, etc. (-1 means no projectile)
-};  
+	float speed = 1.f;
+	bool is_stackable = false;
+	uint32_t use_sound_id = 0;
+	uint32_t projectile_id = 0; //if it's a sword with projectiles, magic weapon or throwable weapon, etc. (0 means no projectile)
+	float projectile_cd = 0.0f; //projectile cooldown
+};
+
 class InstrumentalWeaponInfo : public WeaponInfo {
 public:
-	InstrumentalWeaponInfo(std::string name, WeaponType type, float power, int dmg, float hit_cd, float spd_factor, float proj_cd, int proj_id, float sizeX, float sizeY, float crit_chance, bool isStackable, int use_sound_id) :
-		WeaponInfo(name, type, dmg, hit_cd, spd_factor, proj_cd, proj_id, sizeX, sizeY, crit_chance, isStackable, use_sound_id) {
-		this->power = power;
-	}
+	InstrumentalWeaponInfo(std::string name, WeaponType type, float power, float range, int dmg, float sizeX, float sizeY,
+		float crit_chance, float speed, bool is_stackable, uint32_t use_sound_id, uint32_t proj_id = 0, float proj_cd = 0) :
+		WeaponInfo(name, type, dmg, sizeX, sizeY, crit_chance, speed, is_stackable, use_sound_id, proj_id, proj_cd),
+		power{ power }, range{ range } {}
 
 	float power = 1.0f;
 	float range = 1.0f;
 };
+
 class MagicalWeaponInfo : public WeaponInfo {
 public:
-	MagicalWeaponInfo(std::string name, WeaponType type, int dmg, int manaCost, float hit_cd, float spd_factor, float proj_cd, int proj_id, float sizeX, float sizeY, float crit_chance, bool isStackable, int use_sound_id) :
-		WeaponInfo(name, type, dmg, hit_cd, spd_factor, proj_cd, proj_id, sizeX, sizeY, crit_chance, isStackable, use_sound_id) {
-		this->manaCost = manaCost;
-	}
-	int get_weapon_mana_cost() const { return manaCost; }
-private:
-	int manaCost;
+	MagicalWeaponInfo(std::string name, WeaponType type, uint32_t mana_cost, int dmg, float sizeX, float sizeY,
+		float crit_chance, float speed, bool is_stackable, uint32_t use_sound_id, uint32_t proj_id = 0, float proj_cd = 0) :
+		WeaponInfo(name, type, dmg, sizeX, sizeY, crit_chance, speed, is_stackable, use_sound_id, proj_id, proj_cd),
+		mana_cost{ mana_cost } {}
+
+	uint32_t mana_cost;
 };
 
 class AmmoInfo : public ObjectInfo {
 public:
-	AmmoInfo(
-		std::string name, AmmoType type, int dmg, float sizeX, float sizeY,
-		int entity_id, uint32_t effect_comp_id = 0, uint32_t light_comp_id = 0
-	) : ObjectInfo(isAmmo, name, effect_comp_id, light_comp_id), type{ type },
-		damage{ dmg }, sizeX{ sizeX }, sizeY{ sizeY }, entity_id{ entity_id } {}
-	AmmoType get_ammo_type() const override { return type; }
-	int get_damage() const override { return damage; }
-	float get_size_x() const override { return sizeX; }
-	float get_size_y() const override { return sizeY; }
-	int get_entity_id() const override { return entity_id; }
-private:
+	AmmoInfo(std::string name, AmmoType type, int dmg, float sizeX, float sizeY,
+		uint32_t entity_id, uint32_t effect_comp_id = 0, uint32_t light_comp_id = 0) :
+		ObjectInfo(isAmmo, name, effect_comp_id, light_comp_id), type{ type },
+		damage{ dmg }, size_x{ sizeX }, size_y{ sizeY }, entity_id{ entity_id } {}
+
 	AmmoType type;
-	int entity_id;
+	uint32_t entity_id;
 	int damage;
-	float sizeX;
-	float sizeY;
+	float size_x;
+	float size_y;
 };
 
 //OBJECT COMPONENTS
@@ -560,6 +549,7 @@ public:
 	virtual InventorySlot* get_chest_slots() { return nullptr; }
 	virtual uint8_t get_door_state() const { return 0; }
 };
+
 class ComplexObjectPartComponent : public ObjectComponent {
 public:
 	ComplexObjectPartComponent(uint16_t column, uint16_t line) :column{ column }, line{ line } {}
@@ -568,12 +558,14 @@ public:
 private:
 	uint16_t column, line;
 };
+
 class ChestComponent : public ObjectComponent {
 public:
 	InventorySlot* get_chest_slots() override { return chest_slots; }
 private:
 	InventorySlot chest_slots[40];
 };
+
 class DoorComponent : public ObjectComponent {
 public:
 	DoorComponent(uint8_t state) : door_state{ state } {}

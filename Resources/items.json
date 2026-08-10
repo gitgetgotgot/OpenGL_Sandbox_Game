@@ -1,466 +1,531 @@
 [
   {
     "id": 0,
-    "type": "Base",
-    "sub_type": "None",
-    "name": "Air"
+    "type": 0,
+    "sub_type": 0,
+    "name": "Air",
+    "sprite": 0
   },
   {
     "id": 1,
-    "type": "Base",
-    "sub_type": "isCompObjPart",
-    "name": "CompObjPart"
+    "type": 0,
+    "sub_type": 4,
+    "name": "CompObjPart",
+    "sprite": 0
   },
   {
     "id": 2,
-    "type": "Block",
-    "sub_type": "isSolidBlock",
+    "type": 1,
+    "sub_type": 0,
     "name": "Stone",
     "toughness": 1,
     "drop_id": 2,
-    "collision": true
+    "collision": true,
+    "sprite": 22
   },
   {
     "id": 3,
-    "type": "Block",
-    "sub_type": "isSolidBlock",
+    "type": 1,
+    "sub_type": 0,
     "name": "Dirt",
     "toughness": 1,
     "drop_id": 3,
-    "collision": true
+    "collision": true,
+    "sprite": 23
   },
   {
     "id": 4,
-    "type": "Block",
-    "sub_type": "isSolidBlock",
+    "type": 1,
+    "sub_type": 0,
     "name": "Grass Dirt",
     "toughness": 1,
     "drop_id": 4,
-    "collision": true
+    "collision": true,
+    "sprite": 24
   },
   {
     "id": 5,
-    "type": "Block",
-    "sub_type": "isSolidBlock",
+    "type": 1,
+    "sub_type": 0,
     "name": "Sand",
     "toughness": 1,
     "drop_id": 5,
-    "collision": true
+    "collision": true,
+    "sprite": 25
   },
   {
     "id": 6,
-    "type": "Block",
-    "sub_type": "isWood",
+    "type": 1,
+    "sub_type": 1,
     "name": "Oak",
     "toughness": 1,
     "drop_id": 6,
-    "collision": false
+    "collision": false,
+    "sprite": 26
   },
   {
     "id": 7,
-    "type": "Block",
-    "sub_type": "isSolidBlock",
+    "type": 1,
+    "sub_type": 0,
     "name": "Oak Planks",
     "toughness": 1,
     "drop_id": 7,
-    "collision": true
+    "collision": true,
+    "sprite": 27
   },
   {
     "id": 8,
-    "type": "Block",
-    "sub_type": "isSolidBlock",
+    "type": 1,
+    "sub_type": 0,
     "name": "Crimson Stone",
     "toughness": 1,
     "drop_id": 8,
-    "collision": true
+    "collision": true,
+    "sprite": 28
   },
   {
     "id": 9,
-    "type": "Block",
-    "sub_type": "isSolidBlock",
+    "type": 1,
+    "sub_type": 0,
     "name": "Corrupted Stone",
     "toughness": 1,
     "drop_id": 9,
-    "collision": true
+    "collision": true,
+    "sprite": 29
   },
   {
     "id": 10,
-    "type": "Block",
-    "sub_type": "isSolidBlock",
+    "type": 1,
+    "sub_type": 0,
     "name": "Copper Ore",
     "toughness": 1,
     "drop_id": 10,
-    "collision": true
+    "collision": true,
+    "sprite": 30
   },
   {
     "id": 11,
-    "type": "Block",
-    "sub_type": "isSolidBlock",
+    "type": 1,
+    "sub_type": 0,
     "name": "Iron Ore",
     "toughness": 1,
     "drop_id": 11,
-    "collision": true
+    "collision": true,
+    "sprite": 31
   },
   {
     "id": 12,
-    "type": "Block",
-    "sub_type": "isSolidBlock",
+    "type": 1,
+    "sub_type": 0,
     "name": "Gold Ore",
     "toughness": 1,
     "drop_id": 12,
-    "collision": true
+    "collision": true,
+    "sprite": 32
   },
   {
     "id": 13,
-    "type": "Block",
-    "sub_type": "isLiquid",
+    "type": 1,
+    "sub_type": 5,
     "name": "Water",
     "toughness": 1,
     "drop_id": 0,
-    "collision": false
+    "collision": false,
+    "sprite": 33
   },
   {
     "id": 14,
-    "type": "Block",
-    "sub_type": "isSolidBlock",
+    "type": 1,
+    "sub_type": 0,
     "name": "Snow",
     "toughness": 1,
     "drop_id": 14,
-    "collision": true
+    "collision": true,
+    "sprite": 34
   },
   {
     "id": 15,
-    "type": "Block",
-    "sub_type": "isSolidBlock",
+    "type": 1,
+    "sub_type": 0,
     "name": "Ice",
     "toughness": 1,
     "drop_id": 15,
-    "collision": true
+    "collision": true,
+    "sprite": 35
   },
   {
     "id": 16,
-    "type": "Block",
-    "sub_type": "isSolidBlock",
+    "type": 1,
+    "sub_type": 0,
     "name": "Snow Grass Dirt",
     "toughness": 1,
     "drop_id": 16,
-    "collision": true
+    "collision": true,
+    "sprite": 36
   },
   {
     "id": 17,
-    "type": "Block",
-    "sub_type": "isSolidBlock",
+    "type": 1,
+    "sub_type": 0,
     "name": "Crimson Grass Dirt",
     "toughness": 1,
     "drop_id": 17,
-    "collision": true
+    "collision": true,
+    "sprite": 37
   },
   {
     "id": 18,
-    "type": "Block",
-    "sub_type": "isSolidBlock",
+    "type": 1,
+    "sub_type": 0,
     "name": "Corrupted Grass Dirt",
     "toughness": 1,
     "drop_id": 18,
-    "collision": true
+    "collision": true,
+    "sprite": 38
   },
   {
     "id": 19,
-    "type": "Block",
-    "sub_type": "isGrass",
+    "type": 1,
+    "sub_type": 6,
     "name": "Grass",
     "toughness": 1,
     "drop_id": 19,
-    "collision": false
+    "collision": false,
+    "sprite": 39
   },
   {
     "id": 20,
-    "type": "Block",
-    "sub_type": "isGrass",
+    "type": 1,
+    "sub_type": 6,
     "name": "Corrupted Grass",
     "toughness": 1,
     "drop_id": 20,
-    "collision": false
+    "collision": false,
+    "sprite": 40
   },
   {
     "id": 21,
-    "type": "Block",
-    "sub_type": "isGrass",
+    "type": 1,
+    "sub_type": 6,
     "name": "Crimson Grass",
     "toughness": 1,
     "drop_id": 21,
-    "collision": false
+    "collision": false,
+    "sprite": 41
   },
   {
     "id": 22,
-    "type": "Block",
-    "sub_type": "isPlant",
+    "type": 1,
+    "sub_type": 7,
     "name": "Day Flower",
     "toughness": 1,
     "drop_id": 22,
-    "collision": false
+    "collision": false,
+    "sprite": 42
   },
   {
     "id": 23,
-    "type": "Block",
-    "sub_type": "isTorch",
+    "type": 1,
+    "sub_type": 4,
     "name": "Torch",
     "toughness": 1,
     "drop_id": 23,
     "collision": false,
-    "light_id": 1
+    "light_id": 1,
+    "sprite": 43,
+    "craft": {
+      "amount": 1,
+      "condition": 0,
+      "items": [
+        {
+          "item_id": 2,
+          "item_amount": 2
+        },
+        {
+          "item_id": 3,
+          "item_amount": 5
+        }
+      ]
+    }
   },
   {
     "id": 24,
-    "type": "Block",
-    "sub_type": "isTorch",
+    "type": 1,
+    "sub_type": 4,
     "name": "Torch(L)",
     "toughness": 1,
     "drop_id": 23,
     "collision": false,
-    "light_id": 1
+    "light_id": 1,
+    "sprite": 44
   },
   {
     "id": 25,
-    "type": "Block",
-    "sub_type": "isTorch",
+    "type": 1,
+    "sub_type": 4,
     "name": "Torch(R)",
     "toughness": 1,
     "drop_id": 23,
     "collision": false,
-    "light_id": 1
+    "light_id": 1,
+    "sprite": 45
   },
   {
     "id": 26,
-    "type": "Block",
-    "sub_type": "isTorch",
+    "type": 1,
+    "sub_type": 4,
     "name": "Ice Torch",
     "toughness": 1,
     "drop_id": 26,
     "collision": false,
-    "light_id": 2
+    "light_id": 2,
+    "sprite": 46
   },
   {
     "id": 27,
-    "type": "Block",
-    "sub_type": "isTorch",
+    "type": 1,
+    "sub_type": 4,
     "name": "Ice Torch(L)",
     "toughness": 1,
     "drop_id": 26,
     "collision": false,
-    "light_id": 2
+    "light_id": 2,
+    "sprite": 47
   },
   {
     "id": 28,
-    "type": "Block",
-    "sub_type": "isTorch",
+    "type": 1,
+    "sub_type": 4,
     "name": "Ice Torch(R)",
     "toughness": 1,
     "drop_id": 26,
     "collision": false,
-    "light_id": 2
+    "light_id": 2,
+    "sprite": 48
   },
   {
     "id": 29,
-    "type": "Block",
-    "sub_type": "isGlass",
+    "type": 1,
+    "sub_type": 8,
     "name": "Glass",
     "toughness": 1,
     "drop_id": 29,
-    "collision": true
+    "collision": true,
+    "sprite": 49
   },
   {
     "id": 30,
-    "type": "Block",
-    "sub_type": "isPlatform",
+    "type": 1,
+    "sub_type": 3,
     "name": "Oak Platform",
     "toughness": 1,
     "drop_id": 30,
     "collision": false,
-    "platform_collision": true
+    "platform_collision": true,
+    "sprite": 50
   },
   {
     "id": 31,
-    "type": "Block",
-    "sub_type": "isPlatform",
+    "type": 1,
+    "sub_type": 3,
     "name": "Oak Platform(L)",
     "toughness": 1,
     "drop_id": 30,
     "collision": false,
-    "platform_collision": true
+    "platform_collision": true,
+    "sprite": 51
   },
   {
     "id": 32,
-    "type": "Block",
-    "sub_type": "isPlatform",
+    "type": 1,
+    "sub_type": 3,
     "name": "Oak Platform(R)",
     "toughness": 1,
     "drop_id": 30,
     "collision": false,
-    "platform_collision": true
+    "platform_collision": true,
+    "sprite": 52
   },
   {
     "id": 33,
-    "type": "Block",
-    "sub_type": "isPlant",
+    "type": 1,
+    "sub_type": 7,
     "name": "Mushroom",
     "toughness": 1,
     "drop_id": 33,
-    "collision": false
+    "collision": false,
+    "sprite": 53
   },
   {
     "id": 34,
-    "type": "Block",
-    "sub_type": "isPlant",
+    "type": 1,
+    "sub_type": 7,
     "name": "Glowing Mushroom",
     "toughness": 1,
     "drop_id": 34,
-    "collision": false
+    "collision": false,
+    "sprite": 54
   },
   {
     "id": 35,
-    "type": "Block",
-    "sub_type": "isSolidBlock",
+    "type": 1,
+    "sub_type": 0,
     "name": "Hardened Sand",
     "toughness": 1,
     "drop_id": 35,
-    "collision": true
+    "collision": true,
+    "sprite": 55
   },
 
   {
     "id": 36,
-    "type": "Wall",
+    "type": 3,
     "name": "Stone Wall",
     "toughness": 1,
-    "drop_id": 36
+    "drop_id": 36,
+    "sprite": 56
   },
   {
     "id": 37,
-    "type": "Wall",
+    "type": 3,
     "name": "Dirt Wall",
     "toughness": 1,
-    "drop_id": 37
+    "drop_id": 37,
+    "sprite": 57
   },
   {
     "id": 38,
-    "type": "Wall",
+    "type": 3,
     "name": "Oak Wall",
     "toughness": 1,
-    "drop_id": 38
+    "drop_id": 38,
+    "sprite": 58
   },
   {
     "id": 39,
-    "type": "Wall",
+    "type": 3,
     "name": "Crimson Wall",
     "toughness": 1,
-    "drop_id": 39
+    "drop_id": 39,
+    "sprite": 59
   },
   {
     "id": 40,
-    "type": "Wall",
+    "type": 3,
     "name": "Corrupted Wall",
     "toughness": 1,
-    "drop_id": 40
+    "drop_id": 40,
+    "sprite": 60
   },
   {
     "id": 41,
-    "type": "Wall",
+    "type": 3,
     "name": "Snow Wall",
     "toughness": 1,
-    "drop_id": 41
+    "drop_id": 41,
+    "sprite": 61
   },
   {
     "id": 42,
-    "type": "Wall",
+    "type": 3,
     "name": "Sand Wall",
     "toughness": 1,
-    "drop_id": 42
+    "drop_id": 42,
+    "sprite": 62
   },
 
   {
     "id": 43,
-    "type": "Complex",
+    "type": 2,
     "sub_type": 0,
     "name": "Workbench",
     "toughness": 1,
     "drop_id": 43,
     "width": 2,
     "height": 1,
-    "platform_collision": true
+    "platform_collision": true,
+    "sprite": 63
   },
   {
     "id": 44,
-    "type": "Complex",
+    "type": 2,
     "sub_type": 1,
     "name": "Furnace",
     "toughness": 1,
     "drop_id": 44,
     "width": 3,
-    "height": 2
+    "height": 2,
+    "sprite": 64
   },
   {
     "id": 45,
-    "type": "Complex",
+    "type": 2,
     "sub_type": 6,
     "name": "Anvil",
     "toughness": 1,
     "drop_id": 45,
     "width": 2,
-    "height": 1
+    "height": 1,
+    "sprite": 65
   },
   {
     "id": 46,
-    "type": "Complex",
+    "type": 2,
     "sub_type": 4,
     "name": "Oak Table",
     "toughness": 1,
     "drop_id": 46,
     "width": 3,
-    "height": 2
+    "height": 2,
+    "sprite": 66
   },
   {
     "id": 47,
-    "type": "Complex",
+    "type": 2,
     "sub_type": 5,
     "name": "Oak Chair",
     "toughness": 1,
     "drop_id": 47,
     "width": 1,
-    "height": 2
+    "height": 2,
+    "sprite": 67
   },
   {
     "id": 48,
-    "type": "Complex",
+    "type": 2,
     "sub_type": 5,
     "name": "Oak Chair(R)",
     "toughness": 1,
     "drop_id": 48,
     "width": 1,
-    "height": 2
+    "height": 2,
+    "sprite": 68
   },
   {
     "id": 49,
-    "type": "Complex",
+    "type": 2,
     "sub_type": 2,
     "name": "Chest",
     "toughness": 1,
     "drop_id": 49,
     "width": 2,
-    "height": 2
+    "height": 2,
+    "sprite": 69
   },
   {
     "id": 50,
-    "type": "Complex",
+    "type": 2,
     "sub_type": 2,
     "name": "ChestOpen",
     "toughness": 1,
     "drop_id": 49,
     "width": 2,
-    "height": 2
+    "height": 2,
+    "sprite": 70
   },
   {
     "id": 51,
-    "type": "Complex",
+    "type": 2,
     "sub_type": 9,
     "name": "Life Crystal",
     "toughness": 1,
@@ -468,67 +533,74 @@
     "width": 2,
     "height": 2,
     "effect_id": 3,
-    "light_id": 4
+    "light_id": 4,
+    "sprite": 71
   },
   {
     "id": 52,
-    "type": "Complex",
+    "type": 2,
     "sub_type": 3,
     "name": "Oak Door",
     "toughness": 1,
     "drop_id": 52,
     "width": 2,
-    "height": 3
+    "height": 3,
+    "sprite": 72
   },
   {
     "id": 53,
-    "type": "Complex",
+    "type": 2,
     "sub_type": 3,
     "name": "Oak Door(R)",
     "toughness": 1,
     "drop_id": 52,
     "width": 2,
-    "height": 3
+    "height": 3,
+    "sprite": 73
   },
   {
     "id": 54,
-    "type": "Complex",
+    "type": 2,
     "sub_type": 3,
     "name": "Oak Door(C)",
     "toughness": 1,
     "drop_id": 52,
     "width": 1,
     "height": 3,
-    "collision": true
+    "collision": true,
+    "sprite": 74
   },
   {
     "id": 55,
-    "type": "Block",
+    "type": 1,
     "sub_type": 2,
     "name": "Oak Tree Top",
     "toughness": 1,
-    "drop_id": 55
+    "drop_id": 55,
+    "sprite": 75
   },
   {
     "id": 56,
-    "type": "Block",
-    "sub_type": 2,
-    "name": "Oak Branch(R)",
-    "toughness": 1,
-    "drop_id": 56
-  },
-  {
-    "id": 57,
-    "type": "Block",
+    "type": 1,
     "sub_type": 2,
     "name": "Oak Branch(L)",
     "toughness": 1,
-    "drop_id": 57
+    "drop_id": 56,
+    "sprite": 76
+  },
+  {
+    "id": 57,
+    "type": 1,
+    "sub_type": 2,
+    "name": "Oak Branch(R)",
+    "toughness": 1,
+    "drop_id": 57,
+    "sprite": 77
   },
 
   {
     "id": 58,
-    "type": 4,
+    "type": 5,
     "sub_type": 0,
     "name": "Copper Pickaxe",
     "power": 1,
@@ -539,11 +611,12 @@
     "size_y": 1.5,
     "crit_ch": 5,
     "stackable": false,
-    "use_sound_id": 3
+    "use_sound_id": 3,
+    "sprite": 78
   },
   {
     "id": 59,
-    "type": 4,
+    "type": 5,
     "sub_type": 3,
     "name": "Copper Axe",
     "power": 1,
@@ -554,11 +627,12 @@
     "size_y": 1.5,
     "crit_ch": 5,
     "stackable": false,
-    "use_sound_id": 3
+    "use_sound_id": 3,
+    "sprite": 79
   },
   {
     "id": 60,
-    "type": 3,
+    "type": 4,
     "sub_type": 2,
     "name": "Copper Dagger",
     "dmg": 3,
@@ -567,11 +641,12 @@
     "size_y": 1.5,
     "crit_ch": 5,
     "stackable": false,
-    "use_sound_id": 3
+    "use_sound_id": 3,
+    "sprite": 80
   },
   {
     "id": 61,
-    "type": 3,
+    "type": 4,
     "sub_type": 1,
     "name": "Copper Sword",
     "dmg": 4,
@@ -580,11 +655,12 @@
     "size_y": 1.5,
     "crit_ch": 5,
     "stackable": false,
-    "use_sound_id": 3
+    "use_sound_id": 3,
+    "sprite": 81
   },
   {
     "id": 62,
-    "type": 4,
+    "type": 5,
     "sub_type": 4,
     "name": "Copper Hammer",
     "power": 1,
@@ -595,11 +671,12 @@
     "size_y": 1.5,
     "crit_ch": 5,
     "stackable": false,
-    "use_sound_id": 3
+    "use_sound_id": 3,
+    "sprite": 82
   },
   {
     "id": 63,
-    "type": 3,
+    "type": 4,
     "sub_type": 7,
     "name": "Copper Bow",
     "dmg": 3,
@@ -608,11 +685,12 @@
     "size_y": 1.5,
     "crit_ch": 5,
     "stackable": false,
-    "use_sound_id": 3
+    "use_sound_id": 3,
+    "sprite": 83
   },
   {
     "id": 64,
-    "type": 4,
+    "type": 5,
     "sub_type": 0,
     "name": "Iron Pickaxe",
     "power": 1,
@@ -623,11 +701,12 @@
     "size_y": 1.5,
     "crit_ch": 5,
     "stackable": false,
-    "use_sound_id": 3
+    "use_sound_id": 3,
+    "sprite": 84
   },
   {
     "id": 65,
-    "type": 4,
+    "type": 5,
     "sub_type": 3,
     "name": "Iron Axe",
     "power": 1,
@@ -638,11 +717,12 @@
     "size_y": 1.5,
     "crit_ch": 5,
     "stackable": false,
-    "use_sound_id": 3
+    "use_sound_id": 3,
+    "sprite": 85
   },
   {
     "id": 66,
-    "type": 3,
+    "type": 4,
     "sub_type": 2,
     "name": "Iron Dagger",
     "dmg": 3,
@@ -651,11 +731,12 @@
     "size_y": 1.5,
     "crit_ch": 5,
     "stackable": false,
-    "use_sound_id": 3
+    "use_sound_id": 3,
+    "sprite": 86
   },
   {
     "id": 67,
-    "type": 3,
+    "type": 4,
     "sub_type": 1,
     "name": "Iron Sword",
     "dmg": 4,
@@ -664,11 +745,12 @@
     "size_y": 1.5,
     "crit_ch": 5,
     "stackable": false,
-    "use_sound_id": 3
+    "use_sound_id": 3,
+    "sprite": 87
   },
   {
     "id": 68,
-    "type": 4,
+    "type": 5,
     "sub_type": 4,
     "name": "Iron Hammer",
     "power": 1,
@@ -679,11 +761,12 @@
     "size_y": 1.5,
     "crit_ch": 5,
     "stackable": false,
-    "use_sound_id": 3
+    "use_sound_id": 3,
+    "sprite": 88
   },
   {
     "id": 69,
-    "type": 3,
+    "type": 4,
     "sub_type": 7,
     "name": "Iron Bow",
     "dmg": 3,
@@ -692,11 +775,12 @@
     "size_y": 1.5,
     "crit_ch": 5,
     "stackable": false,
-    "use_sound_id": 3
+    "use_sound_id": 3,
+    "sprite": 89
   },
   {
     "id": 70,
-    "type": 4,
+    "type": 5,
     "sub_type": 0,
     "name": "Golden Pickaxe",
     "power": 1,
@@ -707,11 +791,12 @@
     "size_y": 1.5,
     "crit_ch": 5,
     "stackable": false,
-    "use_sound_id": 3
+    "use_sound_id": 3,
+    "sprite": 90
   },
   {
     "id": 71,
-    "type": 4,
+    "type": 5,
     "sub_type": 3,
     "name": "Golden Axe",
     "power": 1,
@@ -722,11 +807,12 @@
     "size_y": 1.5,
     "crit_ch": 5,
     "stackable": false,
-    "use_sound_id": 3
+    "use_sound_id": 3,
+    "sprite": 91
   },
   {
     "id": 72,
-    "type": 3,
+    "type": 4,
     "sub_type": 2,
     "name": "Golden Dagger",
     "dmg": 3,
@@ -735,11 +821,12 @@
     "size_y": 1.5,
     "crit_ch": 5,
     "stackable": false,
-    "use_sound_id": 3
+    "use_sound_id": 3,
+    "sprite": 92
   },
   {
     "id": 73,
-    "type": 3,
+    "type": 4,
     "sub_type": 1,
     "name": "Golden Sword",
     "dmg": 4,
@@ -748,11 +835,12 @@
     "size_y": 1.5,
     "crit_ch": 5,
     "stackable": false,
-    "use_sound_id": 3
+    "use_sound_id": 3,
+    "sprite": 93
   },
   {
     "id": 74,
-    "type": 4,
+    "type": 5,
     "sub_type": 4,
     "name": "Golden Hammer",
     "power": 1,
@@ -763,11 +851,12 @@
     "size_y": 1.5,
     "crit_ch": 5,
     "stackable": false,
-    "use_sound_id": 3
+    "use_sound_id": 3,
+    "sprite": 94
   },
   {
     "id": 75,
-    "type": 3,
+    "type": 4,
     "sub_type": 7,
     "name": "Golden Bow",
     "dmg": 3,
@@ -776,55 +865,327 @@
     "size_y": 1.5,
     "crit_ch": 5,
     "stackable": false,
-    "use_sound_id": 3
+    "use_sound_id": 3,
+    "sprite": 95
   },
 
   {
     "id": 76,
     "type": 0,
     "sub_type": 9,
-    "name": "Copper Coin"
+    "name": "Copper Coin",
+    "sprite": 96
   },
   {
     "id": 77,
     "type": 0,
     "sub_type": 9,
-    "name": "Silver Coin"
+    "name": "Silver Coin",
+    "sprite": 97
   },
   {
     "id": 78,
     "type": 0,
     "sub_type": 9,
-    "name": "Gold Coin"
+    "name": "Gold Coin",
+    "sprite": 98
   },
   {
     "id": 79,
     "type": 0,
     "sub_type": 9,
-    "name": "Platinum Coin"
+    "name": "Platinum Coin",
+    "sprite": 99
   },
   {
     "id": 80,
     "type": 0,
     "sub_type": 8,
-    "name": "Copper Ingot"
+    "name": "Copper Ingot",
+    "sprite": 100
   },
   {
     "id": 81,
     "type": 0,
     "sub_type": 8,
-    "name": "Iron Ingot"
+    "name": "Iron Ingot",
+    "sprite": 101
   },
   {
     "id": 82,
     "type": 0,
     "sub_type": 8,
-    "name": "Gold Ingot"
+    "name": "Gold Ingot",
+    "sprite": 102
   },
   {
     "id": 83,
     "type": 0,
     "sub_type": 8,
-    "name": "Gel"
+    "name": "Gel",
+    "sprite": 103
+  },
+  {
+    "id": 84,
+    "type": 1,
+    "sub_type": 9,
+    "name": "Bottle",
+    "toughness": 1,
+    "drop_id": 84,
+    "collision": false,
+    "sprite": 104
+  },
+  {
+    "id": 85,
+    "type": 1,
+    "sub_type": 9,
+    "name": "Bottle of Water",
+    "toughness": 1,
+    "drop_id": 85,
+    "collision": false,
+    "sprite": 105
+  },
+  {
+    "id": 86,
+    "type": 0,
+    "sub_type": 8,
+    "name": "Lens",
+    "sprite": 106
+  },
+  {
+    "id": 87,
+    "type": 0,
+    "sub_type": 8,
+    "name": "Fallen Star",
+    "sprite": 107
+  },
+  {
+    "id": 88,
+    "type": 0,
+    "sub_type": 11,
+    "name": "Mana Crystal",
+    "effect_id": 4,
+    "sprite": 108
+  },
+  {
+    "id": 89,
+    "type": 0,
+    "sub_type": 12,
+    "name": "Healing Potion",
+    "effect_id": 5,
+    "sprite": 109
+  },
+  {
+    "id": 90,
+    "type": 0,
+    "sub_type": 12,
+    "name": "Speed Potion",
+    "effect_id": 6,
+    "sprite": 110
+  },
+  {
+    "id": 91,
+    "type": 0,
+    "sub_type": 12,
+    "name": "Defense Potion",
+    "effect_id": 7,
+    "sprite": 111
+  },
+  {
+    "id": 92,
+    "type": 0,
+    "sub_type": 12,
+    "name": "Regeneration Potion",
+    "effect_id": 8,
+    "sprite": 112
+  },
+  {
+    "id": 93,
+    "type": 0,
+    "sub_type": 12,
+    "name": "Better Healing Potion",
+    "effect_id": 9,
+    "sprite": 113
+  },
+  {
+    "id": 94,
+    "type": 6,
+    "sub_type": 10,
+    "name": "Magic Wand",
+    "mana_cost": 5,
+    "dmg": 5,
+    "speed": 1,
+    "size_x": 1.0,
+    "size_y": 1.0,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3,
+    "proj_id": 1,
+    "proj_cd": 1.0,
+    "sprite": 114
+  },
+  {
+    "id": 95,
+    "type": 4,
+    "sub_type": 8,
+    "name": "Shuriken",
+    "dmg": 5,
+    "speed": 1,
+    "size_x": 1.0,
+    "size_y": 1.0,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3,
+    "sprite": 115
+  },
+  {
+    "id": 96,
+    "type": 4,
+    "sub_type": 8,
+    "name": "Throwable Knife",
+    "dmg": 5,
+    "speed": 1,
+    "size_x": 1.0,
+    "size_y": 1.0,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3,
+    "sprite": 116
+  },
+  {
+    "id": 97,
+    "type": 6,
+    "sub_type": 10,
+    "name": "Game.cpp",
+    "mana_cost": 5,
+    "dmg": 5,
+    "speed": 1,
+    "size_x": 1.0,
+    "size_y": 1.0,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3,
+    "proj_id": 1,
+    "proj_cd": 1.0,
+    "sprite": 117
+  },
+  {
+    "id": 98,
+    "type": 4,
+    "sub_type": 5,
+    "name": "Pistol",
+    "dmg": 5,
+    "speed": 1,
+    "size_x": 1.0,
+    "size_y": 1.0,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3,
+    "sprite": 118
+  },
+  {
+    "id": 99,
+    "type": 4,
+    "sub_type": 6,
+    "name": "Shotgun",
+    "dmg": 5,
+    "speed": 1,
+    "size_x": 1.0,
+    "size_y": 1.0,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3,
+    "sprite": 119
+  },
+  {
+    "id": 100,
+    "type": 4,
+    "sub_type": 2,
+    "name": "Trident",
+    "dmg": 5,
+    "speed": 1,
+    "size_x": 1.0,
+    "size_y": 1.0,
+    "crit_ch": 5,
+    "stackable": false,
+    "use_sound_id": 3,
+    "sprite": 120
+  },
+  {
+    "id": 101,
+    "type": 7,
+    "sub_type": 0,
+    "name": "Arrow",
+    "dmg": 5,
+    "size_x": 1.0,
+    "size_y": 1.0,
+    "entity_id": 1,
+    "sprite": 121
+  },
+  {
+    "id": 102,
+    "type": 7,
+    "sub_type": 0,
+    "name": "Flaming Arrow",
+    "dmg": 5,
+    "size_x": 1.0,
+    "size_y": 1.0,
+    "entity_id": 1,
+    "sprite": 122
+  },
+  {
+    "id": 103,
+    "type": 7,
+    "sub_type": 0,
+    "name": "Frostburn Arrow",
+    "dmg": 5,
+    "size_x": 1.0,
+    "size_y": 1.0,
+    "entity_id": 1,
+    "sprite": 123
+  },
+  {
+    "id": 104,
+    "type": 7,
+    "sub_type": 0,
+    "name": "Jester's Arrow",
+    "dmg": 5,
+    "size_x": 1.0,
+    "size_y": 1.0,
+    "entity_id": 1,
+    "sprite": 124
+  },
+  {
+    "id": 105,
+    "type": 7,
+    "sub_type": 0,
+    "name": "Dark Arrow",
+    "dmg": 5,
+    "size_x": 1.0,
+    "size_y": 1.0,
+    "entity_id": 1,
+    "sprite": 125
+  },
+  {
+    "id": 106,
+    "type": 7,
+    "sub_type": 0,
+    "name": "Hell Arrow",
+    "dmg": 5,
+    "size_x": 1.0,
+    "size_y": 1.0,
+    "entity_id": 1,
+    "sprite": 126
+  },
+  {
+    "id": 107,
+    "type": 7,
+    "sub_type": 1,
+    "name": "Bullet",
+    "dmg": 5,
+    "size_x": 1.0,
+    "size_y": 1.0,
+    "entity_id": 1,
+    "sprite": 127
   }
 ]

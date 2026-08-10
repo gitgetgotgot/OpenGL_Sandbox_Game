@@ -1,0 +1,1542 @@
+[
+  {
+    "id": 0,
+    "name": "Empty",
+    "padding": 0,
+    "sprite": {
+      "U0": 0.0,
+      "V0": 0.0,
+      "w": 0.0,
+      "h": 0.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 1,
+    "name": "BasicSlot",
+    "padding": 0,
+    "sprite": {
+      "U0": 2.0,
+      "V0": 0.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 2,
+    "name": "ChestSlot",
+    "padding": 0,
+    "sprite": {
+      "U0": 4.0,
+      "V0": 0.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 3,
+    "name": "HotbarFrame",
+    "padding": 0,
+    "sprite": {
+      "U0": 6.0,
+      "V0": 0.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 4,
+    "name": "CraftSlot",
+    "padding": 0,
+    "sprite": {
+      "U0": 8.0,
+      "V0": 0.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 5,
+    "name": "CraftBorder",
+    "padding": 0,
+    "sprite": {
+      "U0": 10.0,
+      "V0": 0.0,
+      "w": 4.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 6,
+    "name": "CraftBorder2",
+    "padding": 0,
+    "sprite": {
+      "U0": 10.0,
+      "V0": 1.0,
+      "w": 4.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 7,
+    "name": "TooltipLB",
+    "padding": 0,
+    "sprite": {
+      "U0": 0.0,
+      "V0": 0.0,
+      "w": 4.0,
+      "h": 4.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 8,
+    "name": "TooltipLC",
+    "padding": 0,
+    "sprite": {
+      "U0": 0.0,
+      "V0": 4.0,
+      "w": 4.0,
+      "h": 12.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 9,
+    "name": "TooltipLT",
+    "padding": 0,
+    "sprite": {
+      "U0": 0.0,
+      "V0": 16.0,
+      "w": 4.0,
+      "h": 4.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 10,
+    "name": "TooltipCB",
+    "padding": 0,
+    "sprite": {
+      "U0": 4.0,
+      "V0": 0.0,
+      "w": 24.0,
+      "h": 4.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 11,
+    "name": "TooltipC",
+    "padding": 0,
+    "sprite": {
+      "U0": 4.0,
+      "V0": 4.0,
+      "w": 24.0,
+      "h": 12.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 12,
+    "name": "TooltipCT",
+    "padding": 0,
+    "sprite": {
+      "U0": 4.0,
+      "V0": 16.0,
+      "w": 24.0,
+      "h": 4.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 13,
+    "name": "TooltipRB",
+    "padding": 0,
+    "sprite": {
+      "U0": 28.0,
+      "V0": 0.0,
+      "w": 4.0,
+      "h": 4.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 14,
+    "name": "TooltipRC",
+    "padding": 0,
+    "sprite": {
+      "U0": 28.0,
+      "V0": 4.0,
+      "w": 4.0,
+      "h": 12.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 15,
+    "name": "TooltipRT",
+    "padding": 0,
+    "sprite": {
+      "U0": 28.0,
+      "V0": 16.0,
+      "w": 4.0,
+      "h": 4.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 16,
+    "name": "HeartFull",
+    "padding": 0,
+    "sprite": {
+      "U0": 14.0,
+      "V0": 0.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 17,
+    "name": "HeartHalf",
+    "padding": 0,
+    "sprite": {
+      "U0": 16.0,
+      "V0": 0.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 18,
+    "name": "HeartEmpty",
+    "padding": 0,
+    "sprite": {
+      "U0": 18.0,
+      "V0": 0.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 19,
+    "name": "ManaFull",
+    "padding": 0,
+    "sprite": {
+      "U0": 20.0,
+      "V0": 0.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 20,
+    "name": "ManaHalf",
+    "padding": 0,
+    "sprite": {
+      "U0": 22.0,
+      "V0": 0.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 21,
+    "name": "ManaEmpty",
+    "padding": 0,
+    "sprite": {
+      "U0": 24.0,
+      "V0": 0.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+
+  {
+    "id": 22,
+    "name": "Stone",
+    "padding": 1,
+    "sprite": {
+      "U0": 1,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 23,
+    "name": "Dirt",
+    "padding": 1,
+    "sprite": {
+      "U0": 19,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 24,
+    "name": "Grass Dirt",
+    "padding": 1,
+    "sprite": {
+      "U0": 37,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 25,
+    "name": "Sand",
+    "padding": 1,
+    "sprite": {
+      "U0": 55,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 26,
+    "name": "Oak",
+    "padding": 1,
+    "sprite": {
+      "U0": 73,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 27,
+    "name": "Oak Planks",
+    "padding": 1,
+    "sprite": {
+      "U0": 91,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 28,
+    "name": "Crimson Stone",
+    "padding": 1,
+    "sprite": {
+      "U0": 109,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 29,
+    "name": "Corrupted Stone",
+    "padding": 1,
+    "sprite": {
+      "U0": 127,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 30,
+    "name": "Copper Ore",
+    "padding": 1,
+    "sprite": {
+      "U0": 145,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 31,
+    "name": "Iron Ore",
+    "padding": 1,
+    "sprite": {
+      "U0": 163,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 32,
+    "name": "Gold Ore",
+    "padding": 1,
+    "sprite": {
+      "U0": 181,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 33,
+    "name": "Water",
+    "padding": 1,
+    "sprite": {
+      "U0": 199,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 34,
+    "name": "Snow",
+    "padding": 1,
+    "sprite": {
+      "U0": 217,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 35,
+    "name": "Ice",
+    "padding": 1,
+    "sprite": {
+      "U0": 235,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 36,
+    "name": "Snow Grass Dirt",
+    "padding": 1,
+    "sprite": {
+      "U0": 253,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 37,
+    "name": "Crimson Grass Dirt",
+    "padding": 1,
+    "sprite": {
+      "U0": 271,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 38,
+    "name": "Corrupted Grass Dirt",
+    "padding": 1,
+    "sprite": {
+      "U0": 289,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 39,
+    "name": "Grass",
+    "padding": 1,
+    "sprite": {
+      "U0": 307,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 40,
+    "name": "Corrupted Grass",
+    "padding": 1,
+    "sprite": {
+      "U0": 325,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 41,
+    "name": "Crimson Grass",
+    "padding": 1,
+    "sprite": {
+      "U0": 343,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 42,
+    "name": "Day Flower",
+    "padding": 1,
+    "sprite": {
+      "U0": 361,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 43,
+    "name": "Torch",
+    "padding": 1,
+    "sprite": {
+      "U0": 379,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 44,
+    "name": "Torch(L)",
+    "padding": 1,
+    "sprite": {
+      "U0": 397,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 45,
+    "name": "Torch(R)",
+    "padding": 1,
+    "sprite": {
+      "U0": 415,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 46,
+    "name": "Ice Torch",
+    "padding": 1,
+    "sprite": {
+      "U0": 433,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 47,
+    "name": "Ice Torch(L)",
+    "padding": 1,
+    "sprite": {
+      "U0": 451,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 48,
+    "name": "Ice Torch(R)",
+    "padding": 1,
+    "sprite": {
+      "U0": 469,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 49,
+    "name": "Glass",
+    "padding": 1,
+    "sprite": {
+      "U0": 487,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 50,
+    "name": "Oak Platform",
+    "padding": 1,
+    "sprite": {
+      "U0": 1,
+      "V0": 477,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 51,
+    "name": "Oak Platform(L)",
+    "padding": 1,
+    "sprite": {
+      "U0": 19,
+      "V0": 477,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 52,
+    "name": "Oak Platform(R)",
+    "padding": 1,
+    "sprite": {
+      "U0": 37,
+      "V0": 477,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 53,
+    "name": "Mushroom",
+    "padding": 1,
+    "sprite": {
+      "U0": 55,
+      "V0": 477,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 54,
+    "name": "Glowing Mushroom",
+    "padding": 1,
+    "sprite": {
+      "U0": 73,
+      "V0": 477,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 55,
+    "name": "Hardened Sand",
+    "padding": 1,
+    "sprite": {
+      "U0": 91,
+      "V0": 477,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+
+  {
+    "id": 56,
+    "name": "Stone Wall",
+    "padding": 1,
+    "sprite": {
+      "U0": 1,
+      "V0": 441,
+      "w": 32,
+      "h": 32,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 57,
+    "name": "Dirt Wall",
+    "padding": 1,
+    "sprite": {
+      "U0": 37,
+      "V0": 441,
+      "w": 32,
+      "h": 32,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 58,
+    "name": "Oak Wall",
+    "padding": 1,
+    "sprite": {
+      "U0": 73,
+      "V0": 441,
+      "w": 32,
+      "h": 32,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 59,
+    "name": "Crimson Wall",
+    "padding": 1,
+    "sprite": {
+      "U0": 109,
+      "V0": 441,
+      "w": 32,
+      "h": 32,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 60,
+    "name": "Corrupted Wall",
+    "padding": 1,
+    "sprite": {
+      "U0": 145,
+      "V0": 441,
+      "w": 32,
+      "h": 32,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 61,
+    "name": "Snow Wall",
+    "padding": 1,
+    "sprite": {
+      "U0": 181,
+      "V0": 441,
+      "w": 32,
+      "h": 32,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 62,
+    "name": "Sand Wall",
+    "padding": 1,
+    "sprite": {
+      "U0": 217,
+      "V0": 441,
+      "w": 32,
+      "h": 32,
+      "base_size": 1.0
+    }
+  },
+
+  {
+    "id": 63,
+    "name": "Workbench",
+    "padding": 1,
+    "sprite": {
+      "U0": 1,
+      "V0": 405,
+      "w": 32,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 64,
+    "name": "Furnace",
+    "padding": 1,
+    "sprite": {
+      "U0": 37,
+      "V0": 405,
+      "w": 48,
+      "h": 32,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 65,
+    "name": "Anvil",
+    "padding": 1,
+    "sprite": {
+      "U0": 91,
+      "V0": 405,
+      "w": 32,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 66,
+    "name": "Oak Table",
+    "padding": 1,
+    "sprite": {
+      "U0": 127,
+      "V0": 405,
+      "w": 48,
+      "h": 32,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 67,
+    "name": "Oak Chair",
+    "padding": 1,
+    "sprite": {
+      "U0": 181,
+      "V0": 405,
+      "w": 16,
+      "h": 32,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 68,
+    "name": "Oak Chair(R)",
+    "padding": 1,
+    "sprite": {
+      "U0": 199,
+      "V0": 405,
+      "w": 16,
+      "h": 32,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 69,
+    "name": "Chest",
+    "padding": 1,
+    "sprite": {
+      "U0": 217,
+      "V0": 405,
+      "w": 32,
+      "h": 32,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 70,
+    "name": "ChestOpen",
+    "padding": 1,
+    "sprite": {
+      "U0": 253,
+      "V0": 405,
+      "w": 32,
+      "h": 32,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 71,
+    "name": "Life Crystal",
+    "padding": 1,
+    "sprite": {
+      "U0": 289,
+      "V0": 405,
+      "w": 32,
+      "h": 32,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 72,
+    "name": "Oak Door",
+    "padding": 1,
+    "sprite": {
+      "U0": 0.0,
+      "V0": 8.0,
+      "w": 2.0,
+      "h": 3.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 73,
+    "name": "Oak Door(R)",
+    "padding": 1,
+    "sprite": {
+      "U0": 2.0,
+      "V0": 8.0,
+      "w": 2.0,
+      "h": 3.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 74,
+    "name": "Oak Door(C)",
+    "padding": 1,
+    "sprite": {
+      "U0": 4.0,
+      "V0": 8.0,
+      "w": 1.0,
+      "h": 3.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 75,
+    "name": "Oak Tree Top",
+    "padding": 1,
+    "sprite": {
+      "U0": 5.0,
+      "V0": 8.0,
+      "w": 3.0,
+      "h": 3.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 76,
+    "name": "Oak Branch(L)",
+    "padding": 1,
+    "sprite": {
+      "U0": 8.0,
+      "V0": 8.0,
+      "w": 2.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 77,
+    "name": "Oak Branch(R)",
+    "padding": 1,
+    "sprite": {
+      "U0": 8.0,
+      "V0": 7.0,
+      "w": 2.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+
+  {
+    "id": 78,
+    "name": "Copper Pickaxe",
+    "padding": 1,
+    "sprite": {
+      "U0": 0.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 79,
+    "name": "Copper Axe",
+    "padding": 1,
+    "sprite": {
+      "U0": 1.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 80,
+    "name": "Copper Dagger",
+    "padding": 1,
+    "sprite": {
+      "U0": 2.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 81,
+    "name": "Copper Sword",
+    "padding": 1,
+    "sprite": {
+      "U0": 3.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 82,
+    "name": "Copper Hammer",
+    "padding": 1,
+    "sprite": {
+      "U0": 4.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 83,
+    "name": "Copper Bow",
+    "padding": 1,
+    "sprite": {
+      "U0": 5.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 84,
+    "name": "Iron Pickaxe",
+    "padding": 1,
+    "sprite": {
+      "U0": 6.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 85,
+    "name": "Iron Axe",
+    "padding": 1,
+    "sprite": {
+      "U0": 7.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 86,
+    "name": "Iron Dagger",
+    "padding": 1,
+    "sprite": {
+      "U0": 8.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 87,
+    "name": "Iron Sword",
+    "padding": 1,
+    "sprite": {
+      "U0": 9.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 88,
+    "name": "Iron Hammer",
+    "padding": 1,
+    "sprite": {
+      "U0": 10.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 89,
+    "name": "Iron Bow",
+    "padding": 1,
+    "sprite": {
+      "U0": 11.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 90,
+    "name": "Golden Pickaxe",
+    "padding": 1,
+    "sprite": {
+      "U0": 12.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 91,
+    "name": "Golden Axe",
+    "padding": 1,
+    "sprite": {
+      "U0": 13.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 92,
+    "name": "Golden Dagger",
+    "padding": 1,
+    "sprite": {
+      "U0": 14.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 93,
+    "name": "Golden Sword",
+    "padding": 1,
+    "sprite": {
+      "U0": 15.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 94,
+    "name": "Golden Hammer",
+    "padding": 1,
+    "sprite": {
+      "U0": 16.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 95,
+    "name": "Golden Bow",
+    "padding": 1,
+    "sprite": {
+      "U0": 17.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 96,
+    "name": "Copper Coin",
+    "padding": 1,
+    "sprite": {
+      "U0": 18.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 97,
+    "name": "Silver Coin",
+    "padding": 1,
+    "sprite": {
+      "U0": 19.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 98,
+    "name": "Gold Coin",
+    "padding": 1,
+    "sprite": {
+      "U0": 20.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 99,
+    "name": "Platinum Coin",
+    "padding": 1,
+    "sprite": {
+      "U0": 21.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 100,
+    "name": "Copper Ingot",
+    "padding": 1,
+    "sprite": {
+      "U0": 22.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 101,
+    "name": "Iron Ingot",
+    "padding": 1,
+    "sprite": {
+      "U0": 23.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 102,
+    "name": "Gold Ingot",
+    "padding": 1,
+    "sprite": {
+      "U0": 24.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 103,
+    "name": "Gel",
+    "padding": 1,
+    "sprite": {
+      "U0": 25.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 104,
+    "name": "Bottle",
+    "padding": 1,
+    "sprite": {
+      "U0": 26.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 105,
+    "name": "Bottle of Water",
+    "padding": 1,
+    "sprite": {
+      "U0": 27.0,
+      "V0": 9.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 106,
+    "name": "Lens",
+    "padding": 1,
+    "sprite": {
+      "U0": 0.0,
+      "V0": 10.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 107,
+    "name": "Fallen Star",
+    "padding": 1,
+    "sprite": {
+      "U0": 1.0,
+      "V0": 10.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 108,
+    "name": "Mana Crystall",
+    "padding": 1,
+    "sprite": {
+      "U0": 2.0,
+      "V0": 10.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 109,
+    "name": "Healing Potion",
+    "padding": 1,
+    "sprite": {
+      "U0": 3.0,
+      "V0": 10.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 110,
+    "name": "Speed Potion",
+    "padding": 1,
+    "sprite": {
+      "U0": 4.0,
+      "V0": 10.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 111,
+    "name": "Defense Potion",
+    "padding": 1,
+    "sprite": {
+      "U0": 5.0,
+      "V0": 10.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 112,
+    "name": "Regeneration Potion",
+    "padding": 1,
+    "sprite": {
+      "U0": 6.0,
+      "V0": 10.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 113,
+    "name": "Better Healing Potion",
+    "padding": 1,
+    "sprite": {
+      "U0": 7.0,
+      "V0": 10.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 114,
+    "name": "Magic Wand",
+    "padding": 1,
+    "sprite": {
+      "U0": 8.0,
+      "V0": 10.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 115,
+    "name": "Shuriken",
+    "padding": 1,
+    "sprite": {
+      "U0": 9.0,
+      "V0": 10.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 116,
+    "name": "Throwable Knife",
+    "padding": 1,
+    "sprite": {
+      "U0": 10.0,
+      "V0": 10.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 117,
+    "name": "Game.cpp",
+    "padding": 1,
+    "sprite": {
+      "U0": 11.0,
+      "V0": 10.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 118,
+    "name": "Pistol",
+    "padding": 1,
+    "sprite": {
+      "U0": 12.0,
+      "V0": 10.0,
+      "w": 2.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 119,
+    "name": "Shotgun",
+    "padding": 1,
+    "sprite": {
+      "U0": 14.0,
+      "V0": 10.0,
+      "w": 2.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 120,
+    "name": "Trident",
+    "padding": 1,
+    "sprite": {
+      "U0": 0.0,
+      "V0": 12.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 121,
+    "name": "Arrow",
+    "padding": 1,
+    "sprite": {
+      "U0": 6.0,
+      "V0": 12.0,
+      "w": 1.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 122,
+    "name": "Flaming Arrow",
+    "padding": 1,
+    "sprite": {
+      "U0": 7.0,
+      "V0": 12.0,
+      "w": 1.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 123,
+    "name": "Frostburn Arrow",
+    "padding": 1,
+    "sprite": {
+      "U0": 8.0,
+      "V0": 12.0,
+      "w": 1.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 124,
+    "name": "Star Arrow",
+    "padding": 1,
+    "sprite": {
+      "U0": 9.0,
+      "V0": 12.0,
+      "w": 1.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 125,
+    "name": "Dark Arrow",
+    "padding": 1,
+    "sprite": {
+      "U0": 10.0,
+      "V0": 12.0,
+      "w": 1.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 126,
+    "name": "Hell Arrow",
+    "padding": 1,
+    "sprite": {
+      "U0": 11.0,
+      "V0": 12.0,
+      "w": 1.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "id": 127,
+    "name": "Bullet",
+    "padding": 1,
+    "sprite": {
+      "U0": 12.0,
+      "V0": 10.0,
+      "w": 1.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  }
+]
