@@ -10,10 +10,12 @@
 void EntitySystem::init() {
 	entities.reserve(MAX_ENTITIES_RENDER);
 	entity_render_buf.reserve(MAX_ENTITIES_RENDER);
+	entity_render_buf.resize(MAX_ENTITIES_RENDER);
 
-	entity_sp = std::make_unique<ShaderProgram>("Resources/shaders/sprites2.vert", "Resources/shaders/sprites.frag");
+	entity_sp = std::make_unique<ShaderProgram>("Resources/shaders/sprites_entity.vert", "Resources/shaders/sprites.frag");
 
 	entity_ssbo = std::make_unique<SSBO>();
+	entity_ssbo->bind_SSBO(0);
 	entity_ssbo->set_data(nullptr, sizeof(EntityRenderData) * MAX_ENTITIES_RENDER, GL_DYNAMIC_DRAW);
 	
 	GLfloat pos[] = {
@@ -64,67 +66,85 @@ void EntitySystem::update() {
 					physx.linear_velocity.y = std::max(physx.linear_velocity.y, -MobPhysics::MAX_FALL_SPEED);
 				}
 				float dY = physx.linear_velocity.y * TimeManager::deltaTime;
-				entity->hitbox.center.y += dY;
 				physx.fallingDistance += std::abs(dY);
 				//calculate current Y max level where mob is falling down
 				if (physx.linear_velocity.y < 0.0f)
 					physx.current_Y_max_level = (int)entity->hitbox.center.y;
 			}
-			entity->hitbox.center.x += physx.linear_velocity.x * TimeManager::deltaTime;
+			//tr.pos += physx.linear_velocity * TimeManager::deltaTime;
+			//entity->hitbox.center = tr.pos + glm::vec2(0.0f, entity->hitbox.size.y * 0.5f);
+			glm::vec2 delta_move = physx.linear_velocity;
 
-			
-			/*
+			physx.collision = CollisionType::NONE;
+			physx.platform_collision = false;
+
 			for (int i = min_slot_x; i < max_slot_x; i++) {
 				for (int j = min_slot_y; j < max_slot_y; j++) {
-					if (sprites_Array[i][j].object.object_type) {
-						if (sprites_Array[i][j].object.object_type == isCompObjPart) {  //if part of complex object, then use its column and line
-							object_id = sprites_Array[sprites_Array[i][j].object.component->get_column()][sprites_Array[i][j].object.component->get_line()].object.object_id;
+					uint32_t slot_index = j * world_width + i;
+					WorldSlot* slot = &world_slots_ptr[slot_index];
+
+					if (slot->tile_id != 0) {
+						ObjectInfo* obj_info_ptr = ObjectsDB::objectInfo[slot->tile_id].get();
+
+						//get main part or complex object
+						if (obj_info_ptr->objectType == ObjectType::isCompObjPart) {
+							ObjectComponent* comp = obj_comps_ptr->find(slot_index)->second.get();
+							uint16_t main_slot_x = comp->get_column();
+							uint16_t main_slot_y = comp->get_line();
+							slot_index = main_slot_y * world_width + main_slot_x;
+							slot = &world_slots_ptr[slot_index];
+							obj_info_ptr = ObjectsDB::objectInfo[slot->tile_id].get();
 						}
-						else {  //if it's simple or complex object
-							object_id = sprites_Array[i][j].object.object_id;
-						}
-						if (objectInfo[object_id]->allow_bottom_collision()) { //if only bottom collision is allowed
-							if (Collisions::getTypeCollisionAABBwithBlock(entity->hitbox, i, j, BLOCK_VISIBLE_SIZE) == BOTTOM && physx.current_Y_max_level > j) {
-								if (physx.current_jump_V && !physx.moving_down)
-									continue;
+
+						//this shouldn't happen, as world slots logically have only these types, air is skipped at the beginning, but i'll leave it for now
+						if (obj_info_ptr->objectType != ObjectType::isBlock &&
+							obj_info_ptr->objectType != ObjectType::isComplexObject) continue;
+
+						if (static_cast<BlockInfo*>(obj_info_ptr)->platform_collision &&
+							physx.linear_velocity.y <= 0.0f
+						) { //if object has platform-like collision
+							if (Collisions::getTypeCollisionAABBwithBlock(entity->hitbox, i, j) & CollisionType::BOTTOM && physx.current_Y_max_level > j) {
 								physx.time_falling = 0.f;
-								entity->hitbox.center.y = j * BLOCK_VISIBLE_SIZE + BLOCK_VISIBLE_SIZE + height * 0.5f;
 								physx.fallingDistance = 0.f;
-								physx.current_jump_V = 0.f;
+								physx.linear_velocity.y = 0.0f;
+								tr.pos.y = float(j) + 1.0f;
 								physx.current_Y_max_level = j + 1;
-								physx.has_bottom_collision_only_with_objects = true;
+								physx.platform_collision = true;
 							}
 						}
-						else if (objectInfo[object_id]->allow_collision()) //if all types of collision are allowed
-							switch (Collisions::getTypeCollisionAABBwithBlock(entity->hitbox, i, j, BLOCK_VISIBLE_SIZE)) {
-							case LEFT:
-								if (!(is_solid_block(i + 1, j))) {
-									entity->hitbox.center.x = i * BLOCK_VISIBLE_SIZE + BLOCK_VISIBLE_SIZE + width * 0.5f;
-									physx.has_side_collision = true;
-									if (eXinc < 0.f) eXinc = 0.f;
-								}
+						else if (static_cast<BlockInfo*>(obj_info_ptr)->collision) //usual collision
+							switch (Collisions::getTypeCollisionAABBwithBlock(entity->hitbox, i, j)) {
+							case CollisionType::LEFT:
+								if (delta_move.x < 0.0f) delta_move.x = 0.0f;
+								physx.collision |= CollisionType::LEFT;
+								tr.pos.x = float(i) + 1.0f + entity->hitbox.size.x * 0.5f;
+								entity->hitbox.center = tr.pos + glm::vec2(0.0f, entity->hitbox.size.y * 0.5f);
 								break;
-							case RIGHT:
-								entity->hitbox.center.x = i * BLOCK_VISIBLE_SIZE - width * 0.5f;
-								physx.has_side_collision = true;
-								if (eXinc > 0.f) eXinc = 0.f;
+							case CollisionType::RIGHT:
+								if (delta_move.x > 0.0f) delta_move.x = 0.0f;
+								physx.collision |= CollisionType::RIGHT;
+								tr.pos.x = float(i) - entity->hitbox.size.x * 0.5f;
+								entity->hitbox.center = tr.pos + glm::vec2(0.0f, entity->hitbox.size.y * 0.5f);
 								break;
-							case TOP:
-								physx.has_top_collision = true;
+							case CollisionType::TOP:
+								physx.collision |= CollisionType::TOP;
 								physx.time_falling = 0.f;
-								entity->hitbox.center.y = j * BLOCK_VISIBLE_SIZE - height * 0.5f;
 								physx.fallingDistance = 0.f;
-								physx.current_jump_V = 0.f;
+								physx.linear_velocity.y = 0.0f;
+								delta_move.y = 0.0f;
+								tr.pos.y = float(j) - entity->hitbox.size.y;
+								entity->hitbox.center = tr.pos + glm::vec2(0.0f, entity->hitbox.size.y * 0.5f);
 								break;
-							case BOTTOM:
-								has_bottom = true;
+							case CollisionType::BOTTOM:
+								if (physx.linear_velocity.y > 0.0f) continue;
+								physx.collision |= CollisionType::BOTTOM;
 								physx.time_falling = 0.f;
-								entity->hitbox.center.y = j * BLOCK_VISIBLE_SIZE + BLOCK_VISIBLE_SIZE + height * 0.5f;
 								physx.fallingDistance = 0.f;
-								physx.current_jump_V = 0.f;
+								physx.linear_velocity.y = 0.0f;
+								delta_move.y = 0.0f;
+								tr.pos.y = float(j) + 1.0f;
+								entity->hitbox.center = tr.pos + glm::vec2(0.0f, entity->hitbox.size.y * 0.5f);
 								physx.current_Y_max_level = j + 1;
-								break;
-							case CORNER:
 								break;
 							default:
 								break;
@@ -132,23 +152,10 @@ void EntitySystem::update() {
 					}
 				}
 			}
-			if (has_bottom) {
-				physx.has_bottom_collision = true;
-				physx.has_bottom_collision_only_with_objects = false;
-			}
-			else physx.has_bottom_collision = false;
-			if (physx.has_bottom_collision_only_with_objects)
-				physx.has_bottom_collision = true;
+			//entity->hitbox.center = tr.pos + glm::vec2(0.0f, entity->hitbox.size.y * 0.5f);
 
-			if (physx.should_jump) { //start jump
-				physx.should_jump = false;
-				physx.has_bottom_collision = false;
-				physx.has_bottom_collision_only_with_objects = false;
-				physx.current_jump_V = physx.jump_V0 * BLOCK_VISIBLE_SIZE;
-			}
-			entity->hitbox.center.x += eXinc;
-			physx.Xinc = eXinc;
-			*/
+			tr.pos += delta_move * TimeManager::deltaTime;
+			entity->hitbox.center = tr.pos + glm::vec2(0.0f, entity->hitbox.size.y * 0.5f);
 
 			if (GameMath::mouse_intersection(
 				glm::vec2(x, y), glm::vec2(width, height), glm::vec2(SystemContext::mouse.world_x_pos, SystemContext::mouse.world_y_pos))) {
@@ -173,14 +180,29 @@ void EntitySystem::update() {
 		render_data.UV.z = sprite.W;
 		render_data.UV.w = sprite.H;
 	}
+
+	entity_ssbo->update_data(entity_render_buf.data(), entities.size() * sizeof(EntityRenderData));
 }
 
 void EntitySystem::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
-	renderer->renderInstancedData(entity_sp, instance_vao, instance_vbo, instance_ebo, 6U, 9U);
+	renderer->renderInstancedData(entity_sp, instance_vao, instance_vbo, instance_ebo, 6U, entities.size());
+}
+
+void EntitySystem::set_world_data(
+	WorldSlot* world_slots_ptr, uint32_t world_width, uint32_t world_height,
+	std::unordered_map<uint32_t, std::unique_ptr<ObjectComponent>>* obj_comps_ptr
+) {
+	this->world_slots_ptr = world_slots_ptr;
+	this->world_width = world_width;
+	this->world_height = world_height;
+	this->obj_comps_ptr = obj_comps_ptr;
 }
 
 bool EntitySystem::spawn_entity(uint32_t id, glm::vec2 pos) {
 	std::unique_ptr<EntityInfo>& entityInfo = EntityDB::entityInfo[id];
+
+	entities.emplace_back(std::make_unique<Slime>(id, pos));
+	entities.back()->on_create();
 	/*	
 	if (entityInfo->type == EntityType::isMob) {
 		switch (entityInfo->type) {

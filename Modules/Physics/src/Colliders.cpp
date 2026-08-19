@@ -27,24 +27,24 @@ bool Collisions::checkCollisionAABB(Collider_2D_AABB& c1, Collider_2D_AABB& c2) 
 	return false;
 }
 
-CollisionType Collisions::getTypeCollisionAABBwithBlock(Collider_2D_AABB& c1, int column, int line, float blockSize) {
+CollisionType Collisions::getTypeCollisionAABBwithBlock(Collider_2D_AABB& c1, int column, int line) {
 	float h1Left = c1.center.x - c1.size.x * 0.5f;
 	float h1Right = h1Left + c1.size.x;
-	float h2Left = column * blockSize;
-	float h2Right = h2Left + blockSize;
+	float h2Left = column;
+	float h2Right = h2Left + 1.0f;
 
 	if (h1Left <= h2Right && h1Right >= h2Left) {
 
 		float h1Bottom = c1.center.y - c1.size.y * 0.5f;
 		float h1Top = h1Bottom + c1.size.y;
-		float h2Bottom = line * blockSize;
-		float h2Top = h2Bottom + blockSize;
+		float h2Bottom = line;
+		float h2Top = h2Bottom + 1.0f;
 
 		if (h1Bottom <= h2Top && h1Top >= h2Bottom) {
-			float dx = (h1Left + c1.size.x * 0.5f) - (h2Left + blockSize * 0.5f);
-			float dy = (h1Bottom + c1.size.y * 0.5f) - (h2Bottom + blockSize * 0.5f);
-			dx = (c1.size.x + blockSize) * 0.5f - std::abs(dx);
-			dy = (c1.size.y + blockSize) * 0.5f - std::abs(dy);
+			float dx = (h1Left + c1.size.x * 0.5f) - (h2Left + 0.5f);
+			float dy = (h1Bottom + c1.size.y * 0.5f) - (h2Bottom + 0.5f);
+			dx = (c1.size.x + 1.0f) * 0.5f - std::abs(dx);
+			dy = (c1.size.y + 1.0f) * 0.5f - std::abs(dy);
 
 			if (dx > dy) {
 				if (h1Top > h2Top)

@@ -22,7 +22,7 @@ void AnimatorController::update() {
 	if (current_frame_time >= current_clip->frame_time) {
 		current_frame_time = 0.0f;
 		current_sprite_index++;
-		if (current_sprite_index > max_sprite_index) { //stop or continue anim clip only after "frame time" of the last sprite
+		if (current_sprite_index == max_sprite_index) { //stop or continue anim clip only after "frame time" of the last sprite
 			if (current_clip->looping) {
 				current_sprite_index = 0;
 			}

@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-enum class CraftCondition : uint32_t {
+enum class CraftCondition : uint16_t {
 	c_NOTHING     = 0,
 	c_WORKBENCH   = 1 << 0,
 	c_FURNACE     = 1 << 1,
@@ -15,6 +15,8 @@ enum class CraftCondition : uint32_t {
 };
 
 struct CraftingPair {
+	CraftingPair() {}
+	CraftingPair(uint16_t item_id, uint16_t amount) : item_id{ item_id }, amount{ amount } {}
 	uint16_t item_id = 0, amount = 0;
 };
 

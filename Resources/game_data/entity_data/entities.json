@@ -1,7 +1,6 @@
 [
   {
-    "id": 0,
-    "name": "Slime",
+    "UID": "Entity:Core:Slime",
     "type": 0,
     "mob_type": 0,
     "enemy_type": 0,
@@ -11,18 +10,16 @@
     "DMG": 5.0,
     "speed_x": 2.0,
     "speed_y": 5.0,
-    "sprite_w": 2.0,
-    "sprite_h": 2.0,
-    "hitbox_w": 2.0,
-    "hitbox_h": 2.0,
+    "hitbox_w": 1.5,
+    "hitbox_h": 1.5,
     "drop": [
       {
-        "item_id": 2,
+        "item_UID": "Item:Core:Gel",
         "chance": 50.0,
         "min": 2,
         "max": 2
       }
     ],
-    "animator_id": 0
+    "animator_UID": "Animator:Core:Slime"
   }
 ]

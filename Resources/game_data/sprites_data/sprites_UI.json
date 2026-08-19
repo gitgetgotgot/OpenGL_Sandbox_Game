@@ -1,0 +1,254 @@
+[
+  {
+    "UID": "Sprite:Core:BasicSlot",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 2.0,
+      "V0": 0.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Sprite:Core:ChestSlot",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 4.0,
+      "V0": 0.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Sprite:Core:HotbarFrame",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 6.0,
+      "V0": 0.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Sprite:Core:CraftSlot",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 8.0,
+      "V0": 0.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Sprite:Core:CraftBorder",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 10.0,
+      "V0": 0.0,
+      "w": 4.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Sprite:Core:CraftBorder2",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 10.0,
+      "V0": 1.0,
+      "w": 4.0,
+      "h": 1.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Sprite:Core:TooltipLB",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 0.0,
+      "V0": 0.0,
+      "w": 4.0,
+      "h": 4.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Sprite:Core:TooltipLC",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 0.0,
+      "V0": 4.0,
+      "w": 4.0,
+      "h": 12.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Sprite:Core:TooltipLT",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 0.0,
+      "V0": 16.0,
+      "w": 4.0,
+      "h": 4.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Sprite:Core:TooltipCB",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 4.0,
+      "V0": 0.0,
+      "w": 24.0,
+      "h": 4.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Sprite:Core:TooltipC",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 4.0,
+      "V0": 4.0,
+      "w": 24.0,
+      "h": 12.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Sprite:Core:TooltipCT",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 4.0,
+      "V0": 16.0,
+      "w": 24.0,
+      "h": 4.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Sprite:Core:TooltipRB",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 28.0,
+      "V0": 0.0,
+      "w": 4.0,
+      "h": 4.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Sprite:Core:TooltipRC",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 28.0,
+      "V0": 4.0,
+      "w": 4.0,
+      "h": 12.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Sprite:Core:TooltipRT",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 28.0,
+      "V0": 16.0,
+      "w": 4.0,
+      "h": 4.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Sprite:Core:HeartFull",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 14.0,
+      "V0": 0.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Sprite:Core:HeartHalf",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 16.0,
+      "V0": 0.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Sprite:Core:HeartEmpty",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 18.0,
+      "V0": 0.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Sprite:Core:ManaFull",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 20.0,
+      "V0": 0.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Sprite:Core:ManaHalf",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 22.0,
+      "V0": 0.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Sprite:Core:ManaEmpty",
+    "texture": "game_ui",
+    "padding": 0,
+    "sprite": {
+      "U0": 24.0,
+      "V0": 0.0,
+      "w": 2.0,
+      "h": 2.0,
+      "base_size": 1.0
+    }
+  }
+]

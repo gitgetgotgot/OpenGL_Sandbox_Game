@@ -54,17 +54,16 @@ public:
 
 class EntityInfo {
 public:
-	EntityInfo(EntityType type, std::string name, glm::vec2 hitboxSize, glm::vec2 spriteSize) :
-		type{ type }, name{ name }, hitboxSize{ hitboxSize }, spriteSize{ spriteSize } {}
+	EntityInfo(EntityType type, std::string name, glm::vec2 hitboxSize) :
+		type{ type }, name{ name }, hitboxSize{ hitboxSize } {}
 	~EntityInfo() {}
 
 	EntityType type = EntityType::isMob;
 	std::string name;
 	glm::vec2 hitboxSize{ 1.0f };
-	glm::vec2 spriteSize{ 1.0f };
 	//usable components (if ID = 0 then no component is used)
 	uint32_t effect_comp_id = 0;
-	uint32_t light_comp_id = 0;
+	uint32_t light_id = 0;
 };
 
 class EntityDB {
@@ -74,9 +73,9 @@ public:
 
 class MobInfo : public EntityInfo {
 public:
-	MobInfo(std::string name, MobType mob_type, MovementType move_type, float HP, float DMG, float DEF, float speed_x, float speed_y,
-		glm::vec2 hitboxSize, glm::vec2 spriteSize, std::vector<DropInfo>&& drop_items, uint32_t animator_id) :
-		EntityInfo(EntityType::isMob, name, hitboxSize, spriteSize), HP{ HP }, DMG{ DMG }, DEF{ DEF }, speed_x{ speed_x }, speed_y{ speed_y },
+	MobInfo(std::string name, MobType mob_type, MovementType move_type, float HP, float DMG, float DEF, float speed_x,
+		float speed_y, glm::vec2 hitboxSize, std::vector<DropInfo>&& drop_items, uint32_t animator_id) :
+		EntityInfo(EntityType::isMob, name, hitboxSize), HP{ HP }, DMG{ DMG }, DEF{ DEF }, speed_x{ speed_x }, speed_y{ speed_y },
 		mob_type{ mob_type }, move_type{ move_type }, drop_items{ std::move(drop_items) }, animator_id{ animator_id } {}
 
 	float HP = 0.0f, DMG = 0.0f, DEF = 0.0f;
@@ -89,9 +88,9 @@ public:
 
 class EnemyInfo : public MobInfo {
 public:
-	EnemyInfo(std::string name, EnemyType enemy_type, MovementType move_type, float HP, float DMG, float DEF, float speed_x, float speed_y,
-		glm::vec2 hitboxSize, glm::vec2 spriteSize, std::vector<DropInfo>&& drop_items, uint32_t animator_id) :
-		MobInfo(name, MobType::isEnemy, move_type, HP, DMG, DEF, speed_x, speed_y, hitboxSize, spriteSize,
+	EnemyInfo(std::string name, EnemyType enemy_type, MovementType move_type, float HP, float DMG, float DEF, float speed_x,
+		float speed_y, glm::vec2 hitboxSize, std::vector<DropInfo>&& drop_items, uint32_t animator_id) :
+		MobInfo(name, MobType::isEnemy, move_type, HP, DMG, DEF, speed_x, speed_y, hitboxSize,
 			std::move(drop_items), animator_id), enemy_type{ enemy_type } {}
 
 	EnemyType enemy_type = EnemyType::isSlime;

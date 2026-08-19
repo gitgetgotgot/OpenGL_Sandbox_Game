@@ -4,7 +4,7 @@ Texture::~Texture() {
 	glDeleteTextures(1, &this->id);
 }
 
-void Texture::load_2D_texture(const char* fileName, bool isPixelised) {
+void Texture::add_2D_texture(const char* fileName, bool isPixelised) {
 	int imgWidth, imgHeight, numOfColorChannels;
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* image_bytes = stbi_load(fileName, &imgWidth, &imgHeight, &numOfColorChannels, 0);
@@ -26,7 +26,7 @@ void Texture::load_2D_texture(const char* fileName, bool isPixelised) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::load_R8_texture_from_buffer(const unsigned char* img_buf, int width, int height, bool isPixelised) {
+void Texture::add_R8_texture_from_buffer(const unsigned char* img_buf, int width, int height, bool isPixelised) {
 	glGenTextures(1, &this->id);
 	glBindTexture(GL_TEXTURE_2D, this->id);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, isPixelised ? GL_NEAREST : GL_LINEAR);
@@ -41,7 +41,7 @@ void Texture::load_R8_texture_from_buffer(const unsigned char* img_buf, int widt
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::load_text_bitmap(const char* filename, bool isPixelised, unsigned char** image_bytes, int& numOfChannels) {
+void Texture::add_text_bitmap(const char* filename, bool isPixelised, unsigned char** image_bytes, int& numOfChannels) {
 	int imgWidth, imgHeight;
 	stbi_set_flip_vertically_on_load(false);
 	*image_bytes = stbi_load(filename, &imgWidth, &imgHeight, &numOfChannels, 0);

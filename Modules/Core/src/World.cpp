@@ -9,6 +9,9 @@ void World::init(Player* player) {
 	MAX_CHUNK_Y = height / CHUNK_SIZE;
 
 	spriteMgr = SpriteManager::get_instance();
+	entity_system = EntitySystem::get_instance();
+	entity_system->init();
+	entity_system->set_world_data(world_slots, width, height, &object_components);
 
 	//CONSTRAINTS
 	const uint32_t MAX_SQUARES = CHUNK_SIZE * CHUNK_SIZE * 2;
@@ -75,6 +78,8 @@ void World::init(Player* player) {
 			load_chunk_buffer(x, y, x * 4 + y);
 		}
 	}
+
+	//main_camera.pos = glm::vec2(2000.0f, 900.0f);
 }
 
 void World::update() {
@@ -116,6 +121,7 @@ void World::update() {
 	if (main_camera.pos.y > float(height - 1)) main_camera.pos.y = float(height - 1);
 
 	main_camera.update_camera();
+	GameContext::PLAYER_LAST_POS = main_camera.pos;
 
 	//update sprites ubo
 	sprites_ubo_data.viewMatrix = main_camera.viewMatrix;
@@ -127,6 +133,11 @@ void World::update() {
 	uint32_t camera_chunk_x = uint32_t(main_camera.pos.x) / CHUNK_SIZE;
 	uint32_t camera_chunk_y = uint32_t(main_camera.pos.y) / CHUNK_SIZE;
 	update_chunks(camera_chunk_x, camera_chunk_y);
+
+	if (SystemContext::keyBoard.key_is_pressed(Key::KeyP)) {
+		entity_system->spawn_entity(0, main_camera.pos);
+	}
+	entity_system->update();
 
 	if (SystemContext::keyBoard.key_is_pressed(Key::KeyE))
 		main_player_ptr->inventory.toggle_inventory();
@@ -160,6 +171,8 @@ void World::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
 			renderer->renderIndexedDataVAOSpecific(buf.vao, buf.index_count);
 		}
 	}
+
+	entity_system->render(renderer);
 }
 
 void World::update_chunks(uint32_t& camera_chunk_x, uint32_t& camera_chunk_y) {

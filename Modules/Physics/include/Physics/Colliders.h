@@ -30,7 +30,7 @@ namespace Collisions {
 
 	bool checkCollisionAABB(Collider_2D_AABB& c1, Collider_2D_AABB& c2);
 
-	CollisionType getTypeCollisionAABBwithBlock(Collider_2D_AABB& c1, int column, int line, float blockSize);
+	CollisionType getTypeCollisionAABBwithBlock(Collider_2D_AABB& c1, int column, int line);
 
 	//the first hitbox is main and return type is for it
 	CollisionType getTypeCollisionAABB(Collider_2D_AABB& c1, Collider_2D_AABB& c2);

@@ -1209,16 +1209,27 @@ void Game::init() {
 	//load_available_saves();
 
 	//load textures
-	atlas_texture.load_2D_texture("Resources/textures/2D_Textures.png", true);
-	atlas_texture.bind(0);
+	textures.setup_texture_array(512, 512, 2, false);
+	textures.bind(0);
+	textures.add_2D_texture("Resources/textures/game_ui.png");
+	textures.add_2D_texture("Resources/textures/game_items.png");
+	textures.add_2D_texture("Resources/textures/game_entity.png");
+
+	std::unordered_map<std::string, uint32_t> texture_layers;
+	texture_layers["game_ui"] = 0;
+	texture_layers["game_items"] = 1;
+	texture_layers["game_entity"] = 2;
 
 	spriteMgr = SpriteManager::get_instance();
 	compsMgr = ComponentsManager::get_instance();
+	craft_sys = CraftingSystem::get_instance();
+	effectsManager = Effects::EffectsManager::get_instance();
+	effectsManager->init(10);
+	particlesMgr = ParticlesManager::get_instance();
+	particlesSystem = ParticleSystem::get_instance();
 
-	ObjectsDB::objectInfo.reserve(120);
-	ObjectsDB::objectInfo.resize(120);
+	ObjectsDB::objectInfo.reserve(200);
 	EntityDB::entityInfo.reserve(20);
-	EntityDB::entityInfo.resize(20);
 	
 	//EFFECTS
 	/*0 */ compsMgr->add_effect_component(0.f, 0); //empty
@@ -1231,32 +1242,23 @@ void Game::init() {
 	/*7 */ compsMgr->add_effect_component(120.f, 2); // def potion buff for 2 min
 	/*8 */ compsMgr->add_effect_component(120.f, 4); // regen potion buff for 2 min
 	/*9 */ compsMgr->add_effect_component(0.f, 10);  // better heal potion buff
-	
-	//LIGHTS
-	/*0 */compsMgr->add_light_component(0.f, glm::vec3{}); //empty
-	/*1 */compsMgr->add_light_component(5.f, glm::vec3(1.f, 1.f, 0.f)); //torch
-	/*2 */compsMgr->add_light_component(5.f, glm::vec3(0.f, 0.9f, 1.f)); //ice torch
-	/*3 */compsMgr->add_light_component(3.f, glm::vec3(1.f, 1.f, 0.f)); //furnace
-	/*4 */compsMgr->add_light_component(3.f, glm::vec3(0.8f, 0.2f, 0.2f)); //life crystal
-	/*5 */compsMgr->add_light_component(3.f, glm::vec3(1.f, 1.f, 0.f)); //flame arrow
-	/*6 */compsMgr->add_light_component(3.f, glm::vec3(0.f, 0.9f, 1.f)); //frostburn arrow
-	/*7 */compsMgr->add_light_component(3.f, glm::vec3(1.f, 0.9f, 0.9f)); //jester's arrow
-	/*8 */compsMgr->add_light_component(3.f, glm::vec3(0.306f, 0.086f, 0.702f)); //unholy arrow
-	/*9 */compsMgr->add_light_component(3.f, glm::vec3(1.f, 0.76f, 0.03f)); //hellfire arrow
-	/*10*/compsMgr->add_light_component(1.f, glm::vec3(0.5f, 0.f, 0.f)); //bullet
-	/*11*/compsMgr->add_light_component(1.f, glm::vec3(0.506f, 0.286f, 0.902f)); //NULL projectile
-	/*12*/compsMgr->add_light_component(0.5f, glm::vec3(1.f, 1.f, 0.f)); //flame particle
-	/*13*/compsMgr->add_light_component(0.5f, glm::vec3(0.f, 0.9f, 1.f)); //frostburn particle
+
 
 	const float block_UV_size = 1.f / 32.f;
 	const float pixel_UV_size = 1.f / 512.f;
 	SpriteManager::MAIN_PIXEL_UV_SIZE = pixel_UV_size;
 	SpriteManager::MAIN_BLOCK_UV_SIZE = block_UV_size;
 
-	load_sprites_JSON();
-	load_items_data_JSON();
-	load_entities_data_JSON();
-	load_animations_data_JSON();
+	// load sequence: textures -> sprites -> lights -> particles -> effects -> items -> animations -> entities -> other...
+	// resolve dependencies: items, entities
+	load_sprites_JSON(texture_layers);
+	load_lights_JSON();
+	load_items_basic_data_JSON();
+	load_animations_basic_data_JSON();
+	load_entities_basic_data_JSON();
+
+	resolve_items_dependencies_JSON();
+	resolve_entities_dependencies_JSON();
 
 	/*
 	//ambient objects
@@ -1291,23 +1293,8 @@ void Game::init() {
 	spriteMgr->add_sprite(0.f, 3.f * block_UV_size, block_UV_size * 16.f, block_UV_size * 9.f);
 	ambientController.sprites[4] = spriteMgr->get_last_index();
 	*/
-	
-	//entities info
-	EntityDB::entityInfo[0] = std::make_unique<ProjectileInfo>(Arrow, 74, 5, 1, true, glm::vec2(1.f, 1.f));
-	EntityDB::entityInfo[1] = std::make_unique<ProjectileInfo>(Arrow, 75, 7, 1, true, glm::vec2(1.f, 1.f), 1, 5);
-	EntityDB::entityInfo[2] = std::make_unique<ProjectileInfo>(Arrow, 76, 9, 1, true, glm::vec2(1.f, 1.f), 2, 6);
-	EntityDB::entityInfo[3] = std::make_unique<ProjectileInfo>(Arrow, 77, 10, 9999, false, glm::vec2(1.f, 1.f), 0, 7);
-	EntityDB::entityInfo[4] = std::make_unique<ProjectileInfo>(Arrow, 78, 14, 1, true, glm::vec2(1.f, 1.f), 0, 8);
-	EntityDB::entityInfo[5] = std::make_unique<ProjectileInfo>(Arrow, 79, 16, 1, true, glm::vec2(1.f, 1.f), 0, 9);
-
-	EntityDB::entityInfo[11] = std::make_unique<ProjectileInfo>(MagicBall, -1, 9999999, 1, false, glm::vec2(2.f, 1.f), 0, 10); //NULL projectile
-	EntityDB::entityInfo[12] = std::make_unique<ProjectileInfo>(Bullet, 97, 7, 1, false, glm::vec2(1.f, 1.f), 0, 11); //bullet projectile
-	EntityDB::entityInfo[13] = std::make_unique<ProjectileInfo>(Throwable, 94, 10, 4, true, glm::vec2(1.f, 1.f)); //shuriken projectile
-	EntityDB::entityInfo[14] = std::make_unique<ProjectileInfo>(Throwable, 95, 5, 2, true, glm::vec2(1.f, 1.f)); //throwable knife projectile
 
 	//effects info
-	effectsManager = Effects::EffectsManager::get_instance();
-	effectsManager->init(10);
 	/*0*/  effectsManager->add_effect_info(Effects::EffectType::isImmediateBuff, "LifeCrystalBuff", Effects::StatName::isHP, 20.0f);
 	/*1*/  effectsManager->add_effect_info(Effects::EffectType::isImmediateBuff, "ManaCrystalBuff", Effects::StatName::isMana, 20.0f);
 	/*2*/  effectsManager->add_effect_info(Effects::EffectType::isBuff, "DefenceBuff", Effects::StatName::isDef, 10.0f);
@@ -1321,17 +1308,14 @@ void Game::init() {
 	/*10*/ effectsManager->add_effect_info(Effects::EffectType::isHealing, "PotionHeal", Effects::StatName::isHP, 50.0f);
 
 	//Particles
-	particlesMgr = ParticlesManager::get_instance();
-	particlesSystem = ParticleSystem::get_instance();
-	
-	spriteMgr->add_sprite_absolute(14.f * block_UV_size, 1.0 - block_UV_size * 6 - block_UV_size, block_UV_size, block_UV_size, 1.0f);
+	spriteMgr->add_sprite("", 14 * block_UV_size, 1.0 - block_UV_size * 6 - block_UV_size, block_UV_size, block_UV_size, 1.0f, 0);
 	particlesMgr->add_particle_info((uint32_t)spriteMgr->get_last_index(), 12); //flame light
 
-	spriteMgr->add_sprite_absolute(15.f * block_UV_size, 1.0 - block_UV_size * 6 - block_UV_size, block_UV_size, block_UV_size, 1.0f);
+	spriteMgr->add_sprite("", 15 * block_UV_size, 1.0 - block_UV_size * 6 - block_UV_size, block_UV_size, block_UV_size, 1.0f, 0);
 	particlesMgr->add_particle_info((uint32_t)spriteMgr->get_last_index(), 13); //frostburn light
 
 	//Crafting info
-	craft_sys = CraftingSystem::get_instance();
+	/*
 	craft_sys->add(39, 1, CraftCondition::c_NOTHING, std::vector<CraftingPair>{CraftingPair{ 7, 15 }}); //workbench
 	craft_sys->add(29, 2, CraftCondition::c_NOTHING, std::vector<CraftingPair>{CraftingPair{ 7, 1 }}); //2 oak platforms
 	craft_sys->add(23, 3, CraftCondition::c_NOTHING, std::vector<CraftingPair>{CraftingPair{ 7, 1 }, CraftingPair{ 74, 1 }}); //3 torches
@@ -1346,6 +1330,7 @@ void Game::init() {
 	craft_sys->add(75, 25, CraftCondition::c_WORKBENCH, std::vector<CraftingPair>{CraftingPair{ 7, 1 }, CraftingPair{ 2, 1 }}); //wooden arrow
 	craft_sys->add(76, 10, CraftCondition::c_NOTHING, std::vector<CraftingPair>{CraftingPair{ 75, 10 }, CraftingPair{ 23, 1 }}); //flaming arrow
 	craft_sys->add(77, 10, CraftCondition::c_NOTHING, std::vector<CraftingPair>{CraftingPair{ 75, 10 }, CraftingPair{ 26, 1 }}); //frostburn arrow
+	*/
 
 	//reserve memory for objects
 	dropped_items.reserve(1000);
@@ -1420,111 +1405,198 @@ void Game::init_input() {
 	InputHandler::setGLFWwindowCallbacks(window);
 }
 
-void Game::load_sprites_JSON() {
+bool Game::load_sprites_JSON(std::unordered_map<std::string, uint32_t>& texture_layers) {
+	std::filesystem::path core_sprites_path = "Resources/game_data/sprites_data";
+	
+	for (auto& entry : std::filesystem::directory_iterator(core_sprites_path)) {
+		if (!entry.is_regular_file()) continue;
 
-	std::ifstream file("Resources/sprites.json");
-	nlohmann::json json;
-	file >> json;
+		std::filesystem::path file_path = entry.path();
+		if (file_path.extension() != ".json") continue;
 
-	for (auto& item : json) {
-		uint32_t padding = item["padding"];
+		std::ifstream file(file_path);
+		if (!file.is_open()) {
+			std::cerr << "[Sprites JSON Loader] Cannot open: " << file_path << "\n";
+			return false;
+		}
+		nlohmann::json json;
+		file >> json;
 
-		auto& sprite = item["sprite"];
-		uint32_t u0 = sprite["U0"];
-		uint32_t v0 = sprite["V0"];
-		uint32_t w = sprite["w"];
-		uint32_t h = sprite["h"];
-		float base_size = sprite["base_size"];
+		for (const auto& s : json) {
+			std::string UID = s["UID"].get<std::string>();
+			std::string texture_name = s["texture"].get<std::string>();
+			uint32_t padding = s["padding"].get<uint32_t>();
+			uint32_t texture_array_id = texture_layers[texture_name];
 
-		spriteMgr->add_sprite_pixels(u0, v0, w, h, base_size);
+			auto& sprite = s["sprite"];
+			uint32_t u0 = sprite["U0"].get<uint32_t>();
+			uint32_t v0 = sprite["V0"].get<uint32_t>();
+			uint32_t w = sprite["w"].get<uint32_t>();
+			uint32_t h = sprite["h"].get<uint32_t>();
+			float base_size = sprite["base_size"].get<float>();
+
+			spriteMgr->add_sprite(UID, u0, v0, w, h, base_size, texture_array_id);
+		}
 	}
+
+	return true;
 }
 
-void Game::load_items_data_JSON() {
-	std::ifstream file("Resources/items.json");
-	nlohmann::json json;
-	file >> json;
+bool Game::load_lights_JSON() {
 
-	for (auto& item : json) {
-		//basic common info
-		uint32_t id = item["id"];
-		uint32_t sprite_id = item["sprite"];
-		std::string name = item["name"];
-		uint32_t type_id = item["type"];
-		uint32_t effect_id = 0, light_id = 0;
+	std::filesystem::path core_lights_path = "Resources/game_data/lights_data";
 
-		//place object info
-		if (type_id == 0) { //Base Object
-			uint32_t sub_type_id = item["sub_type"];
-			if (item.contains("effect_id")) effect_id = item["effect_id"];
-			if (item.contains("light_id")) light_id = item["light_id"];
-			ObjectsDB::objectInfo[id] = std::make_unique<ObjectInfo>((ObjectType)sub_type_id, name);
+	for (auto& entry : std::filesystem::directory_iterator(core_lights_path)) {
+		if (!entry.is_regular_file()) continue;
+
+		std::filesystem::path file_path = entry.path();
+		if (file_path.extension() != ".json") continue;
+
+		std::ifstream file(file_path);
+		if (!file.is_open()) {
+			std::cerr << "[Lights JSON Loader] Cannot open: " << file_path << "\n";
+			return false;
 		}
-		else if (type_id > 0 && type_id < 3) { //simple or complex
-			uint32_t sub_type_id = item["sub_type"];
-			float toughness = item["toughness"]; uint16_t drop_id = item["drop_id"];
-			bool collision = false, platform_collision = false;
-			if (item.contains("collision")) collision = item["collision"];
-			if (item.contains("platform_collision")) platform_collision = item["platform_collision"];
-			if (item.contains("effect_id")) effect_id = item["effect_id"];
-			if (item.contains("light_id")) light_id = item["light_id"];
+		nlohmann::json json;
+		file >> json;
 
-			if (type_id == 1) { //Simple Object
-				ObjectsDB::objectInfo[id] = std::make_unique<BlockInfo>(
-					name, (BlockType)sub_type_id, toughness, drop_id, collision, platform_collision, effect_id, light_id);
-			}
-			else { //Complex Object
-				float width_blocks = item["width"], height_blocks = item["height"];
-				ObjectsDB::objectInfo[id] = std::make_unique<ComplexObjectInfo>(
-					name, (ComplexObjectType)sub_type_id, toughness, drop_id, width_blocks, height_blocks, collision, platform_collision, effect_id, light_id);
-			}
+		for (const auto& light : json) {
+			std::string UID = light["UID"].get<std::string>();
+			float radius = light["radius"].get<float>();
+			float r = light["r"].get<float>();
+			float g = light["g"].get<float>();
+			float b = light["b"].get<float>();
+			compsMgr->add_light(UID, radius, glm::vec3(r, g, b));
 		}
-		else if (type_id == 3) { //Wall
-			float toughness = item["toughness"]; uint16_t drop_id = item["drop_id"];
-			ObjectsDB::objectInfo[id] = std::make_unique<WallInfo>(name, toughness, drop_id);
-		}
-		else if (type_id > 3 && type_id < 7) { //Weapon
-			uint32_t sub_type_id = item["sub_type"];
-			int damage = item["dmg"]; float speed = item["speed"];
-			float size_x = item["size_x"], size_y = item["size_y"];
-			float crit_chance = item["crit_ch"]; bool is_stackable = item["stackable"];
-			uint32_t use_sound_id = item["use_sound_id"];
-			uint32_t proj_id = 0; float proj_cd = 0.0f;
-			if (item.contains("proj_id")) proj_id = item["proj_id"];
-			if (item.contains("proj_cd")) proj_cd = item["proj_cd"];
-
-			if (type_id == 4) { //Regular Weapon
-				ObjectsDB::objectInfo[id] = std::make_unique<WeaponInfo>(
-					name, (WeaponType)sub_type_id, damage, size_x, size_y, crit_chance, speed, is_stackable, use_sound_id, proj_id, proj_cd);
-			}
-			else if (type_id == 5) { //Instrumental Weapon
-				float power = item["power"], range = item["range"];
-				ObjectsDB::objectInfo[id] = std::make_unique<InstrumentalWeaponInfo>(
-					name, (WeaponType)sub_type_id, power, range, damage, size_x, size_y, crit_chance, speed, is_stackable, use_sound_id, proj_id, proj_cd);
-			}
-			else { //Magical Weapon
-				uint32_t mana_cost = item["mana_cost"];
-				ObjectsDB::objectInfo[id] = std::make_unique<MagicalWeaponInfo>(
-					name, (WeaponType)sub_type_id, mana_cost, damage, size_x, size_y, crit_chance, speed, is_stackable, use_sound_id, proj_id, proj_cd);
-			}
-		}
-		else if (type_id == 7) { //Ammo
-			uint32_t sub_type_id = item["sub_type"];
-			int damage = item["dmg"];
-			float size_x = item["size_x"], size_y = item["size_y"];
-			uint32_t entity_id = item["entity_id"];
-			if (item.contains("effect_id")) effect_id = item["effect_id"];
-			if (item.contains("light_id")) light_id = item["light_id"];
-			ObjectsDB::objectInfo[id] = std::make_unique<AmmoInfo>(name, (AmmoType)sub_type_id, damage, size_x, size_y, entity_id, effect_id, light_id);
-		}
-
-		ObjectsDB::objectInfo[id]->sprite_id = sprite_id;
-
-		std::cout << "[Items] (id = " << id << "): " << name << ", Sprite id = " << sprite_id << std::endl;
 	}
+
+	return true;
 }
 
-void Game::load_entities_data_JSON() {
+bool Game::load_effects_JSON() {
+
+	std::filesystem::path core_effects_path = "Resources/game_data/effects_data";
+
+	for (auto& entry : std::filesystem::directory_iterator(core_effects_path)) {
+		if (!entry.is_regular_file()) continue;
+
+		std::filesystem::path file_path = entry.path();
+		if (file_path.extension() != ".json") continue;
+
+		std::ifstream file(file_path);
+		if (!file.is_open()) {
+			std::cerr << "[Lights JSON Loader] Cannot open: " << file_path << "\n";
+			return false;
+		}
+		nlohmann::json json;
+		file >> json;
+
+		for (const auto& light : json) {
+			std::string UID = light["UID"].get<std::string>();
+			float radius = light["radius"].get<float>();
+			float r = light["r"].get<float>();
+			float g = light["g"].get<float>();
+			float b = light["b"].get<float>();
+			compsMgr->add_light(UID, radius, glm::vec3(r, g, b));
+		}
+	}
+
+	return true;
+}
+
+bool Game::load_items_basic_data_JSON() {
+	std::filesystem::path core_items_path = "Resources/game_data/items_data";
+	for (auto& entry : std::filesystem::directory_iterator(core_items_path)) {
+		if (!entry.is_regular_file()) continue;
+
+		std::filesystem::path file_path = entry.path();
+		if (file_path.extension() != ".json") continue;
+
+		std::ifstream file(file_path);
+		if (!file.is_open()) {
+			std::cerr << "[Items JSON Loader] Cannot open: " << file_path << "\n";
+			return false;
+		}
+		nlohmann::json json;
+		file >> json;
+
+		for (auto& item : json) {
+			//basic common info
+			std::string UID = item["UID"].get<std::string>();
+			std::string sprite_UID = item["sprite"].get<std::string>();
+			uint32_t type_id = item["type"].get<uint32_t>();
+			uint32_t sub_type_id = 0;
+			if (item.contains("sub_type")) sub_type_id = item["sub_type"].get<uint32_t>();
+			uint32_t effect_id = 0, light_id = 0; //change
+			if (item.contains("effect_id")) effect_id = item["effect_id"]; //change
+			if (item.contains("light_id")) light_id = item["light_id"]; //change
+
+			auto it = ObjectsDB::UID_set.emplace(UID);
+			std::string_view uid_view = *(it.first);
+			ObjectsDB::UID_to_ID.emplace(uid_view, ObjectsDB::objectInfo.size());
+
+			//place object info
+			if (type_id == 0) { //Base Object
+				ObjectsDB::objectInfo.emplace_back(std::make_unique<ObjectInfo>((ObjectType)sub_type_id, uid_view));
+			}
+			else if (type_id > 0 && type_id < 3) { //simple or complex
+				float toughness = item["toughness"];
+				bool collision = false, platform_collision = false;
+				if (item.contains("collision")) collision = item["collision"];
+				if (item.contains("platform_collision")) platform_collision = item["platform_collision"];
+
+				if (type_id == 1) { //Simple Object
+					ObjectsDB::objectInfo.emplace_back(std::make_unique<BlockInfo>(
+						uid_view, (BlockType)sub_type_id, toughness, collision, platform_collision, effect_id, light_id));
+				}
+				else { //Complex Object
+					float width_blocks = item["width"], height_blocks = item["height"];
+					ObjectsDB::objectInfo.emplace_back(std::make_unique<ComplexObjectInfo>(uid_view,
+						(ComplexObjectType)sub_type_id, toughness, width_blocks, height_blocks, collision, platform_collision, effect_id, light_id));
+				}
+			}
+			else if (type_id == 3) { //Wall
+				float toughness = item["toughness"];
+				ObjectsDB::objectInfo.emplace_back(std::make_unique<WallInfo>(uid_view, toughness));
+			}
+			else if (type_id > 3 && type_id < 7) { //Weapon
+				int damage = item["dmg"]; float speed = item["speed"];
+				float size_x = item["size_x"], size_y = item["size_y"];
+				float crit_chance = item["crit_ch"]; bool is_stackable = item["stackable"];
+				uint32_t use_sound_id = item["use_sound_id"]; //change
+				
+				if (type_id == 4) { //Regular Weapon
+					ObjectsDB::objectInfo.emplace_back(std::make_unique<WeaponInfo>(
+						uid_view, (WeaponType)sub_type_id, damage, size_x, size_y, crit_chance, speed, is_stackable, use_sound_id));
+				}
+				else if (type_id == 5) { //Instrumental Weapon
+					float power = item["power"], range = item["range"];
+					ObjectsDB::objectInfo.emplace_back(std::make_unique<InstrumentalWeaponInfo>(
+						uid_view, (WeaponType)sub_type_id, power, range, damage, size_x, size_y, crit_chance, speed, is_stackable, use_sound_id));
+				}
+				else { //Magical Weapon
+					uint32_t mana_cost = item["mana_cost"];
+					ObjectsDB::objectInfo.emplace_back(std::make_unique<MagicalWeaponInfo>(
+						uid_view, (WeaponType)sub_type_id, mana_cost, damage, size_x, size_y, crit_chance, speed, is_stackable, use_sound_id));
+				}
+			}
+			else if (type_id == 7) { //Ammo
+				int damage = item["dmg"];
+				float size_x = item["size_x"], size_y = item["size_y"];
+				ObjectsDB::objectInfo.emplace_back(std::make_unique<AmmoInfo>(
+					uid_view, (AmmoType)sub_type_id, damage, size_x, size_y, effect_id, light_id));
+			}
+
+			ObjectsDB::objectInfo.back()->sprite_id = spriteMgr->get_sprite_id(sprite_UID);
+
+			std::cout << "[Items JSON Loader] Item: " << UID << std::endl;
+		}
+	}
+
+	return true;
+}
+
+void Game::load_entities_basic_data_JSON() {
 	std::ifstream file("Resources/entities.json");
 	nlohmann::json json;
 	file >> json;
@@ -1542,7 +1614,6 @@ void Game::load_entities_data_JSON() {
 			uint32_t move_type_id = entity["move_type"];
 			float HP = entity["HP"], DEF = entity["DEF"], DMG = entity["DMG"];
 			float speed_x = entity["speed_x"], speed_y = entity["speed_y"];
-			float sprite_w = entity["sprite_w"], sprite_h = entity["sprite_h"];
 			float hitbox_w = entity["hitbox_w"], hitbox_h = entity["hitbox_h"];
 			std::vector<nlohmann::json> drop = entity["drop"].get<std::vector<nlohmann::json>>();
 			std::vector<DropInfo> drops;
@@ -1559,22 +1630,119 @@ void Game::load_entities_data_JSON() {
 			if (mob_type == MobType::isEnemy) {
 				uint32_t enemy_type_id = entity["enemy_type"];
 				EntityDB::entityInfo[id] = std::make_unique<EnemyInfo>(name, (EnemyType)enemy_type_id, (MovementType)move_type_id,
-					HP, DMG, DEF, speed_x, speed_y, glm::vec2(hitbox_w, hitbox_h), glm::vec2(sprite_w, sprite_h), std::move(drops), animator_id);
+					HP, DMG, DEF, speed_x, speed_y, glm::vec2(hitbox_w, hitbox_h), std::move(drops), animator_id);
 			}
 			else {
 				EntityDB::entityInfo[id] = std::make_unique<MobInfo>(name, mob_type, (MovementType)move_type_id,
-					HP, DMG, DEF, speed_x, speed_y, glm::vec2(hitbox_w, hitbox_h), glm::vec2(sprite_w, sprite_h), std::move(drops), animator_id);
+					HP, DMG, DEF, speed_x, speed_y, glm::vec2(hitbox_w, hitbox_h), std::move(drops), animator_id);
 			}
 		}
 	}
 }
 
-void Game::load_animations_data_JSON() {
+void Game::load_animations_basic_data_JSON() {
 	std::ifstream file("Resources/animations.json");
 	nlohmann::json json;
 	file >> json;
 
 	for (auto& anim : json) {
+		uint32_t id = anim["id"];
+		std::vector<nlohmann::json> anims = anim["animator"].get<std::vector<nlohmann::json>>();
+		AnimatorManager::get_instance()->add_animator();
+		Animator& animator = *AnimatorManager::get_instance()->get_animator(id);
+		animator.clips.reserve(anims.size());
 
+		for (auto& a : anims) {
+			uint32_t clip_id = a["clip_id"];
+			AnimationClipManager::get_instance()->add_clip();
+			AnimationClip& clip = *AnimationClipManager::get_instance()->get_clip(clip_id);
+			animator.clips.emplace_back(clip_id);
+
+			bool loop = a["loop"];
+			float frame_time = a["frame_time"];
+			std::vector<uint32_t> sprites = a["sprites"].get<std::vector<uint32_t>>();
+
+			clip.looping = loop;
+			clip.sprites = std::move(sprites);
+			clip.set_frame_time(frame_time);
+		}
 	}
+}
+
+bool Game::resolve_items_dependencies_JSON() {
+
+	std::filesystem::path core_items_path = "Resources/game_data/items_data";
+	for (auto& entry : std::filesystem::directory_iterator(core_items_path)) {
+		if (!entry.is_regular_file()) continue;
+
+		std::filesystem::path file_path = entry.path();
+		if (file_path.extension() != ".json") continue;
+
+		std::ifstream file(file_path);
+		if (!file.is_open()) {
+			std::cerr << "[Items JSON Loader] Cannot open: " << file_path << "\n";
+			return false;
+		}
+		nlohmann::json json;
+		file >> json;
+
+		for (auto& item : json) {
+			std::string UID = item["UID"].get<std::string>();
+			std::string_view uid_view = UID;
+			uint32_t global_ID = ObjectsDB::UID_to_ID[uid_view];
+
+			if (item.contains("drop_UID")) {
+				std::string drop_UID = item["drop_UID"];
+				std::string_view drop_uid_view = drop_UID;
+				uint32_t drop_ID = ObjectsDB::UID_to_ID[drop_uid_view];
+				ObjectInfo* info = ObjectsDB::objectInfo[global_ID].get();
+				if (info->objectType == ObjectType::isWall)
+					static_cast<WallInfo*>(info)->drop_id = drop_ID;
+				else
+					static_cast<BlockInfo*>(info)->drop_id = drop_ID;
+			}
+			if (item.contains("proj_UID")) {
+				std::string proj_UID = item["proj_UID"];
+				float proj_cd = item["proj_cd"];
+				std::string_view proj_uid_view = proj_UID;
+				uint32_t proj_ID = ObjectsDB::UID_to_ID[proj_uid_view];
+				ObjectInfo* info = ObjectsDB::objectInfo[global_ID].get();
+				static_cast<WeaponInfo*>(info)->projectile_id = proj_ID;
+				static_cast<WeaponInfo*>(info)->projectile_cd = proj_cd;
+			}
+			if (item.contains("entity_UID")) {
+				std::string entity_UID = item["entity_UID"];
+				std::string_view entity_uid_view = entity_UID;
+				uint32_t entity_ID = 0;
+				ObjectInfo* info = ObjectsDB::objectInfo[global_ID].get();
+				static_cast<AmmoInfo*>(info)->entity_id = entity_ID;
+			}
+			if (item.contains("craft")) {
+				auto& craft = item["craft"];
+				uint16_t amount = craft["amount"].get<uint16_t>();
+				uint16_t condition_id = craft["condition"].get<uint16_t>();
+
+				std::vector<nlohmann::json> items = craft["items"].get<std::vector<nlohmann::json>>();
+				std::vector<CraftingPair> craft_pairs;
+				craft_pairs.reserve(items.size());
+
+				for (auto& i : items) {
+					std::string item_UID = i["item_UID"];
+					std::string_view item_uid_view = item_UID;
+					uint16_t item_amount = i["item_amount"];
+					uint32_t item_ID = ObjectsDB::UID_to_ID[item_uid_view];
+					craft_pairs.emplace_back((uint16_t)item_ID, item_amount);
+				}
+
+				craft_sys->add(global_ID, amount, CraftCondition(condition_id), std::move(craft_pairs));
+			}
+		}
+	}
+
+	return true;
+}
+
+bool Game::resolve_entities_dependencies_JSON() {
+
+	return false;
 }

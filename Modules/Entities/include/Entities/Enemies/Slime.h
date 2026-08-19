@@ -12,6 +12,6 @@ private:
 	void change_anim();
 	enum SLIME_ANIM_STATE : uint8_t {
 		SLIME_IDLE, SLIME_JUMP
-	} current_state = SLIME_IDLE, prev_state = SLIME_IDLE;
+	} current_state = SLIME_IDLE, prev_state = SLIME_JUMP;
 	float time_standing = 0.f; //time when slime is not moving
 };

@@ -23,10 +23,15 @@ public:
 	//init
 	void init_open_gl();
 	void init_input();
-	void load_sprites_JSON();
-	void load_items_data_JSON();
-	void load_entities_data_JSON();
-	void load_animations_data_JSON();
+	bool load_sprites_JSON(std::unordered_map<std::string, uint32_t>& texture_layers);
+	bool load_lights_JSON();
+	bool load_effects_JSON();
+	bool load_items_basic_data_JSON();
+	void load_entities_basic_data_JSON();
+	void load_animations_basic_data_JSON();
+
+	bool resolve_items_dependencies_JSON();
+	bool resolve_entities_dependencies_JSON();
 
 	/*void init_inventory_buffer();
 	void init_audio();
@@ -103,6 +108,7 @@ private:
 
 	//textures
 	Texture atlas_texture;
+	Texture3D textures;
 	SpriteManager* spriteMgr = nullptr;
 
 	//Graphics main objects

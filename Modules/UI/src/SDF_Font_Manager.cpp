@@ -37,7 +37,7 @@ void SDF_Font_Manager::load_main_sdf_font(const char* fontName) {
 	meta_file.close();
 
 	mainFontTexture.bind(1);
-	mainFontTexture.load_R8_texture_from_buffer(sdf.data(), glyph_atlas_size, glyph_atlas_size, false);
+	mainFontTexture.add_R8_texture_from_buffer(sdf.data(), glyph_atlas_size, glyph_atlas_size, false);
 	mainFontTexture.bind(1);
 
 	std::cout << "SDF Font loaded successfully" << std::endl;

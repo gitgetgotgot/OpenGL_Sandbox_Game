@@ -286,24 +286,29 @@ struct TextField {
 //classes that contain info about all objects
 class ObjectInfo {
 public:
-	ObjectInfo(std::string name) : name{ name } {}
-	ObjectInfo(ObjectType type, std::string name, uint32_t effect_comp_id = 0, uint32_t light_comp_id = 0) :
-		objectType{ type }, name{ name }, effect_comp_id{ effect_comp_id }, light_comp_id{ light_comp_id } {}
+	ObjectInfo(ObjectType type, std::string_view uid, uint32_t effect_comp_id = 0, uint32_t light_id = 0) :
+		objectType{ type }, uid{ uid }, effect_id{ effect_comp_id }, light_id{ light_id } {
+		size_t pos = uid.rfind(':');
+		if (pos == std::string_view::npos) name = uid; //if ':' not found, but this shouldn't happen if resource file is correct
+		else name = uid.substr(pos + 1);
+	}
 	virtual ~ObjectInfo() {}
 
 	//main info
 	ObjectType objectType = None;
-	std::string name;
-	bool isMaterial = false;
+	std::string_view uid, name;
 	uint32_t sprite_id = 0;
 
 	//usable components (if ID = 0 then no component is used)
-	uint32_t effect_comp_id = 0;
-	uint32_t light_comp_id = 0;
+	uint16_t effect_id = 0;
+	float effect_duration = 0.0f;
+	uint16_t light_id = 0;
 };
 
 class ObjectsDB {
 public:
+	inline static std::unordered_set<std::string/*UID*/> UID_set;
+	inline static std::unordered_map<std::string_view/*UID*/, uint32_t/*global_ID*/> UID_to_ID;
 	inline static std::vector<std::unique_ptr<ObjectInfo>> objectInfo;
 };
 
@@ -447,8 +452,8 @@ private:
 
 class WallInfo : public ObjectInfo {
 public:
-	WallInfo(std::string name, float toughness, uint16_t drop_object_id) :
-		ObjectInfo(ObjectType::isWall, name), toughness{ toughness }, drop_id{ drop_object_id } {}
+	WallInfo(std::string_view uid, float toughness) :
+		ObjectInfo(ObjectType::isWall, uid), toughness{ toughness } {}
 
 	float toughness = 1.0f;
 	uint16_t drop_id = 0;
@@ -457,11 +462,11 @@ public:
 class BlockInfo : public ObjectInfo {
 public:
 	BlockInfo(
-		std::string name, BlockType type, float toughness, uint16_t drop_obj_id, bool collision,
-		bool platform_collision, uint32_t effect_comp_id = 0, uint32_t light_comp_id = 0
+		std::string_view uid, BlockType type, float toughness, bool collision,
+		bool platform_collision, uint32_t effect_comp_id = 0, uint32_t light_id = 0
 	) :
-		ObjectInfo(isBlock, name, effect_comp_id, light_comp_id), type{ type }, toughness{ toughness },
-		drop_id{ drop_obj_id }, collision{ collision }, platform_collision{ platform_collision } {}
+		ObjectInfo(isBlock, uid, effect_comp_id, light_id), type{ type }, toughness{ toughness },
+		collision{ collision }, platform_collision{ platform_collision } {}
 
 	BlockType type = BlockType::isSolidBlock;
 	float toughness = 1;
@@ -474,10 +479,10 @@ class ComplexObjectInfo : public BlockInfo {
 public:
 	//it doesn't matter what type of BlockType is used for the BlockInfo constructor here, so it's just isSolidBlock
 	ComplexObjectInfo(
-		std::string name, ComplexObjectType type, float toughness, uint16_t drop_obj_id, float blocks_width,
-		float blocks_height, bool collision, bool platform_collision, uint32_t effect_comp_id = 0, uint32_t light_comp_id = 0
+		std::string_view uid, ComplexObjectType type, float toughness, float blocks_width,
+		float blocks_height, bool collision, bool platform_collision, uint32_t effect_comp_id = 0, uint32_t light_id = 0
 	) :
-		BlockInfo(name, isSolidBlock, toughness, drop_obj_id, collision, platform_collision, effect_comp_id, light_comp_id),
+		BlockInfo(uid, isSolidBlock, collision, platform_collision, effect_comp_id, light_id),
 		blocks_width{ blocks_width }, complex_type{ type }, blocks_height{ blocks_height } {
 		objectType = isComplexObject;
 	}
@@ -488,10 +493,10 @@ public:
 
 class WeaponInfo : public ObjectInfo {
 public:
-	WeaponInfo(std::string name, WeaponType type, int dmg, float sizeX, float sizeY, float crit_chance, float speed, bool is_stackable,
-		uint32_t use_sound_id, uint32_t proj_id = 0, float proj_cd = 0) :
-		ObjectInfo(ObjectType::isWeapon, name), type{ type }, damage{ dmg }, size_x{ sizeX }, size_y{ sizeY }, crit_chance{ crit_chance },
-		speed{ speed }, is_stackable{ is_stackable }, use_sound_id{ use_sound_id }, projectile_id{ proj_id }, projectile_cd{ proj_cd } {}
+	WeaponInfo(std::string_view uid, WeaponType type, int dmg, float sizeX, float sizeY, float crit_chance, float speed, bool is_stackable,
+		uint32_t use_sound_id) :
+		ObjectInfo(ObjectType::isWeapon, uid), type{ type }, damage{ dmg }, size_x{ sizeX }, size_y{ sizeY }, crit_chance{ crit_chance },
+		speed{ speed }, is_stackable{ is_stackable }, use_sound_id{ use_sound_id } {}
 
 	WeaponType type;
 	int damage;
@@ -507,9 +512,9 @@ public:
 
 class InstrumentalWeaponInfo : public WeaponInfo {
 public:
-	InstrumentalWeaponInfo(std::string name, WeaponType type, float power, float range, int dmg, float sizeX, float sizeY,
-		float crit_chance, float speed, bool is_stackable, uint32_t use_sound_id, uint32_t proj_id = 0, float proj_cd = 0) :
-		WeaponInfo(name, type, dmg, sizeX, sizeY, crit_chance, speed, is_stackable, use_sound_id, proj_id, proj_cd),
+	InstrumentalWeaponInfo(std::string_view uid, WeaponType type, float power, float range, int dmg, float sizeX, float sizeY,
+		float crit_chance, float speed, bool is_stackable, uint32_t use_sound_id) :
+		WeaponInfo(uid, type, dmg, sizeX, sizeY, crit_chance, speed, is_stackable, use_sound_id),
 		power{ power }, range{ range } {}
 
 	float power = 1.0f;
@@ -518,9 +523,9 @@ public:
 
 class MagicalWeaponInfo : public WeaponInfo {
 public:
-	MagicalWeaponInfo(std::string name, WeaponType type, uint32_t mana_cost, int dmg, float sizeX, float sizeY,
-		float crit_chance, float speed, bool is_stackable, uint32_t use_sound_id, uint32_t proj_id = 0, float proj_cd = 0) :
-		WeaponInfo(name, type, dmg, sizeX, sizeY, crit_chance, speed, is_stackable, use_sound_id, proj_id, proj_cd),
+	MagicalWeaponInfo(std::string_view uid, WeaponType type, uint32_t mana_cost, int dmg, float sizeX, float sizeY,
+		float crit_chance, float speed, bool is_stackable, uint32_t use_sound_id) :
+		WeaponInfo(uid, type, dmg, sizeX, sizeY, crit_chance, speed, is_stackable, use_sound_id),
 		mana_cost{ mana_cost } {}
 
 	uint32_t mana_cost;
@@ -528,10 +533,10 @@ public:
 
 class AmmoInfo : public ObjectInfo {
 public:
-	AmmoInfo(std::string name, AmmoType type, int dmg, float sizeX, float sizeY,
-		uint32_t entity_id, uint32_t effect_comp_id = 0, uint32_t light_comp_id = 0) :
-		ObjectInfo(isAmmo, name, effect_comp_id, light_comp_id), type{ type },
-		damage{ dmg }, size_x{ sizeX }, size_y{ sizeY }, entity_id{ entity_id } {}
+	AmmoInfo(std::string_view uid, AmmoType type, int dmg, float sizeX, float sizeY,
+		uint32_t effect_comp_id = 0, uint32_t light_id = 0) :
+		ObjectInfo(isAmmo, uid, effect_comp_id, light_id), type{ type },
+		damage{ dmg }, size_x{ sizeX }, size_y{ sizeY } {}
 
 	AmmoType type;
 	uint32_t entity_id;

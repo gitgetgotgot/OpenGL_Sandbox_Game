@@ -35,7 +35,7 @@ void main() {
 
 	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(aPos, 0.0, 1.0);
 
-	texCoord = get_quad_UV(gl_VertexID % 4);
+	texCoord = get_quad_UV(int(gl_VertexID % 4));
 	globalCoord = (modelMatrix * vec4(aPos, 0.0, 1.0)).xy;
 
 	dayRatio = day_ratio;

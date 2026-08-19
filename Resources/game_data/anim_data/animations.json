@@ -1,0 +1,19 @@
+[
+  {
+    "UID": "Animator:Core:Slime",
+    "animator": [
+      {
+        "UID": "Clip:Core:Slime_Idle",
+        "loop": true,
+        "frame_time": 0.5,
+        "sprites": [ "Sprite:Core:GreenSlime2", "Sprite:Core:GreenSlime" ]
+      },
+      {
+        "UID": "Clip:Core:Slime_Jump",
+        "loop": false,
+        "frame_time": 0.5,
+        "sprites": [ "Sprite:Core:GreenSlime" ]
+      }
+    ]
+  }
+]

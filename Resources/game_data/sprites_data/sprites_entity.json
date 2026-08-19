@@ -1,0 +1,26 @@
+[
+  {
+    "UID": "Sprite:Core:GreenSlime",
+    "texture": "game_entity",
+    "padding": 1,
+    "sprite": {
+      "U0": 127,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.5
+    }
+  },
+  {
+    "UID": "Sprite:Core:GreenSlime2",
+    "texture": "game_entity",
+    "padding": 1,
+    "sprite": {
+      "U0": 145,
+      "V0": 495,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.5
+    }
+  }
+]

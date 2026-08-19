@@ -1,13 +1,6 @@
 #pragma once
 #include <cstdint>
-
-//structure that contains info about appliable effect
-struct EffectComponent {
-	float duration = 0.f;
-	uint32_t id = 0;
-	EffectComponent() {}
-	EffectComponent(uint32_t id, float duration) : id{ id }, duration{ duration } {}
-};
+#include <unordered_map>
 
 //structure that contains info about appliable lighting
 struct LightComponent {
@@ -23,21 +16,19 @@ public:
 		static ComponentsManager compsMgr;
 		return &compsMgr;
 	}
-	void add_effect_component(float duration, uint32_t effect_id) {
-		appliable_effects.emplace_back(effect_id, duration);
-	}
-	EffectComponent& get_effect_comp(uint32_t id) {
-		return appliable_effects[id];
-	}
-	void add_light_component(float radius, glm::vec3 color) {
+	void add_light(std::string uid, float radius, glm::vec3 color) {
+		lights_uid_to_id.emplace(uid, appliable_lights.size());
 		appliable_lights.emplace_back(radius, color);
 	}
-	LightComponent& get_light_comp(uint32_t id) {
+	uint32_t get_light_id(std::string light_UID) {
+		return lights_uid_to_id[light_UID];
+	}
+	LightComponent& get_light(uint32_t id) {
 		return appliable_lights[id];
 	}
 private:
 	ComponentsManager(){}
 	~ComponentsManager(){}
-	std::vector<EffectComponent> appliable_effects;
 	std::vector<LightComponent> appliable_lights;
+	std::unordered_map<std::string/*UID*/, uint32_t/*ID*/> lights_uid_to_id;
 };

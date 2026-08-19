@@ -5,12 +5,11 @@
 class ProjectileInfo : public EntityInfo {
 public:
 	ProjectileInfo(ProjectileType type, int ammo_item_id, int damage, int max_enemy_hits,
-		bool gravity, glm::vec2 spriteSize, uint32_t effect_comp_id = 0, uint32_t light_comp_id = 0) :
-		EntityInfo(isProjectile, "", glm::vec2(0.f, 0.f), spriteSize), type{ type }, ammo_item_id{ ammo_item_id },
+		bool gravity, uint32_t effect_comp_id = 0, uint32_t light_id = 0) :
+		EntityInfo(isProjectile, "", glm::vec2(0.f, 0.f)), type{ type }, ammo_item_id{ ammo_item_id },
 		DMG{ damage }, max_enemy_hits{ max_enemy_hits }, affected_by_gravity{ gravity } {
-		this->spriteSize = spriteSize;
 		this->effect_comp_id = effect_comp_id;
-		this->light_comp_id = light_comp_id;
+		this->light_id = light_id;
 	}
 
 	ProjectileType type;
@@ -24,7 +23,7 @@ public:
 
 class GravityProjectile : public EntityBase {
 public:
-	GravityProjectile(int entity_id, float speedX, float speedY, float flying_angle, float center_x, float center_y, glm::vec2 spriteSize, int DMG, int max_enemy_hits, bool isCrit, float spriteAdjustmentAngle) :
+	GravityProjectile(int entity_id, float speedX, float speedY, float flying_angle, float center_x, float center_y, int DMG, int max_enemy_hits, bool isCrit, float spriteAdjustmentAngle) :
 		EntityBase(entity_id), speedX{ speedX }, speedY{ speedY }, flying_angle{ flying_angle }, DMG{ DMG }, isCrit{ isCrit }, max_enemy_hits_available{ max_enemy_hits }, sprite_adjustment_angle{ spriteAdjustmentAngle } {
 		hitbox.center = { center_x, center_y };
 		//sprite_center_point = hitbox.center;

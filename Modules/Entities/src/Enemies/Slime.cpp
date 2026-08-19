@@ -19,6 +19,12 @@ void Slime::update() {
 		physics.linear_velocity.x = 0.0f;
 		current_state = SLIME_ANIM_STATE::SLIME_IDLE;
 	}
+	else if (physics.linear_velocity.x == 0.0f) {
+		if (GameContext::PLAYER_LAST_POS.x - hitbox.center.x > 0.f)
+			physics.linear_velocity.x = 4.0f;
+		else
+			physics.linear_velocity.x = -4.0f;
+	}
 
 	if (physics.time_falling > 0.0f)
 		current_state = SLIME_ANIM_STATE::SLIME_JUMP;
@@ -26,19 +32,14 @@ void Slime::update() {
 	//make jump after standing for 5 seconds
 	if (time_standing >= 5.0f) {
 		time_standing = 0.0f;
-		physics.linear_velocity.y = 5.0f;
-
-		if (GameContext::PLAYER_LAST_POS.x - hitbox.center.x > 0.f)
-			physics.linear_velocity.x = 2.f;
-		else
-			physics.linear_velocity.x = -2.f;
+		physics.linear_velocity.y = 8.0f;
 	}
 
 	if (current_state != prev_state) {
 		change_anim();
 		prev_state = current_state;
 	}
-
+	
 	current_sprite = anim_controller.current_sprite;
 }
 

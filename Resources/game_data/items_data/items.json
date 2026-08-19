@@ -1,608 +1,546 @@
 [
   {
-    "id": 0,
+    "UID": "Item:Core:Air",
     "type": 0,
     "sub_type": 0,
-    "name": "Air",
-    "sprite": 0
+    "sprite": "Sprite:Core:Empty"
   },
   {
-    "id": 1,
+    "UID": "Item:Core:CompObjPart",
     "type": 0,
     "sub_type": 4,
-    "name": "CompObjPart",
-    "sprite": 0
+    "sprite": "Sprite:Core:Empty"
   },
   {
-    "id": 2,
+    "UID": "Item:Core:Stone",
     "type": 1,
     "sub_type": 0,
-    "name": "Stone",
     "toughness": 1,
-    "drop_id": 2,
+    "drop_UID": "Item:Core:Stone",
     "collision": true,
-    "sprite": 22
+    "sprite": "Sprite:Core:Stone"
   },
   {
-    "id": 3,
+    "UID": "Item:Core:Dirt",
     "type": 1,
     "sub_type": 0,
-    "name": "Dirt",
     "toughness": 1,
-    "drop_id": 3,
+    "drop_UID": "Item:Core:Dirt",
     "collision": true,
-    "sprite": 23
+    "sprite": "Sprite:Core:Dirt"
   },
   {
-    "id": 4,
+    "UID": "Item:Core:Grass Dirt",
     "type": 1,
     "sub_type": 0,
-    "name": "Grass Dirt",
     "toughness": 1,
-    "drop_id": 4,
+    "drop_UID": "Item:Core:Grass Dirt",
     "collision": true,
-    "sprite": 24
+    "sprite": "Sprite:Core:Grass Dirt"
   },
   {
-    "id": 5,
+    "UID": "Item:Core:Sand",
     "type": 1,
     "sub_type": 0,
-    "name": "Sand",
     "toughness": 1,
-    "drop_id": 5,
+    "drop_UID": "Item:Core:Sand",
     "collision": true,
-    "sprite": 25
+    "sprite": "Sprite:Core:Sand"
   },
   {
-    "id": 6,
+    "UID": "Item:Core:Oak",
     "type": 1,
     "sub_type": 1,
-    "name": "Oak",
     "toughness": 1,
-    "drop_id": 6,
+    "drop_UID": "Item:Core:Oak",
     "collision": false,
-    "sprite": 26
+    "sprite": "Sprite:Core:Oak"
   },
   {
-    "id": 7,
+    "UID": "Item:Core:Oak Planks",
     "type": 1,
     "sub_type": 0,
-    "name": "Oak Planks",
     "toughness": 1,
-    "drop_id": 7,
+    "drop_UID": "Item:Core:Oak Planks",
     "collision": true,
-    "sprite": 27
+    "sprite": "Sprite:Core:Oak Planks"
   },
   {
-    "id": 8,
+    "UID": "Item:Core:Crimson Stone",
     "type": 1,
     "sub_type": 0,
-    "name": "Crimson Stone",
     "toughness": 1,
-    "drop_id": 8,
+    "drop_UID": "Item:Core:Crimson Stone",
     "collision": true,
-    "sprite": 28
+    "sprite": "Sprite:Core:Crimson Stone"
   },
   {
-    "id": 9,
+    "UID": "Item:Core:Corrupted Stone",
     "type": 1,
     "sub_type": 0,
-    "name": "Corrupted Stone",
     "toughness": 1,
-    "drop_id": 9,
+    "drop_UID": "Item:Core:Corrupted Stone",
     "collision": true,
-    "sprite": 29
+    "sprite": "Sprite:Core:Corrupted Stone"
   },
   {
-    "id": 10,
+    "UID": "Item:Core:Copper Ore",
     "type": 1,
     "sub_type": 0,
-    "name": "Copper Ore",
     "toughness": 1,
-    "drop_id": 10,
+    "drop_UID": "Item:Core:Copper Ore",
     "collision": true,
-    "sprite": 30
+    "sprite": "Sprite:Core:Copper Ore"
   },
   {
-    "id": 11,
+    "UID": "Item:Core:Iron Ore",
     "type": 1,
     "sub_type": 0,
-    "name": "Iron Ore",
     "toughness": 1,
-    "drop_id": 11,
+    "drop_UID": "Item:Core:Iron Ore",
     "collision": true,
-    "sprite": 31
+    "sprite": "Sprite:Core:Iron Ore"
   },
   {
-    "id": 12,
+    "UID": "Item:Core:Gold Ore",
     "type": 1,
     "sub_type": 0,
-    "name": "Gold Ore",
     "toughness": 1,
-    "drop_id": 12,
+    "drop_UID": "Item:Core:Gold Ore",
     "collision": true,
-    "sprite": 32
+    "sprite": "Sprite:Core:Gold Ore"
   },
   {
-    "id": 13,
+    "UID": "Item:Core:Water",
     "type": 1,
     "sub_type": 5,
-    "name": "Water",
     "toughness": 1,
-    "drop_id": 0,
+    "drop_UID": "Item:Core:Water",
     "collision": false,
-    "sprite": 33
+    "sprite": "Sprite:Core:Water"
   },
   {
-    "id": 14,
+    "UID": "Item:Core:Snow",
     "type": 1,
     "sub_type": 0,
-    "name": "Snow",
     "toughness": 1,
-    "drop_id": 14,
+    "drop_UID": "Item:Core:Snow",
     "collision": true,
-    "sprite": 34
+    "sprite": "Sprite:Core:Snow"
   },
   {
-    "id": 15,
+    "UID": "Item:Core:Ice",
     "type": 1,
     "sub_type": 0,
-    "name": "Ice",
     "toughness": 1,
-    "drop_id": 15,
+    "drop_UID": "Item:Core:Ice",
     "collision": true,
-    "sprite": 35
+    "sprite": "Sprite:Core:Ice"
   },
   {
-    "id": 16,
+    "UID": "Item:Core:Snow Grass Dirt",
     "type": 1,
     "sub_type": 0,
-    "name": "Snow Grass Dirt",
     "toughness": 1,
-    "drop_id": 16,
+    "drop_UID": "Item:Core:Snow Grass Dirt",
     "collision": true,
-    "sprite": 36
+    "sprite": "Sprite:Core:Snow Grass Dirt"
   },
   {
-    "id": 17,
+    "UID": "Item:Core:Crimson Grass Dirt",
     "type": 1,
     "sub_type": 0,
-    "name": "Crimson Grass Dirt",
     "toughness": 1,
-    "drop_id": 17,
+    "drop_UID": "Item:Core:Crimson Grass Dirt",
     "collision": true,
-    "sprite": 37
+    "sprite": "Sprite:Core:Crimson Grass Dirt"
   },
   {
-    "id": 18,
+    "UID": "Item:Core:Corrupted Grass Dirt",
     "type": 1,
     "sub_type": 0,
-    "name": "Corrupted Grass Dirt",
     "toughness": 1,
-    "drop_id": 18,
+    "drop_UID": "Item:Core:Corrupted Grass Dirt",
     "collision": true,
-    "sprite": 38
+    "sprite": "Sprite:Core:Corrupted Grass Dirt"
   },
   {
-    "id": 19,
+    "UID": "Item:Core:Grass",
     "type": 1,
     "sub_type": 6,
-    "name": "Grass",
     "toughness": 1,
-    "drop_id": 19,
+    "drop_UID": "Item:Core:Grass",
     "collision": false,
-    "sprite": 39
+    "sprite": "Sprite:Core:Grass"
   },
   {
-    "id": 20,
+    "UID": "Item:Core:Corrupted Grass",
     "type": 1,
     "sub_type": 6,
-    "name": "Corrupted Grass",
     "toughness": 1,
-    "drop_id": 20,
+    "drop_UID": "Item:Core:Corrupted Grass",
     "collision": false,
-    "sprite": 40
+    "sprite": "Sprite:Core:Corrupted Grass"
   },
   {
-    "id": 21,
+    "UID": "Item:Core:Crimson Grass",
     "type": 1,
     "sub_type": 6,
-    "name": "Crimson Grass",
     "toughness": 1,
-    "drop_id": 21,
+    "drop_UID": "Item:Core:Crimson Grass",
     "collision": false,
-    "sprite": 41
+    "sprite": "Sprite:Core:Crimson Grass"
   },
   {
-    "id": 22,
+    "UID": "Item:Core:Day Flower",
     "type": 1,
     "sub_type": 7,
-    "name": "Day Flower",
     "toughness": 1,
-    "drop_id": 22,
+    "drop_UID": "Item:Core:Day Flower",
     "collision": false,
-    "sprite": 42
+    "sprite": "Sprite:Core:Day Flower"
   },
   {
-    "id": 23,
+    "UID": "Item:Core:Torch",
     "type": 1,
     "sub_type": 4,
-    "name": "Torch",
     "toughness": 1,
-    "drop_id": 23,
+    "drop_UID": "Item:Core:Torch",
     "collision": false,
     "light_id": 1,
-    "sprite": 43,
+    "sprite": "Sprite:Core:Torch",
     "craft": {
       "amount": 1,
       "condition": 0,
       "items": [
         {
-          "item_id": 2,
-          "item_amount": 2
+          "item_UID": "Item:Core:Oak Planks",
+          "item_amount": 1
         },
         {
-          "item_id": 3,
-          "item_amount": 5
+          "item_UID": "Item:Core:Gel",
+          "item_amount": 1
         }
       ]
     }
   },
   {
-    "id": 24,
+    "UID": "Item:Core:Torch(L)",
     "type": 1,
     "sub_type": 4,
-    "name": "Torch(L)",
     "toughness": 1,
-    "drop_id": 23,
+    "drop_UID": "Item:Core:Torch",
     "collision": false,
     "light_id": 1,
-    "sprite": 44
+    "sprite": "Sprite:Core:Torch(L)"
   },
   {
-    "id": 25,
+    "UID": "Item:Core:Torch(R)",
     "type": 1,
     "sub_type": 4,
-    "name": "Torch(R)",
     "toughness": 1,
-    "drop_id": 23,
+    "drop_UID": "Item:Core:Torch",
     "collision": false,
     "light_id": 1,
-    "sprite": 45
+    "sprite": "Sprite:Core:Torch(R)"
   },
   {
-    "id": 26,
+    "UID": "Item:Core:Ice Torch",
     "type": 1,
     "sub_type": 4,
-    "name": "Ice Torch",
     "toughness": 1,
-    "drop_id": 26,
+    "drop_UID": "Item:Core:Ice Torch",
     "collision": false,
     "light_id": 2,
-    "sprite": 46
+    "sprite": "Sprite:Core:Ice Torch"
   },
   {
-    "id": 27,
+    "UID": "Item:Core:Ice Torch(L)",
     "type": 1,
     "sub_type": 4,
-    "name": "Ice Torch(L)",
     "toughness": 1,
-    "drop_id": 26,
+    "drop_UID": "Item:Core:Ice Torch",
     "collision": false,
     "light_id": 2,
-    "sprite": 47
+    "sprite": "Sprite:Core:Ice Torch(L)"
   },
   {
-    "id": 28,
+    "UID": "Item:Core:Ice Torch(R)",
     "type": 1,
     "sub_type": 4,
-    "name": "Ice Torch(R)",
     "toughness": 1,
-    "drop_id": 26,
+    "drop_UID": "Item:Core:Ice Torch",
     "collision": false,
     "light_id": 2,
-    "sprite": 48
+    "sprite": "Sprite:Core:Ice Torch(R)"
   },
   {
-    "id": 29,
+    "UID": "Item:Core:Glass",
     "type": 1,
     "sub_type": 8,
-    "name": "Glass",
     "toughness": 1,
-    "drop_id": 29,
+    "drop_UID": "Item:Core:Glass",
     "collision": true,
-    "sprite": 49
+    "sprite": "Sprite:Core:Glass"
   },
   {
-    "id": 30,
+    "UID": "Item:Core:Oak Platform",
     "type": 1,
     "sub_type": 3,
-    "name": "Oak Platform",
     "toughness": 1,
-    "drop_id": 30,
+    "drop_UID": "Item:Core:Oak Platform",
     "collision": false,
     "platform_collision": true,
-    "sprite": 50
+    "sprite": "Sprite:Core:Oak Platform"
   },
   {
-    "id": 31,
+    "UID": "Item:Core:Oak Platform(L)",
     "type": 1,
     "sub_type": 3,
-    "name": "Oak Platform(L)",
     "toughness": 1,
-    "drop_id": 30,
+    "drop_UID": "Item:Core:Oak Platform",
     "collision": false,
     "platform_collision": true,
-    "sprite": 51
+    "sprite": "Sprite:Core:Oak Platform(L)"
   },
   {
-    "id": 32,
+    "UID": "Item:Core:Oak Platform(R)",
     "type": 1,
     "sub_type": 3,
-    "name": "Oak Platform(R)",
     "toughness": 1,
-    "drop_id": 30,
+    "drop_UID": "Item:Core:Oak Platform",
     "collision": false,
     "platform_collision": true,
-    "sprite": 52
+    "sprite": "Sprite:Core:Oak Platform(R)"
   },
   {
-    "id": 33,
+    "UID": "Item:Core:Mushroom",
     "type": 1,
     "sub_type": 7,
-    "name": "Mushroom",
     "toughness": 1,
-    "drop_id": 33,
+    "drop_UID": "Item:Core:Mushroom",
     "collision": false,
-    "sprite": 53
+    "sprite": "Sprite:Core:Mushroom"
   },
   {
-    "id": 34,
+    "UID": "Item:Core:Glowing Mushroom",
     "type": 1,
     "sub_type": 7,
-    "name": "Glowing Mushroom",
     "toughness": 1,
-    "drop_id": 34,
+    "drop_UID": "Item:Core:Glowing Mushroom",
     "collision": false,
-    "sprite": 54
+    "sprite": "Sprite:Core:Glowing Mushroom"
   },
   {
-    "id": 35,
+    "UID": "Item:Core:Hardened Sand",
     "type": 1,
     "sub_type": 0,
-    "name": "Hardened Sand",
     "toughness": 1,
-    "drop_id": 35,
+    "drop_UID": "Item:Core:Hardened Sand",
     "collision": true,
-    "sprite": 55
+    "sprite": "Sprite:Core:Hardened Sand"
   },
-
   {
-    "id": 36,
+    "UID": "Item:Core:Stone Wall",
     "type": 3,
-    "name": "Stone Wall",
     "toughness": 1,
-    "drop_id": 36,
-    "sprite": 56
+    "drop_UID": "Item:Core:Stone Wall",
+    "sprite": "Sprite:Core:Stone Wall"
   },
   {
-    "id": 37,
+    "UID": "Item:Core:Dirt Wall",
     "type": 3,
-    "name": "Dirt Wall",
     "toughness": 1,
-    "drop_id": 37,
-    "sprite": 57
+    "drop_UID": "Item:Core:Dirt Wall",
+    "sprite": "Sprite:Core:Dirt Wall"
   },
   {
-    "id": 38,
+    "UID": "Item:Core:Oak Wall",
     "type": 3,
-    "name": "Oak Wall",
     "toughness": 1,
-    "drop_id": 38,
-    "sprite": 58
+    "drop_UID": "Item:Core:Oak Wall",
+    "sprite": "Sprite:Core:Oak Wall"
   },
   {
-    "id": 39,
+    "UID": "Item:Core:Crimson Wall",
     "type": 3,
-    "name": "Crimson Wall",
     "toughness": 1,
-    "drop_id": 39,
-    "sprite": 59
+    "drop_UID": "Item:Core:Crimson Wall",
+    "sprite": "Sprite:Core:Crimson Wall"
   },
   {
-    "id": 40,
+    "UID": "Item:Core:Corrupted Wall",
     "type": 3,
-    "name": "Corrupted Wall",
     "toughness": 1,
-    "drop_id": 40,
-    "sprite": 60
+    "drop_UID": "Item:Core:Corrupted Wall",
+    "sprite": "Sprite:Core:Corrupted Wall"
   },
   {
-    "id": 41,
+    "UID": "Item:Core:Snow Wall",
     "type": 3,
-    "name": "Snow Wall",
     "toughness": 1,
-    "drop_id": 41,
-    "sprite": 61
+    "drop_UID": "Item:Core:Snow Wall",
+    "sprite": "Sprite:Core:Snow Wall"
   },
   {
-    "id": 42,
+    "UID": "Item:Core:Sand Wall",
     "type": 3,
-    "name": "Sand Wall",
     "toughness": 1,
-    "drop_id": 42,
-    "sprite": 62
+    "drop_UID": "Item:Core:Sand Wall",
+    "sprite": "Sprite:Core:Sand Wall"
   },
-
   {
-    "id": 43,
+    "UID": "Item:Core:Workbench",
     "type": 2,
     "sub_type": 0,
-    "name": "Workbench",
     "toughness": 1,
-    "drop_id": 43,
+    "drop_UID": "Item:Core:Workbench",
     "width": 2,
     "height": 1,
     "platform_collision": true,
-    "sprite": 63
+    "sprite": "Sprite:Core:Workbench"
   },
   {
-    "id": 44,
+    "UID": "Item:Core:Furnace",
     "type": 2,
     "sub_type": 1,
-    "name": "Furnace",
     "toughness": 1,
-    "drop_id": 44,
+    "drop_UID": "Item:Core:Furnace",
     "width": 3,
     "height": 2,
-    "sprite": 64
+    "sprite": "Sprite:Core:Furnace"
   },
   {
-    "id": 45,
+    "UID": "Item:Core:Anvil",
     "type": 2,
     "sub_type": 6,
-    "name": "Anvil",
     "toughness": 1,
-    "drop_id": 45,
+    "drop_UID": "Item:Core:Anvil",
     "width": 2,
     "height": 1,
-    "sprite": 65
+    "sprite": "Sprite:Core:Anvil"
   },
   {
-    "id": 46,
+    "UID": "Item:Core:Oak Table",
     "type": 2,
     "sub_type": 4,
-    "name": "Oak Table",
     "toughness": 1,
-    "drop_id": 46,
+    "drop_UID": "Item:Core:Oak Table",
     "width": 3,
     "height": 2,
-    "sprite": 66
+    "sprite": "Sprite:Core:Oak Table"
   },
   {
-    "id": 47,
+    "UID": "Item:Core:Oak Chair",
     "type": 2,
     "sub_type": 5,
-    "name": "Oak Chair",
     "toughness": 1,
-    "drop_id": 47,
+    "drop_UID": "Item:Core:Oak Chair",
     "width": 1,
     "height": 2,
-    "sprite": 67
+    "sprite": "Sprite:Core:Oak Chair"
   },
   {
-    "id": 48,
+    "UID": "Item:Core:Oak Chair(R)",
     "type": 2,
     "sub_type": 5,
-    "name": "Oak Chair(R)",
     "toughness": 1,
-    "drop_id": 48,
+    "drop_UID": "Item:Core:Oak Chair(R)",
     "width": 1,
     "height": 2,
-    "sprite": 68
+    "sprite": "Sprite:Core:Oak Chair(R)"
   },
   {
-    "id": 49,
+    "UID": "Item:Core:Chest",
     "type": 2,
     "sub_type": 2,
-    "name": "Chest",
     "toughness": 1,
-    "drop_id": 49,
+    "drop_UID": "Item:Core:Chest",
     "width": 2,
     "height": 2,
-    "sprite": 69
+    "sprite": "Sprite:Core:Chest"
   },
   {
-    "id": 50,
+    "UID": "Item:Core:ChestOpen",
     "type": 2,
     "sub_type": 2,
-    "name": "ChestOpen",
     "toughness": 1,
-    "drop_id": 49,
+    "drop_UID": "Item:Core:Chest",
     "width": 2,
     "height": 2,
-    "sprite": 70
+    "sprite": "Sprite:Core:ChestOpen"
   },
   {
-    "id": 51,
+    "UID": "Item:Core:Life Crystal",
     "type": 2,
     "sub_type": 9,
-    "name": "Life Crystal",
     "toughness": 1,
-    "drop_id": 51,
+    "drop_UID": "Item:Core:Life Crystal",
     "width": 2,
     "height": 2,
     "effect_id": 3,
     "light_id": 4,
-    "sprite": 71
+    "sprite": "Sprite:Core:Life Crystal"
   },
   {
-    "id": 52,
+    "UID": "Item:Core:Oak Door",
     "type": 2,
     "sub_type": 3,
-    "name": "Oak Door",
     "toughness": 1,
-    "drop_id": 52,
+    "drop_UID": "Item:Core:Oak Door",
     "width": 2,
     "height": 3,
-    "sprite": 72
+    "sprite": "Sprite:Core:Oak Door"
   },
   {
-    "id": 53,
+    "UID": "Item:Core:Oak Door(R)",
     "type": 2,
     "sub_type": 3,
-    "name": "Oak Door(R)",
     "toughness": 1,
-    "drop_id": 52,
+    "drop_UID": "Item:Core:Oak Door",
     "width": 2,
     "height": 3,
-    "sprite": 73
+    "sprite": "Sprite:Core:Oak Door(R)"
   },
   {
-    "id": 54,
+    "UID": "Item:Core:Oak Door(C)",
     "type": 2,
     "sub_type": 3,
-    "name": "Oak Door(C)",
     "toughness": 1,
-    "drop_id": 52,
+    "drop_UID": "Item:Core:Oak Door",
     "width": 1,
     "height": 3,
     "collision": true,
-    "sprite": 74
+    "sprite": "Sprite:Core:Oak Door(C)"
   },
   {
-    "id": 55,
+    "UID": "Item:Core:Oak Tree Top",
     "type": 1,
     "sub_type": 2,
-    "name": "Oak Tree Top",
     "toughness": 1,
-    "drop_id": 55,
-    "sprite": 75
+    "drop_UID": "Item:Core:Oak Tree Top",
+    "sprite": "Sprite:Core:Oak Tree Top"
   },
   {
-    "id": 56,
+    "UID": "Item:Core:Oak Branch(L)",
     "type": 1,
     "sub_type": 2,
-    "name": "Oak Branch(L)",
     "toughness": 1,
-    "drop_id": 56,
-    "sprite": 76
+    "drop_UID": "Item:Core:Oak Branch(L)",
+    "sprite": "Sprite:Core:Oak Branch(L)"
   },
   {
-    "id": 57,
+    "UID": "Item:Core:Oak Branch(R)",
     "type": 1,
     "sub_type": 2,
-    "name": "Oak Branch(R)",
     "toughness": 1,
-    "drop_id": 57,
-    "sprite": 77
+    "drop_UID": "Item:Core:Oak Branch(R)",
+    "sprite": "Sprite:Core:Oak Branch(R)"
   },
-
   {
-    "id": 58,
+    "UID": "Item:Core:Copper Pickaxe",
     "type": 5,
     "sub_type": 0,
-    "name": "Copper Pickaxe",
     "power": 1,
     "range": 5,
     "dmg": 1,
@@ -612,13 +550,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 78
+    "sprite": "Sprite:Core:Copper Pickaxe"
   },
   {
-    "id": 59,
+    "UID": "Item:Core:Copper Axe",
     "type": 5,
     "sub_type": 3,
-    "name": "Copper Axe",
     "power": 1,
     "range": 5,
     "dmg": 1,
@@ -628,13 +565,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 79
+    "sprite": "Sprite:Core:Copper Axe"
   },
   {
-    "id": 60,
+    "UID": "Item:Core:Copper Dagger",
     "type": 4,
     "sub_type": 2,
-    "name": "Copper Dagger",
     "dmg": 3,
     "speed": 1,
     "size_x": 1.5,
@@ -642,13 +578,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 80
+    "sprite": "Sprite:Core:Copper Dagger"
   },
   {
-    "id": 61,
+    "UID": "Item:Core:Copper Sword",
     "type": 4,
     "sub_type": 1,
-    "name": "Copper Sword",
     "dmg": 4,
     "speed": 1,
     "size_x": 1.5,
@@ -656,13 +591,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 81
+    "sprite": "Sprite:Core:Copper Sword"
   },
   {
-    "id": 62,
+    "UID": "Item:Core:Copper Hammer",
     "type": 5,
     "sub_type": 4,
-    "name": "Copper Hammer",
     "power": 1,
     "range": 5,
     "dmg": 1,
@@ -672,13 +606,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 82
+    "sprite": "Sprite:Core:Copper Hammer"
   },
   {
-    "id": 63,
+    "UID": "Item:Core:Copper Bow",
     "type": 4,
     "sub_type": 7,
-    "name": "Copper Bow",
     "dmg": 3,
     "speed": 1,
     "size_x": 1.5,
@@ -686,13 +619,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 83
+    "sprite": "Sprite:Core:Copper Bow"
   },
   {
-    "id": 64,
+    "UID": "Item:Core:Iron Pickaxe",
     "type": 5,
     "sub_type": 0,
-    "name": "Iron Pickaxe",
     "power": 1,
     "range": 5,
     "dmg": 1,
@@ -702,13 +634,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 84
+    "sprite": "Sprite:Core:Iron Pickaxe"
   },
   {
-    "id": 65,
+    "UID": "Item:Core:Iron Axe",
     "type": 5,
     "sub_type": 3,
-    "name": "Iron Axe",
     "power": 1,
     "range": 5,
     "dmg": 1,
@@ -718,13 +649,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 85
+    "sprite": "Sprite:Core:Iron Axe"
   },
   {
-    "id": 66,
+    "UID": "Item:Core:Iron Dagger",
     "type": 4,
     "sub_type": 2,
-    "name": "Iron Dagger",
     "dmg": 3,
     "speed": 1,
     "size_x": 1.5,
@@ -732,13 +662,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 86
+    "sprite": "Sprite:Core:Iron Dagger"
   },
   {
-    "id": 67,
+    "UID": "Item:Core:Iron Sword",
     "type": 4,
     "sub_type": 1,
-    "name": "Iron Sword",
     "dmg": 4,
     "speed": 1,
     "size_x": 1.5,
@@ -746,13 +675,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 87
+    "sprite": "Sprite:Core:Iron Sword"
   },
   {
-    "id": 68,
+    "UID": "Item:Core:Iron Hammer",
     "type": 5,
     "sub_type": 4,
-    "name": "Iron Hammer",
     "power": 1,
     "range": 5,
     "dmg": 1,
@@ -762,13 +690,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 88
+    "sprite": "Sprite:Core:Iron Hammer"
   },
   {
-    "id": 69,
+    "UID": "Item:Core:Iron Bow",
     "type": 4,
     "sub_type": 7,
-    "name": "Iron Bow",
     "dmg": 3,
     "speed": 1,
     "size_x": 1.5,
@@ -776,13 +703,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 89
+    "sprite": "Sprite:Core:Iron Bow"
   },
   {
-    "id": 70,
+    "UID": "Item:Core:Golden Pickaxe",
     "type": 5,
     "sub_type": 0,
-    "name": "Golden Pickaxe",
     "power": 1,
     "range": 5,
     "dmg": 1,
@@ -792,13 +718,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 90
+    "sprite": "Sprite:Core:Golden Pickaxe"
   },
   {
-    "id": 71,
+    "UID": "Item:Core:Golden Axe",
     "type": 5,
     "sub_type": 3,
-    "name": "Golden Axe",
     "power": 1,
     "range": 5,
     "dmg": 1,
@@ -808,13 +733,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 91
+    "sprite": "Sprite:Core:Golden Axe"
   },
   {
-    "id": 72,
+    "UID": "Item:Core:Golden Dagger",
     "type": 4,
     "sub_type": 2,
-    "name": "Golden Dagger",
     "dmg": 3,
     "speed": 1,
     "size_x": 1.5,
@@ -822,13 +746,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 92
+    "sprite": "Sprite:Core:Golden Dagger"
   },
   {
-    "id": 73,
+    "UID": "Item:Core:Golden Sword",
     "type": 4,
     "sub_type": 1,
-    "name": "Golden Sword",
     "dmg": 4,
     "speed": 1,
     "size_x": 1.5,
@@ -836,13 +759,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 93
+    "sprite": "Sprite:Core:Golden Sword"
   },
   {
-    "id": 74,
+    "UID": "Item:Core:Golden Hammer",
     "type": 5,
     "sub_type": 4,
-    "name": "Golden Hammer",
     "power": 1,
     "range": 5,
     "dmg": 1,
@@ -852,13 +774,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 94
+    "sprite": "Sprite:Core:Golden Hammer"
   },
   {
-    "id": 75,
+    "UID": "Item:Core:Golden Bow",
     "type": 4,
     "sub_type": 7,
-    "name": "Golden Bow",
     "dmg": 3,
     "speed": 1,
     "size_x": 1.5,
@@ -866,152 +787,132 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 95
+    "sprite": "Sprite:Core:Golden Bow"
   },
-
   {
-    "id": 76,
+    "UID": "Item:Core:Copper Coin",
     "type": 0,
     "sub_type": 9,
-    "name": "Copper Coin",
-    "sprite": 96
+    "sprite": "Sprite:Core:Copper Coin"
   },
   {
-    "id": 77,
+    "UID": "Item:Core:Silver Coin",
     "type": 0,
     "sub_type": 9,
-    "name": "Silver Coin",
-    "sprite": 97
+    "sprite": "Sprite:Core:Silver Coin"
   },
   {
-    "id": 78,
+    "UID": "Item:Core:Gold Coin",
     "type": 0,
     "sub_type": 9,
-    "name": "Gold Coin",
-    "sprite": 98
+    "sprite": "Sprite:Core:Gold Coin"
   },
   {
-    "id": 79,
+    "UID": "Item:Core:Platinum Coin",
     "type": 0,
     "sub_type": 9,
-    "name": "Platinum Coin",
-    "sprite": 99
+    "sprite": "Sprite:Core:Platinum Coin"
   },
   {
-    "id": 80,
+    "UID": "Item:Core:Copper Ingot",
     "type": 0,
     "sub_type": 8,
-    "name": "Copper Ingot",
-    "sprite": 100
+    "sprite": "Sprite:Core:Copper Ingot"
   },
   {
-    "id": 81,
+    "UID": "Item:Core:Iron Ingot",
     "type": 0,
     "sub_type": 8,
-    "name": "Iron Ingot",
-    "sprite": 101
+    "sprite": "Sprite:Core:Iron Ingot"
   },
   {
-    "id": 82,
+    "UID": "Item:Core:Gold Ingot",
     "type": 0,
     "sub_type": 8,
-    "name": "Gold Ingot",
-    "sprite": 102
+    "sprite": "Sprite:Core:Gold Ingot"
   },
   {
-    "id": 83,
+    "UID": "Item:Core:Gel",
     "type": 0,
     "sub_type": 8,
-    "name": "Gel",
-    "sprite": 103
+    "sprite": "Sprite:Core:Gel"
   },
   {
-    "id": 84,
+    "UID": "Item:Core:Bottle",
     "type": 1,
     "sub_type": 9,
-    "name": "Bottle",
     "toughness": 1,
-    "drop_id": 84,
+    "drop_UID": "Item:Core:Bottle",
     "collision": false,
-    "sprite": 104
+    "sprite": "Sprite:Core:Bottle"
   },
   {
-    "id": 85,
+    "UID": "Item:Core:Bottle of Water",
     "type": 1,
     "sub_type": 9,
-    "name": "Bottle of Water",
     "toughness": 1,
-    "drop_id": 85,
+    "drop_UID": "Item:Core:Bottle of Water",
     "collision": false,
-    "sprite": 105
+    "sprite": "Sprite:Core:Bottle of Water"
   },
   {
-    "id": 86,
+    "UID": "Item:Core:Lens",
     "type": 0,
     "sub_type": 8,
-    "name": "Lens",
-    "sprite": 106
+    "sprite": "Sprite:Core:Lens"
   },
   {
-    "id": 87,
+    "UID": "Item:Core:Fallen Star",
     "type": 0,
     "sub_type": 8,
-    "name": "Fallen Star",
-    "sprite": 107
+    "sprite": "Sprite:Core:Fallen Star"
   },
   {
-    "id": 88,
+    "UID": "Item:Core:Mana Crystal",
     "type": 0,
     "sub_type": 11,
-    "name": "Mana Crystal",
     "effect_id": 4,
-    "sprite": 108
+    "sprite": "Sprite:Core:Mana Crystall"
   },
   {
-    "id": 89,
+    "UID": "Item:Core:Healing Potion",
     "type": 0,
     "sub_type": 12,
-    "name": "Healing Potion",
     "effect_id": 5,
-    "sprite": 109
+    "sprite": "Sprite:Core:Healing Potion"
   },
   {
-    "id": 90,
+    "UID": "Item:Core:Speed Potion",
     "type": 0,
     "sub_type": 12,
-    "name": "Speed Potion",
     "effect_id": 6,
-    "sprite": 110
+    "sprite": "Sprite:Core:Speed Potion"
   },
   {
-    "id": 91,
+    "UID": "Item:Core:Defense Potion",
     "type": 0,
     "sub_type": 12,
-    "name": "Defense Potion",
     "effect_id": 7,
-    "sprite": 111
+    "sprite": "Sprite:Core:Defense Potion"
   },
   {
-    "id": 92,
+    "UID": "Item:Core:Regeneration Potion",
     "type": 0,
     "sub_type": 12,
-    "name": "Regeneration Potion",
     "effect_id": 8,
-    "sprite": 112
+    "sprite": "Sprite:Core:Regeneration Potion"
   },
   {
-    "id": 93,
+    "UID": "Item:Core:Better Healing Potion",
     "type": 0,
     "sub_type": 12,
-    "name": "Better Healing Potion",
     "effect_id": 9,
-    "sprite": 113
+    "sprite": "Sprite:Core:Better Healing Potion"
   },
   {
-    "id": 94,
+    "UID": "Item:Core:Magic Wand",
     "type": 6,
     "sub_type": 10,
-    "name": "Magic Wand",
     "mana_cost": 5,
     "dmg": 5,
     "speed": 1,
@@ -1022,13 +923,12 @@
     "use_sound_id": 3,
     "proj_id": 1,
     "proj_cd": 1.0,
-    "sprite": 114
+    "sprite": "Sprite:Core:Magic Wand"
   },
   {
-    "id": 95,
+    "UID": "Item:Core:Shuriken",
     "type": 4,
     "sub_type": 8,
-    "name": "Shuriken",
     "dmg": 5,
     "speed": 1,
     "size_x": 1.0,
@@ -1036,13 +936,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 115
+    "sprite": "Sprite:Core:Shuriken"
   },
   {
-    "id": 96,
+    "UID": "Item:Core:Throwable Knife",
     "type": 4,
     "sub_type": 8,
-    "name": "Throwable Knife",
     "dmg": 5,
     "speed": 1,
     "size_x": 1.0,
@@ -1050,13 +949,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 116
+    "sprite": "Sprite:Core:Throwable Knife"
   },
   {
-    "id": 97,
+    "UID": "Item:Core:Game.cpp",
     "type": 6,
     "sub_type": 10,
-    "name": "Game.cpp",
     "mana_cost": 5,
     "dmg": 5,
     "speed": 1,
@@ -1067,13 +965,12 @@
     "use_sound_id": 3,
     "proj_id": 1,
     "proj_cd": 1.0,
-    "sprite": 117
+    "sprite": "Sprite:Core:Game.cpp"
   },
   {
-    "id": 98,
+    "UID": "Item:Core:Pistol",
     "type": 4,
     "sub_type": 5,
-    "name": "Pistol",
     "dmg": 5,
     "speed": 1,
     "size_x": 1.0,
@@ -1081,13 +978,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 118
+    "sprite": "Sprite:Core:Pistol"
   },
   {
-    "id": 99,
+    "UID": "Item:Core:Shotgun",
     "type": 4,
     "sub_type": 6,
-    "name": "Shotgun",
     "dmg": 5,
     "speed": 1,
     "size_x": 1.0,
@@ -1095,13 +991,12 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 119
+    "sprite": "Sprite:Core:Shotgun"
   },
   {
-    "id": 100,
+    "UID": "Item:Core:Trident",
     "type": 4,
     "sub_type": 2,
-    "name": "Trident",
     "dmg": 5,
     "speed": 1,
     "size_x": 1.0,
@@ -1109,83 +1004,76 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "sprite": 120
+    "sprite": "Sprite:Core:Trident"
   },
   {
-    "id": 101,
+    "UID": "Item:Core:Arrow",
     "type": 7,
     "sub_type": 0,
-    "name": "Arrow",
     "dmg": 5,
     "size_x": 1.0,
     "size_y": 1.0,
     "entity_id": 1,
-    "sprite": 121
+    "sprite": "Sprite:Core:Arrow"
   },
   {
-    "id": 102,
+    "UID": "Item:Core:Flaming Arrow",
     "type": 7,
     "sub_type": 0,
-    "name": "Flaming Arrow",
     "dmg": 5,
     "size_x": 1.0,
     "size_y": 1.0,
     "entity_id": 1,
-    "sprite": 122
+    "sprite": "Sprite:Core:Flaming Arrow"
   },
   {
-    "id": 103,
+    "UID": "Item:Core:Frostburn Arrow",
     "type": 7,
     "sub_type": 0,
-    "name": "Frostburn Arrow",
     "dmg": 5,
     "size_x": 1.0,
     "size_y": 1.0,
     "entity_id": 1,
-    "sprite": 123
+    "sprite": "Sprite:Core:Frostburn Arrow"
   },
   {
-    "id": 104,
+    "UID": "Item:Core:Jester's Arrow",
     "type": 7,
     "sub_type": 0,
-    "name": "Jester's Arrow",
     "dmg": 5,
     "size_x": 1.0,
     "size_y": 1.0,
     "entity_id": 1,
-    "sprite": 124
+    "sprite": "Sprite:Core:Star Arrow"
   },
   {
-    "id": 105,
+    "UID": "Item:Core:Dark Arrow",
     "type": 7,
     "sub_type": 0,
-    "name": "Dark Arrow",
     "dmg": 5,
     "size_x": 1.0,
     "size_y": 1.0,
     "entity_id": 1,
-    "sprite": 125
+    "sprite": "Sprite:Core:Dark Arrow"
   },
   {
-    "id": 106,
+    "UID": "Item:Core:Hell Arrow",
     "type": 7,
     "sub_type": 0,
-    "name": "Hell Arrow",
     "dmg": 5,
     "size_x": 1.0,
     "size_y": 1.0,
     "entity_id": 1,
-    "sprite": 126
+    "sprite": "Sprite:Core:Hell Arrow"
   },
   {
-    "id": 107,
+    "UID": "Item:Core:Bullet",
     "type": 7,
     "sub_type": 1,
-    "name": "Bullet",
     "dmg": 5,
     "size_x": 1.0,
     "size_y": 1.0,
     "entity_id": 1,
-    "sprite": 127
+    "sprite": "Sprite:Core:Bullet"
   }
 ]
