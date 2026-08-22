@@ -1,17 +1,17 @@
 #include <Entities/Enemies/Slime.h>
 #include <Utility/TimeManager.h>
 
-void Slime::on_create() {
+void GameEntity::Slime::on_create() {
 	anim_idle = anim_controller.get_clip_id(0);
 	anim_jump = anim_controller.get_clip_id(1);
 	anim_controller.play(anim_idle);
 }
 
-void Slime::on_destroy() {
+void GameEntity::Slime::on_destroy() {
 
 }
 
-void Slime::update() {
+void GameEntity::Slime::update() {
 	anim_controller.update();
 
 	if (physics.collision & CollisionType::BOTTOM || physics.platform_collision) {
@@ -43,7 +43,7 @@ void Slime::update() {
 	current_sprite = anim_controller.current_sprite;
 }
 
-void Slime::change_anim() {
+void GameEntity::Slime::change_anim() {
 	switch (current_state) {
 	case SLIME_ANIM_STATE::SLIME_IDLE:
 		anim_controller.play(anim_idle);

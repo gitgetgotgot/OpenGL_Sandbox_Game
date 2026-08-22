@@ -25,7 +25,9 @@ public:
 	void init_input();
 	bool load_sprites_JSON(std::unordered_map<std::string, uint32_t>& texture_layers);
 	bool load_lights_JSON();
+	bool load_particles_JSON();
 	bool load_effects_JSON();
+	bool load_crafts_JSON();
 	bool load_items_basic_data_JSON();
 	void load_entities_basic_data_JSON();
 	void load_animations_basic_data_JSON();
@@ -34,41 +36,11 @@ public:
 	bool resolve_entities_dependencies_JSON();
 
 	/*void init_inventory_buffer();
-	void init_audio();
-	//inventory
-	void recolor_active_bar_slot();
-	void reset_active_bar_slot();
-	void update_item_info_box(ObjectType type, int id);
-	void remove_inventory_item(int slot_index);
-	void update_main_crafting_slot(int colorVertex_id, int craft_index, int& text_info_index, Vertex2f*& buffer_ptr);
-	void craft_item(int craft_id);
-	std::vector<int> get_available_crafts();
-	//effects
-	void update_effect_info_box(Effects::Effect& effect);
-	void use_item_with_effect(int inventory_slot);
-	void apply_player_effect(Effects::Effect effect);
-	void apply_entity_effect(Effects::Effect effect, MobStats& stats);
-	//weapons
-	void activate_weapon(WeaponType type);
-	bool shoot_arrow(int weapon_id);
-	bool shoot_bullet(int weapon_id);
-	bool shoot_magic(int weapon_id);
-	bool throw_projectile(int weapon_id);
-	void update_active_weapon(float deltaTime);
 	//items
 	void drop_item(int id, float X, float Y, int amount, float Xinc, bool pick_cd, float cd_time);
 	void drop_enemy_items(int enemy_id, float xPos, float yPos);
 	bool try_to_pick_item(DroppedItem& item);
 	bool item_is_stackable(int id, ObjectType type);
-	//world objects
-	void update_lighting(glm::vec2 light_pos, glm::vec3 light_color, float radius, bool add);
-	void update_block_light_impact(int column, int line, bool use_recursive_method, int recursive_depth);
-	bool is_solid_block(int column, int line);
-	void set_block(int x, int y, int id);
-	void destroy_object(int x, int y);
-	void destroy_complex_object(int x, int y);
-	void set_wall(int x, int y, unsigned short id);
-	void destroy_wall(int x, int y);
 	//world
 	void create_the_world_thread();
 	void load_the_world_thread();
@@ -84,8 +56,6 @@ private:
 	ActiveBreakableObject active_breakable_object;
 	EntityInfoText entity_info_text;
 
-	//Ambient objects
-	//AmbientController ambientController;
 	//Effects
 	Effects::EffectsManager* effectsManager = nullptr;
 	//Components manager
@@ -96,19 +66,18 @@ private:
 	ParticlesManager* particlesMgr = nullptr;
 	ParticleSystem* particlesSystem = nullptr;
 	//Entities
-	EntitySystem* entitySystem = nullptr;
+	GameEntity::EntitySystem* entitySystem = nullptr;
 	//Game Time
 	TimeManager timeMgr;
 	//Main camera
 	Camera camera;
 
 	//MAIN ARRAYS AND VECTORS
-	std::vector<DroppedItem> dropped_items;
+	std::vector<GameEntity::DroppedItem> dropped_items;
 	std::vector<DamageText> damage_text;
 
 	//textures
-	Texture atlas_texture;
-	Texture3D textures;
+	std::unique_ptr<Texture3D> textures_array;
 	SpriteManager* spriteMgr = nullptr;
 
 	//Graphics main objects

@@ -1,12 +1,5 @@
 [
   {
-    "UID": "Light:Core:Empty",
-    "radius": 0.0,
-    "r": 0.0,
-    "g": 0.0,
-    "b": 0.0
-  },
-  {
     "UID": "Light:Core:Torch",
     "radius": 5.0,
     "r": 1.0,

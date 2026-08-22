@@ -24,12 +24,8 @@ public:
 	void add_sprite(std::string UID, uint32_t U0, uint32_t V0, uint32_t width, uint32_t height, float base_world_size, uint32_t texture_array_id);
 	Sprite& get_sprite(uint32_t id);
 	uint32_t get_sprite_id(std::string name);
-	size_t get_size() {
-		return sprites.size();
-	}
-	size_t get_last_index() {
-		return sprites.size() - 1;
-	}
+	size_t get_size();
+	size_t get_last_index();
 	inline static float MAIN_BLOCK_UV_SIZE;
 	inline static float MAIN_PIXEL_UV_SIZE;
 private:

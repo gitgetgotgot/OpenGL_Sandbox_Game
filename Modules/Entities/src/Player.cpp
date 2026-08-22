@@ -6,13 +6,13 @@ void PlayerStats::updateEffects(float deltaTime) {
 		Effects::EffectData& effectData = Effects::EffectsManager::get_instance()->get_effect_info(effect.id);
 
 		if (effect.updateEffect(deltaTime)) {
-			if (effectData.type == Effects::EffectType::isHealSickness) {
+			if (effectData.effect_type == Effects::EffectType::isHealSickness) {
 				hasPotionSickness = false;
 			}
-			else if (effectData.type == Effects::EffectType::isBuff) {
+			else if (effectData.effect_type == Effects::EffectType::isBuff) {
 				manage_effect(effect, false); //remove effect
 			}
-			else if (effectData.type == Effects::EffectType::isDebuff) {
+			else if (effectData.effect_type == Effects::EffectType::isDebuff) {
 				manage_effect(effect, false); //remove effect
 			}
 			effects.erase(effects.begin() + i);
@@ -20,13 +20,13 @@ void PlayerStats::updateEffects(float deltaTime) {
 			continue;
 		}
 
-		if (effectData.type == Effects::EffectType::isDamagingDebuff)
-			if (effect.delta_dmg_time >= effectData.inflict_dmg_cd_time) {
+		if (effectData.effect_type == Effects::EffectType::isDamagingDebuff)
+			if (effect.delta_dmg_time >= effectData.dmg_cd) {
 				effect.delta_dmg_time = 0.0f;
-				inflictDamage(effectData.effectPower);
+				inflictDamage(effectData.effect_value);
 			}
 
-		if (effectData.particle_id != 0 && effect.currentParticleTime >= effectData.particleSpawnInterval) {
+		if (effectData.particle_id != 0 && effect.currentParticleTime >= effectData.particle_spawn_cd) {
 			effect.currentParticleTime = 0.0f;
 			//effectData.emit_particle();
 		}
@@ -35,59 +35,59 @@ void PlayerStats::updateEffects(float deltaTime) {
 
 void PlayerStats::manage_effect(Effects::Effect& effect, bool apply) {
 	Effects::EffectData& effectData = Effects::EffectsManager::get_instance()->get_effect_info(effect.id);
-	if (effectData.type == Effects::EffectType::isBuff) {
-		switch (effectData.statName) {
-		case Effects::StatName::isHP: {
-			if (apply) currentHP += effectData.effectPower;
-			else currentHP -= effectData.effectPower;
+	if (effectData.effect_type == Effects::EffectType::isBuff) {
+		switch (effectData.stat_type) {
+		case Effects::StatType::isHP: {
+			if (apply) currentHP += effectData.effect_value;
+			else currentHP -= effectData.effect_value;
 			break;
 		}
-		case Effects::StatName::isDef: {
-			if (apply) DEF += effectData.effectPower;
-			else DEF -= effectData.effectPower;
+		case Effects::StatType::isDef: {
+			if (apply) DEF += effectData.effect_value;
+			else DEF -= effectData.effect_value;
 			break;
 		}
-		case Effects::StatName::isMana: {
-			if (apply) MANA += effectData.effectPower;
-			else MANA -= effectData.effectPower;
+		case Effects::StatType::isMana: {
+			if (apply) MANA += effectData.effect_value;
+			else MANA -= effectData.effect_value;
 			break;
 		}
-		case Effects::StatName::isRegen: {
-			if (apply) regeneration += effectData.effectPower;
-			else regeneration -= effectData.effectPower;
+		case Effects::StatType::isRegen: {
+			if (apply) regeneration += effectData.effect_value;
+			else regeneration -= effectData.effect_value;
 			break;
 		}
-		case Effects::StatName::isSpeed: {
-			if (apply) speedFactor += effectData.effectPower;
-			else speedFactor -= effectData.effectPower;
+		case Effects::StatType::isSpeed: {
+			if (apply) speedFactor += effectData.effect_value;
+			else speedFactor -= effectData.effect_value;
 			break;
 		}
 		}
 	}
-	else if (effectData.type == Effects::EffectType::isDebuff) {
-		switch (effectData.statName) {
-		case Effects::StatName::isHP: {
+	else if (effectData.effect_type == Effects::EffectType::isDebuff) {
+		switch (effectData.stat_type) {
+		case Effects::StatType::isHP: {
 
 		}
-		case Effects::StatName::isDef: {
+		case Effects::StatType::isDef: {
 
 		}
-		case Effects::StatName::isMana: {
+		case Effects::StatType::isMana: {
 
 		}
-		case Effects::StatName::isRegen: {
+		case Effects::StatType::isRegen: {
 
 		}
-		case Effects::StatName::isSpeed: {
+		case Effects::StatType::isSpeed: {
 
 		}
 		}
 	}
-	else if (effectData.type == Effects::EffectType::isHealing) {
-		currentHP += effectData.effectPower;
+	else if (effectData.effect_type == Effects::EffectType::isHealing) {
+		currentHP += effectData.effect_value;
 		if (currentHP > HP) currentHP = HP;
 	}
-	else if (effectData.type == Effects::EffectType::isHealSickness) {
+	else if (effectData.effect_type == Effects::EffectType::isHealSickness) {
 		hasPotionSickness = true;
 	}
 }

@@ -1,0 +1,90 @@
+[
+  {
+    "UID": "Effect:Core:MushroomHeal",
+    "sprite_UID": "Sprite:Core:Empty",
+    "effect_type": 5,
+    "stat_type": 1,
+    "value": 25.0
+  },
+  {
+    "UID": "Effect:Core:PotionHeal",
+    "sprite_UID": "Sprite:Core:Empty",
+    "effect_type": 5,
+    "stat_type": 1,
+    "value": 50.0
+  },
+  {
+    "UID": "Effect:Core:PotionSickness",
+    "sprite_UID": "Sprite:Core:Empty",
+    "effect_type": 0,
+    "stat_type": 0,
+    "value": 0.0
+  },
+  {
+    "UID": "Effect:Core:LifeCrystalBuff",
+    "sprite_UID": "Sprite:Core:Empty",
+    "effect_type": 4,
+    "stat_type": 1,
+    "value": 20.0
+  },
+  {
+    "UID": "Effect:Core:ManaCrystalBuff",
+    "sprite_UID": "Sprite:Core:Empty",
+    "effect_type": 4,
+    "stat_type": 3,
+    "value": 20.0
+  },
+  {
+    "UID": "Effect:Core:DefBuff",
+    "sprite_UID": "Sprite:Core:Empty",
+    "effect_type": 1,
+    "stat_type": 2,
+    "value": 10.0
+  },
+  {
+    "UID": "Effect:Core:SpeedBuff",
+    "sprite_UID": "Sprite:Core:Empty",
+    "effect_type": 1,
+    "stat_type": 4,
+    "value": 0.25
+  },
+  {
+    "UID": "Effect:Core:RegenBuff",
+    "sprite_UID": "Sprite:Core:Empty",
+    "effect_type": 1,
+    "stat_type": 5,
+    "value": 0.5
+  },
+  {
+    "UID": "Effect:Core:Burning",
+    "sprite_UID": "Sprite:Core:Empty",
+    "effect_type": 3,
+    "stat_type": 1,
+    "value": 2.0,
+    "dmg_cd": 0.25,
+    "particle": {
+      "particle_UID": "",
+      "spawn_cd": 0.1
+    }
+  },
+  {
+    "UID": "Effect:Core:FrostBurning",
+    "sprite_UID": "Sprite:Core:Empty",
+    "effect_type": 3,
+    "stat_type": 1,
+    "value": 2.0,
+    "dmg_cd": 0.25,
+    "particle": {
+      "particle_UID": "",
+      "spawn_cd": 0.1
+    }
+  },
+  {
+    "UID": "Effect:Core:Poisoning",
+    "sprite_UID": "Sprite:Core:Empty",
+    "effect_type": 3,
+    "stat_type": 1,
+    "value": 1.0,
+    "dmg_cd": 0.2
+  }
+]

@@ -68,3 +68,15 @@ foreach(dir ${GAME_DATA_DIRS})
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/${dir}
     )
 endforeach()
+
+add_library(library_test SHARED
+    test_lib.cpp
+)
+target_compile_definitions(library_test PRIVATE DLL_EXPORT)
+
+# Копирование DLL рядом с exe
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:library_test>
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>
+)

@@ -9,7 +9,10 @@ VAO::~VAO() {
 }
 
 void VAO::link_Attribute(GLuint layout, GLuint numOfComps, GLenum type, GLsizeiptr stride, void* offset) const {
-	glVertexAttribPointer(layout, numOfComps, type, GL_FALSE, stride, offset);
+	if(type == GL_FLOAT)
+		glVertexAttribPointer(layout, numOfComps, type, GL_FALSE, stride, offset);
+	else
+		glVertexAttribIPointer(layout, numOfComps, type, stride, offset);
 	glEnableVertexAttribArray(layout);
 }
 

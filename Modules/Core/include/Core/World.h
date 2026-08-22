@@ -6,12 +6,14 @@
 
 struct Vertex2f {
 	Vertex2f() {}
-	Vertex2f(float pX, float pY, float UVx, float UVy) {
+	Vertex2f(float pX, float pY, float UVx, float UVy, uint32_t tex_index) {
 		pos.x = pX; pos.y = pY;
 		UV.x = UVx; UV.y = UVy;
+		texture_array_index = tex_index;
 	}
-	glm::vec2 pos;
-	glm::vec2 UV;
+	glm::vec2 pos{ 0.0f };
+	glm::vec2 UV{ 0.0f };
+	uint32_t texture_array_index = 0;
 };
 
 struct ChunkRenderBuffer {
@@ -57,7 +59,7 @@ private:
 	WorldSlot* world_slots = nullptr;
 	std::unordered_map<uint32_t, std::unique_ptr<ObjectComponent>> object_components;
 
-	EntitySystem* entity_system = nullptr;
+	GameEntity::EntitySystem* entity_system = nullptr;
 
 	static const uint32_t RENDERABLE_CHUNKS_SIZE = 16;
 	ChunkRenderBuffer* render_buffers[RENDERABLE_CHUNKS_SIZE];

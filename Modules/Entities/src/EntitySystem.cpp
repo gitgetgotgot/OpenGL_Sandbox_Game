@@ -7,7 +7,7 @@
 #include <Utility/TimeManager.h>
 #include <Utility/Math.h>
 
-void EntitySystem::init() {
+void GameEntity::EntitySystem::init() {
 	entities.reserve(MAX_ENTITIES_RENDER);
 	entity_render_buf.reserve(MAX_ENTITIES_RENDER);
 	entity_render_buf.resize(MAX_ENTITIES_RENDER);
@@ -38,7 +38,7 @@ void EntitySystem::init() {
 	instance_ebo->unbind_EBO();
 }
 
-void EntitySystem::update() {
+void GameEntity::EntitySystem::update() {
 	int size = entities.size();
 	for (int i = 0; i < size; i++) {
 		EntityBase* entity = entities[i].get();
@@ -184,11 +184,11 @@ void EntitySystem::update() {
 	entity_ssbo->update_data(entity_render_buf.data(), entities.size() * sizeof(EntityRenderData));
 }
 
-void EntitySystem::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
+void GameEntity::EntitySystem::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
 	renderer->renderInstancedData(entity_sp, instance_vao, instance_vbo, instance_ebo, 6U, entities.size());
 }
 
-void EntitySystem::set_world_data(
+void GameEntity::EntitySystem::set_world_data(
 	WorldSlot* world_slots_ptr, uint32_t world_width, uint32_t world_height,
 	std::unordered_map<uint32_t, std::unique_ptr<ObjectComponent>>* obj_comps_ptr
 ) {
@@ -198,31 +198,15 @@ void EntitySystem::set_world_data(
 	this->obj_comps_ptr = obj_comps_ptr;
 }
 
-bool EntitySystem::spawn_entity(uint32_t id, glm::vec2 pos) {
+bool GameEntity::EntitySystem::spawn_entity(uint32_t id, glm::vec2 pos) {
 	std::unique_ptr<EntityInfo>& entityInfo = EntityDB::entityInfo[id];
 
 	entities.emplace_back(std::make_unique<Slime>(id, pos));
 	entities.back()->on_create();
-	/*	
-	if (entityInfo->type == EntityType::isMob) {
-		switch (entityInfo->type) {
-		case EnemyType::isSlime: {
-			entities.emplace_back(std::make_unique<Slime>(id, pos.x, pos.y, *entityInfo));
-		}
-		case EnemyType::isZombie: {
-			entities.emplace_back(std::make_unique<Zombie>(id, pos.x, pos.y, *entityInfo));
-		}
-		case EnemyType::isFlyingEye: {
-			entities.emplace_back(std::make_unique<FlyingEye>(id, pos.x, pos.y, *entityInfo));
-		}
-		}
-	}
-	else if (entityInfo->type == EntityType::isProjectile) {
-		//entities.emplace_back(std::make_unique<GravityProjectile>(id, pos.x, pos.y, *entityInfo));
-	}*/
+	
 	return true;
 }
 
-bool EntitySystem::spawn_projectile() {
+bool GameEntity::EntitySystem::spawn_projectile() {
 	return false;
 }

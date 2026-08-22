@@ -5,6 +5,8 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <unordered_set>
+#include <unordered_map>
 #include <Physics/Colliders.h>
 
 //Object Class Types: {
@@ -38,9 +40,15 @@ struct SpriteData {
 };
 
 struct ShaderLightingInfo {
-	float r, g, b;
-	float global_light_impact;
-	float source_light_impact;
+	ShaderLightingInfo() {}
+	ShaderLightingInfo(uint8_t r, uint8_t g, uint8_t b, uint8_t global_value, uint8_t source_value) {
+		color.x = r; color.y = g; color.z = b;
+		global_light_value = global_value;
+		source_light_value = source_value;
+	}
+	glm::u8vec3 color;
+	uint8_t global_light_value;
+	uint8_t source_light_value;
 };
 
 constexpr uint32_t CHUNK_SIZE = 64;
@@ -286,8 +294,8 @@ struct TextField {
 //classes that contain info about all objects
 class ObjectInfo {
 public:
-	ObjectInfo(ObjectType type, std::string_view uid, uint32_t effect_comp_id = 0, uint32_t light_id = 0) :
-		objectType{ type }, uid{ uid }, effect_id{ effect_comp_id }, light_id{ light_id } {
+	ObjectInfo(ObjectType type, std::string_view uid, uint16_t effect_id = 0, uint16_t light_id = 0) :
+		objectType{ type }, uid{ uid }, effect_id{ effect_id }, light_id{ light_id } {
 		size_t pos = uid.rfind(':');
 		if (pos == std::string_view::npos) name = uid; //if ':' not found, but this shouldn't happen if resource file is correct
 		else name = uid.substr(pos + 1);

@@ -18,6 +18,7 @@ layout(std140, binding = 0) uniform UBO {
 };
 
 out vec2 texCoord;
+flat out uint texID;
 out vec2 globalCoord;
 
 out float dayRatio;

@@ -1,17 +1,5 @@
 [
   {
-    "UID": "Item:Core:Air",
-    "type": 0,
-    "sub_type": 0,
-    "sprite": "Sprite:Core:Empty"
-  },
-  {
-    "UID": "Item:Core:CompObjPart",
-    "type": 0,
-    "sub_type": 4,
-    "sprite": "Sprite:Core:Empty"
-  },
-  {
     "UID": "Item:Core:Stone",
     "type": 1,
     "sub_type": 0,
@@ -207,22 +195,8 @@
     "toughness": 1,
     "drop_UID": "Item:Core:Torch",
     "collision": false,
-    "light_id": 1,
-    "sprite": "Sprite:Core:Torch",
-    "craft": {
-      "amount": 1,
-      "condition": 0,
-      "items": [
-        {
-          "item_UID": "Item:Core:Oak Planks",
-          "item_amount": 1
-        },
-        {
-          "item_UID": "Item:Core:Gel",
-          "item_amount": 1
-        }
-      ]
-    }
+    "light_UID": "Light:Core:Torch",
+    "sprite": "Sprite:Core:Torch"
   },
   {
     "UID": "Item:Core:Torch(L)",
@@ -231,7 +205,7 @@
     "toughness": 1,
     "drop_UID": "Item:Core:Torch",
     "collision": false,
-    "light_id": 1,
+    "light_UID": "Light:Core:Torch",
     "sprite": "Sprite:Core:Torch(L)"
   },
   {
@@ -241,7 +215,7 @@
     "toughness": 1,
     "drop_UID": "Item:Core:Torch",
     "collision": false,
-    "light_id": 1,
+    "light_UID": "Light:Core:Torch",
     "sprite": "Sprite:Core:Torch(R)"
   },
   {
@@ -251,7 +225,7 @@
     "toughness": 1,
     "drop_UID": "Item:Core:Ice Torch",
     "collision": false,
-    "light_id": 2,
+    "light_UID": "Light:Core:IceTorch",
     "sprite": "Sprite:Core:Ice Torch"
   },
   {
@@ -261,7 +235,7 @@
     "toughness": 1,
     "drop_UID": "Item:Core:Ice Torch",
     "collision": false,
-    "light_id": 2,
+    "light_UID": "Light:Core:IceTorch",
     "sprite": "Sprite:Core:Ice Torch(L)"
   },
   {
@@ -271,7 +245,7 @@
     "toughness": 1,
     "drop_UID": "Item:Core:Ice Torch",
     "collision": false,
-    "light_id": 2,
+    "light_UID": "Light:Core:IceTorch",
     "sprite": "Sprite:Core:Ice Torch(R)"
   },
   {
@@ -408,6 +382,7 @@
     "drop_UID": "Item:Core:Furnace",
     "width": 3,
     "height": 2,
+    "light_UID": "Light:Core:Fire",
     "sprite": "Sprite:Core:Furnace"
   },
   {
@@ -478,8 +453,8 @@
     "drop_UID": "Item:Core:Life Crystal",
     "width": 2,
     "height": 2,
-    "effect_id": 3,
-    "light_id": 4,
+    "effect_UID": "Effect:Core:LifeCrystalBuff",
+    "light_UID": "Light:Core:RedLight",
     "sprite": "Sprite:Core:Life Crystal"
   },
   {
@@ -871,42 +846,42 @@
     "UID": "Item:Core:Mana Crystal",
     "type": 0,
     "sub_type": 11,
-    "effect_id": 4,
-    "sprite": "Sprite:Core:Mana Crystall"
+    "effect_UID": "Effect:Core:ManaCrystalBuff",
+    "sprite": "Sprite:Core:Mana Crystal"
   },
   {
     "UID": "Item:Core:Healing Potion",
     "type": 0,
     "sub_type": 12,
-    "effect_id": 5,
+    "effect_UID": "Effect:Core:PotionHeal",
     "sprite": "Sprite:Core:Healing Potion"
   },
   {
     "UID": "Item:Core:Speed Potion",
     "type": 0,
     "sub_type": 12,
-    "effect_id": 6,
+    "effect_UID": "Effect:Core:SpeedBuff",
     "sprite": "Sprite:Core:Speed Potion"
   },
   {
     "UID": "Item:Core:Defense Potion",
     "type": 0,
     "sub_type": 12,
-    "effect_id": 7,
+    "effect_UID": "Effect:Core:DefBuff",
     "sprite": "Sprite:Core:Defense Potion"
   },
   {
     "UID": "Item:Core:Regeneration Potion",
     "type": 0,
     "sub_type": 12,
-    "effect_id": 8,
+    "effect_UID": "Effect:Core:RegenBuff",
     "sprite": "Sprite:Core:Regeneration Potion"
   },
   {
     "UID": "Item:Core:Better Healing Potion",
     "type": 0,
     "sub_type": 12,
-    "effect_id": 9,
+    "effect_UID": "Effect:Core:PotionHeal",
     "sprite": "Sprite:Core:Better Healing Potion"
   },
   {
@@ -921,7 +896,7 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "proj_id": 1,
+    "proj_UID": "Item:Core:Arrow",
     "proj_cd": 1.0,
     "sprite": "Sprite:Core:Magic Wand"
   },
@@ -963,7 +938,7 @@
     "crit_ch": 5,
     "stackable": false,
     "use_sound_id": 3,
-    "proj_id": 1,
+    "proj_UID": "Item:Core:Arrow",
     "proj_cd": 1.0,
     "sprite": "Sprite:Core:Game.cpp"
   },
@@ -1013,7 +988,7 @@
     "dmg": 5,
     "size_x": 1.0,
     "size_y": 1.0,
-    "entity_id": 1,
+    "entity_UID": "Entity:Core:Slime",
     "sprite": "Sprite:Core:Arrow"
   },
   {
@@ -1023,7 +998,7 @@
     "dmg": 5,
     "size_x": 1.0,
     "size_y": 1.0,
-    "entity_id": 1,
+    "entity_UID": "Entity:Core:Slime",
     "sprite": "Sprite:Core:Flaming Arrow"
   },
   {
@@ -1033,17 +1008,17 @@
     "dmg": 5,
     "size_x": 1.0,
     "size_y": 1.0,
-    "entity_id": 1,
+    "entity_UID": "Entity:Core:Slime",
     "sprite": "Sprite:Core:Frostburn Arrow"
   },
   {
-    "UID": "Item:Core:Jester's Arrow",
+    "UID": "Item:Core:Star Arrow",
     "type": 7,
     "sub_type": 0,
     "dmg": 5,
     "size_x": 1.0,
     "size_y": 1.0,
-    "entity_id": 1,
+    "entity_UID": "Entity:Core:Slime",
     "sprite": "Sprite:Core:Star Arrow"
   },
   {
@@ -1053,7 +1028,7 @@
     "dmg": 5,
     "size_x": 1.0,
     "size_y": 1.0,
-    "entity_id": 1,
+    "entity_UID": "Entity:Core:Slime",
     "sprite": "Sprite:Core:Dark Arrow"
   },
   {
@@ -1063,7 +1038,7 @@
     "dmg": 5,
     "size_x": 1.0,
     "size_y": 1.0,
-    "entity_id": 1,
+    "entity_UID": "Entity:Core:Slime",
     "sprite": "Sprite:Core:Hell Arrow"
   },
   {
@@ -1073,7 +1048,7 @@
     "dmg": 5,
     "size_x": 1.0,
     "size_y": 1.0,
-    "entity_id": 1,
+    "entity_UID": "Entity:Core:Slime",
     "sprite": "Sprite:Core:Bullet"
   }
 ]

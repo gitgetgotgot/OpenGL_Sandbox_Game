@@ -1,0 +1,28 @@
+[
+  {
+    "result_UID": "Item:Core:Torch",
+    "amount": 3,
+    "condition": 0,
+    "items": [
+      {
+        "item_UID": "Item:Core:Oak Planks",
+        "item_amount": 1
+      },
+      {
+        "item_UID": "Item:Core:Gel",
+        "item_amount": 1
+      }
+    ]
+  },
+  {
+    "result_UID": "Item:Core:Workbench",
+    "amount": 1,
+    "condition": 0,
+    "items": [
+      {
+        "item_UID": "Item:Core:Oak Planks",
+        "item_amount": 15
+      }
+    ]
+  }
+]

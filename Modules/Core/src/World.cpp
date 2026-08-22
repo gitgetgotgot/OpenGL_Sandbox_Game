@@ -9,7 +9,7 @@ void World::init(Player* player) {
 	MAX_CHUNK_Y = height / CHUNK_SIZE;
 
 	spriteMgr = SpriteManager::get_instance();
-	entity_system = EntitySystem::get_instance();
+	entity_system = GameEntity::EntitySystem::get_instance();
 	entity_system->init();
 	entity_system->set_world_data(world_slots, width, height, &object_components);
 
@@ -41,6 +41,7 @@ void World::init(Player* player) {
 		ebo->bind_EBO();
 		buf->vao->link_Attribute(0, 2, GL_FLOAT, sizeof(Vertex2f), (void*)0);
 		buf->vao->link_Attribute(1, 2, GL_FLOAT, sizeof(Vertex2f), (void*)(2 * sizeof(float)));
+		buf->vao->link_Attribute(2, 1, GL_UNSIGNED_INT, sizeof(Vertex2f), (void*)(4 * sizeof(float)));
 		buf->vao->unbind_VAO();
 		buf->vbo->unbind_VBO();
 		ebo->unbind_EBO();
@@ -64,14 +65,16 @@ void World::init(Player* player) {
 	generate_world_data();
 
 	spriteLightMapSSBO = std::make_unique<SSBO>();
+	/*
 	spriteLightMapSSBO->set_persistent_storage_data(nullptr, width * height * sizeof(ShaderLightingInfo));
 	lightMap_data = static_cast<ShaderLightingInfo*>(glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(ShaderLightingInfo) * width * height, GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT));
 	
 	for (int i = 0; i < width; i++) {
 		for (int j = 0; j < height; j++) {
-			lightMap_data[j * width + i] = ShaderLightingInfo{ 0.f, 1.f, 0.f, 1.f, 0.5f };
+			lightMap_data[j * width + i] = ShaderLightingInfo(0U, 255U, 0U, 255U, 127U);
 		}
 	}
+	*/
 
 	for (int x = 0; x < 4; x++) {
 		for (int y = 0; y < 4; y++) {
@@ -262,18 +265,18 @@ void World::load_chunk_buffer(uint32_t chunk_world_x, uint32_t chunk_world_y, ui
 			Sprite& sprite = spriteMgr->get_sprite(object_info->sprite_id);
 
 			if (object_info->objectType == ObjectType::isBlock) {
-				vertices.add(Vertex2f(x, y,					sprite.U0, sprite.V0),							base_index	  );
-				vertices.add(Vertex2f(x, y + 1.0f,			sprite.U0, sprite.V0 + sprite.H),				base_index + 1);
-				vertices.add(Vertex2f(x + 1.0f, y + 1.0f,	sprite.U0 + sprite.W, sprite.V0 + sprite.H),	base_index + 2);
-				vertices.add(Vertex2f(x + 1.0f, y,			sprite.U0 + sprite.W, sprite.V0),				base_index + 3);
+				vertices.add(Vertex2f(x, y,					sprite.U0, sprite.V0,						sprite.texture_id),	base_index);
+				vertices.add(Vertex2f(x, y + 1.0f,			sprite.U0, sprite.V0 + sprite.H,			sprite.texture_id),	base_index + 1);
+				vertices.add(Vertex2f(x + 1.0f, y + 1.0f,	sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.texture_id),	base_index + 2);
+				vertices.add(Vertex2f(x + 1.0f, y,			sprite.U0 + sprite.W, sprite.V0,			sprite.texture_id),	base_index + 3);
 			}
 			else if (object_info->objectType == ObjectType::isComplexObject) {
 				float x_size = static_cast<ComplexObjectInfo*>(object_info)->blocks_width;
 				float y_size = static_cast<ComplexObjectInfo*>(object_info)->blocks_height;
-				vertices.add(Vertex2f(x, y,						sprite.U0, sprite.V0),							base_index	  );
-				vertices.add(Vertex2f(x, y + y_size,			sprite.U0, sprite.V0 + sprite.H),				base_index + 1);
-				vertices.add(Vertex2f(x + x_size, y + y_size,	sprite.U0 + sprite.W, sprite.V0 + sprite.H),	base_index + 2);
-				vertices.add(Vertex2f(x + x_size, y,			sprite.U0 + sprite.W, sprite.V0),				base_index + 3);
+				vertices.add(Vertex2f(x, y,						sprite.U0, sprite.V0,						sprite.texture_id),	base_index);
+				vertices.add(Vertex2f(x, y + y_size,			sprite.U0, sprite.V0 + sprite.H,			sprite.texture_id),	base_index + 1);
+				vertices.add(Vertex2f(x + x_size, y + y_size,	sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.texture_id),	base_index + 2);
+				vertices.add(Vertex2f(x + x_size, y,			sprite.U0 + sprite.W, sprite.V0,			sprite.texture_id),	base_index + 3);
 			}
 			base_index += 4;
 		}
@@ -477,18 +480,18 @@ bool World::place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id) {
 		Sprite& sprite = spriteMgr->get_sprite(object_info->sprite_id);
 
 		if (object_info->objectType == ObjectType::isBlock) {
-			vertices.add(Vertex2f(world_x, world_y,					sprite.U0, sprite.V0						), tile_index	 );
-			vertices.add(Vertex2f(world_x, world_y + 1.0f,			sprite.U0, sprite.V0 + sprite.H				), tile_index + 1);
-			vertices.add(Vertex2f(world_x + 1.0f, world_y + 1.0f,	sprite.U0 + sprite.W, sprite.V0 + sprite.H	), tile_index + 2);
-			vertices.add(Vertex2f(world_x + 1.0f, world_y,			sprite.U0 + sprite.W, sprite.V0				), tile_index + 3);
+			vertices.add(Vertex2f(world_x, world_y,					sprite.U0, sprite.V0,						sprite.texture_id), tile_index);
+			vertices.add(Vertex2f(world_x, world_y + 1.0f,			sprite.U0, sprite.V0 + sprite.H,			sprite.texture_id), tile_index + 1);
+			vertices.add(Vertex2f(world_x + 1.0f, world_y + 1.0f,	sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.texture_id), tile_index + 2);
+			vertices.add(Vertex2f(world_x + 1.0f, world_y,			sprite.U0 + sprite.W, sprite.V0,			sprite.texture_id), tile_index + 3);
 		}
 		else if (object_info->objectType == ObjectType::isComplexObject) {
 			float x_size = static_cast<ComplexObjectInfo*>(object_info)->blocks_width;
 			float y_size = static_cast<ComplexObjectInfo*>(object_info)->blocks_height;
-			vertices.add(Vertex2f(world_x, world_y,						sprite.U0, sprite.V0),							tile_index	  );
-			vertices.add(Vertex2f(world_x, world_y + y_size,			sprite.U0, sprite.V0 + sprite.H),				tile_index + 1);
-			vertices.add(Vertex2f(world_x + x_size, world_y + y_size,	sprite.U0 + sprite.W, sprite.V0 + sprite.H),	tile_index + 2);
-			vertices.add(Vertex2f(world_x + x_size, world_y,			sprite.U0 + sprite.W, sprite.V0),				tile_index + 3);
+			vertices.add(Vertex2f(world_x, world_y,						sprite.U0, sprite.V0,						sprite.texture_id),	tile_index);
+			vertices.add(Vertex2f(world_x, world_y + y_size,			sprite.U0, sprite.V0 + sprite.H,			sprite.texture_id),	tile_index + 1);
+			vertices.add(Vertex2f(world_x + x_size, world_y + y_size,	sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.texture_id),	tile_index + 2);
+			vertices.add(Vertex2f(world_x + x_size, world_y,			sprite.U0 + sprite.W, sprite.V0,			sprite.texture_id),	tile_index + 3);
 		}
 		buffer.vbo->update_data(vertices.data(), sizeof(Vertex2f) * vertices.size());
 		buffer.index_count += 6;

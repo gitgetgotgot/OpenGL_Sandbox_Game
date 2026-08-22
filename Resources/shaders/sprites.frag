@@ -13,11 +13,12 @@ layout(std430, binding = 1) buffer SpriteLightsSSBO {
 out vec4 fragColor;
 
 in vec2 texCoord;
+flat in uint texID;
 in vec2 globalCoord;
 in float dayRatio;
 flat in ivec2 worldSize;
 
-layout (binding = 0) uniform sampler2D u_tex;
+layout (binding = 0) uniform sampler2DArray u_tex;
 
 vec3 getLightColor(vec2 worldPosition) {
     ivec2 blockCoord = ivec2(worldPosition.xy);
@@ -73,11 +74,8 @@ ShaderLightingInfo getBilinearCustomLightInfo(vec2 worldPosition) {
     return ShaderLightingInfo(lightFinal.x, lightFinal.y, lightFinal.z, lightFinal.w, sourceLightImpactFinal);
 }
 
-void main()
-{
-    if(texture(u_tex, texCoord).a < 0.1) discard;
-
-    vec4 texColor = texture(u_tex, texCoord);
+void main() {
+    vec4 texColor = texture(u_tex, vec3(texCoord, texID));
     vec3 color = texColor.rgb;
     float alpha = texColor.a;
 

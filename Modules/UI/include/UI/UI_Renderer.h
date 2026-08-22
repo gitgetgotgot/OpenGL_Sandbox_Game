@@ -11,13 +11,30 @@ constexpr uint32_t MAX_TOOLTIP_TEXT_SIZE = 500;
 
 struct UI_Vertex2f {
 	UI_Vertex2f() {}
-	UI_Vertex2f(glm::vec2 pos, glm::vec2 UV) : pos{ pos }, UV{ UV } {}
-	UI_Vertex2f(float pX, float pY, float UVx, float UVy) {
+	UI_Vertex2f(float pX, float pY, float UVx, float UVy, uint32_t tex_index) {
+		pos.x = pX; pos.y = pY;
+		UV.x = UVx; UV.y = UVy;
+		this->tex_index = tex_index;
+	}
+	UI_Vertex2f(float pX, float pY, float UVx, float UVy, uint32_t tex_index, glm::vec4 color) {
+		pos.x = pX; pos.y = pY;
+		UV.x = UVx; UV.y = UVy;
+		this->color = color;
+		this->tex_index = tex_index;
+	}
+	glm::vec2 pos{ 0.0f };
+	glm::vec2 UV{ 0.0f };
+	glm::vec4 color{ 1.0f };
+	uint32_t tex_index = 0;
+};
+
+struct UI_Text_Vertex2f {
+	UI_Text_Vertex2f() {}
+	UI_Text_Vertex2f(float pX, float pY, float UVx, float UVy) {
 		pos.x = pX; pos.y = pY;
 		UV.x = UVx; UV.y = UVy;
 	}
-	UI_Vertex2f(glm::vec2 pos, glm::vec2 UV, glm::vec4 color) : pos{ pos }, UV{ UV }, color{ color } {}
-	UI_Vertex2f(float pX, float pY, float UVx, float UVy, glm::vec4 color) {
+	UI_Text_Vertex2f(float pX, float pY, float UVx, float UVy, glm::vec4 color) {
 		pos.x = pX; pos.y = pY;
 		UV.x = UVx; UV.y = UVy;
 		this->color = color;
@@ -51,8 +68,8 @@ public:
 	void update_hotbar_active_slot();
 	//adds new text to buffer, returns length of added text based on height parameter
 	float place_text_to_buffer(
-		std::vector<UI_Vertex2f>& buffer,
-		const char* text, uint32_t text_size,
+		std::vector<UI_Text_Vertex2f>& buffer,
+		std::string_view text, uint32_t text_size,
 		float lb_x, float lb_y, float height,
 		glm::vec4 color = glm::vec4(1.0f)
 	);
@@ -110,11 +127,11 @@ private:
 	std::vector<UI_Vertex2f> craft_helper_items_buffer;
 	std::vector<UI_Vertex2f> cursor_item_buffer;
 
-	std::vector<UI_Vertex2f> basic_text_buffer;
-	std::vector<UI_Vertex2f> chest_text_buffer;
-	std::vector<UI_Vertex2f> craft_text_buffer;
-	std::vector<UI_Vertex2f> tooltip_text_buffer;
-	std::vector<UI_Vertex2f> cursor_item_text_buffer;
+	std::vector<UI_Text_Vertex2f> basic_text_buffer;
+	std::vector<UI_Text_Vertex2f> chest_text_buffer;
+	std::vector<UI_Text_Vertex2f> craft_text_buffer;
+	std::vector<UI_Text_Vertex2f> tooltip_text_buffer;
+	std::vector<UI_Text_Vertex2f> cursor_item_text_buffer;
 
 	uint32_t slots_INDEX_SIZE = 0;
 	uint32_t base_slots_INDEX_SIZE = 0;
@@ -150,4 +167,7 @@ private:
 
 	float tooltip_frame_size = 0.02f;
 	float tooltip_text_height = 0.04f;
+	uint32_t tooltip_first_sprite_id = 0;
+	uint32_t hotbar_frame_sprite_id = 0;
+	uint32_t craft_slot_sprite_id = 0;
 };

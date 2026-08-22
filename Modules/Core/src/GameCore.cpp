@@ -1,13 +1,10 @@
 #include <Core/GameCore.h>
-#include <Entities/Projectile.h>
-#include <Entities/Enemies/Slime.h>
-#include <Entities/Enemies/Zombie.h>
-#include <Entities/Enemies/FlyingEye.h>
 #include <fstream>
 #include <filesystem>
 #include <thread>
 #include <glm/gtx/string_cast.hpp>
 #include <json/json.hpp>
+#include <Entities/Registry.h>
 
 bool Game::update() {
 	timeMgr.update();
@@ -1205,15 +1202,12 @@ void Game::init() {
 	init_open_gl();
 	init_input();
 
-	//load save files if they exist
-	//load_available_saves();
-
-	//load textures
-	textures.setup_texture_array(512, 512, 2, false);
-	textures.bind(0);
-	textures.add_2D_texture("Resources/textures/game_ui.png");
-	textures.add_2D_texture("Resources/textures/game_items.png");
-	textures.add_2D_texture("Resources/textures/game_entity.png");
+	textures_array = std::make_unique<Texture3D>();
+	textures_array->setup_texture_array(512, 512, 2, false);
+	textures_array->add_2D_texture("Resources/textures/game_ui.png");
+	textures_array->add_2D_texture("Resources/textures/game_items.png");
+	textures_array->add_2D_texture("Resources/textures/game_entity.png");
+	textures_array->bind(0);
 
 	std::unordered_map<std::string, uint32_t> texture_layers;
 	texture_layers["game_ui"] = 0;
@@ -1229,83 +1223,27 @@ void Game::init() {
 	particlesSystem = ParticleSystem::get_instance();
 
 	ObjectsDB::objectInfo.reserve(200);
-	EntityDB::entityInfo.reserve(20);
-	
-	//EFFECTS
-	/*0 */ compsMgr->add_effect_component(0.f, 0); //empty
-	/*1 */ compsMgr->add_effect_component(5.f, 5); // burning for 5 sec
-	/*2 */ compsMgr->add_effect_component(5.f, 6); // frostburning for 5 sec
-	/*3 */ compsMgr->add_effect_component(0.f, 0); // life crystall buff
-	/*4 */ compsMgr->add_effect_component(0.f, 1); // mana crystall buff
-	/*5 */ compsMgr->add_effect_component(0.f, 10); // heal potion buff
-	/*6 */ compsMgr->add_effect_component(120.f, 3); // speed potion buff for 2 min
-	/*7 */ compsMgr->add_effect_component(120.f, 2); // def potion buff for 2 min
-	/*8 */ compsMgr->add_effect_component(120.f, 4); // regen potion buff for 2 min
-	/*9 */ compsMgr->add_effect_component(0.f, 10);  // better heal potion buff
-
+	GameEntity::EntityDB::entityInfo.reserve(20);
 
 	const float block_UV_size = 1.f / 32.f;
 	const float pixel_UV_size = 1.f / 512.f;
 	SpriteManager::MAIN_PIXEL_UV_SIZE = pixel_UV_size;
 	SpriteManager::MAIN_BLOCK_UV_SIZE = block_UV_size;
 
-	// load sequence: textures -> sprites -> lights -> particles -> effects -> items -> animations -> entities -> other...
+	// load sequence: textures -> sprites -> lights -> particles -> effects -> items -> crafts -> animations -> entities -> other...
 	// resolve dependencies: items, entities
 	load_sprites_JSON(texture_layers);
 	load_lights_JSON();
+	load_particles_JSON();
+	load_effects_JSON();
 	load_items_basic_data_JSON();
-	load_animations_basic_data_JSON();
-	load_entities_basic_data_JSON();
+	load_crafts_JSON();
+	//load_animations_basic_data_JSON();
+	register_core_entity_factories();
+	//load_entities_basic_data_JSON();
 
 	resolve_items_dependencies_JSON();
-	resolve_entities_dependencies_JSON();
-
-	/*
-	//ambient objects
-	ambientController = AmbientController(dayTime);
-	//sun
-	ambientController.sun.sprite_size = glm::vec2(4.f, 4.f);
-	spriteMgr->add_sprite(10.f * block_UV_size, 23.f * block_UV_size, block_UV_size * 3.f, block_UV_size * 3.f);
-	ambientController.sprites[0] = spriteMgr->get_last_index();
-	//moon1
-	ambientController.moon[0].sprite_size = glm::vec2(2.f, 2.f);
-	spriteMgr->add_sprite(13.f * block_UV_size, 23.f * block_UV_size, block_UV_size * 2.f, block_UV_size * 2.f);
-	ambientController.sprites[1] = spriteMgr->get_last_index();
-	//moon2
-	ambientController.moon[1].sprite_size = glm::vec2(2.f, 2.f);
-	spriteMgr->add_sprite(15.f * block_UV_size, 23.f * block_UV_size, block_UV_size * 2.f, block_UV_size * 2.f);
-	ambientController.sprites[2] = spriteMgr->get_last_index();
-	//clouds and far clouds
-	ambientController.clouds[0].position = { 0.f, ScreenHeight - ScreenWidth * 0.125f };
-	ambientController.clouds[1].position = { ScreenWidth, ScreenHeight - ScreenWidth * 0.125f };
-	ambientController.far_clouds[0].position = { 0.f, ScreenHeight - ScreenWidth * 0.13f };
-	ambientController.far_clouds[1].position = { ScreenWidth * 0.5, ScreenHeight - ScreenWidth * 0.13f };
-	ambientController.far_clouds[2].position = { ScreenWidth, ScreenHeight - ScreenWidth * 0.13f };
-	spriteMgr->add_sprite(0.f, 12.f * block_UV_size, block_UV_size * 16.f, block_UV_size * 2.f);
-	ambientController.sprites[3] = spriteMgr->get_last_index();
-	//sky stars
-	ambientController.sky_stars[0].position = { ScreenWidth * 0.5, 0.f };
-	ambientController.sky_stars[1].position = { 0.f, ScreenHeight * 0.f };
-	ambientController.sky_stars[2].position = { -ScreenWidth * 0.5, 0.f };
-	ambientController.sky_stars[3].position = { ScreenWidth * 0.5, ScreenHeight * 0.5 };
-	ambientController.sky_stars[4].position = { 0.f, ScreenHeight * 0.5f };
-	ambientController.sky_stars[5].position = { -ScreenWidth * 0.5, ScreenHeight * 0.5 };
-	spriteMgr->add_sprite(0.f, 3.f * block_UV_size, block_UV_size * 16.f, block_UV_size * 9.f);
-	ambientController.sprites[4] = spriteMgr->get_last_index();
-	*/
-
-	//effects info
-	/*0*/  effectsManager->add_effect_info(Effects::EffectType::isImmediateBuff, "LifeCrystalBuff", Effects::StatName::isHP, 20.0f);
-	/*1*/  effectsManager->add_effect_info(Effects::EffectType::isImmediateBuff, "ManaCrystalBuff", Effects::StatName::isMana, 20.0f);
-	/*2*/  effectsManager->add_effect_info(Effects::EffectType::isBuff, "DefenceBuff", Effects::StatName::isDef, 10.0f);
-	/*3*/  effectsManager->add_effect_info(Effects::EffectType::isBuff, "SpeedBuff", Effects::StatName::isSpeed, 0.25f);
-	/*4*/  effectsManager->add_effect_info(Effects::EffectType::isBuff, "RegenBuff", Effects::StatName::isRegen, 0.5f);
-	/*5*/  effectsManager->add_effect_info(Effects::EffectType::isDamagingDebuff, "Burning", Effects::StatName::isHP, 2.0f, 1, 0.1f, 0.25f);
-	/*6*/  effectsManager->add_effect_info(Effects::EffectType::isDamagingDebuff, "FrostBurning", Effects::StatName::isHP, 2.0f, 2, 0.1f, 0.25f);
-	/*7*/  effectsManager->add_effect_info(Effects::EffectType::isDamagingDebuff, "Poisoning", Effects::StatName::isHP, 1.0f, 0, 0.0f, 0.25f);
-	/*8*/  effectsManager->add_effect_info(Effects::EffectType::isHealSickness, "PotionSickness", Effects::StatName::isHP, 0.0f);
-	/*9*/  effectsManager->add_effect_info(Effects::EffectType::isHealing, "MushroomHeal", Effects::StatName::isHP, 25.0f);
-	/*10*/ effectsManager->add_effect_info(Effects::EffectType::isHealing, "PotionHeal", Effects::StatName::isHP, 50.0f);
+	//resolve_entities_dependencies_JSON();
 
 	//Particles
 	spriteMgr->add_sprite("", 14 * block_UV_size, 1.0 - block_UV_size * 6 - block_UV_size, block_UV_size, block_UV_size, 1.0f, 0);
@@ -1313,7 +1251,6 @@ void Game::init() {
 
 	spriteMgr->add_sprite("", 15 * block_UV_size, 1.0 - block_UV_size * 6 - block_UV_size, block_UV_size, block_UV_size, 1.0f, 0);
 	particlesMgr->add_particle_info((uint32_t)spriteMgr->get_last_index(), 13); //frostburn light
-
 	//Crafting info
 	/*
 	craft_sys->add(39, 1, CraftCondition::c_NOTHING, std::vector<CraftingPair>{CraftingPair{ 7, 15 }}); //workbench
@@ -1331,13 +1268,8 @@ void Game::init() {
 	craft_sys->add(76, 10, CraftCondition::c_NOTHING, std::vector<CraftingPair>{CraftingPair{ 75, 10 }, CraftingPair{ 23, 1 }}); //flaming arrow
 	craft_sys->add(77, 10, CraftCondition::c_NOTHING, std::vector<CraftingPair>{CraftingPair{ 75, 10 }, CraftingPair{ 26, 1 }}); //frostburn arrow
 	*/
-
-	//reserve memory for objects
-	dropped_items.reserve(1000);
-	damage_text.reserve(100);
-
 	player.inventory.init();
-	for (int i = 2; i < 52; i++) {
+	for (int i = 2; i < 42; i++) {
 		uint16_t amount = rand() % 10000;
 		player.inventory.place_item(i, amount);
 	}
@@ -1406,6 +1338,9 @@ void Game::init_input() {
 }
 
 bool Game::load_sprites_JSON(std::unordered_map<std::string, uint32_t>& texture_layers) {
+	//add empty sprite with global_ID = 0
+	spriteMgr->add_sprite("Sprite:Core:Empty", 0, 0, 0, 0, 0.0f, 0);
+
 	std::filesystem::path core_sprites_path = "Resources/game_data/sprites_data";
 	
 	for (auto& entry : std::filesystem::directory_iterator(core_sprites_path)) {
@@ -1436,6 +1371,8 @@ bool Game::load_sprites_JSON(std::unordered_map<std::string, uint32_t>& texture_
 			float base_size = sprite["base_size"].get<float>();
 
 			spriteMgr->add_sprite(UID, u0, v0, w, h, base_size, texture_array_id);
+
+			std::cout << "[Sprites JSON Loader]: " << UID << " loaded;" << std::endl;
 		}
 	}
 
@@ -1443,6 +1380,8 @@ bool Game::load_sprites_JSON(std::unordered_map<std::string, uint32_t>& texture_
 }
 
 bool Game::load_lights_JSON() {
+	//add empty light with global_ID = 0
+	compsMgr->add_light("Light:Core:Empty", 0.0f, glm::vec3(0.0f, 0.0f, 0.0f));
 
 	std::filesystem::path core_lights_path = "Resources/game_data/lights_data";
 
@@ -1467,13 +1406,23 @@ bool Game::load_lights_JSON() {
 			float g = light["g"].get<float>();
 			float b = light["b"].get<float>();
 			compsMgr->add_light(UID, radius, glm::vec3(r, g, b));
+
+			std::cout << "[Lights JSON Loader]: " << UID << " loaded;" << std::endl;
 		}
 	}
 
 	return true;
 }
 
+bool Game::load_particles_JSON() {
+	//add empty particle with global_ID = 0
+
+	return true;
+}
+
 bool Game::load_effects_JSON() {
+	//add empty effect with global_ID = 0
+	effectsManager->add_effect_info(Effects::EffectType::isBuff, "Effect:Core:Empty", Effects::StatType::isTypeless, 0.0f, 0);
 
 	std::filesystem::path core_effects_path = "Resources/game_data/effects_data";
 
@@ -1485,19 +1434,78 @@ bool Game::load_effects_JSON() {
 
 		std::ifstream file(file_path);
 		if (!file.is_open()) {
-			std::cerr << "[Lights JSON Loader] Cannot open: " << file_path << "\n";
+			std::cerr << "[Effects JSON Loader] Cannot open: " << file_path << "\n";
 			return false;
 		}
 		nlohmann::json json;
 		file >> json;
 
-		for (const auto& light : json) {
-			std::string UID = light["UID"].get<std::string>();
-			float radius = light["radius"].get<float>();
-			float r = light["r"].get<float>();
-			float g = light["g"].get<float>();
-			float b = light["b"].get<float>();
-			compsMgr->add_light(UID, radius, glm::vec3(r, g, b));
+		for (const auto& effect : json) {
+			std::string UID = effect["UID"].get<std::string>();
+			std::string sprite_UID = effect["sprite_UID"].get<std::string>();
+			uint32_t sprite_global_id = spriteMgr->get_sprite_id(sprite_UID);
+			uint8_t effect_type_id = effect["effect_type"].get<uint8_t>();
+			uint8_t stat_type_id = effect["stat_type"].get<uint8_t>();
+			float value = effect["value"].get<float>();
+			
+			uint32_t particle_id = 0;
+			float p_spawn_cd = 0.0f, dmg_cd = 0.0f;
+			if (effect.contains("dmg_cd")) dmg_cd = effect["dmg_cd"].get<float>();
+			if (effect.contains("particle")) {
+				auto& p = effect["particle"];
+				
+			}
+
+			effectsManager->add_effect_info(
+				(Effects::EffectType)effect_type_id, UID, (Effects::StatType)stat_type_id, value,
+				sprite_global_id, particle_id, p_spawn_cd, dmg_cd
+			);
+
+			std::cout << "[Effects JSON Loader]: " << UID << " loaded;" << std::endl;
+		}
+	}
+
+	return true;
+}
+
+bool Game::load_crafts_JSON() {
+	std::filesystem::path core_crafts_path = "Resources/game_data/crafts_data";
+
+	for (auto& entry : std::filesystem::directory_iterator(core_crafts_path)) {
+		if (!entry.is_regular_file()) continue;
+
+		std::filesystem::path file_path = entry.path();
+		if (file_path.extension() != ".json") continue;
+
+		std::ifstream file(file_path);
+		if (!file.is_open()) {
+			std::cerr << "[Crafts JSON Loader] Cannot open: " << file_path << "\n";
+			return false;
+		}
+		nlohmann::json json;
+		file >> json;
+
+		for (const auto& craft : json) {
+			std::string result_UID = craft["result_UID"].get<std::string>();
+			uint32_t item_id = ObjectsDB::UID_to_ID[result_UID];
+			uint16_t amount = craft["amount"].get<uint16_t>();
+			uint16_t condition_id = craft["condition"].get<uint16_t>();
+
+			std::vector<nlohmann::json> items = craft["items"].get<std::vector<nlohmann::json>>();
+			std::vector<CraftingPair> craft_pairs;
+			craft_pairs.reserve(items.size());
+
+			for (auto& i : items) {
+				std::string item_UID = i["item_UID"];
+				std::string_view item_uid_view = item_UID;
+				uint16_t item_amount = i["item_amount"];
+				uint32_t item_ID = ObjectsDB::UID_to_ID[item_uid_view];
+				craft_pairs.emplace_back((uint16_t)item_ID, item_amount);
+			}
+
+			craft_sys->add(item_id, amount, CraftCondition(condition_id), std::move(craft_pairs));
+
+			std::cout << "[Crafts JSON Loader]: " << result_UID << " loaded;" << std::endl;
 		}
 	}
 
@@ -1505,7 +1513,20 @@ bool Game::load_effects_JSON() {
 }
 
 bool Game::load_items_basic_data_JSON() {
+	//add "Air" info with global_ID = 0
+	auto uid0 = ObjectsDB::UID_set.emplace("Item:Core:Air").first;
+	std::string_view uid_view0 = *uid0;
+	ObjectsDB::UID_to_ID.emplace(uid_view0, ObjectsDB::objectInfo.size());
+	ObjectsDB::objectInfo.emplace_back(std::make_unique<ObjectInfo>(ObjectType::None, uid_view0));
+
+	//add "ComplexObjectPart" info with global_ID = 1
+	uid0 = ObjectsDB::UID_set.emplace("Item:Core:CompObjPart").first;
+	uid_view0 = *uid0;
+	ObjectsDB::UID_to_ID.emplace(uid_view0, ObjectsDB::objectInfo.size());
+	ObjectsDB::objectInfo.emplace_back(std::make_unique<ObjectInfo>(ObjectType::isCompObjPart, uid_view0));
+
 	std::filesystem::path core_items_path = "Resources/game_data/items_data";
+
 	for (auto& entry : std::filesystem::directory_iterator(core_items_path)) {
 		if (!entry.is_regular_file()) continue;
 
@@ -1589,7 +1610,7 @@ bool Game::load_items_basic_data_JSON() {
 
 			ObjectsDB::objectInfo.back()->sprite_id = spriteMgr->get_sprite_id(sprite_UID);
 
-			std::cout << "[Items JSON Loader] Item: " << UID << std::endl;
+			std::cout << "[Items JSON Loader]: " << UID << " loaded;" << std::endl;
 		}
 	}
 
@@ -1608,15 +1629,15 @@ void Game::load_entities_basic_data_JSON() {
 		uint32_t type_id = entity["type"];
 		uint32_t effect_id = 0, light_id = 0;
 
-		EntityType entity_type = (EntityType)type_id;
-		if (entity_type == EntityType::isMob) {
+		GameEntity::EntityType entity_type = (GameEntity::EntityType)type_id;
+		if (entity_type == GameEntity::EntityType::isMob) {
 			uint32_t mob_type_id = entity["mob_type"];
 			uint32_t move_type_id = entity["move_type"];
 			float HP = entity["HP"], DEF = entity["DEF"], DMG = entity["DMG"];
 			float speed_x = entity["speed_x"], speed_y = entity["speed_y"];
 			float hitbox_w = entity["hitbox_w"], hitbox_h = entity["hitbox_h"];
 			std::vector<nlohmann::json> drop = entity["drop"].get<std::vector<nlohmann::json>>();
-			std::vector<DropInfo> drops;
+			std::vector<GameEntity::DropInfo> drops;
 			drops.reserve(drop.size());
 			for (auto& d : drop) {
 				uint32_t drop_id = d["item_id"];
@@ -1626,14 +1647,14 @@ void Game::load_entities_basic_data_JSON() {
 			}
 			uint32_t animator_id = entity["animator_id"];
 
-			MobType mob_type = (MobType)mob_type_id;
-			if (mob_type == MobType::isEnemy) {
+			GameEntity::MobType mob_type = (GameEntity::MobType)mob_type_id;
+			if (mob_type == GameEntity::MobType::isEnemy) {
 				uint32_t enemy_type_id = entity["enemy_type"];
-				EntityDB::entityInfo[id] = std::make_unique<EnemyInfo>(name, (EnemyType)enemy_type_id, (MovementType)move_type_id,
-					HP, DMG, DEF, speed_x, speed_y, glm::vec2(hitbox_w, hitbox_h), std::move(drops), animator_id);
+				GameEntity::EntityDB::entityInfo[id] = std::make_unique<GameEntity::EnemyInfo>(name, (GameEntity::EnemyType)enemy_type_id,
+					(GameEntity::MovementType)move_type_id, HP, DMG, DEF, speed_x, speed_y, glm::vec2(hitbox_w, hitbox_h), std::move(drops), animator_id);
 			}
 			else {
-				EntityDB::entityInfo[id] = std::make_unique<MobInfo>(name, mob_type, (MovementType)move_type_id,
+				GameEntity::EntityDB::entityInfo[id] = std::make_unique<GameEntity::MobInfo>(name, mob_type, (GameEntity::MovementType)move_type_id,
 					HP, DMG, DEF, speed_x, speed_y, glm::vec2(hitbox_w, hitbox_h), std::move(drops), animator_id);
 			}
 		}
@@ -1670,8 +1691,8 @@ void Game::load_animations_basic_data_JSON() {
 }
 
 bool Game::resolve_items_dependencies_JSON() {
-
 	std::filesystem::path core_items_path = "Resources/game_data/items_data";
+
 	for (auto& entry : std::filesystem::directory_iterator(core_items_path)) {
 		if (!entry.is_regular_file()) continue;
 
@@ -1690,6 +1711,7 @@ bool Game::resolve_items_dependencies_JSON() {
 			std::string UID = item["UID"].get<std::string>();
 			std::string_view uid_view = UID;
 			uint32_t global_ID = ObjectsDB::UID_to_ID[uid_view];
+			bool loaded = false;
 
 			if (item.contains("drop_UID")) {
 				std::string drop_UID = item["drop_UID"];
@@ -1700,6 +1722,7 @@ bool Game::resolve_items_dependencies_JSON() {
 					static_cast<WallInfo*>(info)->drop_id = drop_ID;
 				else
 					static_cast<BlockInfo*>(info)->drop_id = drop_ID;
+				loaded = true;
 			}
 			if (item.contains("proj_UID")) {
 				std::string proj_UID = item["proj_UID"];
@@ -1709,6 +1732,7 @@ bool Game::resolve_items_dependencies_JSON() {
 				ObjectInfo* info = ObjectsDB::objectInfo[global_ID].get();
 				static_cast<WeaponInfo*>(info)->projectile_id = proj_ID;
 				static_cast<WeaponInfo*>(info)->projectile_cd = proj_cd;
+				loaded = true;
 			}
 			if (item.contains("entity_UID")) {
 				std::string entity_UID = item["entity_UID"];
@@ -1716,26 +1740,9 @@ bool Game::resolve_items_dependencies_JSON() {
 				uint32_t entity_ID = 0;
 				ObjectInfo* info = ObjectsDB::objectInfo[global_ID].get();
 				static_cast<AmmoInfo*>(info)->entity_id = entity_ID;
+				loaded = true;
 			}
-			if (item.contains("craft")) {
-				auto& craft = item["craft"];
-				uint16_t amount = craft["amount"].get<uint16_t>();
-				uint16_t condition_id = craft["condition"].get<uint16_t>();
-
-				std::vector<nlohmann::json> items = craft["items"].get<std::vector<nlohmann::json>>();
-				std::vector<CraftingPair> craft_pairs;
-				craft_pairs.reserve(items.size());
-
-				for (auto& i : items) {
-					std::string item_UID = i["item_UID"];
-					std::string_view item_uid_view = item_UID;
-					uint16_t item_amount = i["item_amount"];
-					uint32_t item_ID = ObjectsDB::UID_to_ID[item_uid_view];
-					craft_pairs.emplace_back((uint16_t)item_ID, item_amount);
-				}
-
-				craft_sys->add(global_ID, amount, CraftCondition(condition_id), std::move(craft_pairs));
-			}
+			if(loaded) std::cout << "[Item Dependency Loader]: " << UID << " loaded;" << std::endl;
 		}
 	}
 
