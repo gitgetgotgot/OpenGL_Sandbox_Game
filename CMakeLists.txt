@@ -56,6 +56,14 @@ target_link_libraries(Core PUBLIC UI)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Core)
 
+
+target_compile_definitions(Core PRIVATE
+    $<$<CONFIG:Debug>:RESOURCE_ROOT="${PROJECT_SOURCE_DIR}">
+    $<$<CONFIG:Release>:RESOURCE_ROOT="">
+    $<$<CONFIG:Debug>:DEBUG_MODE=1>
+    $<$<CONFIG:Release>:DEBUG_MODE=0>
+)
+
 set(GAME_DATA_DIRS
     Resources
     Saves
@@ -69,6 +77,7 @@ foreach(dir ${GAME_DATA_DIRS})
     )
 endforeach()
 
+
 add_library(library_test SHARED
     test_lib.cpp
 )
@@ -80,3 +89,17 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             $<TARGET_FILE:library_test>
             $<TARGET_FILE_DIR:${PROJECT_NAME}>
 )
+
+add_executable(DataCompiler
+    "${PROJECT_SOURCE_DIR}/Tools/DataCompiler/DataCompilerMain.cpp"
+)
+target_link_libraries(DataCompiler PRIVATE Utility)
+
+#add_custom_command(
+#    TARGET ${PROJECT_NAME}
+#    PRE_BUILD
+#    COMMAND DataCompiler
+#        ${PROJECT_SOURCE_DIR}/Resources/game_data
+#        ${PROJECT_SOURCE_DIR}/Resources/bin_data
+#    COMMENT "Compiling core JSON to binary DATA..."
+#)

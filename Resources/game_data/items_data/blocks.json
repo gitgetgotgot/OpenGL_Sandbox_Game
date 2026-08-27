@@ -1,0 +1,596 @@
+[
+  {
+    "UID": "Item:Core:Stone",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 0,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Stone",
+    "collision": true,
+    "sprites": [ "Sprite:Core:Stone" ]
+  },
+  {
+    "UID": "Item:Core:Dirt",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 0,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Dirt",
+    "collision": true,
+    "sprites": [ "Sprite:Core:Dirt" ]
+  },
+  {
+    "UID": "Item:Core:Grass Dirt",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 0,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Grass Dirt",
+    "collision": true,
+    "sprites": [ "Sprite:Core:Grass Dirt" ]
+  },
+  {
+    "UID": "Item:Core:Sand",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 0,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Sand",
+    "collision": true,
+    "sprites": [ "Sprite:Core:Sand" ]
+  },
+  {
+    "UID": "Item:Core:Oak",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 1,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Oak",
+    "collision": false,
+    "sprites": [ "Sprite:Core:Oak" ]
+  },
+  {
+    "UID": "Item:Core:Oak Planks",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 0,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Oak Planks",
+    "collision": true,
+    "sprites": [ "Sprite:Core:Oak Planks" ]
+  },
+  {
+    "UID": "Item:Core:Crimson Stone",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 0,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Crimson Stone",
+    "collision": true,
+    "sprites": [ "Sprite:Core:Crimson Stone" ]
+  },
+  {
+    "UID": "Item:Core:Corrupted Stone",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 0,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Corrupted Stone",
+    "collision": true,
+    "sprites": [ "Sprite:Core:Corrupted Stone" ]
+  },
+  {
+    "UID": "Item:Core:Copper Ore",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 0,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Copper Ore",
+    "collision": true,
+    "sprites": [ "Sprite:Core:Copper Ore" ]
+  },
+  {
+    "UID": "Item:Core:Iron Ore",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 0,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Iron Ore",
+    "collision": true,
+    "sprites": [ "Sprite:Core:Iron Ore" ]
+  },
+  {
+    "UID": "Item:Core:Gold Ore",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 0,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Gold Ore",
+    "collision": true,
+    "sprites": [ "Sprite:Core:Gold Ore" ]
+  },
+  {
+    "UID": "Item:Core:Water",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 5,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Water",
+    "collision": false,
+    "sprites": [ "Sprite:Core:Water" ]
+  },
+  {
+    "UID": "Item:Core:Snow",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 0,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Snow",
+    "collision": true,
+    "sprites": [ "Sprite:Core:Snow" ]
+  },
+  {
+    "UID": "Item:Core:Ice",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 0,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Ice",
+    "collision": true,
+    "sprites": [ "Sprite:Core:Ice" ]
+  },
+  {
+    "UID": "Item:Core:Snow Grass Dirt",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 0,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Snow Grass Dirt",
+    "collision": true,
+    "sprites": [ "Sprite:Core:Snow Grass Dirt" ]
+  },
+  {
+    "UID": "Item:Core:Crimson Grass Dirt",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 0,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Crimson Grass Dirt",
+    "collision": true,
+    "sprites": [ "Sprite:Core:Crimson Grass Dirt" ]
+  },
+  {
+    "UID": "Item:Core:Corrupted Grass Dirt",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 0,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Corrupted Grass Dirt",
+    "collision": true,
+    "sprites": [ "Sprite:Core:Corrupted Grass Dirt" ]
+  },
+  {
+    "UID": "Item:Core:Grass",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 6,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Grass",
+    "collision": false,
+    "sprites": [ "Sprite:Core:Grass" ]
+  },
+  {
+    "UID": "Item:Core:Corrupted Grass",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 6,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Corrupted Grass",
+    "collision": false,
+    "sprites": [ "Sprite:Core:Corrupted Grass" ]
+  },
+  {
+    "UID": "Item:Core:Crimson Grass",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 6,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Crimson Grass",
+    "collision": false,
+    "sprites": [ "Sprite:Core:Crimson Grass" ]
+  },
+  {
+    "UID": "Item:Core:Day Flower",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 7,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Day Flower",
+    "collision": false,
+    "sprites": [ "Sprite:Core:Day Flower" ]
+  },
+  {
+    "UID": "Item:Core:Torch",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 4,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Torch",
+    "collision": false,
+    "lights": [ "Light:Core:Torch" ],
+    "sprites": [ "Sprite:Core:Torch" ]
+  },
+  {
+    "UID": "Item:Core:Torch(L)",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 4,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Torch",
+    "collision": false,
+    "lights": [ "Light:Core:Torch" ],
+    "sprites": [ "Sprite:Core:Torch(L)" ]
+  },
+  {
+    "UID": "Item:Core:Torch(R)",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 4,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Torch",
+    "collision": false,
+    "lights": [ "Light:Core:Torch" ],
+    "sprites": [ "Sprite:Core:Torch(R)" ]
+  },
+  {
+    "UID": "Item:Core:Ice Torch",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 4,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Ice Torch",
+    "collision": false,
+    "lights": [ "Light:Core:IceTorch" ],
+    "sprites": [ "Sprite:Core:Ice Torch" ]
+  },
+  {
+    "UID": "Item:Core:Ice Torch(L)",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 4,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Ice Torch",
+    "collision": false,
+    "lights": [ "Light:Core:IceTorch" ],
+    "sprites": [ "Sprite:Core:Ice Torch(L)" ]
+  },
+  {
+    "UID": "Item:Core:Ice Torch(R)",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 4,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Ice Torch",
+    "collision": false,
+    "lights": [ "Light:Core:IceTorch" ],
+    "sprites": [ "Sprite:Core:Ice Torch(R)" ]
+  },
+  {
+    "UID": "Item:Core:Glass",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 8,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Glass",
+    "collision": true,
+    "sprites": [ "Sprite:Core:Glass" ]
+  },
+  {
+    "UID": "Item:Core:Oak Platform",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 3,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Oak Platform",
+    "collision": false,
+    "platform_collision": true,
+    "sprites": [ "Sprite:Core:Oak Platform" ]
+  },
+  {
+    "UID": "Item:Core:Oak Platform(L)",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 3,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Oak Platform",
+    "collision": false,
+    "platform_collision": true,
+    "sprites": [ "Sprite:Core:Oak Platform(L)" ]
+  },
+  {
+    "UID": "Item:Core:Oak Platform(R)",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 3,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Oak Platform",
+    "collision": false,
+    "platform_collision": true,
+    "sprites": [ "Sprite:Core:Oak Platform(R)" ]
+  },
+  {
+    "UID": "Item:Core:Mushroom",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 7,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Mushroom",
+    "collision": false,
+    "sprites": [ "Sprite:Core:Mushroom" ]
+  },
+  {
+    "UID": "Item:Core:Glowing Mushroom",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 7,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Glowing Mushroom",
+    "collision": false,
+    "sprites": [ "Sprite:Core:Glowing Mushroom" ]
+  },
+  {
+    "UID": "Item:Core:Hardened Sand",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 0,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Hardened Sand",
+    "collision": true,
+    "sprites": [ "Sprite:Core:Hardened Sand" ]
+  },
+  {
+    "UID": "Item:Core:Stone Wall",
+    "class_UID": "Class:Core:Wall",
+    "toughness": 1,
+    "drop_UID": "Item:Core:Stone Wall",
+    "sprites": [ "Sprite:Core:Stone Wall" ]
+  },
+  {
+    "UID": "Item:Core:Dirt Wall",
+    "class_UID": "Class:Core:Wall",
+    "toughness": 1,
+    "drop_UID": "Item:Core:Dirt Wall",
+    "sprites": [ "Sprite:Core:Dirt Wall" ]
+  },
+  {
+    "UID": "Item:Core:Oak Wall",
+    "class_UID": "Class:Core:Wall",
+    "toughness": 1,
+    "drop_UID": "Item:Core:Oak Wall",
+    "sprites": [ "Sprite:Core:Oak Wall" ]
+  },
+  {
+    "UID": "Item:Core:Crimson Wall",
+    "class_UID": "Class:Core:Wall",
+    "toughness": 1,
+    "drop_UID": "Item:Core:Crimson Wall",
+    "sprites": [ "Sprite:Core:Crimson Wall" ]
+  },
+  {
+    "UID": "Item:Core:Corrupted Wall",
+    "class_UID": "Class:Core:Wall",
+    "toughness": 1,
+    "drop_UID": "Item:Core:Corrupted Wall",
+    "sprites": [ "Sprite:Core:Corrupted Wall" ]
+  },
+  {
+    "UID": "Item:Core:Snow Wall",
+    "class_UID": "Class:Core:Wall",
+    "toughness": 1,
+    "drop_UID": "Item:Core:Snow Wall",
+    "sprites": [ "Sprite:Core:Snow Wall" ]
+  },
+  {
+    "UID": "Item:Core:Sand Wall",
+    "class_UID": "Class:Core:Wall",
+    "toughness": 1,
+    "drop_UID": "Item:Core:Sand Wall",
+    "sprites": [ "Sprite:Core:Sand Wall" ]
+  },
+  {
+    "UID": "Item:Core:Oak Tree Top",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 2,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Oak Tree Top",
+    "sprites": [ "Sprite:Core:Oak Tree Top" ]
+  },
+  {
+    "UID": "Item:Core:Oak Branch(L)",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 2,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Oak Branch(L)",
+    "sprites": [ "Sprite:Core:Oak Branch(L)" ]
+  },
+  {
+    "UID": "Item:Core:Oak Branch(R)",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 2,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Oak Branch(R)",
+    "sprites": [ "Sprite:Core:Oak Branch(R)" ]
+  },
+  {
+    "UID": "Item:Core:Copper Coin",
+    "class_UID": "Class:Core:Item",
+    "sub_type": 9,
+    "sprites": [ "Sprite:Core:Copper Coin" ]
+  },
+  {
+    "UID": "Item:Core:Silver Coin",
+    "class_UID": "Class:Core:Item",
+    "sub_type": 9,
+    "sprites": [ "Sprite:Core:Silver Coin" ]
+  },
+  {
+    "UID": "Item:Core:Gold Coin",
+    "class_UID": "Class:Core:Item",
+    "sub_type": 9,
+    "sprites": [ "Sprite:Core:Gold Coin" ]
+  },
+  {
+    "UID": "Item:Core:Platinum Coin",
+    "class_UID": "Class:Core:Item",
+    "sub_type": 9,
+    "sprites": [ "Sprite:Core:Platinum Coin" ]
+  },
+  {
+    "UID": "Item:Core:Copper Ingot",
+    "class_UID": "Class:Core:Item",
+    "sub_type": 8,
+    "sprites": [ "Sprite:Core:Copper Ingot" ]
+  },
+  {
+    "UID": "Item:Core:Iron Ingot",
+    "class_UID": "Class:Core:Item",
+    "sub_type": 8,
+    "sprites": [ "Sprite:Core:Iron Ingot" ]
+  },
+  {
+    "UID": "Item:Core:Gold Ingot",
+    "class_UID": "Class:Core:Item",
+    "sub_type": 8,
+    "sprites": [ "Sprite:Core:Gold Ingot" ]
+  },
+  {
+    "UID": "Item:Core:Gel",
+    "class_UID": "Class:Core:Item",
+    "sub_type": 8,
+    "sprites": [ "Sprite:Core:Gel" ]
+  },
+  {
+    "UID": "Item:Core:Bottle",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 9,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Bottle",
+    "collision": false,
+    "sprites": [ "Sprite:Core:Bottle" ]
+  },
+  {
+    "UID": "Item:Core:Bottle of Water",
+    "class_UID": "Class:Core:Block",
+    "sub_type": 9,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Bottle of Water",
+    "collision": false,
+    "sprites": [ "Sprite:Core:Bottle of Water" ]
+  },
+  {
+    "UID": "Item:Core:Lens",
+    "class_UID": "Class:Core:Item",
+    "sub_type": 8,
+    "sprites": [ "Sprite:Core:Lens" ]
+  },
+  {
+    "UID": "Item:Core:Fallen Star",
+    "class_UID": "Class:Core:Item",
+    "sub_type": 8,
+    "sprites": [ "Sprite:Core:Fallen Star" ]
+  },
+  {
+    "UID": "Item:Core:Mana Crystal",
+    "class_UID": "Class:Core:Consumable",
+    "sub_type": 11,
+    "effects": [
+      {
+        "effect_UID": "Effect:Core:ManaCrystalBuff",
+        "duration": 10.0
+      }
+    ],
+    "sprites": [ "Sprite:Core:Mana Crystal" ]
+  },
+  {
+    "UID": "Item:Core:Healing Potion",
+    "class_UID": "Class:Core:Consumable",
+    "sub_type": 12,
+    "effects": [
+      {
+        "effect_UID": "Effect:Core:PotionHeal",
+        "duration": 10.0
+      }
+    ],
+    "sprites": [ "Sprite:Core:Healing Potion" ]
+  },
+  {
+    "UID": "Item:Core:Speed Potion",
+    "class_UID": "Class:Core:Consumable",
+    "sub_type": 12,
+    "effects": [
+      {
+        "effect_UID": "Effect:Core:SpeedBuff",
+        "duration": 10.0
+      }
+    ],
+    "sprites": [ "Sprite:Core:Speed Potion" ]
+  },
+  {
+    "UID": "Item:Core:Defense Potion",
+    "class_UID": "Class:Core:Consumable",
+    "sub_type": 12,
+    "effects": [
+      {
+        "effect_UID": "Effect:Core:DefBuff",
+        "duration": 10.0
+      }
+    ],
+    "sprites": [ "Sprite:Core:Defense Potion" ]
+  },
+  {
+    "UID": "Item:Core:Regeneration Potion",
+    "class_UID": "Class:Core:Consumable",
+    "sub_type": 12,
+    "effects": [
+      {
+        "effect_UID": "Effect:Core:RegenBuff",
+        "duration": 10.0
+      }
+    ],
+    "sprites": [ "Sprite:Core:Regeneration Potion" ]
+  },
+  {
+    "UID": "Item:Core:Better Healing Potion",
+    "class_UID": "Class:Core:Consumable",
+    "sub_type": 12,
+    "effects": [
+      {
+        "effect_UID": "Effect:Core:PotionHeal",
+        "duration": 10.0
+      }
+    ],
+    "sprites": [ "Sprite:Core:Better Healing Potion" ]
+  },
+  {
+    "UID": "Item:Core:Arrow",
+    "class_UID": "Class:Core:Ammo",
+    "sub_type": 0,
+    "dmg": 5,
+    "entity_UID": "Entity:Core:Slime",
+    "sprites": [ "Sprite:Core:Arrow" ]
+  },
+  {
+    "UID": "Item:Core:Flaming Arrow",
+    "class_UID": "Class:Core:Ammo",
+    "sub_type": 0,
+    "dmg": 5,
+    "entity_UID": "Entity:Core:Slime",
+    "sprites": [ "Sprite:Core:Flaming Arrow" ]
+  },
+  {
+    "UID": "Item:Core:Frostburn Arrow",
+    "class_UID": "Class:Core:Ammo",
+    "sub_type": 0,
+    "dmg": 5,
+    "entity_UID": "Entity:Core:Slime",
+    "sprites": [ "Sprite:Core:Frostburn Arrow" ]
+  },
+  {
+    "UID": "Item:Core:Star Arrow",
+    "class_UID": "Class:Core:Ammo",
+    "sub_type": 0,
+    "dmg": 5,
+    "entity_UID": "Entity:Core:Slime",
+    "sprites": [ "Sprite:Core:Star Arrow" ]
+  },
+  {
+    "UID": "Item:Core:Dark Arrow",
+    "class_UID": "Class:Core:Ammo",
+    "sub_type": 0,
+    "dmg": 5,
+    "entity_UID": "Entity:Core:Slime",
+    "sprites": [ "Sprite:Core:Dark Arrow" ]
+  },
+  {
+    "UID": "Item:Core:Hell Arrow",
+    "class_UID": "Class:Core:Ammo",
+    "sub_type": 0,
+    "dmg": 5,
+    "entity_UID": "Entity:Core:Slime",
+    "sprites": [ "Sprite:Core:Hell Arrow" ]
+  },
+  {
+    "UID": "Item:Core:Bullet",
+    "class_UID": "Class:Core:Ammo",
+    "sub_type": 1,
+    "dmg": 5,
+    "entity_UID": "Entity:Core:Slime",
+    "sprites": [ "Sprite:Core:Bullet" ]
+  }
+]

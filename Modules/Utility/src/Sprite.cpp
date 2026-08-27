@@ -1,5 +1,4 @@
 #include <Utility/Sprite.h>
-#include <iostream>
 
 Sprite::Sprite(float U0, float V0, float width, float height, float base_size, uint32_t texture_array_id) {
 	this->U0 = U0;
@@ -25,14 +24,13 @@ Sprite& SpriteManager::get_sprite(uint32_t id) {
 	return sprites[id];
 }
 
-uint32_t SpriteManager::get_sprite_id(std::string uid) {
+std::optional<uint32_t> SpriteManager::get_sprite_id(std::string uid) {
 	auto it = sprite_UID_to_ID.find(uid);
 	if (it != sprite_UID_to_ID.end()) {
 		return it->second;
 	}
 	else {
-		std::cout << "[SpriteManager]: Sprite " << uid << " not found!" << std::endl;
-		return 0;
+		return std::nullopt;
 	}
 }
 

@@ -2,7 +2,6 @@
 #include <Entities/EntitySystem.h>
 #include <Utility/SparseSet.h>
 #include <IOSystem/SystemContext.h>
-#include <unordered_map>
 
 struct Vertex2f {
 	Vertex2f() {}

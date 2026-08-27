@@ -1,6 +1,7 @@
 #include <UI/UI_Renderer.h>
 #include <Entities/Player.h>
 #include <IOSystem/SystemContext.h>
+#include <Objects/ObjectTypes/WeaponInfo.h>
 
 uint32_t UI_Renderer::tooltip_slots_INDEX_SIZE = 9 * 6;
 
@@ -148,9 +149,9 @@ void UI_Renderer::init(Player* player) {
 	basic_text_buffer.reserve(Inventory::INVENTORY_SIZE * 4 * 4); //for each slot max number is 9999
 	chest_text_buffer.reserve(Inventory::INVENTORY_CHEST_SIZE * 4 * 4);
 
-	tooltip_first_sprite_id = spriteMgr->get_sprite_id("Sprite:Core:TooltipLB");
-	hotbar_frame_sprite_id = spriteMgr->get_sprite_id("Sprite:Core:HotbarFrame");
-	craft_slot_sprite_id = spriteMgr->get_sprite_id("Sprite:Core:CraftSlot");
+	tooltip_first_sprite_id = spriteMgr->get_sprite_id("Sprite:Core:TooltipLB").value();
+	hotbar_frame_sprite_id = spriteMgr->get_sprite_id("Sprite:Core:HotbarFrame").value();
+	craft_slot_sprite_id = spriteMgr->get_sprite_id("Sprite:Core:CraftSlot").value();
 }
 
 void UI_Renderer::update() {
@@ -269,7 +270,7 @@ void UI_Renderer::init_basic_inventory_slots_data() {
 	float Xpos;
 	float Ypos = 0.83f;
 	float width = 0.1f, height = 0.1f;
-	Sprite* sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:BasicSlot"));
+	Sprite* sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:BasicSlot").value());
 
 	auto add_slot_data_to_buffer = [&](uint32_t slot_type_id, std::vector<UI_Vertex2f>& buffer, float width, float height) {
 		buffer.emplace_back(Xpos, Ypos,						sprite->U0, sprite->V0,							sprite->texture_id);
@@ -319,7 +320,7 @@ void UI_Renderer::init_basic_inventory_slots_data() {
 	}
 	
 	//40 slots for chests (used with inventory when any chest is open by the player)
-	sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:ChestSlot"));
+	sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:ChestSlot").value());
 	Ypos = 0.83f - 0.11 * 5.f;
 	for (int i = 0; i < 4; i++) {
 		Xpos = -SystemContext::screen.ratio * 0.97f;
@@ -333,7 +334,7 @@ void UI_Renderer::init_basic_inventory_slots_data() {
 	slots_vbo->update_data(chest_slot_buffer.data(), chest_slot_buffer.size() * sizeof(UI_Vertex2f), basic_slot_buffer.size() * sizeof(UI_Vertex2f));
 	
 	//15 slots for craft info slots
-	sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:CraftSlot"));
+	sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:CraftSlot").value());
 	Ypos = 0.83f - 0.11 * 10.f + 0.005f - 0.14f * 2.f;
 	for (int i = 0; i < 3; i++) {
 		Xpos = -SystemContext::screen.ratio * 0.97f + 0.2f;
@@ -360,10 +361,10 @@ void UI_Renderer::init_basic_inventory_slots_data() {
 	Xpos = -SystemContext::screen.ratio * 0.97f - 0.03f;
 	Ypos = 0.83f - 0.11 * 10.f + 0.125f;
 	width = 0.28f; height = 0.07f;
-	sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:CraftBorder"));
+	sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:CraftBorder").value());
 	add_slot_data_to_buffer(4, craft_borders_buffer, width, height);
 	Ypos -= 0.14f * 5.5f;
-	sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:CraftBorder2"));
+	sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:CraftBorder2").value());
 	add_slot_data_to_buffer(4, craft_borders_buffer, width, height);
 	craft_slots_vbo->update_data(craft_borders_buffer.data(), craft_borders_buffer.size() * sizeof(UI_Vertex2f));
 }
@@ -372,7 +373,7 @@ void UI_Renderer::init_icons_base_vertices() {
 	float Xpos;
 	float Ypos = 0.9f;
 	float icon_size = 0.06f;
-	Sprite* sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:HeartFull"));
+	Sprite* sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:HeartFull").value());
 
 	auto add_icon_to_buffer = [&]() {
 		icons_buffer.emplace_back(Xpos, Ypos,							sprite->U0, sprite->V0,							sprite->texture_id);
@@ -393,7 +394,7 @@ void UI_Renderer::init_icons_base_vertices() {
 	//mana stars vertices
 	Xpos = SystemContext::screen.ratio * 0.95f;
 	Ypos = 0.9f;
-	sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:ManaFull"));
+	sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:ManaFull").value());
 	for (int i = 0; i < 10; i++) {
 		add_icon_to_buffer();
 		Ypos -= 0.061f;
@@ -425,7 +426,7 @@ void UI_Renderer::update_tooltip_data() {
 		add_info_text(item_info->name, item_info->name.size());
 		add_info_text("Can be placed", 13);
 		break;
-	case ObjectType::isComplexObject:
+	case ObjectType::isMultiBlock:
 		text_pos.y += tooltip_text_height * 1.1f;
 		inner_height += tooltip_text_height * 1.1f * 2;
 		add_info_text(item_info->name, item_info->name.size());
@@ -517,7 +518,7 @@ void UI_Renderer::update_cursor_item() {
 	InventorySlot& cursor_slot = main_player_ptr->inventory.cursor_item;
 
 	ObjectInfo* obj_info = ObjectsDB::objectInfo[cursor_slot.item_id].get();
-	Sprite* sprite = &spriteMgr->get_sprite(obj_info->sprite_id);
+	Sprite* sprite = &spriteMgr->get_sprite(obj_info->sprites[0]);
 	
 	cursor_text_INDEX_SIZE = 0;
 	cursor_item_text_buffer.clear();
@@ -647,7 +648,7 @@ void UI_Renderer::update_items() {
 				if (slot.item_id == 0) continue;
 
 				ObjectInfo& obj_info = *ObjectsDB::objectInfo[slot.item_id];
-				sprite = &spriteMgr->get_sprite(obj_info.sprite_id);
+				sprite = &spriteMgr->get_sprite(obj_info.sprites[0]);
 
 				glm::vec4& slot_borders = main_player_ptr->inventory.slots_bounds[i];
 				x = slot_borders.x + 0.0125f;
@@ -684,7 +685,7 @@ void UI_Renderer::update_items() {
 				if (slot.item_id == 0) continue;
 
 				ObjectInfo& obj_info = *ObjectsDB::objectInfo[slot.item_id];
-				sprite = &spriteMgr->get_sprite(obj_info.sprite_id);
+				sprite = &spriteMgr->get_sprite(obj_info.sprites[0]);
 
 				glm::vec4& slot_borders = main_player_ptr->inventory.chest_slots_bounds[i];
 				x = slot_borders.x + 0.0125f;
@@ -782,7 +783,7 @@ void UI_Renderer::update_craft_slots() {
 
 		if (slot.item_data.item_id > 1) {
 			ObjectInfo& item_info = *ObjectsDB::objectInfo[slot.item_data.item_id];
-			sprite = &spriteMgr->get_sprite(item_info.sprite_id);
+			sprite = &spriteMgr->get_sprite(item_info.sprites[0]);
 			add_item_to_buffer(craft_items_buffer, &item_info);
 			craft_items_INDEX_SIZE += 6;
 		}
@@ -826,7 +827,7 @@ void UI_Renderer::update_craft_slots() {
 			slot_size = 0.1f;
 			CraftingPair& craft_pair = craftable_item.items_needed[i];
 			ObjectInfo& item_info = *ObjectsDB::objectInfo[craft_pair.item_id];
-			sprite = &spriteMgr->get_sprite(item_info.sprite_id);
+			sprite = &spriteMgr->get_sprite(item_info.sprites[0]);
 
 			if (craft_pair.amount > 1) {
 				text_builder.add_int((int)craft_pair.amount);
@@ -861,7 +862,7 @@ void UI_Renderer::update_craft_slots() {
 			Xpos = left_bottom_vertex.pos.x + offset;
 			Ypos = left_bottom_vertex.pos.y + offset;
 			ObjectInfo& item_info = *ObjectsDB::objectInfo[main_player_ptr->inventory.get_craft_item(i).item_id];
-			sprite = &spriteMgr->get_sprite(item_info.sprite_id);
+			sprite = &spriteMgr->get_sprite(item_info.sprites[0]);
 			add_item_to_buffer(craft_helper_items_buffer, &item_info);
 		}
 		craft_items_vbo->update_data(

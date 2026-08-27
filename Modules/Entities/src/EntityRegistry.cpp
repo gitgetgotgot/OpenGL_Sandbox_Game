@@ -1,4 +1,4 @@
-#include <Entities/Registry.h>
+#include <Entities/EntityRegistry.h>
 #include <Entities/GameEntities.h>
 #include <Entities/Enemies/Slime.h>
 #include <Entities/Enemies/Zombie.h>

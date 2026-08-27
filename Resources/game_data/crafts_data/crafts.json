@@ -1,5 +1,27 @@
 [
   {
+    "result_UID": "Item:Core:Workbench",
+    "amount": 1,
+    "condition": 0,
+    "items": [
+      {
+        "item_UID": "Item:Core:Oak Planks",
+        "item_amount": 15
+      }
+    ]
+  },
+  {
+    "result_UID": "Item:Core:Oak Platform",
+    "amount": 2,
+    "condition": 0,
+    "items": [
+      {
+        "item_UID": "Item:Core:Oak Planks",
+        "item_amount": 1
+      }
+    ]
+  },
+  {
     "result_UID": "Item:Core:Torch",
     "amount": 3,
     "condition": 0,
@@ -15,13 +37,80 @@
     ]
   },
   {
-    "result_UID": "Item:Core:Workbench",
-    "amount": 1,
+    "result_UID": "Item:Core:Ice Torch",
+    "amount": 3,
     "condition": 0,
     "items": [
       {
+        "item_UID": "Item:Core:Torch",
+        "item_amount": 3
+      },
+      {
+        "item_UID": "Item:Core:Ice",
+        "item_amount": 1
+      }
+    ]
+  },
+  {
+    "result_UID": "Item:Core:Furnace",
+    "amount": 1,
+    "condition": 1,
+    "items": [
+      {
+        "item_UID": "Item:Core:Stone",
+        "item_amount": 20
+      },
+      {
         "item_UID": "Item:Core:Oak Planks",
-        "item_amount": 15
+        "item_amount": 5
+      },
+      {
+        "item_UID": "Item:Core:Torch",
+        "item_amount": 3
+      }
+    ]
+  },
+  {
+    "result_UID": "Item:Core:Anvil",
+    "amount": 1,
+    "condition": 1,
+    "items": [
+      {
+        "item_UID": "Item:Core:Iron Ingot",
+        "item_amount": 5
+      }
+    ]
+  },
+  {
+    "result_UID": "Item:Core:Copper Ingot",
+    "amount": 1,
+    "condition": 2,
+    "items": [
+      {
+        "item_UID": "Item:Core:Copper Ore",
+        "item_amount": 3
+      }
+    ]
+  },
+  {
+    "result_UID": "Item:Core:Iron Ingot",
+    "amount": 1,
+    "condition": 2,
+    "items": [
+      {
+        "item_UID": "Item:Core:Iron Ore",
+        "item_amount": 3
+      }
+    ]
+  },
+  {
+    "result_UID": "Item:Core:Gold Ingot",
+    "amount": 1,
+    "condition": 2,
+    "items": [
+      {
+        "item_UID": "Item:Core:Gold Ore",
+        "item_amount": 3
       }
     ]
   }

@@ -1,6 +1,9 @@
 #pragma once
 #include <cstdint>
+#include <string>
+#include <optional>
 #include <unordered_map>
+#include <glm/ext/vector_float3.hpp>
 
 //structure that contains info about appliable lighting
 struct LightComponent {
@@ -16,16 +19,9 @@ public:
 		static ComponentsManager compsMgr;
 		return &compsMgr;
 	}
-	void add_light(std::string uid, float radius, glm::vec3 color) {
-		lights_uid_to_id.emplace(uid, appliable_lights.size());
-		appliable_lights.emplace_back(radius, color);
-	}
-	uint32_t get_light_id(std::string light_UID) {
-		return lights_uid_to_id[light_UID];
-	}
-	LightComponent& get_light(uint32_t id) {
-		return appliable_lights[id];
-	}
+	void add_light(std::string uid, float radius, glm::vec3 color);
+	std::optional<uint32_t> get_light_id(std::string light_UID);
+	LightComponent& get_light(uint32_t id);
 private:
 	ComponentsManager(){}
 	~ComponentsManager(){}

@@ -1,5 +1,6 @@
 #include <Entities/Enemies/Slime.h>
 #include <Utility/TimeManager.h>
+#include <Utility/GameContext.h>
 
 void GameEntity::Slime::on_create() {
 	anim_idle = anim_controller.get_clip_id(0);

@@ -1,6 +1,7 @@
 #pragma once
 #include <Entities/GameEntities.h>
 #include <Entities/Player.h>
+#include <Rendering/OpenGL_Renderer.h>
 
 namespace GameEntity {
 	constexpr uint32_t MAX_ENTITIES_RENDER = 500;

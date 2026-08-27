@@ -6,6 +6,7 @@
 #include <IOSystem/SystemContext.h>
 #include <Utility/TimeManager.h>
 #include <Utility/Math.h>
+#include <Objects/ObjectTypes/BlockInfo.h>
 
 void GameEntity::EntitySystem::init() {
 	entities.reserve(MAX_ENTITIES_RENDER);
@@ -87,10 +88,10 @@ void GameEntity::EntitySystem::update() {
 						ObjectInfo* obj_info_ptr = ObjectsDB::objectInfo[slot->tile_id].get();
 
 						//get main part or complex object
-						if (obj_info_ptr->objectType == ObjectType::isCompObjPart) {
+						if (obj_info_ptr->objectType == ObjectType::isMultiBlockTile) {
 							ObjectComponent* comp = obj_comps_ptr->find(slot_index)->second.get();
-							uint16_t main_slot_x = comp->get_column();
-							uint16_t main_slot_y = comp->get_line();
+							uint16_t main_slot_x = static_cast<MultiBlockTileComponent*>(comp)->column;
+							uint16_t main_slot_y = static_cast<MultiBlockTileComponent*>(comp)->line;
 							slot_index = main_slot_y * world_width + main_slot_x;
 							slot = &world_slots_ptr[slot_index];
 							obj_info_ptr = ObjectsDB::objectInfo[slot->tile_id].get();
@@ -98,7 +99,7 @@ void GameEntity::EntitySystem::update() {
 
 						//this shouldn't happen, as world slots logically have only these types, air is skipped at the beginning, but i'll leave it for now
 						if (obj_info_ptr->objectType != ObjectType::isBlock &&
-							obj_info_ptr->objectType != ObjectType::isComplexObject) continue;
+							obj_info_ptr->objectType != ObjectType::isMultiBlock) continue;
 
 						if (static_cast<BlockInfo*>(obj_info_ptr)->platform_collision &&
 							physx.linear_velocity.y <= 0.0f

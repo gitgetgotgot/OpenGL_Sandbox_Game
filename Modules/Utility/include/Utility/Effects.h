@@ -1,8 +1,8 @@
 #pragma once
-#include <Entities/Particle.h>
 #include <string>
-#include <vector>
 #include <unordered_set>
+#include <unordered_map>
+#include <optional>
 
 namespace Effects {
 	enum EffectType : uint8_t {
@@ -23,16 +23,14 @@ namespace Effects {
 	};
 
 	struct Effect {
+		Effect(float duration, uint32_t id) : duration{ duration }, id{ id } {}
+		bool updateEffect(float deltaTime);
+		
 		float duration;
-
 		float delta_dmg_time = 0.f; //delta time that is used for debuffs with damage
-
 		float particleSpawnInterval = 0.1f;
 		float currentParticleTime = 0.f;
 		uint32_t id;
-
-		Effect(float duration, uint32_t id) : duration{ duration }, id{ id } {}
-		bool updateEffect(float deltaTime);
 	};
 
 	class EffectData {
@@ -68,7 +66,7 @@ namespace Effects {
 			float effect_value, uint32_t ui_sprite_id, uint32_t particle_id = 0,
 			float particleSpawnInterval = 0.0f, float inflict_dmg_cd_time = 0.0f
 		);
-		uint32_t get_effect_id(std::string_view uid);
+		std::optional<uint32_t> get_effect_id(std::string_view uid);
 		EffectData& get_effect_info(uint32_t id);
 	private:
 		EffectsManager() {}

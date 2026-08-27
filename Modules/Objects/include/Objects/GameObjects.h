@@ -8,28 +8,29 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <Physics/Colliders.h>
+#include <Utility/DataParser.h>
+#include <Utility/DynamicArray.h>
+#include <iostream>
 
-//Object Class Types: {
-// Base = 0, Block = 1, Complex = 2, Wall = 3, Weapon = 4, InstrumentalWeapon = 5, MagicalWeapon = 6, Ammo = 7
-// }
-enum ObjectType : uint8_t {
-	None = 0, isBlock = 1, isWall = 2, isComplexObject = 3, isCompObjPart = 4, isWeapon = 5, isAmmo = 6, isArmor = 7, isMaterial = 8,
-	isCoin = 9, isAccessory = 10, isConsumable = 11, isPotion = 12
+constexpr uint32_t CHUNK_SIZE = 64;
+
+struct WorldSlot {
+	uint16_t tile_id = 0;
+	uint16_t wall_id = 0;
+	uint16_t flags = 0;
 };
-enum BlockType : uint8_t {
-	isSolidBlock = 0, isWood = 1, isTreeTop = 2, isPlatform = 3, isTorch = 4, isLiquid = 5, isGrass = 6, isPlant = 7, isGlass = 8,
-	isBottle = 9
+
+struct InventorySlot {
+	uint16_t item_id = 0;
+	uint16_t amount = 0;
 };
-enum ComplexObjectType : uint8_t {
-	isWorkbench = 0, isFurnace = 1, isChest = 2, isDoor = 3, isTable = 4, isChair = 5, isAnvil = 6, isLamp = 7, isChandelier = 8,
-	isLyfeCrystal = 9
-};
-enum WeaponType : uint8_t {
-	isPickaxe = 0, isSword = 1, isPiercing = 2, isAxe = 3, isHammer = 4, isGun = 5, isShotgun = 6, isBow = 7, isThrowable = 8,
-	isSpear = 9, isMagical = 10
-};
-enum AmmoType : uint8_t {
-	isArrow = 0, isBullet = 1, isMagicBall = 2
+
+struct Universal_UBO_Data {
+	glm::mat4 viewMatrix;
+	glm::mat4 projectionMatrix;
+	glm::ivec2 world_size;
+	float day_ratio;
+	float padding;
 };
 
 struct SpriteData {
@@ -51,25 +52,9 @@ struct ShaderLightingInfo {
 	uint8_t source_light_value;
 };
 
-constexpr uint32_t CHUNK_SIZE = 64;
-
-struct WorldSlot {
-	uint16_t tile_id = 0;
-	uint8_t wall_id = 0;
-	uint8_t flags = 0;
-};
-
-struct InventorySlot {
-	uint16_t item_id = 0;
-	uint16_t amount = 0;
-};
-
-struct Universal_UBO_Data {
-	glm::mat4 viewMatrix;
-	glm::mat4 projectionMatrix;
-	glm::ivec2 world_size;
-	float day_ratio;
-	float padding;
+struct EffectEntry {
+	uint16_t id = 0;
+	float duration = 0.0f;
 };
 
 constexpr float TEXT_DAMAGE_LIFETIME = 1.0f;
@@ -97,220 +82,26 @@ struct DamageText {
 	std::string text;
 };
 
-/*struct Button {
-	Button() {}
-	Button(std::string text, glm::vec2 center_pos, glm::vec2 size, glm::vec4 color, glm::vec4 active_color) : center_pos{ center_pos }, text{ text }, size{ size }, color{ color }, active_color{ active_color } {
-		position = { this->center_pos.x - size.x * 0.5, this->center_pos.y - size.y * 0.5 };
-	}
-	bool cursor_is_inside(float mouseX, float mouseY) {
-		if (mouseX >= position.x && mouseX <= position.x + size.x && mouseY >= position.y && mouseY <= position.y + size.y) {
-			isActive = true;
-			return true;
-		}
-		else {
-			isActive = false;
-			return false;
-		}
-	}
-	void update_pressed_state(Mouse& mouse) {
-		if (mouse.left_button) {
-			if (mouse.mouseX >= position.x && mouse.mouseX <= position.x + size.x && mouse.mouseY >= position.y && mouse.mouseY <= position.y + size.y) {
-				isActive = true;
-			}
-			else {
-				isActive = false;
-			}
-		}
-	}
-	void update_buffer(ColorVertex2f*& buffer) const {
-		if (isActive) {
-			buffer->color = active_color;
-			buffer->pos = { position.x, position.y };
-			buffer++;
-			buffer->color = active_color;
-			buffer->pos = { position.x, position.y + size.y };
-			buffer++;
-			buffer->color = active_color;
-			buffer->pos = { position.x + size.x, position.y + size.y };
-			buffer++;
-			buffer->color = active_color;
-			buffer->pos = { position.x + size.x, position.y };
-			buffer++;
-		}
-		else {
-			buffer->color = color;
-			buffer->pos = { position.x, position.y };
-			buffer++;
-			buffer->color = color;
-			buffer->pos = { position.x, position.y + size.y };
-			buffer++;
-			buffer->color = color;
-			buffer->pos = { position.x + size.x, position.y + size.y };
-			buffer++;
-			buffer->color = color;
-			buffer->pos = { position.x + size.x, position.y };
-			buffer++;
-		}
-	}
-	bool isActive = false;
-	std::string text;
-	glm::vec2 size;
-	glm::vec2 position;
-	glm::vec2 center_pos;
-	glm::vec4 color, active_color;
+enum ObjectType : uint8_t {
+	None, isMultiBlockTile, isWall, isBlock, isMultiBlock, isItem, isWeapon, isAmmo, isConsumable, isArmor, isArtifact, isCoin
 };
-struct TextField {
-	TextField() {}
-	TextField(std::string text, glm::vec2 center_pos, glm::vec2 size, glm::vec4 color, glm::vec4 active_color) : center_pos{ center_pos }, text{ text }, size{ size }, color{ color }, active_color{ active_color } {
-		position = { this->center_pos.x - size.x * 0.5, this->center_pos.y - size.y * 0.5 };
-	}
-	void update_for_fileName_input(Mouse& mouse, bool* keyStates) {
-		if (mouse.left_button) {
-			//mouse.left_button = false;
-			if (mouse.mouseX >= position.x && mouse.mouseX <= position.x + size.x && mouse.mouseY >= position.y && mouse.mouseY <= position.y + size.y) {
-				isActive = true;
-			}
-			else {
-				isActive = false;
-			}
-		}
-		if (isActive) {
-			if (text.size() < 20) {
-				for (int i = 65; i < 90; i++)  //key codes for GLFW from A to Z
-					if (keyStates[i]) {
-						if (keyStates[GLFW_KEY_LEFT_SHIFT] || keyStates[GLFW_KEY_RIGHT_SHIFT]) text += (char)i; //capital letter
-						else text += (char)(i + 32); //not capital letter
-						keyStates[i] = false;
-						return;
-					}
-				for (int i = 48; i < 58; i++) //numbers from 0 to 9
-					if (keyStates[i]) {
-						text += (char)i;
-						keyStates[i] = false;
-						return;
-					}
-				if (keyStates[32]) { //space
-					text += (char)32;
-					keyStates[32] = false;
-				}
-				if (keyStates[45]) { //-
-					text += (char)45;
-					keyStates[45] = false;
-				}
-				if (keyStates[95]) { //_
-					text += (char)95;
-					keyStates[95] = false;
-				}
-			}
-			if (keyStates[GLFW_KEY_BACKSPACE] && text.size() > 0) {
-				keyStates[GLFW_KEY_BACKSPACE] = false;
-				text.resize(text.size() - 1);
-			}
-		}
 
-	}
-	void update_for_input(Mouse& mouse, bool* keyStates) {
-		if (mouse.left_button) {
-			mouse.left_button = false;
-			if (mouse.mouseX >= position.x && mouse.mouseX <= position.x + size.x && mouse.mouseY >= position.y && mouse.mouseY <= position.y + size.y) {
-				isActive = true;
-			}
-			else {
-				isActive = false;
-			}
-		}
-		if (isActive) {
-			if (text.size() < 20) {
-				for (int i = 65; i < 90; i++)  //key codes for GLFW from A to Z
-					if (keyStates[i]) {
-						if (keyStates[GLFW_KEY_LEFT_SHIFT] || keyStates[GLFW_KEY_RIGHT_SHIFT]) text += (char)i; //capital letter
-						else text += (char)(i + 32); //not capital letter
-						keyStates[i] = false;
-						return;
-					}
-				for (int i = 32; i < 65; i++) //from space to @
-					if (keyStates[i]) {
-						text += (char)i;
-						keyStates[i] = false;
-						return;
-					}
-				for (int i = 91; i < 97; i++) //from [ to `
-					if (keyStates[i]) {
-						text += (char)i;
-						keyStates[i] = false;
-						return;
-					}
-				for (int i = 123; i < 127; i++) //from { to ~
-					if (keyStates[i]) {
-						text += (char)i;
-						keyStates[i] = false;
-						return;
-					}
-			}
-			if (keyStates[GLFW_KEY_BACKSPACE] && text.size() > 0) {
-				keyStates[GLFW_KEY_BACKSPACE] = false;
-				text.resize(text.size() - 1);
-			}
-		}
-	}
-	void update_buffer(ColorVertex2f*& buffer) const {
-		if (isActive) {
-			buffer->color = active_color;
-			buffer->pos = { position.x, position.y };
-			buffer++;
-			buffer->color = active_color;
-			buffer->pos = { position.x, position.y + size.y };
-			buffer++;
-			buffer->color = active_color;
-			buffer->pos = { position.x + size.x, position.y + size.y };
-			buffer++;
-			buffer->color = active_color;
-			buffer->pos = { position.x + size.x, position.y };
-			buffer++;
-		}
-		else {
-			buffer->color = color;
-			buffer->pos = { position.x, position.y };
-			buffer++;
-			buffer->color = color;
-			buffer->pos = { position.x, position.y + size.y };
-			buffer++;
-			buffer->color = color;
-			buffer->pos = { position.x + size.x, position.y + size.y };
-			buffer++;
-			buffer->color = color;
-			buffer->pos = { position.x + size.x, position.y };
-			buffer++;
-		}
-	}
-	bool isActive = false;
-	std::string text;
-	glm::vec2 size;
-	glm::vec2 position;
-	glm::vec2 center_pos;
-	glm::vec4 color, active_color;
-};*/
-
-//classes that contain info about all objects
 class ObjectInfo {
 public:
-	ObjectInfo(ObjectType type, std::string_view uid, uint16_t effect_id = 0, uint16_t light_id = 0) :
-		objectType{ type }, uid{ uid }, effect_id{ effect_id }, light_id{ light_id } {
+	ObjectInfo(ObjectType type, std::string_view uid) :
+		objectType{ type }, uid{ uid } {
 		size_t pos = uid.rfind(':');
 		if (pos == std::string_view::npos) name = uid; //if ':' not found, but this shouldn't happen if resource file is correct
 		else name = uid.substr(pos + 1);
 	}
 	virtual ~ObjectInfo() {}
 
-	//main info
-	ObjectType objectType = None;
+	ObjectType objectType = ObjectType::None;
 	std::string_view uid, name;
-	uint32_t sprite_id = 0;
-
-	//usable components (if ID = 0 then no component is used)
-	uint16_t effect_id = 0;
-	float effect_duration = 0.0f;
-	uint16_t light_id = 0;
+	DynamicArray<uint32_t> sprites;
+	DynamicArray<uint16_t> drops;
+	DynamicArray<EffectEntry> effects;
+	DynamicArray<uint16_t> lights;
 };
 
 class ObjectsDB {
@@ -320,293 +111,88 @@ public:
 	inline static std::vector<std::unique_ptr<ObjectInfo>> objectInfo;
 };
 
-struct AmbientObject {
-	glm::vec2 sprite_size;
-	glm::vec2 position;
-};
-/*class AmbientController {
+class ObjectFactoryI {
 public:
-	AmbientController() {}
-	AmbientController(float dayTime) : dayTime{ dayTime } {}
-	AmbientObject sun, moon[2], clouds[2], far_clouds[3], sky_stars[6];
-	uint32_t sprites[5];
-	void updateAmbientLayer(bool isDay, float cycleTime, float dayRatio, SpriteData*& ptr, float ScreenWidth, float ScreenHeight, float blockSize, float deltaTime) {
-		//sky stars
-		glm::vec2* tex = sprites[4];
-		glm::mat4 matModel;
-		float stars_opacity = 0.f;
-		if (!isDay) {
-			if (cycleTime <= dayTime * 0.1) stars_opacity = cycleTime / (dayTime * 0.1);
-			else if (cycleTime >= dayTime * 0.9) stars_opacity = (dayTime - cycleTime) / (dayTime * 0.1);
-			else stars_opacity = 1.f;
-		}
-		for (int i = 0; i < 6; i++) {
-			sky_stars[i].position.x += deltaTime * blockSize * sky_stars_speed;
-		}
-		if (sky_stars[0].position.x >= ScreenWidth) {
-			sky_stars[0].position.x -= ScreenWidth * 0.5;
-			sky_stars[1].position.x -= ScreenWidth * 0.5;
-			sky_stars[2].position.x -= ScreenWidth * 0.5;
-			sky_stars[3].position.x -= ScreenWidth * 0.5;
-			sky_stars[4].position.x -= ScreenWidth * 0.5;
-			sky_stars[5].position.x -= ScreenWidth * 0.5;
-		}
-		for (int i = 0; i < 6; i++) {
-			ptr->tex_UV[0] = tex[0];
-			ptr->tex_UV[1] = tex[1];
-			ptr->tex_UV[2] = tex[2];
-			ptr->tex_UV[3] = tex[3];
-			ptr->opacity = stars_opacity;
-			matModel = glm::mat4(1.f);
-			matModel = glm::translate(matModel, glm::vec3(sky_stars[i].position.x, sky_stars[i].position.y, 0.f));
-			matModel = glm::scale(matModel, glm::vec3(ScreenWidth * 0.5, ScreenHeight * 0.5, 0.f));
-			ptr->modelMatrix = matModel;
-			ptr++;
-		}
-		//far clouds
-		far_clouds[0].position.x -= deltaTime * blockSize * far_clouds_speed;
-		far_clouds[1].position.x -= deltaTime * blockSize * far_clouds_speed;
-		far_clouds[2].position.x -= deltaTime * blockSize * far_clouds_speed;
-		if (far_clouds[0].position.x + ScreenWidth * 0.5 <= 0.f) {
-			far_clouds[0].position.x += ScreenWidth * 0.5;
-			far_clouds[1].position.x += ScreenWidth * 0.5;
-			far_clouds[2].position.x += ScreenWidth * 0.5;
-		}
-		if (dayRatio < 0.02) dayRatio = 0.02;
-		tex = texture_coords[3];
-		for (int i = 0; i < 3; i++) {
-			ptr->tex_UV[0] = tex[0];
-			ptr->tex_UV[1] = tex[1];
-			ptr->tex_UV[2] = tex[2];
-			ptr->tex_UV[3] = tex[3];
-			ptr->light_level = dayRatio;
-			matModel = glm::mat4(1.f);
-			matModel = glm::translate(matModel, glm::vec3(far_clouds[i].position.x, ScreenHeight - ScreenWidth * 0.13f, 0.f));
-			matModel = glm::scale(matModel, glm::vec3(ScreenWidth * 0.5, ScreenWidth * 0.0625f, 0.f));
-			ptr->modelMatrix = matModel;
-			ptr++;
-		}
-		// Sun / Moon
-		if (isDay) {
-			chooseMoon = true;
-			tex = texture_coords[0];
-			ptr->tex_UV[0] = tex[0];
-			ptr->tex_UV[1] = tex[1];
-			ptr->tex_UV[2] = tex[2];
-			ptr->tex_UV[3] = tex[3];
-			glm::mat4 matModel(1.f);
-			matModel = glm::translate(matModel, glm::vec3(ScreenWidth / 2, -ScreenHeight * 0.55, 0.f));
-			matModel = glm::rotate(matModel, glm::radians(40.f - cycleTime * (80.f / dayTime)), glm::vec3(0.f, 0.f, 1.f));
-			matModel = glm::translate(matModel, glm::vec3(-blockSize * sun.sprite_size.x * 0.5, ScreenHeight * 1.5f - blockSize * sun.sprite_size.y * 0.5, 0.f));
-			matModel = glm::scale(matModel, glm::vec3(blockSize * sun.sprite_size.x, blockSize * sun.sprite_size.y, 0.f));
-			ptr->modelMatrix = matModel;
-		}
-		else {
-			if (chooseMoon) {
-				chooseMoon = false;
-				moon_index = rand() % 2;
-			}
-			tex = texture_coords[1 + moon_index];
-			ptr->tex_UV[0] = tex[0];
-			ptr->tex_UV[1] = tex[1];
-			ptr->tex_UV[2] = tex[2];
-			ptr->tex_UV[3] = tex[3];
-			glm::mat4 matModel(1.f);
-			matModel = glm::translate(matModel, glm::vec3(ScreenWidth / 2, -ScreenHeight * 0.55, 0.f));
-			matModel = glm::rotate(matModel, glm::radians(40.f - cycleTime * (80.f / dayTime)), glm::vec3(0.f, 0.f, 1.f));
-			matModel = glm::translate(matModel, glm::vec3(-blockSize * moon[moon_index].sprite_size.x * 0.5, ScreenHeight * 1.5f - blockSize * moon[moon_index].sprite_size.y * 0.5, 0.f));
-			matModel = glm::scale(matModel, glm::vec3(blockSize * moon[moon_index].sprite_size.x, blockSize * moon[moon_index].sprite_size.y, 0.f));
-			ptr->modelMatrix = matModel;
-		}
-		ptr++;
-		//clouds
-		tex = texture_coords[3];
-		clouds[0].position.x -= deltaTime * blockSize * clouds_speed;
-		clouds[1].position.x -= deltaTime * blockSize * clouds_speed;
-		if (clouds[0].position.x + ScreenWidth <= 0.f) {
-			clouds[0].position.x += ScreenWidth;
-			clouds[1].position.x += ScreenWidth;
-		}
-		ptr->tex_UV[0] = tex[0];
-		ptr->tex_UV[1] = tex[1];
-		ptr->tex_UV[2] = tex[2];
-		ptr->tex_UV[3] = tex[3];
-		ptr->light_level = dayRatio;
-		matModel = glm::mat4(1.f);
-		matModel = glm::translate(matModel, glm::vec3(clouds[0].position.x, ScreenHeight - ScreenWidth * 0.125f, 0.f));
-		matModel = glm::scale(matModel, glm::vec3(ScreenWidth, ScreenWidth * 0.125f, 0.f));
-		ptr->modelMatrix = matModel;
-		ptr++;
-		ptr->tex_UV[0] = tex[0];
-		ptr->tex_UV[1] = tex[1];
-		ptr->tex_UV[2] = tex[2];
-		ptr->tex_UV[3] = tex[3];
-		ptr->light_level = dayRatio;
-		matModel = glm::mat4(1.f);
-		matModel = glm::translate(matModel, glm::vec3(clouds[1].position.x, ScreenHeight - ScreenWidth * 0.125f, 0.f));
-		matModel = glm::scale(matModel, glm::vec3(ScreenWidth, ScreenWidth * 0.125f, 0.f));
-		ptr->modelMatrix = matModel;
-		ptr++;
-		
+	virtual void add_object(DataNode& data) = 0;
+	virtual ~ObjectFactoryI() = default;
+};
+
+namespace GameObjects {
+	//base method that fills base data (sprites, effects, lights), except dependencies (drops)
+	void fill_base_data(DataNode& data, ObjectInfo* info);
+	void throw_reference_error(std::string_view item_uid, std::string_view resource_uid);
+	void throw_resource_error(std::string_view item_uid, std::string_view msg);
+}
+
+template<typename T, ObjectType main_type = ObjectType::None>
+class ObjectInfoFactory : public ObjectFactoryI {
+public:
+	static_assert(std::is_base_of_v<ObjectInfo, T>, "T must inherit from ObjectInfo");
+
+	//virtual main method to add info
+	void add_object(DataNode& data) override {
+		create_object_info(data);
+	}
+protected:
+	//base method that adds info to ObjectsDB
+	ObjectInfo* create_object_info(DataNode& data) {
+		std::string UID = data["UID"].get_as<std::string>();
+		auto set_it = ObjectsDB::UID_set.emplace(UID);
+		std::string_view uid_view = *(set_it.first);
+		ObjectsDB::UID_to_ID.emplace(uid_view, ObjectsDB::objectInfo.size());
+
+		ObjectInfo* info = ObjectsDB::objectInfo.emplace_back(std::make_unique<T>(main_type, uid_view)).get();
+		GameObjects::fill_base_data(data, info);
+		return info;
+	}
+};
+
+class ObjectFactoryRegistry {
+public:
+	static ObjectFactoryRegistry* get_instance() {
+		static ObjectFactoryRegistry registry;
+		return &registry;
+	}
+	void register_factory(std::string class_uid, std::unique_ptr<ObjectFactoryI> factory) {
+		object_class_to_factory_id.emplace(class_uid, factories.size());
+		factories.emplace_back(std::move(factory));
+	}
+	ObjectFactoryI* get_factory(uint32_t factory_id) {
+		return factories[factory_id].get();
+	}
+	std::optional<uint32_t> get_factory_id(std::string class_uid) {
+		auto it = object_class_to_factory_id.find(class_uid);
+		if (it == object_class_to_factory_id.end()) return std::nullopt;
+		else return it->second;
 	}
 private:
-	bool chooseMoon = false;
-	int moon_index = 0;
-	float dayTime;
-	float clouds_speed = 1.f; //1 block per second
-	float far_clouds_speed = 0.5f; //half block per second
-	float sky_stars_speed = 0.25f; //quarter block per second
-};*/
-
-class WallInfo : public ObjectInfo {
-public:
-	WallInfo(std::string_view uid, float toughness) :
-		ObjectInfo(ObjectType::isWall, uid), toughness{ toughness } {}
-
-	float toughness = 1.0f;
-	uint16_t drop_id = 0;
-};
-
-class BlockInfo : public ObjectInfo {
-public:
-	BlockInfo(
-		std::string_view uid, BlockType type, float toughness, bool collision,
-		bool platform_collision, uint32_t effect_comp_id = 0, uint32_t light_id = 0
-	) :
-		ObjectInfo(isBlock, uid, effect_comp_id, light_id), type{ type }, toughness{ toughness },
-		collision{ collision }, platform_collision{ platform_collision } {}
-
-	BlockType type = BlockType::isSolidBlock;
-	float toughness = 1;
-	uint16_t drop_id = 0;
-	bool collision = false;
-	bool platform_collision = false; //object behaves like a platform with only one direction collision
-};
-
-class ComplexObjectInfo : public BlockInfo {
-public:
-	//it doesn't matter what type of BlockType is used for the BlockInfo constructor here, so it's just isSolidBlock
-	ComplexObjectInfo(
-		std::string_view uid, ComplexObjectType type, float toughness, float blocks_width,
-		float blocks_height, bool collision, bool platform_collision, uint32_t effect_comp_id = 0, uint32_t light_id = 0
-	) :
-		BlockInfo(uid, isSolidBlock, collision, platform_collision, effect_comp_id, light_id),
-		blocks_width{ blocks_width }, complex_type{ type }, blocks_height{ blocks_height } {
-		objectType = isComplexObject;
-	}
-
-	ComplexObjectType complex_type;
-	float blocks_width, blocks_height;
-};
-
-class WeaponInfo : public ObjectInfo {
-public:
-	WeaponInfo(std::string_view uid, WeaponType type, int dmg, float sizeX, float sizeY, float crit_chance, float speed, bool is_stackable,
-		uint32_t use_sound_id) :
-		ObjectInfo(ObjectType::isWeapon, uid), type{ type }, damage{ dmg }, size_x{ sizeX }, size_y{ sizeY }, crit_chance{ crit_chance },
-		speed{ speed }, is_stackable{ is_stackable }, use_sound_id{ use_sound_id } {}
-
-	WeaponType type;
-	int damage;
-	float size_x = 1.f;
-	float size_y = 1.f;
-	float crit_chance = 0.f;
-	float speed = 1.f;
-	bool is_stackable = false;
-	uint32_t use_sound_id = 0;
-	uint32_t projectile_id = 0; //if it's a sword with projectiles, magic weapon or throwable weapon, etc. (0 means no projectile)
-	float projectile_cd = 0.0f; //projectile cooldown
-};
-
-class InstrumentalWeaponInfo : public WeaponInfo {
-public:
-	InstrumentalWeaponInfo(std::string_view uid, WeaponType type, float power, float range, int dmg, float sizeX, float sizeY,
-		float crit_chance, float speed, bool is_stackable, uint32_t use_sound_id) :
-		WeaponInfo(uid, type, dmg, sizeX, sizeY, crit_chance, speed, is_stackable, use_sound_id),
-		power{ power }, range{ range } {}
-
-	float power = 1.0f;
-	float range = 1.0f;
-};
-
-class MagicalWeaponInfo : public WeaponInfo {
-public:
-	MagicalWeaponInfo(std::string_view uid, WeaponType type, uint32_t mana_cost, int dmg, float sizeX, float sizeY,
-		float crit_chance, float speed, bool is_stackable, uint32_t use_sound_id) :
-		WeaponInfo(uid, type, dmg, sizeX, sizeY, crit_chance, speed, is_stackable, use_sound_id),
-		mana_cost{ mana_cost } {}
-
-	uint32_t mana_cost;
-};
-
-class AmmoInfo : public ObjectInfo {
-public:
-	AmmoInfo(std::string_view uid, AmmoType type, int dmg, float sizeX, float sizeY,
-		uint32_t effect_comp_id = 0, uint32_t light_id = 0) :
-		ObjectInfo(isAmmo, uid, effect_comp_id, light_id), type{ type },
-		damage{ dmg }, size_x{ sizeX }, size_y{ sizeY } {}
-
-	AmmoType type;
-	uint32_t entity_id;
-	int damage;
-	float size_x;
-	float size_y;
+	std::unordered_map<std::string, uint32_t> object_class_to_factory_id;
+	std::vector<std::unique_ptr<ObjectFactoryI>> factories;
+	ObjectFactoryRegistry() {}
+	~ObjectFactoryRegistry() {}
 };
 
 //OBJECT COMPONENTS
 class ObjectComponent {
 public:
 	virtual ~ObjectComponent() {}
-	virtual uint16_t get_column() const { return 0; }
-	virtual uint16_t get_line() const { return 0; }
-	virtual InventorySlot* get_chest_slots() { return nullptr; }
-	virtual uint8_t get_door_state() const { return 0; }
 };
 
-class ComplexObjectPartComponent : public ObjectComponent {
+class MultiBlockTileComponent : public ObjectComponent {
 public:
-	ComplexObjectPartComponent(uint16_t column, uint16_t line) :column{ column }, line{ line } {}
-	uint16_t get_column() const override { return column; }
-	uint16_t get_line() const override { return line; }
-private:
+	MultiBlockTileComponent(uint16_t column, uint16_t line) :column{ column }, line{ line } {}
 	uint16_t column, line;
 };
 
 class ChestComponent : public ObjectComponent {
 public:
-	InventorySlot* get_chest_slots() override { return chest_slots; }
-private:
 	InventorySlot chest_slots[40];
 };
 
 class DoorComponent : public ObjectComponent {
 public:
 	DoorComponent(uint8_t state) : door_state{ state } {}
-	uint8_t get_door_state() const override { return door_state; }
-private:
 	uint8_t door_state = 0; //0 - closed, 1 - opened to left, 2 - opened to right
-};
-
-class GameObject {
-public:
-	GameObject() {}
-	GameObject(ObjectType type, unsigned short object_ID) : object_type{ type }, object_id{ object_ID }, component{ nullptr } {}
-	GameObject(ObjectType type, unsigned short object_ID, ObjectComponent* component) : object_type{ type }, object_id{ object_ID }, component{component} {}
-	GameObject& operator=(GameObject&& other) noexcept {
-		if (this == &other) return *this;
-		object_type = other.object_type;
-		object_id = other.object_id;
-		delete component;
-		component = other.component;
-		other.component = nullptr;
-		return *this;
-	}
-	~GameObject() {
-		delete component;
-	}
-	unsigned short object_id = 0;
-	ObjectType object_type = None;
-	ObjectComponent* component = nullptr;
 };
 
 struct EntityInfoText {
@@ -633,7 +219,7 @@ struct ActiveWeapon { //draw sprite for active weapon (also should be used for t
 	glm::mat4 modelMatrix;
 	glm::vec2 tex_coords[4];
 	float tex_id = 0.f;
-	WeaponType weapon_type;
+	//WeaponType weapon_type;
 	Collider_2D_OBB hitbox;
 };
 

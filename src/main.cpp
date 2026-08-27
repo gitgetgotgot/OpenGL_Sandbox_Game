@@ -35,7 +35,12 @@ int main() {
 	modded_speaker->speak();
 
 	Game game;
-	game.init();
+	try {
+		game.init();
+	}
+	catch (const std::exception& e) {
+		std::cerr << "[INIT]: " << e.what() << std::endl;
+		return EXIT_FAILURE;
+	}
 	game.main_loop();
-	game.uninit();
 }

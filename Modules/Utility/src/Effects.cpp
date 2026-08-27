@@ -1,4 +1,4 @@
-#include <Entities/Effects.h>
+#include <Utility/Effects.h>
 
 bool Effects::Effect::updateEffect(float deltaTime) {
 	duration -= deltaTime;
@@ -21,8 +21,12 @@ void Effects::EffectsManager::add_effect_info(EffectType type, std::string uid, 
 	effects_data.emplace_back(type, uid_view, stat, ui_sprite_id, effect_value, particle_id, particleSpawnInterval, inflict_dmg_cd_time);
 }
 
-uint32_t Effects::EffectsManager::get_effect_id(std::string_view uid) {
-	return effects_UID_to_ID[uid];
+std::optional<uint32_t> Effects::EffectsManager::get_effect_id(std::string_view uid) {
+	auto it = effects_UID_to_ID.find(uid);
+	if (it != effects_UID_to_ID.end())
+		return it->second;
+	else
+		return std::nullopt;
 }
 
 Effects::EffectData& Effects::EffectsManager::get_effect_info(uint32_t id) {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Audio/AudioManager.h>
-#include <Entities/Effects.h>
+#include <Utility/Effects.h>
 #include <Physics/Colliders.h>
 #include <Entities/Animation.h>
 
@@ -183,8 +183,8 @@ namespace GameEntity {
 	class EntityFactoryRegistry {
 	public:
 		static EntityFactoryRegistry* get_instance() {
-			static EntityFactoryRegistry mgr;
-			return &mgr;
+			static EntityFactoryRegistry registry;
+			return &registry;
 		}
 		void register_factory(std::string class_name, std::unique_ptr<EntityFactory> factory) {
 			entity_class_to_factory_id.emplace(class_name, factories.size());

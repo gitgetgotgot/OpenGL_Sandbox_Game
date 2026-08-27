@@ -1,0 +1,132 @@
+[
+  {
+    "UID": "Item:Core:Workbench",
+    "class_UID": "Class:Core:MultiBlock",
+    "sub_type": 0,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Workbench",
+    "width": 2,
+    "height": 1,
+    "platform_collision": true,
+    "sprites": [ "Sprite:Core:Workbench" ]
+  },
+  {
+    "UID": "Item:Core:Furnace",
+    "class_UID": "Class:Core:MultiBlock",
+    "sub_type": 1,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Furnace",
+    "width": 3,
+    "height": 2,
+    "lights": [ "Light:Core:Fire" ],
+    "sprites": [ "Sprite:Core:Furnace" ]
+  },
+  {
+    "UID": "Item:Core:Anvil",
+    "class_UID": "Class:Core:MultiBlock",
+    "sub_type": 6,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Anvil",
+    "width": 2,
+    "height": 1,
+    "sprites": [ "Sprite:Core:Anvil" ]
+  },
+  {
+    "UID": "Item:Core:Oak Table",
+    "class_UID": "Class:Core:MultiBlock",
+    "sub_type": 4,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Oak Table",
+    "width": 3,
+    "height": 2,
+    "sprites": [ "Sprite:Core:Oak Table" ]
+  },
+  {
+    "UID": "Item:Core:Oak Chair",
+    "class_UID": "Class:Core:MultiBlock",
+    "sub_type": 5,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Oak Chair",
+    "width": 1,
+    "height": 2,
+    "sprites": [ "Sprite:Core:Oak Chair" ]
+  },
+  {
+    "UID": "Item:Core:Oak Chair(R)",
+    "class_UID": "Class:Core:MultiBlock",
+    "sub_type": 5,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Oak Chair(R)",
+    "width": 1,
+    "height": 2,
+    "sprites": [ "Sprite:Core:Oak Chair(R)" ]
+  },
+  {
+    "UID": "Item:Core:Chest",
+    "class_UID": "Class:Core:MultiBlock",
+    "sub_type": 2,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Chest",
+    "width": 2,
+    "height": 2,
+    "sprites": [ "Sprite:Core:Chest" ]
+  },
+  {
+    "UID": "Item:Core:ChestOpen",
+    "class_UID": "Class:Core:MultiBlock",
+    "sub_type": 2,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Chest",
+    "width": 2,
+    "height": 2,
+    "sprites": [ "Sprite:Core:ChestOpen" ]
+  },
+  {
+    "UID": "Item:Core:Life Crystal",
+    "class_UID": "Class:Core:MultiBlock",
+    "sub_type": 9,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Life Crystal",
+    "width": 2,
+    "height": 2,
+    "effects": [
+      {
+        "effect_UID": "Effect:Core:LifeCrystalBuff",
+        "duration": 10.0
+      }
+    ],
+    "lights": [ "Light:Core:RedLight" ],
+    "sprites": [ "Sprite:Core:Life Crystal" ]
+  },
+  {
+    "UID": "Item:Core:Oak Door",
+    "class_UID": "Class:Core:MultiBlock",
+    "sub_type": 3,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Oak Door",
+    "width": 2,
+    "height": 3,
+    "sprites": [ "Sprite:Core:Oak Door" ]
+  },
+  {
+    "UID": "Item:Core:Oak Door(R)",
+    "class_UID": "Class:Core:MultiBlock",
+    "sub_type": 3,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Oak Door",
+    "width": 2,
+    "height": 3,
+    "sprites": [ "Sprite:Core:Oak Door(R)" ]
+  },
+  {
+    "UID": "Item:Core:Oak Door(C)",
+    "class_UID": "Class:Core:MultiBlock",
+    "sub_type": 3,
+    "toughness": 1,
+    "drop_UID": "Item:Core:Oak Door",
+    "width": 1,
+    "height": 3,
+    "collision": true,
+    "sprites": [ "Sprite:Core:Oak Door(C)" ]
+  }
+]

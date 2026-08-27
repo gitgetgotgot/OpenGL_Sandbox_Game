@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Entities/Effects.h>
+#include <Utility/Effects.h>
 #include <Physics/Colliders.h>
 #include <Objects/Inventory.h>
 
