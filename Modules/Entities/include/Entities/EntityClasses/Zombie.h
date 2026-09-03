@@ -1,7 +1,8 @@
 #pragma once
-#include <Entities/GameEntities.h>
+#include <Entities/EntityClasses/Mob.h>
+#include <Entities/EntityFactory.h>
 
-namespace GameEntity {
+namespace CoreEntity {
 	class Zombie : public Mob {
 		uint32_t anim_idle = 0, anim_walk = 0, anim_jump = 0;
 	public:
@@ -63,13 +64,5 @@ namespace GameEntity {
 		int sign = -1;
 	};
 
-	class ZombieFactory : public EntityFactory {
-	public:
-		std::unique_ptr<EntityBase> spawn_entity(
-			uint32_t entity_global_ID,
-			float world_x, float world_y
-		) override {
-			return std::make_unique<Zombie>(entity_global_ID, glm::vec2(world_x, world_y));
-		}
-	};
+	class ZombieFactory : public EntityFactory<Zombie> {};
 }

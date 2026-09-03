@@ -1,9 +1,11 @@
 #pragma once
-#include <Objects/GameObjects.h>
+#include "Objects/ObjectFactory.h"
 
-class ArtifactInfo : public ObjectInfo {
-public:
-	ArtifactInfo(ObjectType type, std::string_view uid) : ObjectInfo(type, uid) {}
-};
+namespace CoreObject {
+	class ArtifactInfo : public ObjectInfo {
+	public:
+		ArtifactInfo(ObjectType type) : ObjectInfo(type) {}
+	};
 
-class ArtifactInfoFactory : public ObjectInfoFactory<ArtifactInfo, ObjectType::isArtifact> {};
+	class ArtifactInfoFactory : public ObjectInfoFactory<ArtifactInfo, ObjectType::isArtifact> {};
+}

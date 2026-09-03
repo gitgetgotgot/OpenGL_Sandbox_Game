@@ -1,14 +1,23 @@
 #include <Entities/EntityRegistry.h>
-#include <Entities/GameEntities.h>
-#include <Entities/Enemies/Slime.h>
-#include <Entities/Enemies/Zombie.h>
-#include <Entities/Enemies/FlyingEye.h>
+#include <Entities/EntityInfoFactory.h>
+#include <Entities/EntityFactory.h>
 
-void register_core_entity_factories() {
-	namespace GE = GameEntity;
-	GE::EntityFactoryRegistry* registry = GE::EntityFactoryRegistry::get_instance();
+#include <Entities/EntityTypes/MobInfo.h>
+
+#include <Entities/EntityClasses/Slime.h>
+#include <Entities/EntityClasses/Zombie.h>
+#include <Entities/EntityClasses/FlyingEye.h>
+
+void CoreEntity::register_core_entity_info_factories() {
+	EntityInfoFactoryRegistry* registry = EntityInfoFactoryRegistry::get_instance();
+
+	registry->register_factory("Class:Core:Mob", std::make_unique<MobInfoFactory>());
+}
+
+void CoreEntity::register_core_entity_factories() {
+	EntityFactoryRegistry* registry = EntityFactoryRegistry::get_instance();
 	
-	registry->register_factory("Class:Core:Slime", std::make_unique<GE::SlimeFactory>());
-	registry->register_factory("Class:Core:Zombie", std::make_unique<GE::ZombieFactory>());
-	registry->register_factory("Class:Core:FlyingEye", std::make_unique<GE::FlyingEyeFactory>());
+	registry->register_factory("Class:Core:Slime", std::make_unique<SlimeFactory>());
+	registry->register_factory("Class:Core:Zombie", std::make_unique<ZombieFactory>());
+	registry->register_factory("Class:Core:FlyingEye", std::make_unique<FlyingEyeFactory>());
 }

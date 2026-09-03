@@ -1200,19 +1200,6 @@ void Game::init() {
 	init_open_gl();
 	init_input();
 
-	spriteMgr = SpriteManager::get_instance();
-	craft_sys = CraftingSystem::get_instance();
-	effectsManager = Effects::EffectsManager::get_instance();
-	effectsManager->init(10);
-
-	ObjectsDB::objectInfo.reserve(200);
-	GameEntity::EntityDB::entityInfo.reserve(20);
-
-	const float block_UV_size = 1.f / 32.f;
-	const float pixel_UV_size = 1.f / 512.f;
-	SpriteManager::MAIN_PIXEL_UV_SIZE = pixel_UV_size;
-	SpriteManager::MAIN_BLOCK_UV_SIZE = block_UV_size;
-
 	ResourceLoader* resourceLoader = ResourceLoader::get_instance();
 	resourceLoader->Load_Resources();
 

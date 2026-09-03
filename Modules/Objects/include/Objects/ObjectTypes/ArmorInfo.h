@@ -1,9 +1,11 @@
 #pragma once
-#include <Objects/GameObjects.h>
+#include "Objects/ObjectFactory.h"
 
-class ArmorInfo : public ObjectInfo {
-public:
-	ArmorInfo(ObjectType type, std::string_view uid) : ObjectInfo(type, uid) {}
-};
+namespace CoreObject {
+	class ArmorInfo : public ObjectInfo {
+	public:
+		ArmorInfo(ObjectType type) : ObjectInfo(type) {}
+	};
 
-class ArmorInfoFactory : public ObjectInfoFactory<ArmorInfo, ObjectType::isArmor> {};
+	class ArmorInfoFactory : public ObjectInfoFactory<ArmorInfo, ObjectType::isArmor> {};
+}

@@ -1,3 +1,5 @@
 #pragma once
 
-void register_core_object_factories();
+namespace CoreObject {
+	void register_core_object_factories();
+}

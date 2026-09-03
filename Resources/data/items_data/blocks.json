@@ -4,7 +4,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 0,
     "toughness": 1,
-    "drop_UID": "Item:Core:Stone",
+    "drops": [
+      {
+        "UID": "Item:Core:Stone",
+        "Amount": 1
+      }
+    ],
     "collision": true,
     "sprites": [ "Sprite:Core:Stone" ]
   },
@@ -13,7 +18,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 0,
     "toughness": 1,
-    "drop_UID": "Item:Core:Dirt",
+    "drops": [
+      {
+        "UID": "Item:Core:Dirt",
+        "Amount": 1
+      }
+    ],
     "collision": true,
     "sprites": [ "Sprite:Core:Dirt" ]
   },
@@ -22,7 +32,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 0,
     "toughness": 1,
-    "drop_UID": "Item:Core:Grass Dirt",
+    "drops": [
+      {
+        "UID": "Item:Core:Grass Dirt",
+        "Amount": 1
+      }
+    ],
     "collision": true,
     "sprites": [ "Sprite:Core:Grass Dirt" ]
   },
@@ -31,7 +46,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 0,
     "toughness": 1,
-    "drop_UID": "Item:Core:Sand",
+    "drops": [
+      {
+        "UID": "Item:Core:Sand",
+        "Amount": 1
+      }
+    ],
     "collision": true,
     "sprites": [ "Sprite:Core:Sand" ]
   },
@@ -40,7 +60,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 1,
     "toughness": 1,
-    "drop_UID": "Item:Core:Oak",
+    "drops": [
+      {
+        "UID": "Item:Core:Oak",
+        "Amount": 1
+      }
+    ],
     "collision": false,
     "sprites": [ "Sprite:Core:Oak" ]
   },
@@ -49,7 +74,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 0,
     "toughness": 1,
-    "drop_UID": "Item:Core:Oak Planks",
+    "drops": [
+      {
+        "UID": "Item:Core:Oak Planks",
+        "Amount": 1
+      }
+    ],
     "collision": true,
     "sprites": [ "Sprite:Core:Oak Planks" ]
   },
@@ -58,7 +88,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 0,
     "toughness": 1,
-    "drop_UID": "Item:Core:Crimson Stone",
+    "drops": [
+      {
+        "UID": "Item:Core:Crimson Stone",
+        "Amount": 1
+      }
+    ],
     "collision": true,
     "sprites": [ "Sprite:Core:Crimson Stone" ]
   },
@@ -67,7 +102,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 0,
     "toughness": 1,
-    "drop_UID": "Item:Core:Corrupted Stone",
+    "drops": [
+      {
+        "UID": "Item:Core:Corrupted Stone",
+        "Amount": 1
+      }
+    ],
     "collision": true,
     "sprites": [ "Sprite:Core:Corrupted Stone" ]
   },
@@ -76,7 +116,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 0,
     "toughness": 1,
-    "drop_UID": "Item:Core:Copper Ore",
+    "drops": [
+      {
+        "UID": "Item:Core:Copper Ore",
+        "Amount": 1
+      }
+    ],
     "collision": true,
     "sprites": [ "Sprite:Core:Copper Ore" ]
   },
@@ -85,7 +130,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 0,
     "toughness": 1,
-    "drop_UID": "Item:Core:Iron Ore",
+    "drops": [
+      {
+        "UID": "Item:Core:Iron Ore",
+        "Amount": 1
+      }
+    ],
     "collision": true,
     "sprites": [ "Sprite:Core:Iron Ore" ]
   },
@@ -94,7 +144,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 0,
     "toughness": 1,
-    "drop_UID": "Item:Core:Gold Ore",
+    "drops": [
+      {
+        "UID": "Item:Core:Gold Ore",
+        "Amount": 1
+      }
+    ],
     "collision": true,
     "sprites": [ "Sprite:Core:Gold Ore" ]
   },
@@ -103,7 +158,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 5,
     "toughness": 1,
-    "drop_UID": "Item:Core:Water",
+    "drops": [
+      {
+        "UID": "Item:Core:Water",
+        "Amount": 1
+      }
+    ],
     "collision": false,
     "sprites": [ "Sprite:Core:Water" ]
   },
@@ -112,7 +172,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 0,
     "toughness": 1,
-    "drop_UID": "Item:Core:Snow",
+    "drops": [
+      {
+        "UID": "Item:Core:Snow",
+        "Amount": 1
+      }
+    ],
     "collision": true,
     "sprites": [ "Sprite:Core:Snow" ]
   },
@@ -121,7 +186,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 0,
     "toughness": 1,
-    "drop_UID": "Item:Core:Ice",
+    "drops": [
+      {
+        "UID": "Item:Core:Ice",
+        "Amount": 1
+      }
+    ],
     "collision": true,
     "sprites": [ "Sprite:Core:Ice" ]
   },
@@ -130,7 +200,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 0,
     "toughness": 1,
-    "drop_UID": "Item:Core:Snow Grass Dirt",
+    "drops": [
+      {
+        "UID": "Item:Core:Snow Grass Dirt",
+        "Amount": 1
+      }
+    ],
     "collision": true,
     "sprites": [ "Sprite:Core:Snow Grass Dirt" ]
   },
@@ -139,7 +214,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 0,
     "toughness": 1,
-    "drop_UID": "Item:Core:Crimson Grass Dirt",
+    "drops": [
+      {
+        "UID": "Item:Core:Crimson Grass Dirt",
+        "Amount": 1
+      }
+    ],
     "collision": true,
     "sprites": [ "Sprite:Core:Crimson Grass Dirt" ]
   },
@@ -148,7 +228,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 0,
     "toughness": 1,
-    "drop_UID": "Item:Core:Corrupted Grass Dirt",
+    "drops": [
+      {
+        "UID": "Item:Core:Corrupted Grass Dirt",
+        "Amount": 1
+      }
+    ],
     "collision": true,
     "sprites": [ "Sprite:Core:Corrupted Grass Dirt" ]
   },
@@ -157,7 +242,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 6,
     "toughness": 1,
-    "drop_UID": "Item:Core:Grass",
+    "drops": [
+      {
+        "UID": "Item:Core:Grass",
+        "Amount": 1
+      }
+    ],
     "collision": false,
     "sprites": [ "Sprite:Core:Grass" ]
   },
@@ -166,7 +256,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 6,
     "toughness": 1,
-    "drop_UID": "Item:Core:Corrupted Grass",
+    "drops": [
+      {
+        "UID": "Item:Core:Corrupted Grass",
+        "Amount": 1
+      }
+    ],
     "collision": false,
     "sprites": [ "Sprite:Core:Corrupted Grass" ]
   },
@@ -175,7 +270,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 6,
     "toughness": 1,
-    "drop_UID": "Item:Core:Crimson Grass",
+    "drops": [
+      {
+        "UID": "Item:Core:Crimson Grass",
+        "Amount": 1
+      }
+    ],
     "collision": false,
     "sprites": [ "Sprite:Core:Crimson Grass" ]
   },
@@ -184,7 +284,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 7,
     "toughness": 1,
-    "drop_UID": "Item:Core:Day Flower",
+    "drops": [
+      {
+        "UID": "Item:Core:Day Flower",
+        "Amount": 1
+      }
+    ],
     "collision": false,
     "sprites": [ "Sprite:Core:Day Flower" ]
   },
@@ -193,7 +298,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 4,
     "toughness": 1,
-    "drop_UID": "Item:Core:Torch",
+    "drops": [
+      {
+        "UID": "Item:Core:Torch",
+        "Amount": 1
+      }
+    ],
     "collision": false,
     "lights": [ "Light:Core:Torch" ],
     "sprites": [ "Sprite:Core:Torch" ]
@@ -203,7 +313,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 4,
     "toughness": 1,
-    "drop_UID": "Item:Core:Torch",
+    "drops": [
+      {
+        "UID": "Item:Core:Torch",
+        "Amount": 1
+      }
+    ],
     "collision": false,
     "lights": [ "Light:Core:Torch" ],
     "sprites": [ "Sprite:Core:Torch(L)" ]
@@ -213,7 +328,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 4,
     "toughness": 1,
-    "drop_UID": "Item:Core:Torch",
+    "drops": [
+      {
+        "UID": "Item:Core:Torch",
+        "Amount": 1
+      }
+    ],
     "collision": false,
     "lights": [ "Light:Core:Torch" ],
     "sprites": [ "Sprite:Core:Torch(R)" ]
@@ -223,7 +343,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 4,
     "toughness": 1,
-    "drop_UID": "Item:Core:Ice Torch",
+    "drops": [
+      {
+        "UID": "Item:Core:Ice Torch",
+        "Amount": 1
+      }
+    ],
     "collision": false,
     "lights": [ "Light:Core:IceTorch" ],
     "sprites": [ "Sprite:Core:Ice Torch" ]
@@ -233,7 +358,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 4,
     "toughness": 1,
-    "drop_UID": "Item:Core:Ice Torch",
+    "drops": [
+      {
+        "UID": "Item:Core:Ice Torch",
+        "Amount": 1
+      }
+    ],
     "collision": false,
     "lights": [ "Light:Core:IceTorch" ],
     "sprites": [ "Sprite:Core:Ice Torch(L)" ]
@@ -243,7 +373,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 4,
     "toughness": 1,
-    "drop_UID": "Item:Core:Ice Torch",
+    "drops": [
+      {
+        "UID": "Item:Core:Ice Torch",
+        "Amount": 1
+      }
+    ],
     "collision": false,
     "lights": [ "Light:Core:IceTorch" ],
     "sprites": [ "Sprite:Core:Ice Torch(R)" ]
@@ -253,7 +388,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 8,
     "toughness": 1,
-    "drop_UID": "Item:Core:Glass",
+    "drops": [
+      {
+        "UID": "Item:Core:Glass",
+        "Amount": 1
+      }
+    ],
     "collision": true,
     "sprites": [ "Sprite:Core:Glass" ]
   },
@@ -262,7 +402,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 3,
     "toughness": 1,
-    "drop_UID": "Item:Core:Oak Platform",
+    "drops": [
+      {
+        "UID": "Item:Core:Oak Platform",
+        "Amount": 1
+      }
+    ],
     "collision": false,
     "platform_collision": true,
     "sprites": [ "Sprite:Core:Oak Platform" ]
@@ -272,7 +417,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 3,
     "toughness": 1,
-    "drop_UID": "Item:Core:Oak Platform",
+    "drops": [
+      {
+        "UID": "Item:Core:Oak Platform",
+        "Amount": 1
+      }
+    ],
     "collision": false,
     "platform_collision": true,
     "sprites": [ "Sprite:Core:Oak Platform(L)" ]
@@ -282,7 +432,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 3,
     "toughness": 1,
-    "drop_UID": "Item:Core:Oak Platform",
+    "drops": [
+      {
+        "UID": "Item:Core:Oak Platform",
+        "Amount": 1
+      }
+    ],
     "collision": false,
     "platform_collision": true,
     "sprites": [ "Sprite:Core:Oak Platform(R)" ]
@@ -292,7 +447,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 7,
     "toughness": 1,
-    "drop_UID": "Item:Core:Mushroom",
+    "drops": [
+      {
+        "UID": "Item:Core:Mushroom",
+        "Amount": 1
+      }
+    ],
     "collision": false,
     "sprites": [ "Sprite:Core:Mushroom" ]
   },
@@ -301,7 +461,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 7,
     "toughness": 1,
-    "drop_UID": "Item:Core:Glowing Mushroom",
+    "drops": [
+      {
+        "UID": "Item:Core:Glowing Mushroom",
+        "Amount": 1
+      }
+    ],
     "collision": false,
     "sprites": [ "Sprite:Core:Glowing Mushroom" ]
   },
@@ -310,7 +475,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 0,
     "toughness": 1,
-    "drop_UID": "Item:Core:Hardened Sand",
+    "drops": [
+      {
+        "UID": "Item:Core:Hardened Sand",
+        "Amount": 1
+      }
+    ],
     "collision": true,
     "sprites": [ "Sprite:Core:Hardened Sand" ]
   },
@@ -318,49 +488,84 @@
     "UID": "Item:Core:Stone Wall",
     "class_UID": "Class:Core:Wall",
     "toughness": 1,
-    "drop_UID": "Item:Core:Stone Wall",
+    "drops": [
+      {
+        "UID": "Item:Core:Stone Wall",
+        "Amount": 1
+      }
+    ],
     "sprites": [ "Sprite:Core:Stone Wall" ]
   },
   {
     "UID": "Item:Core:Dirt Wall",
     "class_UID": "Class:Core:Wall",
     "toughness": 1,
-    "drop_UID": "Item:Core:Dirt Wall",
+    "drops": [
+      {
+        "UID": "Item:Core:Dirt Wall",
+        "Amount": 1
+      }
+    ],
     "sprites": [ "Sprite:Core:Dirt Wall" ]
   },
   {
     "UID": "Item:Core:Oak Wall",
     "class_UID": "Class:Core:Wall",
     "toughness": 1,
-    "drop_UID": "Item:Core:Oak Wall",
+    "drops": [
+      {
+        "UID": "Item:Core:Oak Wall",
+        "Amount": 1
+      }
+    ],
     "sprites": [ "Sprite:Core:Oak Wall" ]
   },
   {
     "UID": "Item:Core:Crimson Wall",
     "class_UID": "Class:Core:Wall",
     "toughness": 1,
-    "drop_UID": "Item:Core:Crimson Wall",
+    "drops": [
+      {
+        "UID": "Item:Core:Crimson Wall",
+        "Amount": 1
+      }
+    ],
     "sprites": [ "Sprite:Core:Crimson Wall" ]
   },
   {
     "UID": "Item:Core:Corrupted Wall",
     "class_UID": "Class:Core:Wall",
     "toughness": 1,
-    "drop_UID": "Item:Core:Corrupted Wall",
+    "drops": [
+      {
+        "UID": "Item:Core:Corrupted Wall",
+        "Amount": 1
+      }
+    ],
     "sprites": [ "Sprite:Core:Corrupted Wall" ]
   },
   {
     "UID": "Item:Core:Snow Wall",
     "class_UID": "Class:Core:Wall",
     "toughness": 1,
-    "drop_UID": "Item:Core:Snow Wall",
+    "drops": [
+      {
+        "UID": "Item:Core:Snow Wall",
+        "Amount": 1
+      }
+    ],
     "sprites": [ "Sprite:Core:Snow Wall" ]
   },
   {
     "UID": "Item:Core:Sand Wall",
     "class_UID": "Class:Core:Wall",
     "toughness": 1,
-    "drop_UID": "Item:Core:Sand Wall",
+    "drops": [
+      {
+        "UID": "Item:Core:Sand Wall",
+        "Amount": 1
+      }
+    ],
     "sprites": [ "Sprite:Core:Sand Wall" ]
   },
   {
@@ -368,7 +573,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 2,
     "toughness": 1,
-    "drop_UID": "Item:Core:Oak Tree Top",
+    "drops": [
+      {
+        "UID": "Item:Core:Oak Tree Top",
+        "Amount": 1
+      }
+    ],
     "sprites": [ "Sprite:Core:Oak Tree Top" ]
   },
   {
@@ -376,7 +586,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 2,
     "toughness": 1,
-    "drop_UID": "Item:Core:Oak Branch(L)",
+    "drops": [
+      {
+        "UID": "Item:Core:Oak Branch(L)",
+        "Amount": 1
+      }
+    ],
     "sprites": [ "Sprite:Core:Oak Branch(L)" ]
   },
   {
@@ -384,7 +599,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 2,
     "toughness": 1,
-    "drop_UID": "Item:Core:Oak Branch(R)",
+    "drops": [
+      {
+        "UID": "Item:Core:Oak Branch(R)",
+        "Amount": 1
+      }
+    ],
     "sprites": [ "Sprite:Core:Oak Branch(R)" ]
   },
   {
@@ -440,7 +660,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 9,
     "toughness": 1,
-    "drop_UID": "Item:Core:Bottle",
+    "drops": [
+      {
+        "UID": "Item:Core:Bottle",
+        "Amount": 1
+      }
+    ],
     "collision": false,
     "sprites": [ "Sprite:Core:Bottle" ]
   },
@@ -449,7 +674,12 @@
     "class_UID": "Class:Core:Block",
     "sub_type": 9,
     "toughness": 1,
-    "drop_UID": "Item:Core:Bottle of Water",
+    "drops": [
+      {
+        "UID": "Item:Core:Bottle of Water",
+        "Amount": 1
+      }
+    ],
     "collision": false,
     "sprites": [ "Sprite:Core:Bottle of Water" ]
   },

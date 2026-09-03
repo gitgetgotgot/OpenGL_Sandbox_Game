@@ -1,9 +1,7 @@
 #pragma once
-#include <Objects/GameObjects.h>
-#include <cstdint>
-#include <vector>
-#include <unordered_map>
+#include <Utility/CommonData.h>
 #include <unordered_set>
+#include <unordered_map>
 
 enum class CraftCondition : uint16_t {
 	c_NOTHING     = 0,
@@ -41,10 +39,8 @@ struct ItemCrafts {
 
 class CraftingSystem {
 public:
-	static CraftingSystem* get_instance() {
-		static CraftingSystem sys;
-		return &sys;
-	}
+	static CraftingSystem* get_instance();
+	void ClearData();
 	void update_available_crafts(InventorySlot* inventory_slots_ptr, uint32_t slots_size, uint32_t player_flags);
 	void add(uint16_t item_id, uint16_t amount, CraftCondition condition, std::vector<CraftingPair> items_needed);
 	CraftableItem& get_available_craft(uint32_t index);

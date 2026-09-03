@@ -1,7 +1,8 @@
 #pragma once
-#include <Entities/GameEntities.h>
+#include <Entities/EntityClasses/Mob.h>
+#include <Entities/EntityFactory.h>
 
-namespace GameEntity {
+namespace CoreEntity {
 	class Slime : public Mob {
 		uint32_t anim_idle = 0, anim_jump = 0;
 	public:
@@ -17,13 +18,5 @@ namespace GameEntity {
 		float time_standing = 0.f; //time when slime is not moving
 	};
 
-	class SlimeFactory : public EntityFactory {
-	public:
-		std::unique_ptr<EntityBase> spawn_entity(
-			uint32_t entity_global_ID,
-			float world_x, float world_y
-		) override {
-			return std::make_unique<Slime>(entity_global_ID, glm::vec2(world_x, world_y));
-		}
-	};
+	class SlimeFactory : public EntityFactory<Slime> {};
 }

@@ -3,7 +3,7 @@
 #include <Utility/Math.h>
 #include <Utility/Sprite.h>
 #include <Utility/GameContext.h>
-#include <Utility/AppliableComps.h>
+#include <Utility/Lights.h>
 #include <glm/glm.hpp>
 
 struct ParticleInfo {

@@ -5,9 +5,9 @@
 #include <Objects/Inventory.h>
 
 struct PlayerStats {
-	std::vector<Effects::Effect> effects;
+	std::vector<CoreResource::Effect> effects;
 	void updateEffects(float deltaTime);
-	void manage_effect(Effects::Effect& effect, bool apply);
+	void manage_effect(CoreResource::Effect& effect, bool apply);
 	void inflictDamage(float dmg) { HP -= dmg; }
 
 	float HP = 100;

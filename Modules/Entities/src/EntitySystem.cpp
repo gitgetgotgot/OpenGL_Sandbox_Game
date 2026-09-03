@@ -1,14 +1,15 @@
-#include <Entities/EntitySystem.h>
-#include <Entities/Enemies/Slime.h>
-#include <Entities/Enemies/Zombie.h>
-#include <Entities/Enemies/FlyingEye.h>
-#include <Entities/Projectile.h>
+#include "Entities/EntitySystem.h"
+#include "Entities/EntityClasses/Mob.h"
 #include <IOSystem/SystemContext.h>
 #include <Utility/TimeManager.h>
 #include <Utility/Math.h>
 #include <Objects/ObjectTypes/BlockInfo.h>
+#include <Objects/ObjectManager.h>
 
-void GameEntity::EntitySystem::init() {
+void CoreEntity::EntitySystem::init() {
+	entity_mgr = EntityInfoManager::get_instance();
+	entity_factory_reg = EntityFactoryRegistry::get_instance();
+
 	entities.reserve(MAX_ENTITIES_RENDER);
 	entity_render_buf.reserve(MAX_ENTITIES_RENDER);
 	entity_render_buf.resize(MAX_ENTITIES_RENDER);
@@ -39,17 +40,18 @@ void GameEntity::EntitySystem::init() {
 	instance_ebo->unbind_EBO();
 }
 
-void GameEntity::EntitySystem::update() {
+void CoreEntity::EntitySystem::update() {
 	int size = entities.size();
 	for (int i = 0; i < size; i++) {
-		EntityBase* entity = entities[i].get();
-		Transform& tr = entity->transform;
-		EntityInfo* info = EntityDB::entityInfo[entity->entity_id].get();
+		EntityBase* entity_base = entities[i].get();
+		Transform& tr = entity_base->transform;
+		EntityInfo* info = entity_mgr->get_entity_info(entity_base->entity_id);
 		EntityRenderData& render_data = entity_render_buf[i];
 
 		//update physics
-		if (info->type == EntityType::isMob) {
-			MobPhysics& physx = static_cast<Mob*>(entity)->physics;
+		if (info->main_type == EntityMainType::isMob) {
+			Mob* entity = static_cast<Mob*>(entity_base);
+			MobPhysics& physx = entity->physics;
 			float width = entity->hitbox.size.x;
 			float height = entity->hitbox.size.y;
 			float x = entity->hitbox.center.x - width * 0.5f;
@@ -85,23 +87,23 @@ void GameEntity::EntitySystem::update() {
 					WorldSlot* slot = &world_slots_ptr[slot_index];
 
 					if (slot->tile_id != 0) {
-						ObjectInfo* obj_info_ptr = ObjectsDB::objectInfo[slot->tile_id].get();
+						CoreObject::ObjectInfo* obj_info_ptr = CoreObject::ObjectManager::get_instance()->get_object_info(slot->tile_id);
 
 						//get main part or complex object
-						if (obj_info_ptr->objectType == ObjectType::isMultiBlockTile) {
-							ObjectComponent* comp = obj_comps_ptr->find(slot_index)->second.get();
-							uint16_t main_slot_x = static_cast<MultiBlockTileComponent*>(comp)->column;
-							uint16_t main_slot_y = static_cast<MultiBlockTileComponent*>(comp)->line;
+						if (obj_info_ptr->objectType == CoreObject::ObjectType::isMultiBlockTile) {
+							CoreObject::ObjectComponent* comp = obj_comps_ptr->find(slot_index)->second.get();
+							uint16_t main_slot_x = static_cast<CoreObject::MultiBlockTileComponent*>(comp)->column;
+							uint16_t main_slot_y = static_cast<CoreObject::MultiBlockTileComponent*>(comp)->line;
 							slot_index = main_slot_y * world_width + main_slot_x;
 							slot = &world_slots_ptr[slot_index];
-							obj_info_ptr = ObjectsDB::objectInfo[slot->tile_id].get();
+							obj_info_ptr = CoreObject::ObjectManager::get_instance()->get_object_info(slot->tile_id);
 						}
 
 						//this shouldn't happen, as world slots logically have only these types, air is skipped at the beginning, but i'll leave it for now
-						if (obj_info_ptr->objectType != ObjectType::isBlock &&
-							obj_info_ptr->objectType != ObjectType::isMultiBlock) continue;
+						if (obj_info_ptr->objectType != CoreObject::ObjectType::isBlock &&
+							obj_info_ptr->objectType != CoreObject::ObjectType::isMultiBlock) continue;
 
-						if (static_cast<BlockInfo*>(obj_info_ptr)->platform_collision &&
+						if (static_cast<CoreObject::BlockInfo*>(obj_info_ptr)->platform_collision &&
 							physx.linear_velocity.y <= 0.0f
 						) { //if object has platform-like collision
 							if (Collisions::getTypeCollisionAABBwithBlock(entity->hitbox, i, j) & CollisionType::BOTTOM && physx.current_Y_max_level > j) {
@@ -113,7 +115,7 @@ void GameEntity::EntitySystem::update() {
 								physx.platform_collision = true;
 							}
 						}
-						else if (static_cast<BlockInfo*>(obj_info_ptr)->collision) //usual collision
+						else if (static_cast<CoreObject::BlockInfo*>(obj_info_ptr)->collision) //usual collision
 							switch (Collisions::getTypeCollisionAABBwithBlock(entity->hitbox, i, j)) {
 							case CollisionType::LEFT:
 								if (delta_move.x < 0.0f) delta_move.x = 0.0f;
@@ -165,10 +167,10 @@ void GameEntity::EntitySystem::update() {
 		}
 
 		//update entity
-		entity->update();
+		entity_base->update();
 
 		//update render data
-		Sprite& sprite = *entity->current_sprite;
+		CoreResource::Sprite& sprite = *entity_base->current_sprite;
 		glm::vec2 sprite_adjustment(0.0f, sprite.base_size * sprite.ratio.y * 0.5f * tr.scale.y);
 		GameMath::update_2D_TRS(
 			render_data.modelMatrix,
@@ -185,13 +187,13 @@ void GameEntity::EntitySystem::update() {
 	entity_ssbo->update_data(entity_render_buf.data(), entities.size() * sizeof(EntityRenderData));
 }
 
-void GameEntity::EntitySystem::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
+void CoreEntity::EntitySystem::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
 	renderer->renderInstancedData(entity_sp, instance_vao, instance_vbo, instance_ebo, 6U, entities.size());
 }
 
-void GameEntity::EntitySystem::set_world_data(
+void CoreEntity::EntitySystem::set_world_data(
 	WorldSlot* world_slots_ptr, uint32_t world_width, uint32_t world_height,
-	std::unordered_map<uint32_t, std::unique_ptr<ObjectComponent>>* obj_comps_ptr
+	std::unordered_map<uint32_t, std::unique_ptr<CoreObject::ObjectComponent>>* obj_comps_ptr
 ) {
 	this->world_slots_ptr = world_slots_ptr;
 	this->world_width = world_width;
@@ -199,15 +201,13 @@ void GameEntity::EntitySystem::set_world_data(
 	this->obj_comps_ptr = obj_comps_ptr;
 }
 
-bool GameEntity::EntitySystem::spawn_entity(uint32_t id, glm::vec2 pos) {
-	std::unique_ptr<EntityInfo>& entityInfo = EntityDB::entityInfo[id];
-
-	entities.emplace_back(std::make_unique<Slime>(id, pos));
-	entities.back()->on_create();
-	
+bool CoreEntity::EntitySystem::spawn_entity(uint32_t id, glm::vec2 pos) {
+	uint32_t factory_id = entity_mgr->get_entity_info(id)->factory_ID;
+	EntityFactoryI* factory = entity_factory_reg->get_factory(factory_id);
+	entities.emplace_back(factory->spawn(id, pos.x, pos.y));
 	return true;
 }
 
-bool GameEntity::EntitySystem::spawn_projectile() {
+bool CoreEntity::EntitySystem::spawn_projectile() {
 	return false;
 }

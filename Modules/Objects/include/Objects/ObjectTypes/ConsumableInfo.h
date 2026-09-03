@@ -1,13 +1,15 @@
 #pragma once
-#include <Objects/GameObjects.h>
+#include "Objects/ObjectFactory.h"
 
-enum ConsumableType : uint8_t {
-	isFood = 0, isPotion = 1
-};
+namespace CoreObject {
+	enum ConsumableType : uint8_t {
+		isFood = 0, isPotion = 1
+	};
 
-class ConsumableInfo : public ObjectInfo {
-public:
-	ConsumableInfo(ObjectType type, std::string_view uid) : ObjectInfo(type, uid) {}
-};
+	class ConsumableInfo : public ObjectInfo {
+	public:
+		ConsumableInfo(ObjectType type) : ObjectInfo(type) {}
+	};
 
-class ConsumableInfoFactory : public ObjectInfoFactory<ConsumableInfo, ObjectType::isConsumable> {};
+	class ConsumableInfoFactory : public ObjectInfoFactory<ConsumableInfo, ObjectType::isConsumable> {};
+}

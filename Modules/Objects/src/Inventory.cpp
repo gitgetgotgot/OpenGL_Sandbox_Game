@@ -1,7 +1,6 @@
-#include <Objects/Inventory.h>
+#include "Objects/Inventory.h"
 #include <IOSystem/SystemContext.h>
 #include <Utility/TimeManager.h>
-#include <iostream>
 
 void Inventory::init() {
 	crafting_system_ptr = CraftingSystem::get_instance();

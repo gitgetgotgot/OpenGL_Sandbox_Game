@@ -2,7 +2,7 @@
 
 #include <Entities/GameEntities.h>
 
-namespace GameEntity {
+namespace CoreEntity {
 	class ProjectileInfo : public EntityInfo {
 	public:
 		ProjectileInfo(ProjectileType type, int ammo_item_id, int damage, int max_enemy_hits,

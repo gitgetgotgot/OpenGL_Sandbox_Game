@@ -1,7 +1,7 @@
 [
   {
     "UID": "Entity:Core:Slime",
-    "type": 0,
+    "class_UID": "Class:Core:Mob",
     "mob_type": 0,
     "enemy_type": 0,
     "move_type": 0,

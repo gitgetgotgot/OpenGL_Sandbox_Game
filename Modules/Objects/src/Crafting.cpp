@@ -1,4 +1,14 @@
-#include <Objects/Crafting.h>
+#include "Objects/Crafting.h"
+
+CraftingSystem* CraftingSystem::get_instance() {
+	static CraftingSystem sys;
+	return &sys;
+}
+
+void CraftingSystem::ClearData() {
+	crafts = {};
+	items_crafts = {};
+}
 
 void CraftingSystem::update_available_crafts(InventorySlot* inventory_slots_ptr, uint32_t slots_size, uint32_t player_flags) {
 	std::unordered_map</*ID*/uint16_t, /*Amount*/uint16_t> unique_items;

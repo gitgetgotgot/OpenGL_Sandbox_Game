@@ -1,18 +1,18 @@
-#include <Entities/Enemies/Slime.h>
+#include <Entities/EntityClasses/Slime.h>
 #include <Utility/TimeManager.h>
 #include <Utility/GameContext.h>
 
-void GameEntity::Slime::on_create() {
+void CoreEntity::Slime::on_create() {
 	anim_idle = anim_controller.get_clip_id(0);
 	anim_jump = anim_controller.get_clip_id(1);
 	anim_controller.play(anim_idle);
 }
 
-void GameEntity::Slime::on_destroy() {
+void CoreEntity::Slime::on_destroy() {
 
 }
 
-void GameEntity::Slime::update() {
+void CoreEntity::Slime::update() {
 	anim_controller.update();
 
 	if (physics.collision & CollisionType::BOTTOM || physics.platform_collision) {
@@ -44,7 +44,7 @@ void GameEntity::Slime::update() {
 	current_sprite = anim_controller.current_sprite;
 }
 
-void GameEntity::Slime::change_anim() {
+void CoreEntity::Slime::change_anim() {
 	switch (current_state) {
 	case SLIME_ANIM_STATE::SLIME_IDLE:
 		anim_controller.play(anim_idle);

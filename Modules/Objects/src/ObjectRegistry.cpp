@@ -1,15 +1,16 @@
-#include <Objects/ObjectRegistry.h>
-#include <Objects/ObjectTypes/WallInfo.h>
-#include <Objects/ObjectTypes/BlockInfo.h>
-#include <Objects/ObjectTypes/MultiBlockInfo.h>
-#include <Objects/ObjectTypes/ItemInfo.h>
-#include <Objects/ObjectTypes/WeaponInfo.h>
-#include <Objects/ObjectTypes/AmmoInfo.h>
-#include <Objects/ObjectTypes/ConsumableInfo.h>
-#include <Objects/ObjectTypes/ArmorInfo.h>
-#include <Objects/ObjectTypes/ArtifactInfo.h>
+#include "Objects/ObjectRegistry.h"
+#include "Objects/ObjectFactory.h"
+#include "Objects/ObjectTypes/WallInfo.h"
+#include "Objects/ObjectTypes/BlockInfo.h"
+#include "Objects/ObjectTypes/MultiBlockInfo.h"
+#include "Objects/ObjectTypes/ItemInfo.h"
+#include "Objects/ObjectTypes/WeaponInfo.h"
+#include "Objects/ObjectTypes/AmmoInfo.h"
+#include "Objects/ObjectTypes/ConsumableInfo.h"
+#include "Objects/ObjectTypes/ArmorInfo.h"
+#include "Objects/ObjectTypes/ArtifactInfo.h"
 
-void register_core_object_factories() {
+void CoreObject::register_core_object_factories() {
 	ObjectFactoryRegistry* registry = ObjectFactoryRegistry::get_instance();
 	
 	registry->register_factory("Class:Core:Wall",		std::make_unique<WallInfoFactory>());

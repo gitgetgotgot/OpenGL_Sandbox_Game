@@ -1,10 +1,9 @@
 #pragma once
-#include <cstdint>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <cstdint>
 #include <vector>
-#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <Utility/Math.h>
 
 class Screen {
 public:

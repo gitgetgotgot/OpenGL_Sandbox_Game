@@ -1,22 +1,13 @@
 #pragma once
-#include <Objects/GameObjects.h>
+#include "Objects/ObjectFactory.h"
 
-class WallInfo : public ObjectInfo {
-public:
-	WallInfo(ObjectType type, std::string_view uid) : ObjectInfo(type, uid) {}
-	float toughness = 1.0f;
-};
+namespace CoreObject {
+	class WallInfo : public ObjectInfo {
+	public:
+		WallInfo(ObjectType type) : ObjectInfo(type) {}
+		void fill_data(const DataNode& data) override;
+		float toughness = 1.0f;
+	};
 
-class WallInfoFactory : public ObjectInfoFactory<WallInfo, ObjectType::isWall> {
-public:
-	void add_object(DataNode& data) override {
-		ObjectInfo* info = create_object_info(data);
-		try {
-			float toughness = data["toughness"].get_as<float>();
-			static_cast<WallInfo*>(info)->toughness = toughness;
-		}
-		catch (const std::exception& e) {
-			GameObjects::throw_resource_error(info->uid, e.what());
-		}
-	}
-};
+	class WallInfoFactory : public ObjectInfoFactory<WallInfo, ObjectType::isWall> {};
+}

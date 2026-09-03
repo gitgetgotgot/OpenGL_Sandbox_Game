@@ -1,10 +1,10 @@
 #pragma once
 #include <string>
-#include <unordered_set>
+#include <deque>
 #include <unordered_map>
 #include <optional>
 
-namespace Effects {
+namespace CoreResource {
 	enum EffectType : uint8_t {
 		isHealSickness		= 0,
 		isBuff				= 1,
@@ -13,7 +13,7 @@ namespace Effects {
 		isUpgrade			= 4,
 		isHealing			= 5
 	};
-	enum StatType : uint8_t {
+	enum EffectStatType : uint8_t {
 		isTypeless	= 0,
 		isHP		= 1,
 		isDef		= 2,
@@ -35,7 +35,7 @@ namespace Effects {
 
 	class EffectData {
 	public:
-		EffectData(EffectType type, std::string_view uid, StatType stat, uint32_t ui_sprite_id, float effect_value,
+		EffectData(EffectType type, std::string_view uid, EffectStatType stat, uint32_t ui_sprite_id, float effect_value,
 			uint32_t particle_id = 0, float particle_spawn_cd = 0.0f, float dmg_cd = 0.0f) :
 			effect_type{ type }, uid{ uid }, stat_type{ stat }, sprite_id{ ui_sprite_id }, effect_value{ effect_value },
 			particle_id{ particle_id }, particle_spawn_cd{ particle_spawn_cd }, dmg_cd{ dmg_cd }
@@ -50,7 +50,7 @@ namespace Effects {
 		float particle_spawn_cd = 0.0f; //time between every particle spawned
 		float dmg_cd = 0.0f; //cd for a damaging debuff
 		float effect_value = 0.0f; //value of effect that is applied to HP, DEF, Mana, Damage, etc.
-		StatType stat_type = StatType::isTypeless;
+		EffectStatType stat_type = EffectStatType::isTypeless;
 		EffectType effect_type = EffectType::isBuff;
 		std::string_view uid, name;
 	};
@@ -61,8 +61,8 @@ namespace Effects {
 			static EffectsManager effectsMgr;
 			return &effectsMgr;
 		}
-		void init(uint32_t effects_size);
-		void add_effect_info(EffectType type, std::string uid, StatType stat,
+		void ClearData();
+		void add_effect_info(EffectType type, std::string uid, EffectStatType stat,
 			float effect_value, uint32_t ui_sprite_id, uint32_t particle_id = 0,
 			float particleSpawnInterval = 0.0f, float inflict_dmg_cd_time = 0.0f
 		);
@@ -71,9 +71,9 @@ namespace Effects {
 	private:
 		EffectsManager() {}
 		~EffectsManager() {}
-		std::unordered_set<std::string> effects_UID;
-		std::unordered_map<std::string_view, uint32_t> effects_UID_to_ID;
-		std::vector<EffectData> effects_data;
+		std::deque<std::string> UID_storage;
+		std::unordered_map<std::string_view, uint32_t> effect_UID_to_ID;
+		std::vector<EffectData> effects;
 	};
 
 }

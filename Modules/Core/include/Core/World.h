@@ -1,7 +1,8 @@
 #pragma once
-#include <Entities/EntitySystem.h>
 #include <Utility/SparseSet.h>
 #include <IOSystem/SystemContext.h>
+#include <Entities/EntitySystem.h>
+#include <Objects/ObjectComponents.h>
 
 struct Vertex2f {
 	Vertex2f() {}
@@ -53,13 +54,8 @@ public:
 private:
 	uint16_t width = 4224;
 	uint16_t height = 1216;
-
-	SpriteManager* spriteMgr = nullptr;
 	WorldSlot* world_slots = nullptr;
-	std::unordered_map<uint32_t, std::unique_ptr<ObjectComponent>> object_components;
-
-	GameEntity::EntitySystem* entity_system = nullptr;
-
+	std::unordered_map<uint32_t, std::unique_ptr<CoreObject::ObjectComponent>> object_components;
 	static const uint32_t RENDERABLE_CHUNKS_SIZE = 16;
 	ChunkRenderBuffer* render_buffers[RENDERABLE_CHUNKS_SIZE];
 

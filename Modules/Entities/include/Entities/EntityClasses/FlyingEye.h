@@ -1,7 +1,8 @@
 #pragma once
-#include <Entities/GameEntities.h>
+#include <Entities/EntityClasses/Mob.h>
+#include <Entities/EntityFactory.h>
 
-namespace GameEntity {
+namespace CoreEntity {
 	class FlyingEye : public Mob {
 		uint32_t flying_anim = 0;
 	public:
@@ -44,13 +45,5 @@ namespace GameEntity {
 		float flying_angle = 0.0f;
 	};
 
-	class FlyingEyeFactory : public EntityFactory {
-	public:
-		std::unique_ptr<EntityBase> spawn_entity(
-			uint32_t entity_global_ID,
-			float world_x, float world_y
-		) override {
-			return std::make_unique<FlyingEye>(entity_global_ID, glm::vec2(world_x, world_y));
-		}
-	};
+	class FlyingEyeFactory : public EntityFactory<FlyingEye> {};
 }

@@ -2,17 +2,17 @@
 
 void PlayerStats::updateEffects(float deltaTime) {
 	for (int i = 0; i < effects.size(); i++) {
-		Effects::Effect& effect = effects[i];
-		Effects::EffectData& effectData = Effects::EffectsManager::get_instance()->get_effect_info(effect.id);
+		CoreResource::Effect& effect = effects[i];
+		CoreResource::EffectData& effectData = CoreResource::EffectsManager::get_instance()->get_effect_info(effect.id);
 
 		if (effect.updateEffect(deltaTime)) {
-			if (effectData.effect_type == Effects::EffectType::isHealSickness) {
+			if (effectData.effect_type == CoreResource::EffectType::isHealSickness) {
 				hasPotionSickness = false;
 			}
-			else if (effectData.effect_type == Effects::EffectType::isBuff) {
+			else if (effectData.effect_type == CoreResource::EffectType::isBuff) {
 				manage_effect(effect, false); //remove effect
 			}
-			else if (effectData.effect_type == Effects::EffectType::isDebuff) {
+			else if (effectData.effect_type == CoreResource::EffectType::isDebuff) {
 				manage_effect(effect, false); //remove effect
 			}
 			effects.erase(effects.begin() + i);
@@ -20,7 +20,7 @@ void PlayerStats::updateEffects(float deltaTime) {
 			continue;
 		}
 
-		if (effectData.effect_type == Effects::EffectType::isDamagingDebuff)
+		if (effectData.effect_type == CoreResource::EffectType::isDamagingDebuff)
 			if (effect.delta_dmg_time >= effectData.dmg_cd) {
 				effect.delta_dmg_time = 0.0f;
 				inflictDamage(effectData.effect_value);
@@ -33,61 +33,61 @@ void PlayerStats::updateEffects(float deltaTime) {
 	}
 }
 
-void PlayerStats::manage_effect(Effects::Effect& effect, bool apply) {
-	Effects::EffectData& effectData = Effects::EffectsManager::get_instance()->get_effect_info(effect.id);
-	if (effectData.effect_type == Effects::EffectType::isBuff) {
+void PlayerStats::manage_effect(CoreResource::Effect& effect, bool apply) {
+	CoreResource::EffectData& effectData = CoreResource::EffectsManager::get_instance()->get_effect_info(effect.id);
+	if (effectData.effect_type == CoreResource::EffectType::isBuff) {
 		switch (effectData.stat_type) {
-		case Effects::StatType::isHP: {
+		case CoreResource::EffectStatType::isHP: {
 			if (apply) currentHP += effectData.effect_value;
 			else currentHP -= effectData.effect_value;
 			break;
 		}
-		case Effects::StatType::isDef: {
+		case CoreResource::EffectStatType::isDef: {
 			if (apply) DEF += effectData.effect_value;
 			else DEF -= effectData.effect_value;
 			break;
 		}
-		case Effects::StatType::isMana: {
+		case CoreResource::EffectStatType::isMana: {
 			if (apply) MANA += effectData.effect_value;
 			else MANA -= effectData.effect_value;
 			break;
 		}
-		case Effects::StatType::isRegen: {
+		case CoreResource::EffectStatType::isRegen: {
 			if (apply) regeneration += effectData.effect_value;
 			else regeneration -= effectData.effect_value;
 			break;
 		}
-		case Effects::StatType::isSpeed: {
+		case CoreResource::EffectStatType::isSpeed: {
 			if (apply) speedFactor += effectData.effect_value;
 			else speedFactor -= effectData.effect_value;
 			break;
 		}
 		}
 	}
-	else if (effectData.effect_type == Effects::EffectType::isDebuff) {
+	else if (effectData.effect_type == CoreResource::EffectType::isDebuff) {
 		switch (effectData.stat_type) {
-		case Effects::StatType::isHP: {
+		case CoreResource::EffectStatType::isHP: {
 
 		}
-		case Effects::StatType::isDef: {
+		case CoreResource::EffectStatType::isDef: {
 
 		}
-		case Effects::StatType::isMana: {
+		case CoreResource::EffectStatType::isMana: {
 
 		}
-		case Effects::StatType::isRegen: {
+		case CoreResource::EffectStatType::isRegen: {
 
 		}
-		case Effects::StatType::isSpeed: {
+		case CoreResource::EffectStatType::isSpeed: {
 
 		}
 		}
 	}
-	else if (effectData.effect_type == Effects::EffectType::isHealing) {
+	else if (effectData.effect_type == CoreResource::EffectType::isHealing) {
 		currentHP += effectData.effect_value;
 		if (currentHP > HP) currentHP = HP;
 	}
-	else if (effectData.effect_type == Effects::EffectType::isHealSickness) {
+	else if (effectData.effect_type == CoreResource::EffectType::isHealSickness) {
 		hasPotionSickness = true;
 	}
 }

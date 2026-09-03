@@ -41,29 +41,11 @@ private:
 	GLFWwindow* window;
 
 	Player player;
-	
-	ActiveWeapon active_weapon;
-	ActiveBreakableObject active_breakable_object;
-	EntityInfoText entity_info_text;
 
-	//Effects
-	Effects::EffectsManager* effectsManager = nullptr;
-	
-	//Crafting
-	CraftingSystem* craft_sys = nullptr;
-	//Entities
-	GameEntity::EntitySystem* entitySystem = nullptr;
 	//Game Time
 	TimeManager timeMgr;
 	//Main camera
 	Camera camera;
-
-	//MAIN ARRAYS AND VECTORS
-	std::vector<GameEntity::DroppedItem> dropped_items;
-	std::vector<DamageText> damage_text;
-
-	//textures
-	SpriteManager* spriteMgr = nullptr;
 
 	//Graphics main objects
 	std::unique_ptr<OpenGL_Renderer> renderer;
