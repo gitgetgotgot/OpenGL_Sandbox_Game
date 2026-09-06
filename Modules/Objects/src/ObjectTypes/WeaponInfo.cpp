@@ -4,7 +4,6 @@
 void CoreObject::WeaponInfo::fill_data(const DataNode& data) {
 	ObjectInfo::fill_data(data);
 	try {
-		uint8_t sub_type_id = data["sub_type"].get_as<uint8_t>();
 		uint32_t damage = data["dmg"].get_as<uint32_t>();
 		float crit_chance = data["crit_chance"].get_as<float>();
 		float speed = data["speed"].get_as<float>();
@@ -17,7 +16,6 @@ void CoreObject::WeaponInfo::fill_data(const DataNode& data) {
 		if (data.has_child("range")) range = data["range"].get_as<float>();
 		if (data.has_child("use_mana_cost")) use_mana_cost = data["use_mana_cost"].get_as<uint32_t>();
 
-		this->weapon_type = WeaponType(sub_type_id);
 		this->damage = damage;
 		this->crit_chance = crit_chance;
 		this->speed = speed;

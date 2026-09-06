@@ -1,12 +1,13 @@
 #pragma once
-#include <Entities/GameEntities.h>
+#include "Entities/EntityInfo.h"
 
 namespace CoreEntity {
 	class EntityInfoFactoryI {
 	public:
 		~EntityInfoFactoryI() {}
-		//virtual main method to add info
 		virtual void add_entity_info(const DataNode& data) = 0;
+	protected:
+		EntityInfo* register_entity_info(std::unique_ptr<EntityInfo> new_entity_info, const std::string& UID);
 	};
 
 	template<typename T, EntityMainType MAIN_TYPE>
@@ -19,32 +20,22 @@ namespace CoreEntity {
 		}
 	protected:
 		T* create_entity_info(const DataNode& data) {
-			return static_cast<T*>(EntityInfoManager::get_instance()->add_entity_info<T, MAIN_TYPE>(data));
+			std::string UID = data["UID"].get_as<std::string>();
+			std::unique_ptr<EntityInfo> new_info = std::make_unique<T>(MAIN_TYPE);
+			return static_cast<T*>(register_entity_info(std::move(new_info), UID));
 		}
 	};
 
 	class EntityInfoFactoryRegistry {
 	public:
-		static EntityInfoFactoryRegistry* get_instance() {
+		static EntityInfoFactoryRegistry& get_instance() {
 			static EntityInfoFactoryRegistry registry;
-			return &registry;
+			return registry;
 		}
-		void ClearData() {
-			class_UID_to_factory_ID = {};
-			std::vector<std::unique_ptr<EntityInfoFactoryI>>().swap(factories);
-		}
-		void register_factory(std::string class_name, std::unique_ptr<EntityInfoFactoryI> factory) {
-			class_UID_to_factory_ID.emplace(class_name, factories.size());
-			factories.emplace_back(std::move(factory));
-		}
-		EntityInfoFactoryI* get_factory(uint32_t factory_id) {
-			return factories[factory_id].get();
-		}
-		std::optional<uint32_t> get_factory_id(std::string entity_class) {
-			auto it = class_UID_to_factory_ID.find(entity_class);
-			if (it == class_UID_to_factory_ID.end()) return std::nullopt;
-			else return it->second;
-		}
+		void ClearData();
+		void register_factory(std::string class_name, std::unique_ptr<EntityInfoFactoryI> factory);
+		EntityInfoFactoryI* get_factory(uint32_t factory_id);
+		std::optional<uint32_t> get_factory_id(std::string entity_class);
 	private:
 		std::unordered_map<std::string, uint32_t> class_UID_to_factory_ID;
 		std::vector<std::unique_ptr<EntityInfoFactoryI>> factories;

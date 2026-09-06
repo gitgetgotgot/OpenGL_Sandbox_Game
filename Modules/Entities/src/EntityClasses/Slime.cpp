@@ -15,7 +15,7 @@ void CoreEntity::Slime::on_destroy() {
 void CoreEntity::Slime::update() {
 	anim_controller.update();
 
-	if (physics.collision & CollisionType::BOTTOM || physics.platform_collision) {
+	if (physics.collision_mask & CollisionType::BOTTOM || physics.platform_collision) {
 		time_standing += TimeManager::deltaTime;
 		physics.linear_velocity.x = 0.0f;
 		current_state = SLIME_ANIM_STATE::SLIME_IDLE;

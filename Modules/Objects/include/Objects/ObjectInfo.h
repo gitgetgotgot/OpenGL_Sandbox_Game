@@ -1,5 +1,5 @@
 #pragma once
-#include <Utility/CommonData.h>
+#include <Utility/ResourceData.h>
 #include <Utility/DataParser.h>
 #include <Utility/DynamicArray.h>
 
@@ -37,12 +37,15 @@ namespace CoreObject {
 	public:
 		ObjectInfo(ObjectType type);
 		virtual ~ObjectInfo() {}
-		void set_UID(std::string_view uid);
+		void _set_UID(std::string_view uid);
+		bool _has_tag(const uint16_t& TAG) const;
+		void _sort_tags() const;
 		virtual void fill_data(const DataNode& data);
 		virtual void fill_dependent_data(const DataNode& data);
 	public:
 		ObjectType objectType = ObjectType::None;
 		std::string_view uid, name;
+		DynamicArray<uint16_t> tags;
 		DynamicArray<uint32_t> sprites;
 		DynamicArray<DropEntry> drops;
 		DynamicArray<EffectEntry> effects;
@@ -50,6 +53,7 @@ namespace CoreObject {
 	};
 }
 
+/*
 struct ActiveWeapon { //draw sprite for active weapon (also should be used for tools, not only weapons, but it's not important for now)
 	bool isActive = false;
 	bool hitboxIsActive = false;
@@ -98,3 +102,4 @@ struct ActiveBreakableObject {
 	float time_to_break = 1.0f; //default
 	float time_breaking = 0.5f;
 };
+*/

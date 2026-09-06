@@ -1,18 +1,17 @@
 [
   {
     "UID": "Entity:Core:Slime",
-    "class_UID": "Class:Core:Mob",
-    "mob_type": 0,
-    "enemy_type": 0,
-    "move_type": 0,
+    "info_class_UID": "Class:Core:Mob",
+    "class_UID": "Class:Core:Slime",
+    "tags": [ "Core:Slime" ],
     "HP": 20.0,
     "DEF": 0.0,
     "DMG": 5.0,
-    "speed_x": 2.0,
-    "speed_y": 5.0,
-    "hitbox_w": 1.5,
-    "hitbox_h": 1.5,
-    "drop": [
+    "velocity_x": 2.0,
+    "velocity_y": 5.0,
+    "collider_w": 1.5,
+    "collider_h": 1.5,
+    "drops": [
       {
         "item_UID": "Item:Core:Gel",
         "chance": 50.0,

@@ -2,12 +2,7 @@
 #include "Objects/ObjectManager.h"
 
 CoreObject::ObjectInfo* CoreObject::_ObjectFactoryI::register_object_info(std::unique_ptr<CoreObject::ObjectInfo> new_object_info, const std::string& UID) {
-	return CoreObject::ObjectManager::get_instance()->register_object_info(std::move(new_object_info), UID);
-}
-
-CoreObject::ObjectFactoryRegistry* CoreObject::ObjectFactoryRegistry::get_instance() {
-	static CoreObject::ObjectFactoryRegistry registry;
-	return &registry;
+	return CoreObject::ObjectManager::get_instance().register_object_info(std::move(new_object_info), UID);
 }
 
 void CoreObject::ObjectFactoryRegistry::ClearData() {

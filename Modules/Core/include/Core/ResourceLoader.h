@@ -15,9 +15,9 @@ constexpr bool DEBUG = false;
 
 class ResourceLoader {
 public:
-	static ResourceLoader* get_instance() {
+	static ResourceLoader& get_instance() {
 		static ResourceLoader loader;
-		return &loader;
+		return loader;
 	}
 	void Load_Resources();
 	void Hot_Reload();
@@ -31,10 +31,10 @@ public:
 	void load_crafts(const std::vector<std::filesystem::path>& mod_paths) const;
 	void load_animation_clips_data(const std::vector<std::filesystem::path>& mod_paths) const;
 	void load_animation_animators_data(const std::vector<std::filesystem::path>& mod_paths) const;
-	void load_entities_data(const std::vector<std::filesystem::path>& mod_paths) const;
+	void load_entities_data(const std::vector<std::filesystem::path>& mod_paths, std::vector<DataParser>& entity_data_parsers) const;
 
 	void resolve_items_dependencies(const std::vector<DataParser>& item_data_parsers) const;
-	void resolve_entities_dependencies();
+	void resolve_entities_dependencies(const std::vector<DataParser>& entity_data_parsers) const;
 private:
 	ResourceLoader() {}
 	~ResourceLoader() {}

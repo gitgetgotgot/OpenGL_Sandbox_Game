@@ -1,5 +1,6 @@
 #include <Core/GameCore.h>
 #include <thread>
+#include "Core/ResourceLoader.h"
 
 Game::~Game() {
 	uninit();
@@ -1200,8 +1201,7 @@ void Game::init() {
 	init_open_gl();
 	init_input();
 
-	ResourceLoader* resourceLoader = ResourceLoader::get_instance();
-	resourceLoader->Load_Resources();
+	ResourceLoader::get_instance().Load_Resources();
 
 	player.inventory.init();
 	for (int i = 2; i < 42; i++) {

@@ -2,11 +2,6 @@
 #include "Objects/ObjectFactory.h"
 
 namespace CoreObject {
-	enum WeaponType : uint8_t {
-		isPickaxe = 0, isSword = 1, isPiercing = 2, isAxe = 3, isHammer = 4, isGun = 5, isShotgun = 6, isBow = 7, isThrowable = 8,
-		isSpear = 9, isMagical = 10
-	};
-
 	struct ProjectileEntry {
 		uint16_t id = 0;
 		float cooldown = 0.0f;
@@ -16,7 +11,6 @@ namespace CoreObject {
 	public:
 		WeaponInfo(ObjectType type) : ObjectInfo(type) {}
 		void fill_data(const DataNode& data) override;
-		WeaponType weapon_type = WeaponType::isPickaxe;
 		uint32_t damage = 1.0f;
 		float crit_chance = 5.0f;
 		float speed = 1.0f;

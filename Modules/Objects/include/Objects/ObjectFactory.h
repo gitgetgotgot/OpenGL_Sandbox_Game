@@ -29,7 +29,10 @@ namespace CoreObject {
 
 	class ObjectFactoryRegistry {
 	public:
-		static ObjectFactoryRegistry* get_instance();
+		static ObjectFactoryRegistry& get_instance() {
+			static ObjectFactoryRegistry registry;
+			return registry;
+		}
 		void ClearData();
 		void register_factory(std::string class_uid, std::unique_ptr<_ObjectFactoryI> factory);
 		_ObjectFactoryI* get_factory(uint32_t factory_id);

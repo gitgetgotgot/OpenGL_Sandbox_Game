@@ -15,6 +15,7 @@ add_game_module(Rendering)
 add_game_module(UI)
 add_game_module(IOSystem)
 add_game_module(Utility)
+add_game_module(EngineAPI)
 
 add_executable(${PROJECT_NAME} "${PROJECT_SOURCE_DIR}/src/main.cpp")
 
@@ -55,6 +56,8 @@ target_link_libraries(UI PUBLIC Entities)
 target_link_libraries(Core PUBLIC UI)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Core)
+
+target_link_libraries(EngineAPI PUBLIC Entities)
 
 
 target_compile_definitions(Core PRIVATE

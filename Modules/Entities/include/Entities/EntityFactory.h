@@ -1,5 +1,6 @@
 #pragma once
-#include <Entities/GameEntities.h>
+#include "Entities/EntityBase.h"
+#include <memory>
 
 namespace CoreEntity {
 	class EntityFactoryI {
@@ -22,26 +23,16 @@ namespace CoreEntity {
 
 	class EntityFactoryRegistry {
 	public:
-		static EntityFactoryRegistry* get_instance() {
+		static EntityFactoryRegistry& get_instance() {
 			static EntityFactoryRegistry registry;
-			return &registry;
+			return registry;
 		}
-		void ClearData() {
-			class_UID_to_factory_ID = {};
-			std::vector<std::unique_ptr<EntityFactoryI>>().swap(factories);
-		}
-		void register_factory(std::string class_name, std::unique_ptr<EntityFactoryI> factory) {
-			class_UID_to_factory_ID.emplace(class_name, factories.size());
-			factories.emplace_back(std::move(factory));
-		}
-		EntityFactoryI* get_factory(uint32_t factory_id) {
-			return factories[factory_id].get();
-		}
-		uint32_t get_factory_id(std::string entity_class) {
-			return class_UID_to_factory_ID[entity_class];
-		}
+		void ClearData();
+		void register_factory(std::string class_name, std::unique_ptr<EntityFactoryI> factory);
+		EntityFactoryI* get_factory(uint16_t factory_id);
+		std::optional<uint16_t> get_factory_id(std::string entity_class);
 	private:
-		std::unordered_map<std::string, uint32_t> class_UID_to_factory_ID;
+		std::unordered_map<std::string, uint16_t> class_UID_to_factory_ID;
 		std::vector<std::unique_ptr<EntityFactoryI>> factories;
 		EntityFactoryRegistry() {}
 		~EntityFactoryRegistry() {}

@@ -1,5 +1,7 @@
 #pragma once
 #include "Objects/Crafting.h"
+#include <glm/ext/vector_float2.hpp>
+#include <glm/ext/vector_float4.hpp>
 
 struct TooltipData {
 	glm::vec2 inner_size{ 0.f, 0.f };
@@ -72,7 +74,6 @@ public:
 	bool helper_slots_are_visible = false;
 	uint32_t current_crafts_available = 160;
 	int current_craftable_item_index = 0;
-	CraftingSystem* crafting_system_ptr = nullptr;
 
 	uint32_t current_player_flags = 0;
 	uint32_t prev_player_flags = 0;

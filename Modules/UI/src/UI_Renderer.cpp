@@ -1,13 +1,13 @@
-#include <UI/UI_Renderer.h>
+#include "UI/UI_Renderer.h"
 #include <IOSystem/SystemContext.h>
 #include <Objects/ObjectTypes/WeaponInfo.h>
 #include <Objects/ObjectManager.h>
+#include <Utility/Sprite.h>
 
 uint32_t UI_Renderer::tooltip_slots_INDEX_SIZE = 9 * 6;
 
 void UI_Renderer::init(Player* player) {
 	main_player_ptr = player;
-	spriteMgr = CoreResource::SpriteManager::get_instance();
 	sdf_font_manager.load_main_sdf_font("verdana_SDF");
 
 	//CONSTRAINTS
@@ -149,9 +149,9 @@ void UI_Renderer::init(Player* player) {
 	basic_text_buffer.reserve(Inventory::INVENTORY_SIZE * 4 * 4); //for each slot max number is 9999
 	chest_text_buffer.reserve(Inventory::INVENTORY_CHEST_SIZE * 4 * 4);
 
-	tooltip_first_sprite_id = spriteMgr->get_sprite_id("Sprite:Core:TooltipLB").value();
-	hotbar_frame_sprite_id = spriteMgr->get_sprite_id("Sprite:Core:HotbarFrame").value();
-	craft_slot_sprite_id = spriteMgr->get_sprite_id("Sprite:Core:CraftSlot").value();
+	tooltip_first_sprite_id = CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:TooltipLB").value();
+	hotbar_frame_sprite_id = CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:HotbarFrame").value();
+	craft_slot_sprite_id = CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:CraftSlot").value();
 }
 
 void UI_Renderer::update() {
@@ -270,7 +270,7 @@ void UI_Renderer::init_basic_inventory_slots_data() {
 	float Xpos;
 	float Ypos = 0.83f;
 	float width = 0.1f, height = 0.1f;
-	CoreResource::Sprite* sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:BasicSlot").value());
+	CoreResource::Sprite* sprite = &CoreResource::SpriteManager::get_instance().get_sprite(CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:BasicSlot").value());
 
 	auto add_slot_data_to_buffer = [&](uint32_t slot_type_id, std::vector<UI_Vertex2f>& buffer, float width, float height) {
 		buffer.emplace_back(Xpos, Ypos,						sprite->U0, sprite->V0,							sprite->texture_id);
@@ -320,7 +320,7 @@ void UI_Renderer::init_basic_inventory_slots_data() {
 	}
 	
 	//40 slots for chests (used with inventory when any chest is open by the player)
-	sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:ChestSlot").value());
+	sprite = &CoreResource::SpriteManager::get_instance().get_sprite(CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:ChestSlot").value());
 	Ypos = 0.83f - 0.11 * 5.f;
 	for (int i = 0; i < 4; i++) {
 		Xpos = -SystemContext::screen.ratio * 0.97f;
@@ -334,7 +334,7 @@ void UI_Renderer::init_basic_inventory_slots_data() {
 	slots_vbo->update_data(chest_slot_buffer.data(), chest_slot_buffer.size() * sizeof(UI_Vertex2f), basic_slot_buffer.size() * sizeof(UI_Vertex2f));
 	
 	//15 slots for craft info slots
-	sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:CraftSlot").value());
+	sprite = &CoreResource::SpriteManager::get_instance().get_sprite(CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:CraftSlot").value());
 	Ypos = 0.83f - 0.11 * 10.f + 0.005f - 0.14f * 2.f;
 	for (int i = 0; i < 3; i++) {
 		Xpos = -SystemContext::screen.ratio * 0.97f + 0.2f;
@@ -361,10 +361,10 @@ void UI_Renderer::init_basic_inventory_slots_data() {
 	Xpos = -SystemContext::screen.ratio * 0.97f - 0.03f;
 	Ypos = 0.83f - 0.11 * 10.f + 0.125f;
 	width = 0.28f; height = 0.07f;
-	sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:CraftBorder").value());
+	sprite = &CoreResource::SpriteManager::get_instance().get_sprite(CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:CraftBorder").value());
 	add_slot_data_to_buffer(4, craft_borders_buffer, width, height);
 	Ypos -= 0.14f * 5.5f;
-	sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:CraftBorder2").value());
+	sprite = &CoreResource::SpriteManager::get_instance().get_sprite(CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:CraftBorder2").value());
 	add_slot_data_to_buffer(4, craft_borders_buffer, width, height);
 	craft_slots_vbo->update_data(craft_borders_buffer.data(), craft_borders_buffer.size() * sizeof(UI_Vertex2f));
 }
@@ -373,7 +373,7 @@ void UI_Renderer::init_icons_base_vertices() {
 	float Xpos;
 	float Ypos = 0.9f;
 	float icon_size = 0.06f;
-	CoreResource::Sprite* sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:HeartFull").value());
+	CoreResource::Sprite* sprite = &CoreResource::SpriteManager::get_instance().get_sprite(CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:HeartFull").value());
 
 	auto add_icon_to_buffer = [&]() {
 		icons_buffer.emplace_back(Xpos, Ypos,							sprite->U0, sprite->V0,							sprite->texture_id);
@@ -394,7 +394,7 @@ void UI_Renderer::init_icons_base_vertices() {
 	//mana stars vertices
 	Xpos = SystemContext::screen.ratio * 0.95f;
 	Ypos = 0.9f;
-	sprite = &spriteMgr->get_sprite(spriteMgr->get_sprite_id("Sprite:Core:ManaFull").value());
+	sprite = &CoreResource::SpriteManager::get_instance().get_sprite(CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:ManaFull").value());
 	for (int i = 0; i < 10; i++) {
 		add_icon_to_buffer();
 		Ypos -= 0.061f;
@@ -403,7 +403,7 @@ void UI_Renderer::init_icons_base_vertices() {
 
 void UI_Renderer::update_tooltip_data() {
 	TooltipData& tooltip_data = main_player_ptr->inventory.tooltipData;
-	CoreObject::ObjectInfo* item_info = CoreObject::ObjectManager::get_instance()->get_object_info(tooltip_data.item_id);
+	CoreObject::ObjectInfo* item_info = CoreObject::ObjectManager::get_instance().get_object_info(tooltip_data.item_id);
 	float x0 = 0.f, y0 = 0.f, x1 = 0.f, y1 = 0.f;
 	float inner_height = tooltip_frame_size; //y offset
 	float inner_width = 0.0f;
@@ -469,42 +469,42 @@ void UI_Renderer::update_tooltip_data() {
 		tooltip_buffer.emplace_back(x1, y0,		sprite->U0 + sprite->W, sprite->V0,				sprite->texture_id);
 	};
 	//left bottom
-	sprite = &spriteMgr->get_sprite(first_sprite_id++);
+	sprite = &CoreResource::SpriteManager::get_instance().get_sprite(first_sprite_id++);
 	x0 = start_x; x1 = x0 + tooltip_frame_size;
 	y0 = start_y; y1 = y0 + tooltip_frame_size;
 	add_tooltip_part_to_buffer();
 	//left center
-	sprite = &spriteMgr->get_sprite(first_sprite_id++);
+	sprite = &CoreResource::SpriteManager::get_instance().get_sprite(first_sprite_id++);
 	y0 = y1; y1 += inner_height;
 	add_tooltip_part_to_buffer();
 	//left top
-	sprite = &spriteMgr->get_sprite(first_sprite_id++);
+	sprite = &CoreResource::SpriteManager::get_instance().get_sprite(first_sprite_id++);
 	y0 = y1; y1 += tooltip_frame_size;
 	add_tooltip_part_to_buffer();
 	//center bottom
-	sprite = &spriteMgr->get_sprite(first_sprite_id++);
+	sprite = &CoreResource::SpriteManager::get_instance().get_sprite(first_sprite_id++);
 	x0 = x1; x1 += inner_width;
 	y0 = start_y; y1 = y0 + tooltip_frame_size;
 	add_tooltip_part_to_buffer();
 	//center
-	sprite = &spriteMgr->get_sprite(first_sprite_id++);
+	sprite = &CoreResource::SpriteManager::get_instance().get_sprite(first_sprite_id++);
 	y0 = y1; y1 += inner_height;
 	add_tooltip_part_to_buffer();
 	//center top
-	sprite = &spriteMgr->get_sprite(first_sprite_id++);
+	sprite = &CoreResource::SpriteManager::get_instance().get_sprite(first_sprite_id++);
 	y0 = y1; y1 += tooltip_frame_size;
 	add_tooltip_part_to_buffer();
 	//right bottom
-	sprite = &spriteMgr->get_sprite(first_sprite_id++);
+	sprite = &CoreResource::SpriteManager::get_instance().get_sprite(first_sprite_id++);
 	x0 = x1; x1 += tooltip_frame_size;
 	y0 = start_y; y1 = y0 + tooltip_frame_size;
 	add_tooltip_part_to_buffer();
 	//right center
-	sprite = &spriteMgr->get_sprite(first_sprite_id++);
+	sprite = &CoreResource::SpriteManager::get_instance().get_sprite(first_sprite_id++);
 	y0 = y1; y1 += inner_height;
 	add_tooltip_part_to_buffer();
 	//right top
-	sprite = &spriteMgr->get_sprite(first_sprite_id++);
+	sprite = &CoreResource::SpriteManager::get_instance().get_sprite(first_sprite_id++);
 	y0 = y1; y1 += tooltip_frame_size;
 	add_tooltip_part_to_buffer();
 
@@ -517,8 +517,8 @@ void UI_Renderer::update_cursor_item() {
 	float start_y = SystemContext::mouse.ortho_y_pos - item_size * 0.5f;
 	InventorySlot& cursor_slot = main_player_ptr->inventory.cursor_item;
 
-	CoreObject::ObjectInfo* obj_info = CoreObject::ObjectManager::get_instance()->get_object_info(cursor_slot.item_id);
-	CoreResource::Sprite* sprite = &spriteMgr->get_sprite(obj_info->sprites[0]);
+	CoreObject::ObjectInfo* obj_info = CoreObject::ObjectManager::get_instance().get_object_info(cursor_slot.item_id);
+	CoreResource::Sprite* sprite = &CoreResource::SpriteManager::get_instance().get_sprite(obj_info->sprites[0]);
 	
 	cursor_text_INDEX_SIZE = 0;
 	cursor_item_text_buffer.clear();
@@ -552,7 +552,7 @@ void UI_Renderer::update_hotbar_active_slot() {
 	float y = 0.825f;
 	float x = -SystemContext::screen.ratio * 0.97f + 0.11f * main_player_ptr->inventory.current_active_hotbar_slot - 0.005f;
 	float slot_size = 0.11f;
-	CoreResource::Sprite* sprite = &spriteMgr->get_sprite(hotbar_frame_sprite_id);
+	CoreResource::Sprite* sprite = &CoreResource::SpriteManager::get_instance().get_sprite(hotbar_frame_sprite_id);
 	active_hotbar_slot_buffer.emplace_back(x, y, sprite->U0, sprite->V0, sprite->texture_id);
 	active_hotbar_slot_buffer.emplace_back(x, y + slot_size, sprite->U0, sprite->V0 + sprite->H, sprite->texture_id);
 	active_hotbar_slot_buffer.emplace_back(x + slot_size, y + slot_size, sprite->U0 + sprite->W, sprite->V0 + sprite->H, sprite->texture_id);
@@ -565,7 +565,7 @@ void UI_Renderer::update_hotbar_active_slot() {
 	tooltip_text_INDEX_SIZE = 0;
 
 	if (active_item_id != 0) {
-		CoreObject::ObjectInfo* item_info = CoreObject::ObjectManager::get_instance()->get_object_info(active_item_id);
+		CoreObject::ObjectInfo* item_info = CoreObject::ObjectManager::get_instance().get_object_info(active_item_id);
 		place_text_to_buffer(tooltip_text_buffer, item_info->name, item_info->name.size(),
 			-SystemContext::screen.ratio * 0.97f, 0.945f, tooltip_text_height);
 		text_vbo->update_data(tooltip_text_buffer.data(), tooltip_text_buffer.size() * sizeof(UI_Text_Vertex2f), TOTAL_TEXT_VERTEX_SIZE * sizeof(UI_Text_Vertex2f));
@@ -647,8 +647,8 @@ void UI_Renderer::update_items() {
 				InventorySlot& slot = main_player_ptr->inventory.items[i];
 				if (slot.item_id == 0) continue;
 
-				CoreObject::ObjectInfo* obj_info = CoreObject::ObjectManager::get_instance()->get_object_info(slot.item_id);
-				sprite = &spriteMgr->get_sprite(obj_info->sprites[0]);
+				CoreObject::ObjectInfo* obj_info = CoreObject::ObjectManager::get_instance().get_object_info(slot.item_id);
+				sprite = &CoreResource::SpriteManager::get_instance().get_sprite(obj_info->sprites[0]);
 
 				glm::vec4& slot_borders = main_player_ptr->inventory.slots_bounds[i];
 				x = slot_borders.x + 0.0125f;
@@ -684,8 +684,8 @@ void UI_Renderer::update_items() {
 				InventorySlot& slot = main_player_ptr->inventory.active_chest_items_ptr[i];
 				if (slot.item_id == 0) continue;
 
-				CoreObject::ObjectInfo* obj_info = CoreObject::ObjectManager::get_instance()->get_object_info(slot.item_id);
-				sprite = &spriteMgr->get_sprite(obj_info->sprites[0]);
+				CoreObject::ObjectInfo* obj_info = CoreObject::ObjectManager::get_instance().get_object_info(slot.item_id);
+				sprite = &CoreResource::SpriteManager::get_instance().get_sprite(obj_info->sprites[0]);
 
 				glm::vec4& slot_borders = main_player_ptr->inventory.chest_slots_bounds[i];
 				x = slot_borders.x + 0.0125f;
@@ -729,7 +729,7 @@ void UI_Renderer::update_craft_slots() {
 	if (main_player_ptr->inventory.current_crafts_available == 0) return;
 
 	float Xpos, Ypos, slot_size;
-	CoreResource::Sprite* sprite = &spriteMgr->get_sprite(4);
+	CoreResource::Sprite* sprite = &CoreResource::SpriteManager::get_instance().get_sprite(4);
 	auto add_slot_to_buffer = [&]() {
 		craft_slot_buffer.emplace_back(Xpos, Ypos, sprite->U0, sprite->V0, sprite->texture_id);
 		craft_slot_buffer.emplace_back(Xpos, Ypos + slot_size, sprite->U0, sprite->V0 + sprite->H, sprite->texture_id);
@@ -766,7 +766,7 @@ void UI_Renderer::update_craft_slots() {
 		slot_size = slot.current_size;
 		Xpos = slot.current_pos.x - slot_size * 0.5f;
 		Ypos = slot.current_pos.y - slot_size * 0.5f;
-		sprite = &spriteMgr->get_sprite(craft_slot_sprite_id);
+		sprite = &CoreResource::SpriteManager::get_instance().get_sprite(craft_slot_sprite_id);
 		add_slot_to_buffer();
 
 		if (slot.item_data.amount > 1) {
@@ -782,8 +782,8 @@ void UI_Renderer::update_craft_slots() {
 		slot_size *= 0.75f;
 
 		if (slot.item_data.item_id > 1) {
-			CoreObject::ObjectInfo* item_info = CoreObject::ObjectManager::get_instance()->get_object_info(slot.item_data.item_id);
-			sprite = &spriteMgr->get_sprite(item_info->sprites[0]);
+			CoreObject::ObjectInfo* item_info = CoreObject::ObjectManager::get_instance().get_object_info(slot.item_data.item_id);
+			sprite = &CoreResource::SpriteManager::get_instance().get_sprite(item_info->sprites[0]);
 			add_item_to_buffer(craft_items_buffer, item_info);
 			craft_items_INDEX_SIZE += 6;
 		}
@@ -826,8 +826,8 @@ void UI_Renderer::update_craft_slots() {
 			Ypos = left_bottom_vertex.pos.y;
 			slot_size = 0.1f;
 			CraftingPair& craft_pair = craftable_item.items_needed[i];
-			CoreObject::ObjectInfo* item_info = CoreObject::ObjectManager::get_instance()->get_object_info(craft_pair.item_id);
-			sprite = &spriteMgr->get_sprite(item_info->sprites[0]);
+			CoreObject::ObjectInfo* item_info = CoreObject::ObjectManager::get_instance().get_object_info(craft_pair.item_id);
+			sprite = &CoreResource::SpriteManager::get_instance().get_sprite(item_info->sprites[0]);
 
 			if (craft_pair.amount > 1) {
 				text_builder.add_int((int)craft_pair.amount);
@@ -861,8 +861,8 @@ void UI_Renderer::update_craft_slots() {
 			UI_Vertex2f& left_bottom_vertex = helper_craft_slot_buffer[i * 4];
 			Xpos = left_bottom_vertex.pos.x + offset;
 			Ypos = left_bottom_vertex.pos.y + offset;
-			CoreObject::ObjectInfo* item_info = CoreObject::ObjectManager::get_instance()->get_object_info(main_player_ptr->inventory.get_craft_item(i).item_id);
-			sprite = &spriteMgr->get_sprite(item_info->sprites[0]);
+			CoreObject::ObjectInfo* item_info = CoreObject::ObjectManager::get_instance().get_object_info(main_player_ptr->inventory.get_craft_item(i).item_id);
+			sprite = &CoreResource::SpriteManager::get_instance().get_sprite(item_info->sprites[0]);
 			add_item_to_buffer(craft_helper_items_buffer, item_info);
 		}
 		craft_items_vbo->update_data(

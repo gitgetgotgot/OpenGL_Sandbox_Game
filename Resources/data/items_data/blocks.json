@@ -2,7 +2,7 @@
   {
     "UID": "Item:Core:Stone",
     "class_UID": "Class:Core:Block",
-    "sub_type": 0,
+    "tags": [ "Core:SolidBlock" ],
     "toughness": 1,
     "drops": [
       {
@@ -16,7 +16,7 @@
   {
     "UID": "Item:Core:Dirt",
     "class_UID": "Class:Core:Block",
-    "sub_type": 0,
+    "tags": [ "Core:SolidBlock" ],
     "toughness": 1,
     "drops": [
       {
@@ -30,7 +30,7 @@
   {
     "UID": "Item:Core:Grass Dirt",
     "class_UID": "Class:Core:Block",
-    "sub_type": 0,
+    "tags": [ "Core:SolidBlock" ],
     "toughness": 1,
     "drops": [
       {
@@ -44,7 +44,7 @@
   {
     "UID": "Item:Core:Sand",
     "class_UID": "Class:Core:Block",
-    "sub_type": 0,
+    "tags": [ "Core:SolidBlock" ],
     "toughness": 1,
     "drops": [
       {
@@ -58,7 +58,7 @@
   {
     "UID": "Item:Core:Oak",
     "class_UID": "Class:Core:Block",
-    "sub_type": 1,
+    "tags": [ "Core:Wood" ],
     "toughness": 1,
     "drops": [
       {
@@ -72,7 +72,7 @@
   {
     "UID": "Item:Core:Oak Planks",
     "class_UID": "Class:Core:Block",
-    "sub_type": 0,
+    "tags": [ "Core:SolidBlock" ],
     "toughness": 1,
     "drops": [
       {
@@ -86,7 +86,7 @@
   {
     "UID": "Item:Core:Crimson Stone",
     "class_UID": "Class:Core:Block",
-    "sub_type": 0,
+    "tags": [ "Core:SolidBlock" ],
     "toughness": 1,
     "drops": [
       {
@@ -100,7 +100,7 @@
   {
     "UID": "Item:Core:Corrupted Stone",
     "class_UID": "Class:Core:Block",
-    "sub_type": 0,
+    "tags": [ "Core:SolidBlock" ],
     "toughness": 1,
     "drops": [
       {
@@ -114,7 +114,7 @@
   {
     "UID": "Item:Core:Copper Ore",
     "class_UID": "Class:Core:Block",
-    "sub_type": 0,
+    "tags": [ "Core:SolidBlock" ],
     "toughness": 1,
     "drops": [
       {
@@ -128,7 +128,7 @@
   {
     "UID": "Item:Core:Iron Ore",
     "class_UID": "Class:Core:Block",
-    "sub_type": 0,
+    "tags": [ "Core:SolidBlock" ],
     "toughness": 1,
     "drops": [
       {
@@ -142,7 +142,7 @@
   {
     "UID": "Item:Core:Gold Ore",
     "class_UID": "Class:Core:Block",
-    "sub_type": 0,
+    "tags": [ "Core:SolidBlock" ],
     "toughness": 1,
     "drops": [
       {
@@ -156,7 +156,7 @@
   {
     "UID": "Item:Core:Water",
     "class_UID": "Class:Core:Block",
-    "sub_type": 5,
+    "tags": [ "Core:Liquid" ],
     "toughness": 1,
     "drops": [
       {
@@ -170,7 +170,7 @@
   {
     "UID": "Item:Core:Snow",
     "class_UID": "Class:Core:Block",
-    "sub_type": 0,
+    "tags": [ "Core:SolidBlock" ],
     "toughness": 1,
     "drops": [
       {
@@ -184,7 +184,7 @@
   {
     "UID": "Item:Core:Ice",
     "class_UID": "Class:Core:Block",
-    "sub_type": 0,
+    "tags": [ "Core:SolidBlock" ],
     "toughness": 1,
     "drops": [
       {
@@ -198,7 +198,7 @@
   {
     "UID": "Item:Core:Snow Grass Dirt",
     "class_UID": "Class:Core:Block",
-    "sub_type": 0,
+    "tags": [ "Core:SolidBlock" ],
     "toughness": 1,
     "drops": [
       {
@@ -212,7 +212,7 @@
   {
     "UID": "Item:Core:Crimson Grass Dirt",
     "class_UID": "Class:Core:Block",
-    "sub_type": 0,
+    "tags": [ "Core:SolidBlock" ],
     "toughness": 1,
     "drops": [
       {
@@ -226,7 +226,7 @@
   {
     "UID": "Item:Core:Corrupted Grass Dirt",
     "class_UID": "Class:Core:Block",
-    "sub_type": 0,
+    "tags": [ "Core:SolidBlock" ],
     "toughness": 1,
     "drops": [
       {
@@ -240,7 +240,7 @@
   {
     "UID": "Item:Core:Grass",
     "class_UID": "Class:Core:Block",
-    "sub_type": 6,
+    "tags": [ "Core:Grass" ],
     "toughness": 1,
     "drops": [
       {
@@ -254,7 +254,7 @@
   {
     "UID": "Item:Core:Corrupted Grass",
     "class_UID": "Class:Core:Block",
-    "sub_type": 6,
+    "tags": [ "Core:Grass" ],
     "toughness": 1,
     "drops": [
       {
@@ -268,7 +268,7 @@
   {
     "UID": "Item:Core:Crimson Grass",
     "class_UID": "Class:Core:Block",
-    "sub_type": 6,
+    "tags": [ "Core:Grass" ],
     "toughness": 1,
     "drops": [
       {
@@ -282,7 +282,7 @@
   {
     "UID": "Item:Core:Day Flower",
     "class_UID": "Class:Core:Block",
-    "sub_type": 7,
+    "tags": [ "Core:Plant" ],
     "toughness": 1,
     "drops": [
       {
@@ -296,7 +296,7 @@
   {
     "UID": "Item:Core:Torch",
     "class_UID": "Class:Core:Block",
-    "sub_type": 4,
+    "tags": [ "Core:Torch" ],
     "toughness": 1,
     "drops": [
       {
@@ -311,7 +311,7 @@
   {
     "UID": "Item:Core:Torch(L)",
     "class_UID": "Class:Core:Block",
-    "sub_type": 4,
+    "tags": [ "Core:Torch" ],
     "toughness": 1,
     "drops": [
       {
@@ -326,7 +326,7 @@
   {
     "UID": "Item:Core:Torch(R)",
     "class_UID": "Class:Core:Block",
-    "sub_type": 4,
+    "tags": [ "Core:Torch" ],
     "toughness": 1,
     "drops": [
       {
@@ -341,7 +341,7 @@
   {
     "UID": "Item:Core:Ice Torch",
     "class_UID": "Class:Core:Block",
-    "sub_type": 4,
+    "tags": [ "Core:Torch" ],
     "toughness": 1,
     "drops": [
       {
@@ -356,7 +356,7 @@
   {
     "UID": "Item:Core:Ice Torch(L)",
     "class_UID": "Class:Core:Block",
-    "sub_type": 4,
+    "tags": [ "Core:Torch" ],
     "toughness": 1,
     "drops": [
       {
@@ -371,7 +371,7 @@
   {
     "UID": "Item:Core:Ice Torch(R)",
     "class_UID": "Class:Core:Block",
-    "sub_type": 4,
+    "tags": [ "Core:Torch" ],
     "toughness": 1,
     "drops": [
       {
@@ -386,7 +386,7 @@
   {
     "UID": "Item:Core:Glass",
     "class_UID": "Class:Core:Block",
-    "sub_type": 8,
+    "tags": [ "Core:Glass" ],
     "toughness": 1,
     "drops": [
       {
@@ -400,7 +400,7 @@
   {
     "UID": "Item:Core:Oak Platform",
     "class_UID": "Class:Core:Block",
-    "sub_type": 3,
+    "tags": [ "Core:Platform" ],
     "toughness": 1,
     "drops": [
       {
@@ -415,7 +415,7 @@
   {
     "UID": "Item:Core:Oak Platform(L)",
     "class_UID": "Class:Core:Block",
-    "sub_type": 3,
+    "tags": [ "Core:Platform" ],
     "toughness": 1,
     "drops": [
       {
@@ -430,7 +430,7 @@
   {
     "UID": "Item:Core:Oak Platform(R)",
     "class_UID": "Class:Core:Block",
-    "sub_type": 3,
+    "tags": [ "Core:Platform" ],
     "toughness": 1,
     "drops": [
       {
@@ -445,7 +445,7 @@
   {
     "UID": "Item:Core:Mushroom",
     "class_UID": "Class:Core:Block",
-    "sub_type": 7,
+    "tags": [ "Core:Plant" ],
     "toughness": 1,
     "drops": [
       {
@@ -459,7 +459,7 @@
   {
     "UID": "Item:Core:Glowing Mushroom",
     "class_UID": "Class:Core:Block",
-    "sub_type": 7,
+    "tags": [ "Core:Plant" ],
     "toughness": 1,
     "drops": [
       {
@@ -473,7 +473,7 @@
   {
     "UID": "Item:Core:Hardened Sand",
     "class_UID": "Class:Core:Block",
-    "sub_type": 0,
+    "tags": [ "Core:SolidBlock" ],
     "toughness": 1,
     "drops": [
       {
@@ -571,7 +571,7 @@
   {
     "UID": "Item:Core:Oak Tree Top",
     "class_UID": "Class:Core:Block",
-    "sub_type": 2,
+    "tags": [ "Core:TreeTop" ],
     "toughness": 1,
     "drops": [
       {
@@ -584,7 +584,7 @@
   {
     "UID": "Item:Core:Oak Branch(L)",
     "class_UID": "Class:Core:Block",
-    "sub_type": 2,
+    "tags": [ "Core:Wood" ],
     "toughness": 1,
     "drops": [
       {
@@ -597,7 +597,7 @@
   {
     "UID": "Item:Core:Oak Branch(R)",
     "class_UID": "Class:Core:Block",
-    "sub_type": 2,
+    "tags": [ "Core:Wood" ],
     "toughness": 1,
     "drops": [
       {
@@ -658,7 +658,7 @@
   {
     "UID": "Item:Core:Bottle",
     "class_UID": "Class:Core:Block",
-    "sub_type": 9,
+    "tags": [ "Core:Bottle" ],
     "toughness": 1,
     "drops": [
       {
@@ -672,7 +672,7 @@
   {
     "UID": "Item:Core:Bottle of Water",
     "class_UID": "Class:Core:Block",
-    "sub_type": 9,
+    "tags": [ "Core:Bottle" ],
     "toughness": 1,
     "drops": [
       {
@@ -710,7 +710,7 @@
   {
     "UID": "Item:Core:Healing Potion",
     "class_UID": "Class:Core:Consumable",
-    "sub_type": 12,
+    "tags": [ "Core:Potion" ],
     "effects": [
       {
         "effect_UID": "Effect:Core:PotionHeal",
@@ -722,7 +722,7 @@
   {
     "UID": "Item:Core:Speed Potion",
     "class_UID": "Class:Core:Consumable",
-    "sub_type": 12,
+    "tags": [ "Core:Potion" ],
     "effects": [
       {
         "effect_UID": "Effect:Core:SpeedBuff",
@@ -734,7 +734,7 @@
   {
     "UID": "Item:Core:Defense Potion",
     "class_UID": "Class:Core:Consumable",
-    "sub_type": 12,
+    "tags": [ "Core:Potion" ],
     "effects": [
       {
         "effect_UID": "Effect:Core:DefBuff",
@@ -746,7 +746,7 @@
   {
     "UID": "Item:Core:Regeneration Potion",
     "class_UID": "Class:Core:Consumable",
-    "sub_type": 12,
+    "tags": [ "Core:Potion" ],
     "effects": [
       {
         "effect_UID": "Effect:Core:RegenBuff",
@@ -758,7 +758,7 @@
   {
     "UID": "Item:Core:Better Healing Potion",
     "class_UID": "Class:Core:Consumable",
-    "sub_type": 12,
+    "tags": [ "Core:Potion" ],
     "effects": [
       {
         "effect_UID": "Effect:Core:PotionHeal",
@@ -770,7 +770,7 @@
   {
     "UID": "Item:Core:Arrow",
     "class_UID": "Class:Core:Ammo",
-    "sub_type": 0,
+    "tags": [ "Core:Arrow" ],
     "dmg": 5,
     "entity_UID": "Entity:Core:Slime",
     "sprites": [ "Sprite:Core:Arrow" ]
@@ -778,7 +778,7 @@
   {
     "UID": "Item:Core:Flaming Arrow",
     "class_UID": "Class:Core:Ammo",
-    "sub_type": 0,
+    "tags": [ "Core:Arrow" ],
     "dmg": 5,
     "entity_UID": "Entity:Core:Slime",
     "sprites": [ "Sprite:Core:Flaming Arrow" ]
@@ -786,7 +786,7 @@
   {
     "UID": "Item:Core:Frostburn Arrow",
     "class_UID": "Class:Core:Ammo",
-    "sub_type": 0,
+    "tags": [ "Core:Arrow" ],
     "dmg": 5,
     "entity_UID": "Entity:Core:Slime",
     "sprites": [ "Sprite:Core:Frostburn Arrow" ]
@@ -794,7 +794,7 @@
   {
     "UID": "Item:Core:Star Arrow",
     "class_UID": "Class:Core:Ammo",
-    "sub_type": 0,
+    "tags": [ "Core:Arrow" ],
     "dmg": 5,
     "entity_UID": "Entity:Core:Slime",
     "sprites": [ "Sprite:Core:Star Arrow" ]
@@ -802,7 +802,7 @@
   {
     "UID": "Item:Core:Dark Arrow",
     "class_UID": "Class:Core:Ammo",
-    "sub_type": 0,
+    "tags": [ "Core:Arrow" ],
     "dmg": 5,
     "entity_UID": "Entity:Core:Slime",
     "sprites": [ "Sprite:Core:Dark Arrow" ]
@@ -810,7 +810,7 @@
   {
     "UID": "Item:Core:Hell Arrow",
     "class_UID": "Class:Core:Ammo",
-    "sub_type": 0,
+    "tags": [ "Core:Arrow" ],
     "dmg": 5,
     "entity_UID": "Entity:Core:Slime",
     "sprites": [ "Sprite:Core:Hell Arrow" ]
@@ -818,7 +818,7 @@
   {
     "UID": "Item:Core:Bullet",
     "class_UID": "Class:Core:Ammo",
-    "sub_type": 1,
+    "tags": [ "Core:Bullet" ],
     "dmg": 5,
     "entity_UID": "Entity:Core:Slime",
     "sprites": [ "Sprite:Core:Bullet" ]

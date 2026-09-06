@@ -1,8 +1,9 @@
 #pragma once
-#include <Entities/EntityFactory.h>
-#include <Entities/Player.h>
+#include "Entities/Player.h"
+#include "Entities/EntityBase.h"
 #include <Rendering/OpenGL_Renderer.h>
 #include <Objects/ObjectComponents.h>
+#include <Utility/WorldData.h>
 
 namespace CoreEntity {
 	constexpr uint32_t MAX_ENTITIES_RENDER = 500;
@@ -36,8 +37,6 @@ namespace CoreEntity {
 		EntitySystem() {}
 		~EntitySystem() {}
 
-		EntityInfoManager* entity_mgr = nullptr;
-		EntityFactoryRegistry* entity_factory_reg = nullptr;
 		WorldSlot* world_slots_ptr = nullptr;
 		uint32_t world_width = 0, world_height = 0;
 		std::unordered_map<uint32_t, std::unique_ptr<CoreObject::ObjectComponent>>* obj_comps_ptr;

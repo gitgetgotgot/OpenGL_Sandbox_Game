@@ -17,9 +17,9 @@ namespace CoreAnimation {
 
 	class AnimationClipManager {
 	public:
-		static AnimationClipManager* get_instance() {
+		static AnimationClipManager& get_instance() {
 			static AnimationClipManager mgr;
-			return &mgr;
+			return mgr;
 		}
 		void ClearData();
 		AnimationClip* get_clip(uint32_t id);
@@ -37,9 +37,9 @@ namespace CoreAnimation {
 
 	class AnimatorManager {
 	public:
-		static AnimatorManager* get_instance() {
+		static AnimatorManager& get_instance() {
 			static AnimatorManager mgr;
-			return &mgr;
+			return mgr;
 		}
 		void ClearData();
 		Animator* get_animator(uint32_t id);

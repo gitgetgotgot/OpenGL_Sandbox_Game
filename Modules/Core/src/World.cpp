@@ -1,6 +1,7 @@
 #include "Core/World.h"
 #include <Utility/GameContext.h>
 #include <Utility/TimeManager.h>
+#include <Utility/CoreTags.h>
 #include <Objects/ObjectTypes/MultiBlockInfo.h>
 #include <Objects/ObjectTypes/WeaponInfo.h>
 #include <Objects/ObjectManager.h>
@@ -263,8 +264,8 @@ void World::load_chunk_buffer(uint32_t chunk_world_x, uint32_t chunk_world_y, ui
 				continue;
 			}
 			//add tile sprite data
-			CoreObject::ObjectInfo* object_info = CoreObject::ObjectManager::get_instance()->get_object_info(slot->tile_id);
-			CoreResource::Sprite& sprite = CoreResource::SpriteManager::get_instance()->get_sprite(object_info->sprites[0]);
+			CoreObject::ObjectInfo* object_info = CoreObject::ObjectManager::get_instance().get_object_info(slot->tile_id);
+			CoreResource::Sprite& sprite = CoreResource::SpriteManager::get_instance().get_sprite(object_info->sprites[0]);
 
 			if (object_info->objectType == CoreObject::ObjectType::isBlock) {
 				vertices.add(Vertex2f(x, y,					sprite.U0, sprite.V0,						sprite.texture_id),	base_index);
@@ -367,7 +368,7 @@ void World::process_LB_click() {
 	uint16_t active_item_id = main_player_ptr->inventory.get_active_item_id();
 	if (active_item_id == 0) return; //do nothing if player is holding nothing
 
-	CoreObject::ObjectInfo* active_item_info = CoreObject::ObjectManager::get_instance()->get_object_info(active_item_id);
+	CoreObject::ObjectInfo* active_item_info = CoreObject::ObjectManager::get_instance().get_object_info(active_item_id);
 	switch (active_item_info->objectType) {
 	case CoreObject::ObjectType::isBlock: {
 		bool success = place_tile(SystemContext::mouse.world_x_pos, SystemContext::mouse.world_y_pos, active_item_id);
@@ -380,8 +381,7 @@ void World::process_LB_click() {
 		break;
 	}
 	case CoreObject::ObjectType::isWeapon: {
-		CoreObject::WeaponType weapon_type = static_cast<CoreObject::WeaponInfo*>(active_item_info)->weapon_type;
-		if (weapon_type == CoreObject::WeaponType::isPickaxe) {
+		if (active_item_info->_has_tag(TagID::IS_PICKAXE)) {
 			destroy_tile(SystemContext::mouse.world_x_pos, SystemContext::mouse.world_y_pos);
 		}
 		break;
@@ -409,14 +409,13 @@ void World::process_RB_click() {
 		slot = &world_slots[slot_index]; //slot ptr now points on the main object part
 	}
 
-	CoreObject::ObjectInfo* slot_info = CoreObject::ObjectManager::get_instance()->get_object_info(slot->tile_id);
+	CoreObject::ObjectInfo* slot_info = CoreObject::ObjectManager::get_instance().get_object_info(slot->tile_id);
 	if (slot_info->objectType == CoreObject::ObjectType::isMultiBlock) { //complex object -> can be interactable
-		CoreObject::MultiBlockType type = static_cast<CoreObject::MultiBlockInfo*>(slot_info)->multi_block_type;
-		if (type == CoreObject::MultiBlockType::isChest) {
+		if (slot_info->_has_tag(TagID::IS_CHEST)) {
 			std::cout << "Interacted with chest" << std::endl;
 			main_player_ptr->inventory.open_chest(static_cast<CoreObject::ChestComponent*>(object_components[slot_index].get())->chest_slots);
 		}
-		else if (type == CoreObject::MultiBlockType::isDoor) {
+		else if (slot_info->_has_tag(TagID::IS_DOOR)) {
 			std::cout << "Interacted with door" << std::endl;
 		}
 	}
@@ -429,7 +428,7 @@ void World::process_scrollwheel() {
 bool World::place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id) {
 	WorldSlot& slot = world_slots[world_y * width + world_x];
 	if (slot.tile_id != 0) return false; //slot already has tile
-	CoreObject::ObjectInfo* object_info = CoreObject::ObjectManager::get_instance()->get_object_info(tile_id);
+	CoreObject::ObjectInfo* object_info = CoreObject::ObjectManager::get_instance().get_object_info(tile_id);
 	if (object_info->objectType == CoreObject::ObjectType::isMultiBlock) {
 		int obj_width = static_cast<CoreObject::MultiBlockInfo*>(object_info)->tiles_width;
 		int obj_height = static_cast<CoreObject::MultiBlockInfo*>(object_info)->tiles_height;
@@ -451,11 +450,10 @@ bool World::place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id) {
 				object_components.emplace(comp_obj_part_index, std::make_unique<CoreObject::MultiBlockTileComponent>(world_x, world_y));
 			}
 		}
-		CoreObject::MultiBlockType type = static_cast<CoreObject::MultiBlockInfo*>(object_info)->multi_block_type;
-		if (type == CoreObject::MultiBlockType::isChest) {
+		if (object_info->_has_tag(TagID::IS_CHEST)) {
 			object_components.emplace(main_part_index, std::make_unique<CoreObject::ChestComponent>());
 		}
-		else if (type == CoreObject::MultiBlockType::isDoor) {
+		else if (object_info->_has_tag(TagID::IS_DOOR)) {
 			object_components.emplace(main_part_index, std::make_unique<CoreObject::DoorComponent>(0));
 		}
 	}
@@ -476,7 +474,7 @@ bool World::place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id) {
 		uint32_t tile_chunk_y = world_y - chunk_y * CHUNK_SIZE;
 		uint32_t tile_index = (tile_chunk_x * CHUNK_SIZE + tile_chunk_y) * 4;
 
-		CoreResource::Sprite& sprite = CoreResource::SpriteManager::get_instance()->get_sprite(object_info->sprites[0]);
+		CoreResource::Sprite& sprite = CoreResource::SpriteManager::get_instance().get_sprite(object_info->sprites[0]);
 
 		if (object_info->objectType == CoreObject::ObjectType::isBlock) {
 			vertices.add(Vertex2f(world_x, world_y,					sprite.U0, sprite.V0,						sprite.texture_id), tile_index);
@@ -515,7 +513,7 @@ bool World::destroy_tile(uint32_t world_x, uint32_t world_y) {
 		slot = &world_slots[slot_index]; //slot ptr now points on the main object part
 	}
 
-	CoreObject::ObjectInfo* slot_info = CoreObject::ObjectManager::get_instance()->get_object_info(slot->tile_id);
+	CoreObject::ObjectInfo* slot_info = CoreObject::ObjectManager::get_instance().get_object_info(slot->tile_id);
 	if (slot_info->objectType == CoreObject::ObjectType::isMultiBlock) {
 		int obj_width = static_cast<CoreObject::MultiBlockInfo*>(slot_info)->tiles_width;
 		int obj_height = static_cast<CoreObject::MultiBlockInfo*>(slot_info)->tiles_height;
@@ -663,7 +661,7 @@ void World::save_world_data_in_file(const char* filePath) {
 		for (int j = 0; j < height; j++) {
 			uint32_t index = j * width + i;
 			WorldSlot& slot = world_slots[index];
-			CoreObject::ObjectInfo* obj_info = CoreObject::ObjectManager::get_instance()->get_object_info(slot.tile_id);
+			CoreObject::ObjectInfo* obj_info = CoreObject::ObjectManager::get_instance().get_object_info(slot.tile_id);
 			//write tile id
 			write.write(reinterpret_cast<const char*>(&slot.tile_id), sizeof(uint16_t));
 			//write wall id
@@ -680,12 +678,11 @@ void World::save_world_data_in_file(const char* filePath) {
 			}
 			else if (obj_info->objectType == CoreObject::isMultiBlock) {
 				CoreObject::ObjectComponent* obj_comp = object_components[index].get();
-				CoreObject::MultiBlockType complexType = static_cast<CoreObject::MultiBlockInfo*>(obj_info)->multi_block_type;
-				if (complexType == CoreObject::isDoor) {
+				if (obj_info->_has_tag(TagID::IS_DOOR)) {
 					//uint8_t door_state = obj_comp->get_door_state();
 					//write.write(reinterpret_cast<const char*>(&door_state), sizeof(uint8_t));
 				}
-				else if (complexType == CoreObject::isChest) {
+				else if (obj_info->_has_tag(TagID::IS_CHEST)) {
 					//InventorySlot* chest_slots_ptr = obj_comp->get_chest_slots();
 					for (int c = 0; c < 40; c++) {
 						//write.write(reinterpret_cast<const char*>(&chest_slots_ptr[c].item_id), sizeof(uint16_t));

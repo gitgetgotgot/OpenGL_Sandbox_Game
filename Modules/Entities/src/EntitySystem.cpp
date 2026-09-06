@@ -1,5 +1,7 @@
 #include "Entities/EntitySystem.h"
 #include "Entities/EntityClasses/Mob.h"
+#include "Entities/EntityInfoManager.h"
+#include "Entities/EntityFactory.h"
 #include <IOSystem/SystemContext.h>
 #include <Utility/TimeManager.h>
 #include <Utility/Math.h>
@@ -7,9 +9,6 @@
 #include <Objects/ObjectManager.h>
 
 void CoreEntity::EntitySystem::init() {
-	entity_mgr = EntityInfoManager::get_instance();
-	entity_factory_reg = EntityFactoryRegistry::get_instance();
-
 	entities.reserve(MAX_ENTITIES_RENDER);
 	entity_render_buf.reserve(MAX_ENTITIES_RENDER);
 	entity_render_buf.resize(MAX_ENTITIES_RENDER);
@@ -45,13 +44,13 @@ void CoreEntity::EntitySystem::update() {
 	for (int i = 0; i < size; i++) {
 		EntityBase* entity_base = entities[i].get();
 		Transform& tr = entity_base->transform;
-		EntityInfo* info = entity_mgr->get_entity_info(entity_base->entity_id);
+		EntityInfo* info = EntityInfoManager::get_instance().get_entity_info(entity_base->entity_id);
 		EntityRenderData& render_data = entity_render_buf[i];
 
 		//update physics
 		if (info->main_type == EntityMainType::isMob) {
 			Mob* entity = static_cast<Mob*>(entity_base);
-			MobPhysics& physx = entity->physics;
+			EntityPhysics& physx = entity->physics;
 			float width = entity->hitbox.size.x;
 			float height = entity->hitbox.size.y;
 			float x = entity->hitbox.center.x - width * 0.5f;
@@ -62,11 +61,11 @@ void CoreEntity::EntitySystem::update() {
 			int min_slot_y = (int)y - 1;
 			int max_slot_y = (int)(y + height) + 2;
 
-			if (!(physx.collision & CollisionType::BOTTOM)) {
+			if (!(physx.collision_mask & CollisionType::BOTTOM)) {
 				physx.time_falling += TimeManager::deltaTime;
 				if (physx.affected_by_gravity) {
-					physx.linear_velocity.y -= MobPhysics::GRAVITY * physx.gravity_scale * TimeManager::deltaTime;
-					physx.linear_velocity.y = std::max(physx.linear_velocity.y, -MobPhysics::MAX_FALL_SPEED);
+					physx.linear_velocity.y -= EntityPhysics::GRAVITY * physx.gravity_scale * TimeManager::deltaTime;
+					physx.linear_velocity.y = std::max(physx.linear_velocity.y, -EntityPhysics::MAX_FALL_SPEED);
 				}
 				float dY = physx.linear_velocity.y * TimeManager::deltaTime;
 				physx.fallingDistance += std::abs(dY);
@@ -78,7 +77,7 @@ void CoreEntity::EntitySystem::update() {
 			//entity->hitbox.center = tr.pos + glm::vec2(0.0f, entity->hitbox.size.y * 0.5f);
 			glm::vec2 delta_move = physx.linear_velocity;
 
-			physx.collision = CollisionType::NONE;
+			physx.collision_mask = CollisionType::NONE;
 			physx.platform_collision = false;
 
 			for (int i = min_slot_x; i < max_slot_x; i++) {
@@ -87,7 +86,7 @@ void CoreEntity::EntitySystem::update() {
 					WorldSlot* slot = &world_slots_ptr[slot_index];
 
 					if (slot->tile_id != 0) {
-						CoreObject::ObjectInfo* obj_info_ptr = CoreObject::ObjectManager::get_instance()->get_object_info(slot->tile_id);
+						CoreObject::ObjectInfo* obj_info_ptr = CoreObject::ObjectManager::get_instance().get_object_info(slot->tile_id);
 
 						//get main part or complex object
 						if (obj_info_ptr->objectType == CoreObject::ObjectType::isMultiBlockTile) {
@@ -96,7 +95,7 @@ void CoreEntity::EntitySystem::update() {
 							uint16_t main_slot_y = static_cast<CoreObject::MultiBlockTileComponent*>(comp)->line;
 							slot_index = main_slot_y * world_width + main_slot_x;
 							slot = &world_slots_ptr[slot_index];
-							obj_info_ptr = CoreObject::ObjectManager::get_instance()->get_object_info(slot->tile_id);
+							obj_info_ptr = CoreObject::ObjectManager::get_instance().get_object_info(slot->tile_id);
 						}
 
 						//this shouldn't happen, as world slots logically have only these types, air is skipped at the beginning, but i'll leave it for now
@@ -119,18 +118,18 @@ void CoreEntity::EntitySystem::update() {
 							switch (Collisions::getTypeCollisionAABBwithBlock(entity->hitbox, i, j)) {
 							case CollisionType::LEFT:
 								if (delta_move.x < 0.0f) delta_move.x = 0.0f;
-								physx.collision |= CollisionType::LEFT;
+								physx.collision_mask |= CollisionType::LEFT;
 								tr.pos.x = float(i) + 1.0f + entity->hitbox.size.x * 0.5f;
 								entity->hitbox.center = tr.pos + glm::vec2(0.0f, entity->hitbox.size.y * 0.5f);
 								break;
 							case CollisionType::RIGHT:
 								if (delta_move.x > 0.0f) delta_move.x = 0.0f;
-								physx.collision |= CollisionType::RIGHT;
+								physx.collision_mask |= CollisionType::RIGHT;
 								tr.pos.x = float(i) - entity->hitbox.size.x * 0.5f;
 								entity->hitbox.center = tr.pos + glm::vec2(0.0f, entity->hitbox.size.y * 0.5f);
 								break;
 							case CollisionType::TOP:
-								physx.collision |= CollisionType::TOP;
+								physx.collision_mask |= CollisionType::TOP;
 								physx.time_falling = 0.f;
 								physx.fallingDistance = 0.f;
 								physx.linear_velocity.y = 0.0f;
@@ -140,7 +139,7 @@ void CoreEntity::EntitySystem::update() {
 								break;
 							case CollisionType::BOTTOM:
 								if (physx.linear_velocity.y > 0.0f) continue;
-								physx.collision |= CollisionType::BOTTOM;
+								physx.collision_mask |= CollisionType::BOTTOM;
 								physx.time_falling = 0.f;
 								physx.fallingDistance = 0.f;
 								physx.linear_velocity.y = 0.0f;
@@ -202,8 +201,8 @@ void CoreEntity::EntitySystem::set_world_data(
 }
 
 bool CoreEntity::EntitySystem::spawn_entity(uint32_t id, glm::vec2 pos) {
-	uint32_t factory_id = entity_mgr->get_entity_info(id)->factory_ID;
-	EntityFactoryI* factory = entity_factory_reg->get_factory(factory_id);
+	uint32_t factory_id = EntityInfoManager::get_instance().get_entity_info(id)->factory_ID;
+	EntityFactoryI* factory = EntityFactoryRegistry::get_instance().get_factory(factory_id);
 	entities.emplace_back(factory->spawn(id, pos.x, pos.y));
 	return true;
 }

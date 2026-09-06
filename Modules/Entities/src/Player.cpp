@@ -3,7 +3,7 @@
 void PlayerStats::updateEffects(float deltaTime) {
 	for (int i = 0; i < effects.size(); i++) {
 		CoreResource::Effect& effect = effects[i];
-		CoreResource::EffectData& effectData = CoreResource::EffectsManager::get_instance()->get_effect_info(effect.id);
+		CoreResource::EffectData& effectData = CoreResource::EffectsManager::get_instance().get_effect_info(effect.id);
 
 		if (effect.updateEffect(deltaTime)) {
 			if (effectData.effect_type == CoreResource::EffectType::isHealSickness) {
@@ -34,7 +34,7 @@ void PlayerStats::updateEffects(float deltaTime) {
 }
 
 void PlayerStats::manage_effect(CoreResource::Effect& effect, bool apply) {
-	CoreResource::EffectData& effectData = CoreResource::EffectsManager::get_instance()->get_effect_info(effect.id);
+	CoreResource::EffectData& effectData = CoreResource::EffectsManager::get_instance().get_effect_info(effect.id);
 	if (effectData.effect_type == CoreResource::EffectType::isBuff) {
 		switch (effectData.stat_type) {
 		case CoreResource::EffectStatType::isHP: {

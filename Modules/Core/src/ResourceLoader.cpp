@@ -1,13 +1,17 @@
 #include <Core/ResourceLoader.h>
-#include <Entities/EntityRegistry.h>
-#include <Objects/ObjectRegistry.h>
-#include <Objects/Crafting.h>
-#include <Entities/EntityInfoFactory.h>
-#include <Entities/EntityFactory.h>
 #include <Utility/Lights.h>
+#include <Utility/Effects.h>
+#include <Utility/ResourceErrors.h>
+#include <Utility/CoreTags.h>
+#include <Utility/TagRegistry.h>
+#include <Objects/ObjectRegistry.h>
 #include <Objects/ObjectManager.h>
 #include <Objects/ObjectFactory.h>
-#include <Utility/ResourceErrors.h>
+#include <Objects/Crafting.h>
+#include <Entities/EntityRegistry.h>
+#include <Entities/EntityInfoManager.h>
+#include <Entities/EntityInfoFactory.h>
+#include <Entities/EntityFactory.h>
 
 void ResourceLoader::Load_Resources() {
 	if (DEBUG)
@@ -18,12 +22,14 @@ void ResourceLoader::Load_Resources() {
 
 	std::vector<std::filesystem::path> mod_paths;
 	std::vector<DataParser> item_data_parsers;
+	std::vector<DataParser> entity_data_parsers;
 	find_sources(mod_paths);
 	std::unordered_map<std::string, uint32_t> texture_layers;
 
 	CoreObject::register_core_object_factories();
 	CoreEntity::register_core_entity_info_factories();
 	CoreEntity::register_core_entity_factories();
+	CoreTags::register_core_tags();
 
 	const float pixel_UV_size = 1.f / 512.f;
 	CoreResource::SpriteManager::MAIN_PIXEL_UV_SIZE = pixel_UV_size;
@@ -38,27 +44,27 @@ void ResourceLoader::Load_Resources() {
 	load_crafts(mod_paths);
 	load_animation_clips_data(mod_paths);
 	load_animation_animators_data(mod_paths);
-	//load_entities_data(mod_paths);
+	load_entities_data(mod_paths, entity_data_parsers);
 
 	resolve_items_dependencies(item_data_parsers);
-	//resolve_entities_dependencies();
+	resolve_entities_dependencies(entity_data_parsers);
 }
 
 void ResourceLoader::Hot_Reload() {
 	textures_array.reset();
-	CoreResource::SpriteManager::get_instance()->ClearData();
-	CoreResource::LightsManager::get_instance()->ClearData();
+	CoreResource::SpriteManager::get_instance().ClearData();
+	CoreResource::LightsManager::get_instance().ClearData();
 	//particles mgr
-	CoreResource::EffectsManager::get_instance()->ClearData();
-	CoreObject::ObjectManager::get_instance()->ClearData();
-	CoreObject::ObjectFactoryRegistry::get_instance()->ClearData();
-	CraftingSystem::get_instance()->ClearData();
-	CoreAnimation::AnimationClipManager::get_instance()->ClearData();
-	CoreAnimation::AnimatorManager::get_instance()->ClearData();
-	CoreEntity::EntityInfoFactoryRegistry::get_instance()->ClearData();
-	CoreEntity::EntityFactoryRegistry::get_instance()->ClearData();
-	CoreEntity::EntityInfoManager::get_instance()->ClearData();
-	//entity_data info mgr
+	CoreResource::EffectsManager::get_instance().ClearData();
+	CoreObject::ObjectManager::get_instance().ClearData();
+	CoreObject::ObjectFactoryRegistry::get_instance().ClearData();
+	CraftingSystem::get_instance().ClearData();
+	CoreAnimation::AnimationClipManager::get_instance().ClearData();
+	CoreAnimation::AnimatorManager::get_instance().ClearData();
+	CoreEntity::EntityInfoFactoryRegistry::get_instance().ClearData();
+	CoreEntity::EntityFactoryRegistry::get_instance().ClearData();
+	CoreEntity::EntityInfoManager::get_instance().ClearData();
+	TagRegistry::get_instance().ClearData();
 	Load_Resources();
 }
 
@@ -105,7 +111,7 @@ void ResourceLoader::load_textures(const std::vector<std::filesystem::path>& mod
 
 void ResourceLoader::load_sprites(const std::vector<std::filesystem::path>& mod_paths, std::unordered_map<std::string, uint32_t>& texture_layers) const {
 	//add empty sprite with global_ID = 0
-	CoreResource::SpriteManager::get_instance()->add_sprite("Sprite:Core:Empty", 0, 0, 0, 0, 0.0f, 0);
+	CoreResource::SpriteManager::get_instance().add_sprite("Sprite:Core:Empty", 0, 0, 0, 0, 0.0f, 0);
 
 	auto _load_sprites = [&](std::filesystem::path& sprites_path) {
 		for (const auto& entry : std::filesystem::directory_iterator(sprites_path)) {
@@ -134,7 +140,7 @@ void ResourceLoader::load_sprites(const std::vector<std::filesystem::path>& mod_
 					uint32_t h = sprite["h"].get_as<uint32_t>();
 					float base_size = sprite["base_size"].get_as<float>();
 
-					CoreResource::SpriteManager::get_instance()->add_sprite(UID, u0, v0, w, h, base_size, texture_array_id);
+					CoreResource::SpriteManager::get_instance().add_sprite(UID, u0, v0, w, h, base_size, texture_array_id);
 				}
 				catch (const std::exception& e) {
 					ResourceLoading::throw_resource_error(UID, std::string("In file ") + file_path.string() + ": " + e.what());
@@ -154,7 +160,7 @@ void ResourceLoader::load_sprites(const std::vector<std::filesystem::path>& mod_
 
 void ResourceLoader::load_lights(const std::vector<std::filesystem::path>& mod_paths) const {
 	//add empty light with global_ID = 0
-	CoreResource::LightsManager::get_instance()->add_light("Light:Core:Empty", 0.0f, glm::vec3(0.0f, 0.0f, 0.0f));
+	CoreResource::LightsManager::get_instance().add_light("Light:Core:Empty", 0.0f, glm::vec3(0.0f, 0.0f, 0.0f));
 
 	auto _load_lights = [&](std::filesystem::path& lights_path) {
 		for (const auto& entry : std::filesystem::directory_iterator(lights_path)) {
@@ -173,7 +179,7 @@ void ResourceLoader::load_lights(const std::vector<std::filesystem::path>& mod_p
 					float r = light["r"].get_as<float>();
 					float g = light["g"].get_as<float>();
 					float b = light["b"].get_as<float>();
-					CoreResource::LightsManager::get_instance()->add_light(UID, radius, glm::vec3(r, g, b));
+					CoreResource::LightsManager::get_instance().add_light(UID, radius, glm::vec3(r, g, b));
 				}
 				catch (const std::exception& e) {
 					ResourceLoading::throw_resource_error(UID, std::string("In file ") + file_path.string() + ": " + e.what());
@@ -198,7 +204,7 @@ void ResourceLoader::load_particles(const std::vector<std::filesystem::path>& mo
 
 void ResourceLoader::load_effects(const std::vector<std::filesystem::path>& mod_paths) const {
 	//add empty effect with global_ID = 0
-	CoreResource::EffectsManager::get_instance()->add_effect_info(CoreResource::EffectType::isBuff, "Effect:Core:Empty", CoreResource::EffectStatType::isTypeless, 0.0f, 0);
+	CoreResource::EffectsManager::get_instance().add_effect_info(CoreResource::EffectType::isBuff, "Effect:Core:Empty", CoreResource::EffectStatType::isTypeless, 0.0f, 0);
 
 	auto _load_effects = [&](std::filesystem::path& effects_path) {
 		for (const auto& entry : std::filesystem::directory_iterator(effects_path)) {
@@ -214,7 +220,7 @@ void ResourceLoader::load_effects(const std::vector<std::filesystem::path>& mod_
 				std::string UID = effect["UID"].get_as<std::string>();
 				try {
 					std::string sprite_UID = effect["sprite_UID"].get_as<std::string>();
-					auto sprite_global_id = CoreResource::SpriteManager::get_instance()->get_sprite_id(sprite_UID);
+					auto sprite_global_id = CoreResource::SpriteManager::get_instance().get_sprite_id(sprite_UID);
 					if (!sprite_global_id)
 						ResourceLoading::throw_reference_error(UID, sprite_UID);
 					uint8_t effect_type_id = effect["effect_type"].get_as<uint8_t>();
@@ -228,7 +234,7 @@ void ResourceLoader::load_effects(const std::vector<std::filesystem::path>& mod_
 						auto& p = effect["particle"];
 
 					}
-					CoreResource::EffectsManager::get_instance()->add_effect_info(
+					CoreResource::EffectsManager::get_instance().add_effect_info(
 						(CoreResource::EffectType)effect_type_id, UID, (CoreResource::EffectStatType)stat_type_id, value,
 						sprite_global_id.value(), particle_id, p_spawn_cd, dmg_cd
 					);
@@ -251,9 +257,9 @@ void ResourceLoader::load_effects(const std::vector<std::filesystem::path>& mod_
 
 void ResourceLoader::load_items_data(const std::vector<std::filesystem::path>& mod_paths, std::vector<DataParser>& item_data_parsers) {
 	//add "Air" info with global_ID = 0
-	CoreObject::ObjectManager::get_instance()->create_object_info<CoreObject::ObjectInfo, CoreObject::ObjectType::None>("Item:Core:Air");
+	CoreObject::ObjectManager::get_instance().create_object_info<CoreObject::ObjectInfo, CoreObject::ObjectType::None>("Item:Core:Air");
 	//add "MultiBlockTile" info with global_ID = 1
-	CoreObject::ObjectManager::get_instance()->create_object_info<CoreObject::ObjectInfo, CoreObject::ObjectType::isMultiBlockTile>("Item:Core:MultiBlockTile");
+	CoreObject::ObjectManager::get_instance().create_object_info<CoreObject::ObjectInfo, CoreObject::ObjectType::isMultiBlockTile>("Item:Core:MultiBlockTile");
 
 	auto _load_items = [&](std::filesystem::path& items_path) {
 		for (const auto& entry : std::filesystem::directory_iterator(items_path)) {
@@ -267,10 +273,10 @@ void ResourceLoader::load_items_data(const std::vector<std::filesystem::path>& m
 				if (!item.has_child("class_UID"))
 					throw std::runtime_error("Item entry in " + file_path.string() + " has no class UID!");
 				std::string class_uid = item["class_UID"].get_as<std::string>();
-				auto factory_id = CoreObject::ObjectFactoryRegistry::get_instance()->get_factory_id(class_uid);
+				auto factory_id = CoreObject::ObjectFactoryRegistry::get_instance().get_factory_id(class_uid);
 				if (!factory_id)
 					throw std::runtime_error("Info Class " + class_uid + " from file " + file_path.string() + " not found!");
-				CoreObject::_ObjectFactoryI* factory = CoreObject::ObjectFactoryRegistry::get_instance()->get_factory(factory_id.value());
+				CoreObject::_ObjectFactoryI* factory = CoreObject::ObjectFactoryRegistry::get_instance().get_factory(factory_id.value());
 				factory->add_object(item);
 			}
 		}
@@ -299,7 +305,7 @@ void ResourceLoader::load_crafts(const std::vector<std::filesystem::path>& mod_p
 					throw std::runtime_error("Craft entry in " + file_path.string() + " has no result_UID!");
 				std::string result_UID = craft["result_UID"].get_as<std::string>();
 				try {
-					auto item_info_id = CoreObject::ObjectManager::get_instance()->get_object_id(result_UID);
+					auto item_info_id = CoreObject::ObjectManager::get_instance().get_object_id(result_UID);
 					if (!item_info_id.has_value())
 						throw std::runtime_error("Craft entry in " + file_path.string() + ": <" + result_UID + "> doesn't exist!");
 					uint16_t item_id = item_info_id.value();
@@ -312,14 +318,14 @@ void ResourceLoader::load_crafts(const std::vector<std::filesystem::path>& mod_p
 
 					for (auto& i : items) {
 						std::string item_UID = i["item_UID"].get_as<std::string>();
-						auto item_info_ID = CoreObject::ObjectManager::get_instance()->get_object_id(item_UID);
+						auto item_info_ID = CoreObject::ObjectManager::get_instance().get_object_id(item_UID);
 						if (!item_info_ID.has_value())
 							ResourceLoading::throw_reference_error(result_UID, item_UID);
 						uint16_t item_ID = item_info_ID.value();
 						uint16_t item_amount = i["item_amount"].get_as<uint16_t>();
 						craft_pairs.emplace_back((uint16_t)item_ID, item_amount);
 					}
-					CraftingSystem::get_instance()->add(item_id, amount, CraftCondition(condition_id), std::move(craft_pairs));
+					CraftingSystem::get_instance().add(item_id, amount, CraftCondition(condition_id), std::move(craft_pairs));
 				}
 				catch (const std::exception& e) {
 					ResourceLoading::throw_resource_error(result_UID, std::string("In file ") + file_path.string() + ": " + e.what());
@@ -351,7 +357,7 @@ void ResourceLoader::load_animation_clips_data(const std::vector<std::filesystem
 					throw std::runtime_error("Clip entry in " + file_path.string() + " has no UID!");
 				std::string UID = clip_data["UID"].get_as<std::string>();
 				try {
-					CoreAnimation::AnimationClip& clip = CoreAnimation::AnimationClipManager::get_instance()->add_clip(UID);
+					CoreAnimation::AnimationClip& clip = CoreAnimation::AnimationClipManager::get_instance().add_clip(UID);
 
 					bool loop = clip_data["loop"].get_as<bool>();
 					float frame_time = clip_data["frame_time"].get_as<float>();
@@ -363,7 +369,7 @@ void ResourceLoader::load_animation_clips_data(const std::vector<std::filesystem
 					clip.set_frame_time(frame_time);
 					for (uint32_t i = 0; i < sprites_size; i++) {
 						std::string sprite_UID = sprites[i].get_as<std::string>();
-						auto sprite_global_id = CoreResource::SpriteManager::get_instance()->get_sprite_id(sprite_UID);
+						auto sprite_global_id = CoreResource::SpriteManager::get_instance().get_sprite_id(sprite_UID);
 						if (!sprite_global_id.has_value())
 							ResourceLoading::throw_reference_error(UID, sprite_UID);
 						else clip.sprites.emplace_back(sprite_global_id.value());
@@ -399,13 +405,13 @@ void ResourceLoader::load_animation_animators_data(const std::vector<std::filesy
 					throw std::runtime_error("Animator entry in " + file_path.string() + " has no UID!");
 				std::string UID = animator_data["UID"].get_as<std::string>();
 				try {
-					CoreAnimation::Animator& animator = CoreAnimation::AnimatorManager::get_instance()->add_animator(UID);
+					CoreAnimation::Animator& animator = CoreAnimation::AnimatorManager::get_instance().add_animator(UID);
 					auto& clips = animator_data["clips"].array;
 					uint32_t clips_size = clips.size();
 					animator.clips.reserve(clips_size);
 					for (uint32_t i = 0; i < clips_size; i++) {
 						std::string clip_UID = clips[i].get_as<std::string>();
-						auto clip_id_opt = CoreAnimation::AnimationClipManager::get_instance()->get_clip_id(clip_UID);
+						auto clip_id_opt = CoreAnimation::AnimationClipManager::get_instance().get_clip_id(clip_UID);
 						if (!clip_id_opt.has_value())
 							ResourceLoading::throw_reference_error(UID, clip_UID);
 						else animator.clips.emplace_back(clip_id_opt.value());
@@ -427,23 +433,23 @@ void ResourceLoader::load_animation_animators_data(const std::vector<std::filesy
 	}
 }
 
-void ResourceLoader::load_entities_data(const std::vector<std::filesystem::path>& mod_paths) const {
+void ResourceLoader::load_entities_data(const std::vector<std::filesystem::path>& mod_paths, std::vector<DataParser>& entity_data_parsers) const {
 	auto _load_entities = [&](std::filesystem::path& entities_path) {
 		for (const auto& entry : std::filesystem::directory_iterator(entities_path)) {
 			if (!entry.is_regular_file()) continue;
 			std::filesystem::path file_path = entry.path();
 			if (file_path.extension() != data_extension) continue;
 
-			DataParser parser;
+			DataParser& parser = entity_data_parsers.emplace_back();
 			parser.parse_data(file_path, DEBUG);
 			for (const auto& entity_data : parser.node_root.array) {
-				if (!entity_data.has_child("class_UID"))
-					throw std::runtime_error("Entity entry in " + file_path.string() + " has no class UID!");
-				std::string class_uid = entity_data["class_UID"].get_as<std::string>();
-				auto factory_id = CoreEntity::EntityInfoFactoryRegistry::get_instance()->get_factory_id(class_uid);
+				if (!entity_data.has_child("info_class_UID"))
+					throw std::runtime_error("Entity entry in " + file_path.string() + " has no info_class_UID!");
+				std::string info_class_uid = entity_data["info_class_UID"].get_as<std::string>();
+				auto factory_id = CoreEntity::EntityInfoFactoryRegistry::get_instance().get_factory_id(info_class_uid);
 				if (!factory_id.has_value())
-					throw std::runtime_error("Info Class " + class_uid + " from file " + file_path.string() + " not found!");
-				CoreEntity::EntityInfoFactoryI* factory = CoreEntity::EntityInfoFactoryRegistry::get_instance()->get_factory(factory_id.value());
+					throw std::runtime_error("Info Class " + info_class_uid + " from file " + file_path.string() + " not found!");
+				CoreEntity::EntityInfoFactoryI* factory = CoreEntity::EntityInfoFactoryRegistry::get_instance().get_factory(factory_id.value());
 				factory->add_entity_info(entity_data);
 			}
 		}
@@ -462,12 +468,18 @@ void ResourceLoader::resolve_items_dependencies(const std::vector<DataParser>& i
 	uint16_t object_ID = 2;
 	for (const auto& parser : item_data_parsers) {
 		for (const auto& data_node : parser.node_root.array) {
-			CoreObject::ObjectManager::get_instance()->get_object_info(object_ID)->fill_dependent_data(data_node);
+			CoreObject::ObjectManager::get_instance().get_object_info(object_ID)->fill_dependent_data(data_node);
 			object_ID++;
 		}
 	}
 }
 
-void ResourceLoader::resolve_entities_dependencies() {
-
+void ResourceLoader::resolve_entities_dependencies(const std::vector<DataParser>& entity_data_parsers) const {
+	uint16_t entity_ID = 0;
+	for (const auto& parser : entity_data_parsers) {
+		for (const auto& data_node : parser.node_root.array) {
+			CoreEntity::EntityInfoManager::get_instance().get_entity_info(entity_ID)->fill_dependent_data(data_node);
+			entity_ID++;
+		}
+	}
 }

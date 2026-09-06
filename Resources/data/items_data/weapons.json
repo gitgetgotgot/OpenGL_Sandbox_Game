@@ -2,7 +2,7 @@
   {
     "UID": "Item:Core:Copper Pickaxe",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 0,
+    "tags": [ "Core:Pickaxe" ],
     "power": 1,
     "range": 5,
     "dmg": 1,
@@ -17,7 +17,7 @@
   {
     "UID": "Item:Core:Copper Axe",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 3,
+    "tags": [ "Core:Axe" ],
     "power": 1,
     "range": 5,
     "dmg": 1,
@@ -32,7 +32,7 @@
   {
     "UID": "Item:Core:Copper Dagger",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 2,
+    "tags": [ "Core:Piercing" ],
     "dmg": 3,
     "speed": 1,
     "size_x": 1.5,
@@ -45,7 +45,7 @@
   {
     "UID": "Item:Core:Copper Sword",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 1,
+    "tags": [ "Core:Sword" ],
     "dmg": 4,
     "speed": 1,
     "size_x": 1.5,
@@ -58,7 +58,7 @@
   {
     "UID": "Item:Core:Copper Hammer",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 4,
+    "tags": [ "Core:Hammer" ],
     "power": 1,
     "range": 5,
     "dmg": 1,
@@ -73,7 +73,7 @@
   {
     "UID": "Item:Core:Copper Bow",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 7,
+    "tags": [ "Core:Bow" ],
     "dmg": 3,
     "speed": 1,
     "size_x": 1.5,
@@ -86,7 +86,7 @@
   {
     "UID": "Item:Core:Iron Pickaxe",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 0,
+    "tags": [ "Core:Pickaxe" ],
     "power": 1,
     "range": 5,
     "dmg": 1,
@@ -101,7 +101,7 @@
   {
     "UID": "Item:Core:Iron Axe",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 3,
+    "tags": [ "Core:Axe" ],
     "power": 1,
     "range": 5,
     "dmg": 1,
@@ -116,7 +116,7 @@
   {
     "UID": "Item:Core:Iron Dagger",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 2,
+    "tags": [ "Core:Piercing" ],
     "dmg": 3,
     "speed": 1,
     "size_x": 1.5,
@@ -129,7 +129,7 @@
   {
     "UID": "Item:Core:Iron Sword",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 1,
+    "tags": [ "Core:Sword" ],
     "dmg": 4,
     "speed": 1,
     "size_x": 1.5,
@@ -142,7 +142,7 @@
   {
     "UID": "Item:Core:Iron Hammer",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 4,
+    "tags": [ "Core:Hammer" ],
     "power": 1,
     "range": 5,
     "dmg": 1,
@@ -157,7 +157,7 @@
   {
     "UID": "Item:Core:Iron Bow",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 7,
+    "tags": [ "Core:Bow" ],
     "dmg": 3,
     "speed": 1,
     "size_x": 1.5,
@@ -170,7 +170,7 @@
   {
     "UID": "Item:Core:Golden Pickaxe",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 0,
+    "tags": [ "Core:Pickaxe" ],
     "power": 1,
     "range": 5,
     "dmg": 1,
@@ -185,7 +185,7 @@
   {
     "UID": "Item:Core:Golden Axe",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 3,
+    "tags": [ "Core:Axe" ],
     "power": 1,
     "range": 5,
     "dmg": 1,
@@ -200,7 +200,7 @@
   {
     "UID": "Item:Core:Golden Dagger",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 2,
+    "tags": [ "Core:Piercing" ],
     "dmg": 3,
     "speed": 1,
     "size_x": 1.5,
@@ -213,7 +213,7 @@
   {
     "UID": "Item:Core:Golden Sword",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 1,
+    "tags": [ "Core:Sword" ],
     "dmg": 4,
     "speed": 1,
     "size_x": 1.5,
@@ -226,7 +226,7 @@
   {
     "UID": "Item:Core:Golden Hammer",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 4,
+    "tags": [ "Core:Hammer" ],
     "power": 1,
     "range": 5,
     "dmg": 1,
@@ -241,7 +241,7 @@
   {
     "UID": "Item:Core:Golden Bow",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 7,
+    "tags": [ "Core:Bow" ],
     "dmg": 3,
     "speed": 1,
     "size_x": 1.5,
@@ -254,7 +254,7 @@
   {
     "UID": "Item:Core:Magic Wand",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 10,
+    "tags": [ "Core:Magical" ],
     "use_mana_cost": 5,
     "dmg": 5,
     "speed": 1,
@@ -270,7 +270,7 @@
   {
     "UID": "Item:Core:Shuriken",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 8,
+    "tags": [ "Core:Throwable" ],
     "dmg": 5,
     "speed": 1,
     "size_x": 1.0,
@@ -283,7 +283,7 @@
   {
     "UID": "Item:Core:Throwable Knife",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 8,
+    "tags": [ "Core:Throwable" ],
     "dmg": 5,
     "speed": 1,
     "size_x": 1.0,
@@ -296,7 +296,7 @@
   {
     "UID": "Item:Core:Game.cpp",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 10,
+    "tags": [ "Core:Magical" ],
     "use_mana_cost": 5,
     "dmg": 5,
     "speed": 1,
@@ -312,7 +312,7 @@
   {
     "UID": "Item:Core:Pistol",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 5,
+    "tags": [ "Core:Gun" ],
     "dmg": 5,
     "speed": 1,
     "size_x": 1.0,
@@ -325,7 +325,7 @@
   {
     "UID": "Item:Core:Shotgun",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 6,
+    "tags": [ "Core:Shotgun" ],
     "dmg": 5,
     "speed": 1,
     "size_x": 1.0,
@@ -338,7 +338,7 @@
   {
     "UID": "Item:Core:Trident",
     "class_UID": "Class:Core:Weapon",
-    "sub_type": 2,
+    "tags": [ "Core:Piercing" ],
     "dmg": 5,
     "speed": 1,
     "size_x": 1.0,

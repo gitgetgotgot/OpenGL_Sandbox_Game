@@ -1,7 +1,6 @@
 #pragma once
 #include <Rendering/OpenGL_Renderer.h>
 #include <Entities/Player.h>
-#include <Utility/Sprite.h>
 #include <Utility/TextBufferBuilder.h>
 #include <UI/SDF_Font_Manager.h>
 #include <Objects/ObjectManager.h>
@@ -80,7 +79,6 @@ public:
 private:
 	UI_Renderer() {}
 	~UI_Renderer() {}
-	CoreResource::SpriteManager* spriteMgr = nullptr;
 	Player* main_player_ptr = nullptr;
 	SDF_Font_Manager sdf_font_manager;
 	TextBufferBuilder text_builder;

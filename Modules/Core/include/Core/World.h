@@ -1,20 +1,10 @@
 #pragma once
-#include <Utility/SparseSet.h>
 #include <IOSystem/SystemContext.h>
 #include <Entities/EntitySystem.h>
 #include <Objects/ObjectComponents.h>
-
-struct Vertex2f {
-	Vertex2f() {}
-	Vertex2f(float pX, float pY, float UVx, float UVy, uint32_t tex_index) {
-		pos.x = pX; pos.y = pY;
-		UV.x = UVx; UV.y = UVy;
-		texture_array_index = tex_index;
-	}
-	glm::vec2 pos{ 0.0f };
-	glm::vec2 UV{ 0.0f };
-	uint32_t texture_array_index = 0;
-};
+#include <Utility/SparseSet.h>
+#include <Utility/WorldData.h>
+#include <Utility/RenderData.h>
 
 struct ChunkRenderBuffer {
 	uint32_t x = 0, y = 0;
@@ -66,7 +56,7 @@ private:
 		current_buffer_x_max = 3,
 		current_buffer_y_min = 0,
 		current_buffer_y_max = 3;
-	int MAX_CHUNK_X, MAX_CHUNK_Y;
+	int MAX_CHUNK_X = 0, MAX_CHUNK_Y = 0;
 
 	std::unique_ptr<ShaderProgram> shader;
 	std::unique_ptr<UBO> sprites_ubo;

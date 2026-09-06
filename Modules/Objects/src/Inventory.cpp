@@ -3,8 +3,6 @@
 #include <Utility/TimeManager.h>
 
 void Inventory::init() {
-	crafting_system_ptr = CraftingSystem::get_instance();
-
 	slots_bounds.reserve(INVENTORY_SIZE);
 	chest_slots_bounds.reserve(INVENTORY_CHEST_SIZE);
 
@@ -305,7 +303,7 @@ void Inventory::update_helper_slots_input() {
 					current_craftable_item_index = i;
 					update_dynamic_craft_slots_items();
 				}
-				uint16_t item_id = crafting_system_ptr->get_available_craft(i).item_id;
+				uint16_t item_id = CraftingSystem::get_instance().get_available_craft(i).item_id;
 				if (1 > 0) {
 					if (cursor_item.item_id == 0) {
 						tooltip_is_visible = true;
@@ -431,7 +429,7 @@ void Inventory::update_dynamic_craft_slots() {
 				DynamicSlot& last_slot = craft_slots[5];
 				last_slot.current_pos = glm::vec2(-SystemContext::screen.ratio * 0.97f + 0.11f, last_craft_slot_bottom_y);
 				if (current_craftable_item_index + 3 < current_crafts_available) {
-					CraftableItem& item = crafting_system_ptr->get_available_craft(current_craftable_item_index + 3);
+					CraftableItem& item = CraftingSystem::get_instance().get_available_craft(current_craftable_item_index + 3);
 					last_slot.item_data.item_id = item.item_id;
 					last_slot.item_data.amount = item.item_amount;
 				}
@@ -449,7 +447,7 @@ void Inventory::update_dynamic_craft_slots() {
 				DynamicSlot& last_slot = craft_slots[5];
 				last_slot.current_pos = glm::vec2(-SystemContext::screen.ratio * 0.97f + 0.11f, last_craft_slot_up_y);
 				if (current_craftable_item_index - 3 >= 0) {
-					CraftableItem& item = crafting_system_ptr->get_available_craft(current_craftable_item_index - 3);
+					CraftableItem& item = CraftingSystem::get_instance().get_available_craft(current_craftable_item_index - 3);
 					last_slot.item_data.item_id = item.item_id;
 					last_slot.item_data.amount = item.item_amount;
 				}
@@ -490,7 +488,7 @@ void Inventory::update_dynamic_craft_slots_items() {
 			slot.item_data.amount = 0;
 		}
 		else {
-			CraftableItem& item = crafting_system_ptr->get_available_craft(item_index);
+			CraftableItem& item = CraftingSystem::get_instance().get_available_craft(item_index);
 			slot.item_data.item_id = item.item_id;
 			slot.item_data.amount = item.item_amount;
 		}
@@ -500,13 +498,13 @@ void Inventory::update_dynamic_craft_slots_items() {
 
 void Inventory::update_crafts() {
 	should_update_available_crafts = false;
-	crafting_system_ptr->update_available_crafts(items, INVENTORY_MAIN_SIZE, current_player_flags);
-	current_crafts_available = crafting_system_ptr->available_crafts.size();
+	CraftingSystem::get_instance().update_available_crafts(items, INVENTORY_MAIN_SIZE, current_player_flags);
+	current_crafts_available = CraftingSystem::get_instance().available_crafts.size();
 	if (current_craftable_item_index >= current_crafts_available)
 		current_craftable_item_index = current_crafts_available - 1;
 	update_dynamic_craft_slots_items();
 }
 
 CraftableItem& Inventory::get_craft_item(uint32_t index) {
-	return crafting_system_ptr->get_available_craft(index);
+	return CraftingSystem::get_instance().get_available_craft(index);
 }

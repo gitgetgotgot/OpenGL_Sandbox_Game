@@ -1,5 +1,5 @@
 #pragma once
-#include <Utility/CommonData.h>
+#include <Utility/ResourceData.h>
 #include <unordered_set>
 #include <unordered_map>
 
@@ -39,7 +39,10 @@ struct ItemCrafts {
 
 class CraftingSystem {
 public:
-	static CraftingSystem* get_instance();
+	static CraftingSystem& get_instance() {
+		static CraftingSystem sys;
+		return sys;
+	}
 	void ClearData();
 	void update_available_crafts(InventorySlot* inventory_slots_ptr, uint32_t slots_size, uint32_t player_flags);
 	void add(uint16_t item_id, uint16_t amount, CraftCondition condition, std::vector<CraftingPair> items_needed);

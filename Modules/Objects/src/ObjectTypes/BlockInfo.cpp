@@ -4,7 +4,6 @@
 void CoreObject::BlockInfo::fill_data(const DataNode& data) {
 	ObjectInfo::fill_data(data);
 	try {
-		uint8_t sub_type_id = data["sub_type"].get_as<uint8_t>();
 		float toughness = data["toughness"].get_as<float>();
 		bool collision = false, platform_collision = false;
 
@@ -13,7 +12,6 @@ void CoreObject::BlockInfo::fill_data(const DataNode& data) {
 		if (data.has_child("platform_collision"))
 			platform_collision = data["platform_collision"].get_as<bool>();
 
-		this->block_type = BlockType(sub_type_id);
 		this->toughness = toughness;
 		this->collision = collision;
 		this->platform_collision = platform_collision;

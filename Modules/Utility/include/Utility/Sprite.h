@@ -19,9 +19,9 @@ namespace CoreResource {
 
 	class SpriteManager {
 	public:
-		static SpriteManager* get_instance() {
+		static SpriteManager& get_instance() {
 			static SpriteManager spriteMgr;
-			return &spriteMgr;
+			return spriteMgr;
 		}
 		void ClearData();
 		void add_sprite(std::string UID, uint32_t U0, uint32_t V0, uint32_t width, uint32_t height, float base_world_size, uint32_t texture_array_id);

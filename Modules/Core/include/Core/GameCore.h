@@ -3,7 +3,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <Audio/AudioManager.h>
 #include "World.h"
-#include <Core/ResourceLoader.h>
 #include <Utility/TimeManager.h>
 #include <IOSystem/InputHandler.h>
 #include <UI/UI_Renderer.h>

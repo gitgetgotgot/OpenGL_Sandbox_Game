@@ -57,9 +57,9 @@ namespace CoreResource {
 
 	class EffectsManager {
 	public:
-		static EffectsManager* get_instance() {
+		static EffectsManager& get_instance() {
 			static EffectsManager effectsMgr;
-			return &effectsMgr;
+			return effectsMgr;
 		}
 		void ClearData();
 		void add_effect_info(EffectType type, std::string uid, EffectStatType stat,

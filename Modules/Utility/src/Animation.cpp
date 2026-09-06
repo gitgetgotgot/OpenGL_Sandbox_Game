@@ -51,7 +51,7 @@ CoreAnimation::Animator& CoreAnimation::AnimatorManager::add_animator(std::strin
 }
 
 void CoreAnimation::AnimatorController::set_animator(uint32_t id) {
-	animator_ptr = AnimatorManager::get_instance()->get_animator(id);
+	animator_ptr = AnimatorManager::get_instance().get_animator(id);
 	animator_id = id;
 }
 
@@ -71,18 +71,18 @@ void CoreAnimation::AnimatorController::update() {
 				return;
 			}
 		}
-		current_sprite = &CoreResource::SpriteManager::get_instance()->get_sprite(current_clip->sprites[current_sprite_index]);
+		current_sprite = &CoreResource::SpriteManager::get_instance().get_sprite(current_clip->sprites[current_sprite_index]);
 	}
 }
 
 void CoreAnimation::AnimatorController::play(uint32_t clip_id) {
-	current_clip = AnimationClipManager::get_instance()->get_clip(clip_id);
+	current_clip = AnimationClipManager::get_instance().get_clip(clip_id);
 
 	is_playing = true;
 	max_sprite_index = current_clip->sprites.size();
 	current_sprite_index = 0;
 	current_frame_time = 0.0f;
-	current_sprite = &CoreResource::SpriteManager::get_instance()->get_sprite(current_clip->sprites[current_sprite_index]);
+	current_sprite = &CoreResource::SpriteManager::get_instance().get_sprite(current_clip->sprites[current_sprite_index]);
 }
 
 uint32_t CoreAnimation::AnimatorController::get_clip_id(uint32_t animator_clip_index) {

@@ -16,8 +16,8 @@ public:
 struct Font {
 public:
 	GlyphData glyphsData[95]; //[32, 126]
-	float ascender;
-	float descender;
+	float ascender = 0.0f;
+	float descender = 0.0f;
 };
 
 constexpr char SDFFontAtlasesDirectory[] = "Resources/SDF_Fonts/";
@@ -25,6 +25,6 @@ constexpr char SDFFontAtlasesDirectory[] = "Resources/SDF_Fonts/";
 class SDF_Font_Manager {
 public:
 	void load_main_sdf_font(const char* fontName);
-	Font mainFont;
-	Texture mainFontTexture;
+	Font mainFont{};
+	Texture mainFontTexture{};
 };

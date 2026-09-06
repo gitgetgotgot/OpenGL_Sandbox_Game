@@ -1,7 +1,5 @@
 #pragma once
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <glm/ext/matrix_float4x4.hpp>
 
 struct Collider_2D_AABB {
 	glm::vec2 center;

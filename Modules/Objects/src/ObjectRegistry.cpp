@@ -11,15 +11,13 @@
 #include "Objects/ObjectTypes/ArtifactInfo.h"
 
 void CoreObject::register_core_object_factories() {
-	ObjectFactoryRegistry* registry = ObjectFactoryRegistry::get_instance();
-	
-	registry->register_factory("Class:Core:Wall",		std::make_unique<WallInfoFactory>());
-	registry->register_factory("Class:Core:Block",		std::make_unique<BlockInfoFactory>());
-	registry->register_factory("Class:Core:MultiBlock", std::make_unique<MultiBlockInfoFactory>());
-	registry->register_factory("Class:Core:Item",		std::make_unique<ItemInfoFactory>());
-	registry->register_factory("Class:Core:Weapon",		std::make_unique<WeaponInfoFactory>());
-	registry->register_factory("Class:Core:Ammo",		std::make_unique<AmmoInfoFactory>());
-	registry->register_factory("Class:Core:Consumable", std::make_unique<ConsumableInfoFactory>());
-	registry->register_factory("Class:Core:Armor",		std::make_unique<ArmorInfoFactory>());
-	registry->register_factory("Class:Core:Artifact",	std::make_unique<ArtifactInfoFactory>());
+	ObjectFactoryRegistry::get_instance().register_factory("Class:Core:Wall",		std::make_unique<WallInfoFactory>());
+	ObjectFactoryRegistry::get_instance().register_factory("Class:Core:Block",		std::make_unique<BlockInfoFactory>());
+	ObjectFactoryRegistry::get_instance().register_factory("Class:Core:MultiBlock", std::make_unique<MultiBlockInfoFactory>());
+	ObjectFactoryRegistry::get_instance().register_factory("Class:Core:Item",		std::make_unique<ItemInfoFactory>());
+	ObjectFactoryRegistry::get_instance().register_factory("Class:Core:Weapon",		std::make_unique<WeaponInfoFactory>());
+	ObjectFactoryRegistry::get_instance().register_factory("Class:Core:Ammo",		std::make_unique<AmmoInfoFactory>());
+	ObjectFactoryRegistry::get_instance().register_factory("Class:Core:Consumable", std::make_unique<ConsumableInfoFactory>());
+	ObjectFactoryRegistry::get_instance().register_factory("Class:Core:Armor",		std::make_unique<ArmorInfoFactory>());
+	ObjectFactoryRegistry::get_instance().register_factory("Class:Core:Artifact",	std::make_unique<ArtifactInfoFactory>());
 }

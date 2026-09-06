@@ -15,9 +15,9 @@ namespace CoreResource {
 
 	class LightsManager {
 	public:
-		static LightsManager* get_instance() {
+		static LightsManager& get_instance() {
 			static LightsManager compsMgr;
-			return &compsMgr;
+			return compsMgr;
 		}
 		void ClearData();
 		void add_light(std::string uid, float radius, glm::vec3 color);

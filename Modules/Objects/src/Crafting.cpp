@@ -1,10 +1,5 @@
 #include "Objects/Crafting.h"
 
-CraftingSystem* CraftingSystem::get_instance() {
-	static CraftingSystem sys;
-	return &sys;
-}
-
 void CraftingSystem::ClearData() {
 	crafts = {};
 	items_crafts = {};

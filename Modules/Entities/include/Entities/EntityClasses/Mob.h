@@ -1,27 +1,29 @@
 #pragma once
-#include <Entities/EntityTypes/MobInfo.h>
+#include "Entities/EntityBase.h"
+#include <Utility/Effects.h>
+#include <Physics/EntityPhysics.h>
+#include <Physics/Colliders.h>
 
 namespace CoreEntity {
+	struct MobStats {
+		bool applyEffect(CoreResource::Effect& effect) { return true; }
+		void removeEffect(CoreResource::Effect& effect) {}
+
+		int HP = 0;
+		int DEF = 0;
+		float DMG = 0.0f;
+		glm::vec2 speed{ 0.0f };
+		float speedFactor = 1.f;
+		std::vector<CoreResource::Effect> effects;
+	};
+
 	class Mob : public EntityBase {
 	public:
-		Mob(uint32_t entity_id, glm::vec2 spawn_center) : EntityBase(entity_id) {
-			MobInfo* info = static_cast<MobInfo*>(EntityInfoManager::get_instance()->get_entity_info(entity_id));
-			stats.HP = info->HP;
-			stats.DEF = info->DEF;
-			stats.speed = glm::vec2(info->speed_x, info->speed_y);
-
-			transform.pos = spawn_center;
-			hitbox.size = info->hitboxSize;
-			hitbox.center = spawn_center; //probably incorrect
-
-			anim_controller.set_animator(info->animator_id);
-
-			physics.current_Y_max_level = hitbox.center.y - hitbox.size.y * 0.5f;
-		}
+		Mob(uint32_t entity_id, glm::vec2 spawn_center);
 
 		CoreAnimation::AnimatorController anim_controller;
 		MobStats stats;
-		MobPhysics physics;
+		EntityPhysics physics;
 		Collider_2D_AABB hitbox;
 	};
 }
