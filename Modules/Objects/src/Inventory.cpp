@@ -44,6 +44,8 @@ void Inventory::toggle_inventory() {
 }
 
 void Inventory::update() {
+	return;
+
 	if (current_player_flags != prev_player_flags) {
 		should_update_available_crafts = true;
 		prev_player_flags = current_player_flags;

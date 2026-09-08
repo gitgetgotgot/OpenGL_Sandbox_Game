@@ -3,7 +3,7 @@
 const DataNode& DataNode::operator[](std::string key) const {
 	auto it = children.find(key);
 	if (it == children.end())
-		throw std::runtime_error("Child " + key + " not found");
+		throw std::runtime_error("Child <" + key + "> not found");
 	return it->second;
 }
 
@@ -183,4 +183,15 @@ void DataParser::write_from_binary(std::ifstream& in, DataNode& data) {
 		for (auto& c : value) c ^= 0x45;
 		data.value = value;
 	}
+}
+
+void DataParser::read_text_file(std::filesystem::path& path, std::string& str) {
+	std::ifstream file(path);
+	if (!file.is_open())
+		throw std::runtime_error("[Data Parser] Cannot open file: " + path.string());
+	file.seekg(0, std::ios::end);
+	size_t count = file.tellg();
+	file.seekg(0, std::ios::beg);
+	str.resize(count);
+	file.read(str.data(), count);
 }

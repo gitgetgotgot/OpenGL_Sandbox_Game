@@ -4,7 +4,7 @@
 namespace CoreEntity {
 	class EntityInfoFactoryI {
 	public:
-		~EntityInfoFactoryI() {}
+		virtual ~EntityInfoFactoryI() {}
 		virtual void add_entity_info(const DataNode& data) = 0;
 	protected:
 		EntityInfo* register_entity_info(std::unique_ptr<EntityInfo> new_entity_info, const std::string& UID);

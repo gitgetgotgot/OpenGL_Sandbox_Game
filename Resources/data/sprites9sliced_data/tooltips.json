@@ -1,0 +1,21 @@
+[
+  {
+    {
+      "UID": "Core:Tooltip",
+      "texture": "Texture:Core:UI.png",
+      "padding": 0,
+      "sprite": {
+        "U0": 0,
+        "V0": 0,
+        "w": 32,
+        "h": 32,
+        "border": {
+          "left": 4,
+          "right": 4,
+          "top": 4,
+          "bottom": 4
+        }
+      }
+    }
+  }
+]

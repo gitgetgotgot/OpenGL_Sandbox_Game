@@ -1,6 +1,7 @@
-#include <Core/GameCore.h>
-#include <thread>
+#include "Core/GameCore.h"
 #include "Core/ResourceLoader.h"
+#include <UI/UI_Renderer.h>
+#include <thread>
 
 Game::~Game() {
 	uninit();
@@ -19,7 +20,7 @@ bool Game::update() {
 	}
 
 	world->update();
-	ui_renderer->update();
+	CoreUI::UI_Renderer::get_instance().update();
 
 	return 1;
 	/*switch (game_update_state) {
@@ -935,7 +936,7 @@ void Game::render() {
 	renderer->clear(1.0, 1.0, 1.0);
 
 	world->render(renderer);
-	ui_renderer->render(renderer);
+	CoreUI::UI_Renderer::get_instance().render(renderer);
 
 	renderer->present();
 	/*	
@@ -1195,6 +1196,8 @@ void Game::toggle_Fullscreen() {
 	}
 }
 
+#include <UI/UI_ObjectManager.h>
+#include <UI/Image.h>
 void Game::init() {
 	srand(time(NULL));
 
@@ -1203,8 +1206,10 @@ void Game::init() {
 
 	ResourceLoader::get_instance().Load_Resources();
 
+	CoreUI::UI_Renderer::get_instance().init();
+
 	player.inventory.init();
-	for (int i = 2; i < 42; i++) {
+	for (int i = 2; i < 52; i++) {
 		uint16_t amount = rand() % 10000;
 		player.inventory.place_item(i, amount);
 	}
@@ -1216,11 +1221,21 @@ void Game::init() {
 	world = std::make_unique<World>();
 	world->init(&player);
 
-	ui_renderer = UI_Renderer::get_instance();
-	ui_renderer->init(&player);
-	ui_renderer->init_basic_inventory_slots_data();
-	ui_renderer->init_icons_base_vertices();
-	ui_renderer->update_items();
+	CoreUI::Canvas* canvas = CoreUI::UI_Renderer::get_instance().add_canvas();
+	auto widget = CoreUI::UI_ObjectManager::get_instance().add();
+	widget->transform.set_local_pos(0.0f, 0.0f);
+	widget->transform.set_size(1.0f, 1.0f);
+	auto image = widget->add_component<CoreUI::Image>();
+	image->set_sprite(CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:Ice").value());
+	canvas->add_object(widget);
+
+	auto widget2 = CoreUI::UI_ObjectManager::get_instance().add();
+	widget2->transform.set_local_pos(0.25f, 0.25f);
+	widget2->transform.set_size(0.5f, 0.5f);
+	auto image2 = widget2->add_component<CoreUI::Image>();
+	image2->set_sprite(CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:Crimson Stone").value());
+
+
 
 	//openGL settings
 	glEnable(GL_BLEND);

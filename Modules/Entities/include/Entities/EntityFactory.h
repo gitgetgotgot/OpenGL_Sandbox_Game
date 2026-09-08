@@ -5,7 +5,7 @@
 namespace CoreEntity {
 	class EntityFactoryI {
 	public:
-		~EntityFactoryI() {}
+		virtual ~EntityFactoryI() {}
 		virtual std::unique_ptr<EntityBase> spawn(uint32_t entity_global_ID, float world_x, float world_y) = 0;
 	};
 

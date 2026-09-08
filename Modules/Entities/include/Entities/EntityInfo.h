@@ -11,7 +11,7 @@ namespace CoreEntity {
 	class EntityInfo {
 	public:
 		EntityInfo(EntityMainType type);
-		~EntityInfo() {}
+		virtual ~EntityInfo() {}
 		void _set_UID(std::string_view uid);
 		bool _has_tag(const uint16_t& TAG) const;
 		void _sort_tags() const;

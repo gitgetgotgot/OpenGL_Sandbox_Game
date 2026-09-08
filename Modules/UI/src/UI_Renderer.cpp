@@ -1,271 +1,139 @@
 #include "UI/UI_Renderer.h"
+#include "UI/UI_ObjectManager.h"
 #include <IOSystem/SystemContext.h>
 #include <Objects/ObjectTypes/WeaponInfo.h>
 #include <Objects/ObjectManager.h>
 #include <Utility/Sprite.h>
 
-uint32_t UI_Renderer::tooltip_slots_INDEX_SIZE = 9 * 6;
-
-void UI_Renderer::init(Player* player) {
-	main_player_ptr = player;
+void CoreUI::UI_Renderer::init() {
 	sdf_font_manager.load_main_sdf_font("verdana_SDF");
 
-	//CONSTRAINTS
-	const uint32_t MAX_VERTEX_SIZE = MAX_UI_SPRITES_PER_DRAW * 4;
-	const uint32_t MAX_INDEX_SIZE = MAX_UI_SPRITES_PER_DRAW * 6;
+	const uint32_t MAX_SPRITES_VERTEX_SIZE = MAX_SPRITES_PER_DRAW * 4;
+	const uint32_t MAX_SPRITES_INDEX_SIZE = MAX_SPRITES_PER_DRAW * 6;
 
-	ui_shader = std::make_unique<ShaderProgram>("Resources/shaders/ui_sprites.vert", "Resources/shaders/ui_sprites.frag");
+	const uint32_t MAX_SDF_TEXT_VERTEX_SIZE = MAX_SDF_TEXT_PER_DRAW * 4;
+	const uint32_t MAX_SDF_TEXT_INDEX_SIZE = MAX_SDF_TEXT_PER_DRAW * 6;
 
+	// sprites shader & buffers
+	sprites_shader = std::make_unique<ShaderProgram>("Resources/shaders/ui_sprites.vert", "Resources/shaders/ui_sprites.frag");
+
+	//common EBO
 	ebo = std::make_unique<EBO>();
-	GLuint* sprite_index_buffer = new GLuint[MAX_INDEX_SIZE];
-	for (int i = 0; i < MAX_UI_SPRITES_PER_DRAW; i++) {
+	GLuint* sprite_index_buffer = new GLuint[MAX_SPRITES_INDEX_SIZE];
+	for (int i = 0; i < MAX_SPRITES_PER_DRAW; i++) {
 		sprite_index_buffer[i * 6] = sprite_index_buffer[i * 6 + 3] = i * 4;
 		sprite_index_buffer[i * 6 + 2] = sprite_index_buffer[i * 6 + 4] = sprite_index_buffer[i * 6] + 2;
 		sprite_index_buffer[i * 6 + 1] = sprite_index_buffer[i * 6 + 2] - 1;
 		sprite_index_buffer[i * 6 + 5] = sprite_index_buffer[i * 6 + 2] + 1;
 	}
-	ebo->set_data(sprite_index_buffer, MAX_INDEX_SIZE * sizeof(GLuint), GL_STATIC_DRAW);
+	ebo->set_data(sprite_index_buffer, MAX_SPRITES_INDEX_SIZE * sizeof(GLuint), GL_STATIC_DRAW);
 	delete[] sprite_index_buffer;
 
-	//slot buffers
-	slots_vao = std::make_unique<VAO>();
-	slots_vao->bind_VAO();
-	slots_vbo = std::make_unique<VBO>();
-	slots_vbo->set_data(nullptr, MAX_VERTEX_SIZE * sizeof(UI_Vertex2f), GL_DYNAMIC_DRAW);
+	sprites_vao = std::make_unique<VAO>();
+	sprites_vao->bind_VAO();
+	sprites_vbo = std::make_unique<VBO>();
+	sprites_vbo->set_data(nullptr, MAX_SPRITES_VERTEX_SIZE * sizeof(UI_Vertex2f), GL_DYNAMIC_DRAW);
 	ebo->bind_EBO();
-	slots_vao->link_Attribute(0, 2, GL_FLOAT, sizeof(UI_Vertex2f), (void*)0);
-	slots_vao->link_Attribute(1, 2, GL_FLOAT, sizeof(UI_Vertex2f), (void*)(2 * sizeof(float)));
-	slots_vao->link_Attribute(2, 4, GL_FLOAT, sizeof(UI_Vertex2f), (void*)(4 * sizeof(float)));
-	slots_vao->link_Attribute(3, 1, GL_UNSIGNED_INT, sizeof(UI_Vertex2f), (void*)(8 * sizeof(float)));
-	slots_vao->unbind_VAO();
-	slots_vbo->unbind_VBO();
+
+	sprites_vao->link_Attribute(0, 2, GL_FLOAT, sizeof(UI_Vertex2f), (void*)0);
+	sprites_vao->link_Attribute(1, 2, GL_FLOAT, sizeof(UI_Vertex2f), (void*)(2 * sizeof(float)));
+	sprites_vao->link_Attribute(2, 4, GL_FLOAT, sizeof(UI_Vertex2f), (void*)(4 * sizeof(float)));
+	sprites_vao->link_Attribute(3, 1, GL_UNSIGNED_INT, sizeof(UI_Vertex2f), (void*)(8 * sizeof(float)));
+
+	sprites_vao->unbind_VAO();
+	sprites_vbo->unbind_VBO();
 	ebo->unbind_EBO();
 
-	icons_vao = std::make_unique<VAO>();
-	icons_vao->bind_VAO();
-	icons_vbo = std::make_unique<VBO>();
-	icons_vbo->set_data(nullptr, 4 * 100 * sizeof(UI_Vertex2f), GL_DYNAMIC_DRAW); //100 icons
-	ebo->bind_EBO();
-	icons_vao->link_Attribute(0, 2, GL_FLOAT, sizeof(UI_Vertex2f), (void*)0);
-	icons_vao->link_Attribute(1, 2, GL_FLOAT, sizeof(UI_Vertex2f), (void*)(2 * sizeof(float)));
-	icons_vao->link_Attribute(2, 4, GL_FLOAT, sizeof(UI_Vertex2f), (void*)(4 * sizeof(float)));
-	icons_vao->link_Attribute(3, 1, GL_UNSIGNED_INT, sizeof(UI_Vertex2f), (void*)(8 * sizeof(float)));
-	icons_vao->unbind_VAO();
-	icons_vbo->unbind_VBO();
-	ebo->unbind_EBO();
-
-	const uint32_t MAX_CRAFT_SLOTS_VERTEX_SIZE = 200 * 4;
-	craft_slots_vao = std::make_unique<VAO>();
-	craft_slots_vao->bind_VAO();
-	craft_slots_vbo = std::make_unique<VBO>();
-	craft_slots_vbo->set_data(nullptr, MAX_CRAFT_SLOTS_VERTEX_SIZE * sizeof(UI_Vertex2f), GL_DYNAMIC_DRAW);
-	ebo->bind_EBO();
-	craft_slots_vao->link_Attribute(0, 2, GL_FLOAT, sizeof(UI_Vertex2f), (void*)0);
-	craft_slots_vao->link_Attribute(1, 2, GL_FLOAT, sizeof(UI_Vertex2f), (void*)(2 * sizeof(float)));
-	craft_slots_vao->link_Attribute(2, 4, GL_FLOAT, sizeof(UI_Vertex2f), (void*)(4 * sizeof(float)));
-	craft_slots_vao->link_Attribute(3, 1, GL_UNSIGNED_INT, sizeof(UI_Vertex2f), (void*)(8 * sizeof(float)));
-	craft_slots_vao->unbind_VAO();
-	craft_slots_vbo->unbind_VBO();
-	ebo->unbind_EBO();
-
-	//item buffers
-	items_vao = std::make_unique<VAO>();
-	items_vao->bind_VAO();
-	items_vbo = std::make_unique<VBO>();
-	items_vbo->set_data(nullptr, MAX_VERTEX_SIZE * sizeof(UI_Vertex2f), GL_DYNAMIC_DRAW);
-	ebo->bind_EBO();
-	items_vao->link_Attribute(0, 2, GL_FLOAT, sizeof(UI_Vertex2f), (void*)0);
-	items_vao->link_Attribute(1, 2, GL_FLOAT, sizeof(UI_Vertex2f), (void*)(2 * sizeof(float)));
-	items_vao->link_Attribute(2, 4, GL_FLOAT, sizeof(UI_Vertex2f), (void*)(4 * sizeof(float)));
-	items_vao->link_Attribute(3, 1, GL_UNSIGNED_INT, sizeof(UI_Vertex2f), (void*)(8 * sizeof(float)));
-	items_vao->unbind_VAO();
-	items_vbo->unbind_VBO();
-	ebo->unbind_EBO();
-
-	craft_items_vao = std::make_unique<VAO>();
-	craft_items_vao->bind_VAO();
-	craft_items_vbo = std::make_unique<VBO>();
-	craft_items_vbo->set_data(nullptr, MAX_CRAFT_SLOTS_VERTEX_SIZE * sizeof(UI_Vertex2f), GL_DYNAMIC_DRAW);
-	ebo->bind_EBO();
-	craft_items_vao->link_Attribute(0, 2, GL_FLOAT, sizeof(UI_Vertex2f), (void*)0);
-	craft_items_vao->link_Attribute(1, 2, GL_FLOAT, sizeof(UI_Vertex2f), (void*)(2 * sizeof(float)));
-	craft_items_vao->link_Attribute(2, 4, GL_FLOAT, sizeof(UI_Vertex2f), (void*)(4 * sizeof(float)));
-	craft_items_vao->link_Attribute(3, 1, GL_UNSIGNED_INT, sizeof(UI_Vertex2f), (void*)(8 * sizeof(float)));
-	craft_items_vao->unbind_VAO();
-	craft_items_vbo->unbind_VBO();
-	ebo->unbind_EBO();
-
-	//sdf text shader and buffers
+	// SDF text shader & buffers
 	sdf_text_shader = std::make_unique<ShaderProgram>("Resources/shaders/sdf_text.vert", "Resources/shaders/sdf_text.frag");
-	text_vao = std::make_unique<VAO>();
-	text_vao->bind_VAO();
-	text_vbo = std::make_unique<VBO>();
-	text_vbo->set_data(nullptr, MAX_VERTEX_SIZE * sizeof(UI_Text_Vertex2f), GL_DYNAMIC_DRAW);
+
+	sdf_text_vao = std::make_unique<VAO>();
+	sdf_text_vao->bind_VAO();
+	sdf_text_vbo = std::make_unique<VBO>();
+	sdf_text_vbo->set_data(nullptr, MAX_SDF_TEXT_VERTEX_SIZE * sizeof(UI_Text_Vertex2f), GL_DYNAMIC_DRAW);
 	ebo->bind_EBO();
-	text_vao->link_Attribute(0, 2, GL_FLOAT, sizeof(UI_Text_Vertex2f), (void*)0);
-	text_vao->link_Attribute(1, 2, GL_FLOAT, sizeof(UI_Text_Vertex2f), (void*)(2 * sizeof(float)));
-	text_vao->link_Attribute(2, 4, GL_FLOAT, sizeof(UI_Text_Vertex2f), (void*)(4 * sizeof(float)));
-	text_vao->unbind_VAO();
-	text_vbo->unbind_VBO();
+
+	sdf_text_vao->link_Attribute(0, 2, GL_FLOAT, sizeof(UI_Text_Vertex2f), (void*)0);
+	sdf_text_vao->link_Attribute(1, 2, GL_FLOAT, sizeof(UI_Text_Vertex2f), (void*)(2 * sizeof(float)));
+	sdf_text_vao->link_Attribute(2, 4, GL_FLOAT, sizeof(UI_Text_Vertex2f), (void*)(4 * sizeof(float)));
+
+	sdf_text_vao->unbind_VAO();
+	sdf_text_vbo->unbind_VBO();
 	ebo->unbind_EBO();
 
-	craft_text_vao = std::make_unique<VAO>();
-	craft_text_vao->bind_VAO();
-	craft_text_vbo = std::make_unique<VBO>();
-	craft_text_vbo->set_data(nullptr, 29 * 4 * 4 * sizeof(UI_Text_Vertex2f), GL_DYNAMIC_DRAW);
-	ebo->bind_EBO();
-	craft_text_vao->link_Attribute(0, 2, GL_FLOAT, sizeof(UI_Text_Vertex2f), (void*)0);
-	craft_text_vao->link_Attribute(1, 2, GL_FLOAT, sizeof(UI_Text_Vertex2f), (void*)(2 * sizeof(float)));
-	craft_text_vao->link_Attribute(2, 4, GL_FLOAT, sizeof(UI_Text_Vertex2f), (void*)(4 * sizeof(float)));
-	craft_text_vao->unbind_VAO();
-	craft_text_vbo->unbind_VBO();
-	ebo->unbind_EBO();
-
-	ui_ubo = std::make_unique<UBO>();
-	ui_ubo->bind_UBO(1);
+	ubo = std::make_unique<UBO>();
+	ubo->bind_UBO(1);
 	ubo_data.viewMatrix = glm::mat4(1.0f);
 	ubo_data.projectionMatrix = glm::ortho(-SystemContext::screen.ratio, SystemContext::screen.ratio, -1.0f, 1.0f);
-	ui_ubo->set_data(&ubo_data, sizeof(UI_UBO), GL_DYNAMIC_DRAW);
+	ubo->set_data(&ubo_data, sizeof(UI_UBO), GL_DYNAMIC_DRAW);
 
-	active_hotbar_slot_buffer.reserve(4);
-	basic_slot_buffer.reserve(Inventory::INVENTORY_SIZE * 4);
-	chest_slot_buffer.reserve(Inventory::INVENTORY_CHEST_SIZE * 4);
-	craft_info_slot_buffer.reserve(24 * 4);
-	helper_craft_slot_buffer.reserve(20 * 8 * 4);
-	craft_borders_buffer.reserve(2 * 4);
-	slots_VERTEX_SIZE = Inventory::INVENTORY_SIZE * 4 + Inventory::INVENTORY_CHEST_SIZE * 4;
-	base_slots_INDEX_SIZE = Inventory::INVENTORY_SIZE * 6 + Inventory::INVENTORY_CHEST_SIZE * 6;
-	tooltip_buffer.reserve(9 * 4);
-	icons_buffer.reserve(100 * 4);
-
-	basic_items_buffer.reserve(Inventory::INVENTORY_SIZE * 4);
-	chest_items_buffer.reserve(Inventory::INVENTORY_CHEST_SIZE * 4);
-	craft_items_buffer.reserve(6 * 4);
-	craft_info_items_buffer.reserve(24 * 4);
-	craft_helper_items_buffer.reserve(160 * 4);
-	cursor_item_buffer.reserve(4);
-	cursor_item_text_buffer.reserve(4 * 4); //max number is 9999
-
-	basic_text_buffer.reserve(Inventory::INVENTORY_SIZE * 4 * 4); //for each slot max number is 9999
-	chest_text_buffer.reserve(Inventory::INVENTORY_CHEST_SIZE * 4 * 4);
-
-	tooltip_first_sprite_id = CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:TooltipLB").value();
-	hotbar_frame_sprite_id = CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:HotbarFrame").value();
-	craft_slot_sprite_id = CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:CraftSlot").value();
+	//reserve memory for buffers (this size should be enought for most scenarios)
+	canvases.reserve(10);
+	sprites_buffer.reserve(MAX_SPRITES_VERTEX_SIZE);
+	sdf_text_buffer.reserve(MAX_SDF_TEXT_VERTEX_SIZE);
 }
 
-void UI_Renderer::update() {
-	update_icons();
-	update_items(); //maybe can change this method
+void CoreUI::UI_Renderer::update() {
+	sprites_buffer.clear();
+	sdf_text_buffer.clear();
+	render_queue.clear();
+	render_queue.resize(1);
 
-	if (main_player_ptr->inventory.is_open) {
-		slots_INDEX_SIZE = Inventory::INVENTORY_SIZE * 6;
-		//add chest slots
-		if (main_player_ptr->inventory.has_open_chest) {
-			slots_INDEX_SIZE += Inventory::INVENTORY_CHEST_SIZE * 6;
-		}
+	// update all dirty UI objects
+	UI_ObjectManager::get_instance().update_dirty_objects();
 
-		update_craft_slots();
-
-		//add tooltip
-		if (main_player_ptr->inventory.tooltip_is_visible) {
-			update_tooltip_data();
-		}
-		//cursor item
-		else if (main_player_ptr->inventory.cursor_item.item_id > 0) {
-			update_cursor_item();
-		}
+	// replace all UI objects in render buffers
+	for (auto& canvas : canvases) {
+		if (canvas.is_enabled) canvas.update_canvas_objects_data(render_queue, sprites_buffer, sdf_text_buffer);
 	}
-	else {
-		slots_INDEX_SIZE = 10 * 6;
-		update_hotbar_active_slot();
-	}
+
+	sprites_vbo->update_data(sprites_buffer.data(), sprites_buffer.size() * sizeof(UI_Vertex2f));
+	sdf_text_vbo->update_data(sdf_text_buffer.data(), sdf_text_buffer.size() * sizeof(UI_Text_Vertex2f));
 }
 
-void UI_Renderer::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
-	//slots
-	renderer->renderIndexedData(ui_shader, slots_vao, slots_vbo, ebo, slots_INDEX_SIZE);
+void CoreUI::UI_Renderer::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
+	sprites_INDEX_OFFSET = 0;
+	sdf_text_INDEX_OFFSET = 0;
 
-	if (main_player_ptr->inventory.is_open) {
-		//items
-		renderer->renderIndexedData(ui_shader, items_vao, items_vbo, ebo, TOTAL_ITEMS_INDEX_SIZE);
-
-		//items text
-		renderer->renderIndexedData(sdf_text_shader, text_vao, text_vbo, ebo, TOTAL_TEXT_INDEX_SIZE);
-
-		//craft UI
-		if (main_player_ptr->inventory.current_crafts_available > 0) {
-			uint32_t rect_y = (1.f + main_player_ptr->inventory.craft_slots_scissor_rect_y0) * 0.5f * SystemContext::screen.height;
-			uint32_t rect_height = main_player_ptr->inventory.craft_slots_scissor_rect_height * 0.5f * SystemContext::screen.height;
-			
-			//render craft borders
-			renderer->renderIndexedData(ui_shader, craft_slots_vao, craft_slots_vbo, ebo, 12);
-
-			//scissor rect
-			renderer->useScissorTest(true);
-			renderer->setScissorRect(0, rect_y,SystemContext::screen.width, rect_height);
-				//--craft slots
-				renderer->renderIndexedData(ui_shader, craft_slots_vao, craft_slots_vbo, ebo, craft_slots_INDEX_SIZE, 12);
-				//--craft items
-				renderer->renderIndexedData(ui_shader, craft_items_vao, craft_items_vbo, ebo, craft_items_INDEX_SIZE);
-			renderer->useScissorTest(false);
-			
-			//craft info slots
-			renderer->renderIndexedData(ui_shader, craft_slots_vao, craft_slots_vbo, ebo, craft_info_slots_INDEX_SIZE, 12 + craft_slots_INDEX_SIZE);
-
-			//helper craft slots
-			if (main_player_ptr->inventory.helper_slots_are_visible)
-				renderer->renderIndexedData(ui_shader, craft_slots_vao, craft_slots_vbo, ebo, helper_slots_INDEX_SIZE, 12 + craft_slots_INDEX_SIZE + craft_info_slots_INDEX_SIZE);
-
-			//craft info items
-			renderer->renderIndexedData(ui_shader, craft_items_vao, craft_items_vbo, ebo, craft_info_items_INDEX_SIZE, craft_items_INDEX_SIZE);
-			
-			//helper craft items
-			if (main_player_ptr->inventory.helper_slots_are_visible)
-				renderer->renderIndexedData(ui_shader, craft_items_vao, craft_items_vbo, ebo, craft_helper_items_INDEX_SIZE, craft_items_INDEX_SIZE + craft_info_items_INDEX_SIZE);
-
-			//scissor rect
-			renderer->useScissorTest(true);
-			renderer->setScissorRect(0, rect_y, SystemContext::screen.width, rect_height);
-				//--craft text
-				renderer->renderIndexedData(sdf_text_shader, craft_text_vao, craft_text_vbo, ebo, craft_text_INDEX_SIZE);
-			renderer->useScissorTest(false);
+	for (auto& render_entry : render_queue) {
+		//render sprites
+		if (render_entry.type == UI_Component_Type::UI_SPRITE) {
+			renderer->renderIndexedData(sprites_shader, sprites_vao, sprites_vbo, ebo, render_entry.index_count, sprites_INDEX_OFFSET);
+			sprites_INDEX_OFFSET += render_entry.index_count;
 		}
-
-		//tooltip
-		if (main_player_ptr->inventory.tooltip_is_visible) {
-			//tooltip background
-			renderer->renderIndexedData(ui_shader, slots_vao, slots_vbo, ebo, tooltip_slots_INDEX_SIZE, base_slots_INDEX_SIZE);
-			//tooltip info
-			renderer->renderIndexedData(sdf_text_shader, text_vao, text_vbo, ebo, tooltip_text_INDEX_SIZE, TOTAL_TEXT_INDEX_SIZE);
-		}
-
-		//cursor item
-		else if (main_player_ptr->inventory.cursor_item.item_id > 0) {
-			//render item
-			renderer->renderIndexedData(ui_shader, items_vao, items_vbo, ebo, 6, TOTAL_ITEMS_INDEX_SIZE);
-			//render text
-			renderer->renderIndexedData(sdf_text_shader, text_vao, text_vbo, ebo, cursor_text_INDEX_SIZE, TOTAL_TEXT_INDEX_SIZE);
+		//render sdf text
+		else if (render_entry.type == UI_Component_Type::UI_TEXT) {
+			renderer->renderIndexedData(sdf_text_shader, sdf_text_vao, sdf_text_vbo, ebo, render_entry.index_count, sdf_text_INDEX_OFFSET);
+			sdf_text_INDEX_OFFSET += render_entry.index_count;
 		}
 	}
-	else {
-		//render active slot
-		renderer->renderIndexedData(ui_shader, slots_vao, slots_vbo, ebo, 6, base_slots_INDEX_SIZE);
 
-		//hotbar items
-		renderer->renderIndexedData(ui_shader, items_vao, items_vbo, ebo, items_hotbar_INDEX_SIZE);
-
-		//hotbar items text
-		renderer->renderIndexedData(sdf_text_shader, text_vao, text_vbo, ebo, text_hotbar_INDEX_SIZE);
-
-		//active item name
-		renderer->renderIndexedData(sdf_text_shader, text_vao, text_vbo, ebo, tooltip_text_INDEX_SIZE, TOTAL_TEXT_INDEX_SIZE);
-	}
-
-	//icons
-	renderer->renderIndexedData(ui_shader, icons_vao, icons_vbo, ebo, icons_INDEX_SIZE);
+	/*
+	//scissor rect
+	renderer->useScissorTest(true);
+	renderer->setScissorRect(0, rect_y, SystemContext::screen.width, rect_height);
+	//--craft text
+	renderer->renderIndexedData(sdf_text_shader, craft_text_vao, craft_text_vbo, ebo, craft_text_INDEX_SIZE);
+	renderer->useScissorTest(false);
+	*/
 }
 
+CoreUI::Canvas* CoreUI::UI_Renderer::add_canvas() {
+	return &canvases.emplace_back();
+}
+
+bool CoreUI::UI_Renderer::remove_canvas(uint32_t index) {
+	if (index >= canvases.size()) return false;
+	canvases.erase(canvases.begin() + index);
+	return true;
+}
+
+CoreUI::Canvas* CoreUI::UI_Renderer::get_canvas(uint32_t index) {
+	if (index >= canvases.size()) return nullptr;
+	return &canvases[index];
+}
+
+/*
 void UI_Renderer::init_basic_inventory_slots_data() {
 	float Xpos;
 	float Ypos = 0.83f;
@@ -296,7 +164,7 @@ void UI_Renderer::init_basic_inventory_slots_data() {
 		}
 		Ypos -= 0.11f;
 	}
-	
+
 	//8 slots (4 for coins and ammo)
 	Xpos = -SystemContext::screen.ratio * 0.97f + 10.f * 0.11f;
 	for (int i = 0; i < 2; i++) {
@@ -307,7 +175,7 @@ void UI_Renderer::init_basic_inventory_slots_data() {
 		}
 		Xpos += 0.11f;
 	}
-	
+
 	//16 slots for armor and accessories
 	Xpos = SystemContext::screen.ratio * 0.82f;
 	for (int i = 0; i < 2; i++) {
@@ -318,7 +186,7 @@ void UI_Renderer::init_basic_inventory_slots_data() {
 		}
 		Xpos += 0.11f;
 	}
-	
+
 	//40 slots for chests (used with inventory when any chest is open by the player)
 	sprite = &CoreResource::SpriteManager::get_instance().get_sprite(CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:ChestSlot").value());
 	Ypos = 0.83f - 0.11 * 5.f;
@@ -332,7 +200,7 @@ void UI_Renderer::init_basic_inventory_slots_data() {
 	}
 	slots_vbo->update_data(basic_slot_buffer.data(), sizeof(UI_Vertex2f) * basic_slot_buffer.size());
 	slots_vbo->update_data(chest_slot_buffer.data(), chest_slot_buffer.size() * sizeof(UI_Vertex2f), basic_slot_buffer.size() * sizeof(UI_Vertex2f));
-	
+
 	//15 slots for craft info slots
 	sprite = &CoreResource::SpriteManager::get_instance().get_sprite(CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:CraftSlot").value());
 	Ypos = 0.83f - 0.11 * 10.f + 0.005f - 0.14f * 2.f;
@@ -356,7 +224,7 @@ void UI_Renderer::init_basic_inventory_slots_data() {
 		}
 		Ypos -= 0.09f;
 	}
-	
+
 	//craft borders
 	Xpos = -SystemContext::screen.ratio * 0.97f - 0.03f;
 	Ypos = 0.83f - 0.11 * 10.f + 0.125f;
@@ -368,7 +236,6 @@ void UI_Renderer::init_basic_inventory_slots_data() {
 	add_slot_data_to_buffer(4, craft_borders_buffer, width, height);
 	craft_slots_vbo->update_data(craft_borders_buffer.data(), craft_borders_buffer.size() * sizeof(UI_Vertex2f));
 }
-
 void UI_Renderer::init_icons_base_vertices() {
 	float Xpos;
 	float Ypos = 0.9f;
@@ -400,7 +267,6 @@ void UI_Renderer::init_icons_base_vertices() {
 		Ypos -= 0.061f;
 	}
 }
-
 void UI_Renderer::update_tooltip_data() {
 	TooltipData& tooltip_data = main_player_ptr->inventory.tooltipData;
 	CoreObject::ObjectInfo* item_info = CoreObject::ObjectManager::get_instance().get_object_info(tooltip_data.item_id);
@@ -456,7 +322,7 @@ void UI_Renderer::update_tooltip_data() {
 	float start_y = SystemContext::mouse.ortho_y_pos - inner_height;
 	adjust_tooltip_text_pos(start_x, start_y);
 	text_vbo->update_data(tooltip_text_buffer.data(), tooltip_text_buffer.size() * sizeof(UI_Text_Vertex2f), TOTAL_TEXT_VERTEX_SIZE * sizeof(UI_Text_Vertex2f));
-	
+
 	//update tooltip background
 	tooltip_buffer.clear();
 	int first_sprite_id = tooltip_first_sprite_id;
@@ -510,7 +376,6 @@ void UI_Renderer::update_tooltip_data() {
 
 	slots_vbo->update_data(tooltip_buffer.data(), tooltip_buffer.size() * sizeof(UI_Vertex2f), slots_VERTEX_SIZE * sizeof(UI_Vertex2f));
 }
-
 void UI_Renderer::update_cursor_item() {
 	float item_size = 0.075f;
 	float start_x = SystemContext::mouse.ortho_x_pos - item_size;
@@ -519,7 +384,7 @@ void UI_Renderer::update_cursor_item() {
 
 	CoreObject::ObjectInfo* obj_info = CoreObject::ObjectManager::get_instance().get_object_info(cursor_slot.item_id);
 	CoreResource::Sprite* sprite = &CoreResource::SpriteManager::get_instance().get_sprite(obj_info->sprites[0]);
-	
+
 	cursor_text_INDEX_SIZE = 0;
 	cursor_item_text_buffer.clear();
 	uint32_t text_size = 0;
@@ -546,7 +411,6 @@ void UI_Renderer::update_cursor_item() {
 	cursor_item_buffer.emplace_back(start_x + sizeX, start_y,			sprite->U0 + sprite->W, sprite->V0,				sprite->texture_id);
 	items_vbo->update_data(cursor_item_buffer.data(), cursor_item_buffer.size() * sizeof(UI_Vertex2f), TOTAL_ITEMS_VERTEX_SIZE * sizeof(UI_Vertex2f));
 }
-
 void UI_Renderer::update_hotbar_active_slot() {
 	active_hotbar_slot_buffer.clear();
 	float y = 0.825f;
@@ -572,7 +436,6 @@ void UI_Renderer::update_hotbar_active_slot() {
 		tooltip_text_INDEX_SIZE = item_info->name.size() * 6;
 	}
 }
-
 float UI_Renderer::place_text_to_buffer(std::vector<UI_Text_Vertex2f>& buffer, std::string_view text, uint32_t text_size, float lb_x, float lb_y, float height, glm::vec4 color) {
 	float start_x = lb_x;
 	float start_y = lb_y - sdf_font_manager.mainFont.descender * height;
@@ -593,7 +456,6 @@ float UI_Renderer::place_text_to_buffer(std::vector<UI_Text_Vertex2f>& buffer, s
 	}
 	return x_offset;
 }
-
 void UI_Renderer::adjust_tooltip_text_pos(float dX, float dY) {
 	int size = tooltip_text_buffer.size() / 4;
 	UI_Text_Vertex2f* ptr = tooltip_text_buffer.data();
@@ -612,7 +474,6 @@ void UI_Renderer::adjust_tooltip_text_pos(float dX, float dY) {
 		ptr++;
 	}
 }
-
 void UI_Renderer::update_items() {
 	Inventory& inv = main_player_ptr->inventory;
 
@@ -724,7 +585,6 @@ void UI_Renderer::update_items() {
 		text_vbo->update_data(chest_text_buffer.data(), chest_text_VERTEX_SIZE * sizeof(UI_Text_Vertex2f), text_VERTEX_SIZE * sizeof(UI_Text_Vertex2f));
 	}
 }
-
 void UI_Renderer::update_craft_slots() {
 	if (main_player_ptr->inventory.current_crafts_available == 0) return;
 
@@ -876,8 +736,8 @@ void UI_Renderer::update_craft_slots() {
 
 	craft_text_vbo->update_data(craft_text_buffer.data(), craft_text_buffer.size() * sizeof(UI_Text_Vertex2f));
 }
-
 void UI_Renderer::update_icons() {
 	icons_INDEX_SIZE = 6 * 30;
 	icons_vbo->update_data(icons_buffer.data(), icons_buffer.size() * sizeof(UI_Vertex2f));
 }
+*/

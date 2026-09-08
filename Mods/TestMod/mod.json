@@ -1,0 +1,11 @@
+{
+  "mod_UID": "TestMod",
+  "version": "1.0.0",
+  "dependencies": [
+    {
+      "name": "ModName",
+      "version": ">=1.0.0"
+    }
+  ],
+  "has_dll": true
+}

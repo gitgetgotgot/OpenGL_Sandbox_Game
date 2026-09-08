@@ -5,7 +5,6 @@
 #include "World.h"
 #include <Utility/TimeManager.h>
 #include <IOSystem/InputHandler.h>
-#include <UI/UI_Renderer.h>
 #include <filesystem>
 
 enum Game_State : uint8_t { inMainMenu, inOptions, inControlsOptions, inAudioOptions, inRenderingOptions,
@@ -52,8 +51,6 @@ private:
 
 	//World data
 	std::unique_ptr<World> world;
-	//ui
-	UI_Renderer* ui_renderer = nullptr;
 
 	//save the world info in file in specific interval, for the safety :)
 	int auto_save_interval = 120; //120 seconds

@@ -4,6 +4,7 @@
 #include <Utility/ResourceErrors.h>
 #include <Utility/CoreTags.h>
 #include <Utility/TagRegistry.h>
+#include <Utility/ModsManager.h>
 #include <Objects/ObjectRegistry.h>
 #include <Objects/ObjectManager.h>
 #include <Objects/ObjectFactory.h>
@@ -13,6 +14,13 @@
 #include <Entities/EntityInfoFactory.h>
 #include <Entities/EntityFactory.h>
 
+ResourceLoader::~ResourceLoader() {
+	DynamicLibLoader lib_loader;
+	for (auto& lib : library_handles) {
+		lib_loader.unload_library(lib.handle);
+	}
+}
+
 void ResourceLoader::Load_Resources() {
 	if (DEBUG)
 		data_extension = ".json";
@@ -20,12 +28,11 @@ void ResourceLoader::Load_Resources() {
 		data_extension = ".DATA";
 	resources_root = RESOURCE_ROOT;
 
-	std::vector<std::filesystem::path> mod_paths;
 	std::vector<DataParser> item_data_parsers;
 	std::vector<DataParser> entity_data_parsers;
-	find_sources(mod_paths);
 	std::unordered_map<std::string, uint32_t> texture_layers;
 
+	find_mods();
 	CoreObject::register_core_object_factories();
 	CoreEntity::register_core_entity_info_factories();
 	CoreEntity::register_core_entity_factories();
@@ -35,16 +42,16 @@ void ResourceLoader::Load_Resources() {
 	CoreResource::SpriteManager::MAIN_PIXEL_UV_SIZE = pixel_UV_size;
 
 	// LOAD ORDER IS IMPORTANT
-	load_textures(mod_paths, texture_layers);
-	load_sprites(mod_paths, texture_layers);
-	load_lights(mod_paths);
-	load_particles(mod_paths);
-	load_effects(mod_paths);
-	load_items_data(mod_paths, item_data_parsers);
-	load_crafts(mod_paths);
-	load_animation_clips_data(mod_paths);
-	load_animation_animators_data(mod_paths);
-	load_entities_data(mod_paths, entity_data_parsers);
+	load_textures(texture_layers);
+	load_sprites(texture_layers);
+	load_lights();
+	load_particles();
+	load_effects();
+	load_items_data(item_data_parsers);
+	load_crafts();
+	load_animation_clips_data();
+	load_animation_animators_data();
+	load_entities_data(entity_data_parsers);
 
 	resolve_items_dependencies(item_data_parsers);
 	resolve_entities_dependencies(entity_data_parsers);
@@ -68,16 +75,85 @@ void ResourceLoader::Hot_Reload() {
 	Load_Resources();
 }
 
-void ResourceLoader::find_sources(std::vector<std::filesystem::path>& paths) const {
+void ResourceLoader::find_mods() const {
+	std::filesystem::path info_file = "mod.json";
+	std::filesystem::path description_file = "description.txt";
 	std::filesystem::path mods_path_entry = resources_root / "Mods";
 	if (!std::filesystem::exists(mods_path_entry)) return;
 	for (const auto& entry : std::filesystem::directory_iterator(mods_path_entry)) {
 		if (entry.is_regular_file()) continue;
-		paths.emplace_back(entry.path());
+		std::filesystem::path mod_folder_path = entry.path();
+
+		std::filesystem::path info_path = entry / info_file;
+		if (!std::filesystem::exists(info_path))
+			throw std::runtime_error("Mod has no <mod.json> in " + mod_folder_path.string());
+
+		DataParser parser;
+		parser.parse_JSON_format(info_path);
+		try {
+			ModInfo& mod = ModsManager::get_instance().add(parser.node_root);
+			mod.mod_folder_path = mod_folder_path;
+			std::filesystem::path desc_file = mod_folder_path / description_file;
+			parser.read_text_file(desc_file, mod.description);
+		}
+		catch (const std::exception& e) {
+			throw std::runtime_error("Error in <" + info_path.string() + ">: " + e.what());
+		}
 	}
 }
 
-void ResourceLoader::load_textures(const std::vector<std::filesystem::path>& mod_paths, std::unordered_map<std::string, uint32_t>& texture_layers) {
+void ResourceLoader::load_libraries() {
+	std::filesystem::path lib_path;
+	std::string lib_ext;
+	typedef void(*REGISTER_OBJECT_FACTORIES)(CoreObject::ObjectFactoryRegistry * obj_registry);
+	typedef void(*REGISTER_ENTITY_INFO_FACTORIES)(CoreEntity::EntityInfoFactoryRegistry * entity_info_registry);
+	typedef void(*REGISTER_ENTITY_FACTORIES)(CoreEntity::EntityFactoryRegistry * entity_registry);
+	DynamicLibLoader lib_loader;
+	void* lib_handle = nullptr;
+	void* fun = nullptr;
+
+#if defined(_WIN32)
+	lib_ext = ".dll";
+#else
+	lib_ext = ".so";
+#endif
+	for (const auto& mod_info : ModsManager::get_instance().get_mods()) {
+		if (!mod_info.has_dll) continue;
+		lib_path = mod_info.mod_folder_path / "Resources/libs";
+		if (!std::filesystem::exists(lib_path)) continue;
+
+		for (const auto& entry : std::filesystem::directory_iterator(lib_path)) {
+			if (!entry.is_regular_file()) continue;
+			std::filesystem::path file_path = entry.path();
+			if (file_path.extension() != lib_ext) continue;
+
+			lib_handle = lib_loader.load_library(file_path.string().c_str());
+			if (!lib_handle) {
+				std::string msg = "Couldn't load lib <"; msg += file_path.string(); msg += ">";
+				throw std::runtime_error(msg);
+			}
+			library_handles.emplace_back().handle = lib_handle;
+
+			fun = lib_loader.get(lib_handle, "REGISTER_OBJECT_FACTORIES");
+			if (fun) {
+				REGISTER_OBJECT_FACTORIES reg_fun = (REGISTER_OBJECT_FACTORIES)fun;
+				reg_fun(&CoreObject::ObjectFactoryRegistry::get_instance());
+			}
+			fun = lib_loader.get(lib_handle, "REGISTER_ENTITY_INFO_FACTORIES");
+			if (fun) {
+				REGISTER_ENTITY_INFO_FACTORIES reg_fun = (REGISTER_ENTITY_INFO_FACTORIES)fun;
+				reg_fun(&CoreEntity::EntityInfoFactoryRegistry::get_instance());
+			}
+			fun = lib_loader.get(lib_handle, "REGISTER_ENTITY_FACTORIES");
+			if (fun) {
+				REGISTER_ENTITY_FACTORIES reg_fun = (REGISTER_ENTITY_FACTORIES)fun;
+				reg_fun(&CoreEntity::EntityFactoryRegistry::get_instance());
+			}
+		}
+	}
+}
+
+void ResourceLoader::load_textures(std::unordered_map<std::string, uint32_t>& texture_layers) {
 	//SHOULD REMAKE THIS TO ALLOCATE APPROPRIATE TEXTURE ARRAY DEPTH
 	textures_array = std::make_unique<Texture3D>();
 	textures_array->setup_texture_array(512, 512, 5, false);
@@ -99,17 +175,17 @@ void ResourceLoader::load_textures(const std::vector<std::filesystem::path>& mod
 	std::filesystem::path textures_path = resources_root / "Resources/textures";
 	std::string source_name = "Core";
 	_load_textures(textures_path, source_name);
-	for (const auto& mod_path : mod_paths) {
-		textures_path = mod_path / "Resources/textures";
+	for (const auto& mod_info : ModsManager::get_instance().get_mods()) {
+		textures_path = mod_info.mod_folder_path / "Resources/textures";
 		if (!std::filesystem::exists(textures_path)) continue;
-		source_name = mod_path.filename().string();
+		source_name = mod_info.mod_folder_path.filename().string();
 		_load_textures(textures_path, source_name);
 	}
 
 	textures_array->bind(0);
 }
 
-void ResourceLoader::load_sprites(const std::vector<std::filesystem::path>& mod_paths, std::unordered_map<std::string, uint32_t>& texture_layers) const {
+void ResourceLoader::load_sprites(std::unordered_map<std::string, uint32_t>& texture_layers) const {
 	//add empty sprite with global_ID = 0
 	CoreResource::SpriteManager::get_instance().add_sprite("Sprite:Core:Empty", 0, 0, 0, 0, 0.0f, 0);
 
@@ -151,14 +227,14 @@ void ResourceLoader::load_sprites(const std::vector<std::filesystem::path>& mod_
 	
 	std::filesystem::path sprites_path = resources_root / "Resources/data/sprites_data";
 	_load_sprites(sprites_path);
-	for (const auto& mod_path : mod_paths) {
-		sprites_path = mod_path / "Resources/data/sprites_data";
+	for (const auto& mod_info : ModsManager::get_instance().get_mods()) {
+		sprites_path = mod_info.mod_folder_path / "Resources/data/sprites_data";
 		if (!std::filesystem::exists(sprites_path)) continue;
 		_load_sprites(sprites_path);
 	}
 }
 
-void ResourceLoader::load_lights(const std::vector<std::filesystem::path>& mod_paths) const {
+void ResourceLoader::load_lights() const {
 	//add empty light with global_ID = 0
 	CoreResource::LightsManager::get_instance().add_light("Light:Core:Empty", 0.0f, glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -190,19 +266,19 @@ void ResourceLoader::load_lights(const std::vector<std::filesystem::path>& mod_p
 
 	std::filesystem::path lights_path = resources_root / "Resources/data/lights_data";
 	_load_lights(lights_path);
-	for (const auto& mod_path : mod_paths) {
-		lights_path = mod_path / "Resources/data/lights_data";
+	for (const auto& mod_info : ModsManager::get_instance().get_mods()) {
+		lights_path = mod_info.mod_folder_path / "Resources/data/lights_data";
 		if (!std::filesystem::exists(lights_path)) continue;
 		_load_lights(lights_path);
 	}
 }
 
-void ResourceLoader::load_particles(const std::vector<std::filesystem::path>& mod_paths) {
+void ResourceLoader::load_particles() {
 	//add empty particle with global_ID = 0
 
 }
 
-void ResourceLoader::load_effects(const std::vector<std::filesystem::path>& mod_paths) const {
+void ResourceLoader::load_effects() const {
 	//add empty effect with global_ID = 0
 	CoreResource::EffectsManager::get_instance().add_effect_info(CoreResource::EffectType::isBuff, "Effect:Core:Empty", CoreResource::EffectStatType::isTypeless, 0.0f, 0);
 
@@ -248,14 +324,14 @@ void ResourceLoader::load_effects(const std::vector<std::filesystem::path>& mod_
 
 	std::filesystem::path effects_path = resources_root / "Resources/data/effects_data";
 	_load_effects(effects_path);
-	for (const auto& mod_path : mod_paths) {
-		effects_path = mod_path / "Resources/data/effects_data";
+	for (const auto& mod_info : ModsManager::get_instance().get_mods()) {
+		effects_path = mod_info.mod_folder_path / "Resources/data/effects_data";
 		if (!std::filesystem::exists(effects_path)) continue;
 		_load_effects(effects_path);
 	}
 }
 
-void ResourceLoader::load_items_data(const std::vector<std::filesystem::path>& mod_paths, std::vector<DataParser>& item_data_parsers) {
+void ResourceLoader::load_items_data(std::vector<DataParser>& item_data_parsers) {
 	//add "Air" info with global_ID = 0
 	CoreObject::ObjectManager::get_instance().create_object_info<CoreObject::ObjectInfo, CoreObject::ObjectType::None>("Item:Core:Air");
 	//add "MultiBlockTile" info with global_ID = 1
@@ -284,14 +360,14 @@ void ResourceLoader::load_items_data(const std::vector<std::filesystem::path>& m
 	
 	std::filesystem::path items_path = resources_root / "Resources/data/items_data";
 	_load_items(items_path);
-	for (const auto& mod_path : mod_paths) {
-		items_path = mod_path / "Resources/data/items_data";
+	for (const auto& mod_info : ModsManager::get_instance().get_mods()) {
+		items_path = mod_info.mod_folder_path / "Resources/data/items_data";
 		if (!std::filesystem::exists(items_path)) continue;
 		_load_items(items_path);
 	}
 }
 
-void ResourceLoader::load_crafts(const std::vector<std::filesystem::path>& mod_paths) const {
+void ResourceLoader::load_crafts() const {
 	auto _load_crafts = [&](std::filesystem::path& crafts_path) {
 		for (const auto& entry : std::filesystem::directory_iterator(crafts_path)) {
 			if (!entry.is_regular_file()) continue;
@@ -336,14 +412,14 @@ void ResourceLoader::load_crafts(const std::vector<std::filesystem::path>& mod_p
 
 	std::filesystem::path crafts_path = resources_root / "Resources/data/crafts_data";
 	_load_crafts(crafts_path);
-	for (const auto& mod_path : mod_paths) {
-		crafts_path = mod_path / "Resources/data/crafts_data";
+	for (const auto& mod_info : ModsManager::get_instance().get_mods()) {
+		crafts_path = mod_info.mod_folder_path / "Resources/data/crafts_data";
 		if (!std::filesystem::exists(crafts_path)) continue;
 		_load_crafts(crafts_path);
 	}
 }
 
-void ResourceLoader::load_animation_clips_data(const std::vector<std::filesystem::path>& mod_paths) const {
+void ResourceLoader::load_animation_clips_data() const {
 	auto _load_clips = [&](std::filesystem::path& clips_path) {
 		for (const auto& entry : std::filesystem::directory_iterator(clips_path)) {
 			if (!entry.is_regular_file()) continue;
@@ -384,14 +460,14 @@ void ResourceLoader::load_animation_clips_data(const std::vector<std::filesystem
 
 	std::filesystem::path clips_path = resources_root / "Resources/data/anim_data/clips";
 	_load_clips(clips_path);
-	for (const auto& mod_path : mod_paths) {
-		clips_path = mod_path / "Resources/data/anim_data/clips";
+	for (const auto& mod_info : ModsManager::get_instance().get_mods()) {
+		clips_path = mod_info.mod_folder_path / "Resources/data/anim_data/clips";
 		if (!std::filesystem::exists(clips_path)) continue;
 		_load_clips(clips_path);
 	}
 }
 
-void ResourceLoader::load_animation_animators_data(const std::vector<std::filesystem::path>& mod_paths) const {
+void ResourceLoader::load_animation_animators_data() const {
 	auto _load_animators = [&](std::filesystem::path& animators_path) {
 		for (const auto& entry : std::filesystem::directory_iterator(animators_path)) {
 			if (!entry.is_regular_file()) continue;
@@ -426,14 +502,14 @@ void ResourceLoader::load_animation_animators_data(const std::vector<std::filesy
 
 	std::filesystem::path animators_path = resources_root / "Resources/data/anim_data/animators";
 	_load_animators(animators_path);
-	for (const auto& mod_path : mod_paths) {
-		animators_path = mod_path / "Resources/data/anim_data/animators";
+	for (const auto& mod_info : ModsManager::get_instance().get_mods()) {
+		animators_path = mod_info.mod_folder_path / "Resources/data/anim_data/animators";
 		if (!std::filesystem::exists(animators_path)) continue;
 		_load_animators(animators_path);
 	}
 }
 
-void ResourceLoader::load_entities_data(const std::vector<std::filesystem::path>& mod_paths, std::vector<DataParser>& entity_data_parsers) const {
+void ResourceLoader::load_entities_data(std::vector<DataParser>& entity_data_parsers) const {
 	auto _load_entities = [&](std::filesystem::path& entities_path) {
 		for (const auto& entry : std::filesystem::directory_iterator(entities_path)) {
 			if (!entry.is_regular_file()) continue;
@@ -457,8 +533,8 @@ void ResourceLoader::load_entities_data(const std::vector<std::filesystem::path>
 	
 	std::filesystem::path entities_path = resources_root / "Resources/data/entity_data";
 	_load_entities(entities_path);
-	for (const auto& mod_path : mod_paths) {
-		entities_path = mod_path / "Resources/data/entity_data";
+	for (const auto& mod_info : ModsManager::get_instance().get_mods()) {
+		entities_path = mod_info.mod_folder_path / "Resources/data/entity_data";
 		if (!std::filesystem::exists(entities_path)) continue;
 		_load_entities(entities_path);
 	}

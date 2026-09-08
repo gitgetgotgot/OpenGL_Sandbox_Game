@@ -8,18 +8,21 @@
 
 #include <filesystem>
 
+struct LibraryHandle {
+    void* handle;
+};
+
 class DynamicLibLoader {
 public:
-    bool load_library(const char* lib_path) {
+    void* load_library(const char* lib_path) {
 #if defined(_WIN32)
-        handle = LoadLibraryA(lib_path);
+        return (void*)LoadLibraryA(lib_path);
 #else
-        handle = dlopen(lib_path, RTLD_NOW);
+        return (void*)dlopen(lib_path, RTLD_NOW | RTLD_LOCAL);
 #endif
-        return handle != nullptr;
     }
 
-    void* get(const char* name) {
+    void* get(void* handle, const char* name) {
 #if defined(_WIN32)
         return (void*)GetProcAddress((HMODULE)handle, name);
 #else
@@ -27,14 +30,11 @@ public:
 #endif
     }
 
-    void unload_library() {
+    void unload_library(void* handle) {
 #if defined(_WIN32)
         if (handle) FreeLibrary((HMODULE)handle);
 #else
         if (handle) dlclose(handle);
 #endif
     }
-
-private:
-    void* handle = nullptr;
 };

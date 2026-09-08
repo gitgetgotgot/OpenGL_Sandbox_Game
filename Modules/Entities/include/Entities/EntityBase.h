@@ -6,7 +6,7 @@ namespace CoreEntity {
 	class EntityBase {
 	public:
 		EntityBase(uint32_t entity_id) : entity_id{ entity_id } {}
-		~EntityBase() {}
+		virtual ~EntityBase() {}
 		virtual void on_create() = 0;
 		virtual void on_destroy() = 0;
 		virtual void update() = 0;

@@ -69,5 +69,6 @@ public:
 	void write_from_JSON(const nlohmann::json& j, DataNode& data);
 	void write_JSON_to_binary(std::ofstream& out, const nlohmann::json& j);
 	void write_from_binary(std::ifstream& in, DataNode& data);
+	void read_text_file(std::filesystem::path& path, std::string& str);
 };
 

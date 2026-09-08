@@ -1,0 +1,4 @@
+This is a simple test mod.
+It adds some new things with new classes in DLL.
+This mod adds 20 new objects and 10 new entities.
+Created for testing.

@@ -1,171 +1,51 @@
 #pragma once
 #include <Rendering/OpenGL_Renderer.h>
-#include <Entities/Player.h>
 #include <Utility/TextBufferBuilder.h>
-#include <UI/SDF_Font_Manager.h>
-#include <Objects/ObjectManager.h>
+#include "UI/SDF_Font_Manager.h"
+#include "UI/Canvas.h"
 
-constexpr uint32_t MAX_UI_SPRITES_PER_DRAW = 1000;
-constexpr uint32_t MAX_TOOLTIP_TEXT_SIZE = 500;
+namespace CoreUI {
+	constexpr uint16_t MAX_SPRITES_PER_DRAW = 2000;
+	constexpr uint16_t MAX_SDF_TEXT_PER_DRAW = 2000;
 
-struct UI_Vertex2f {
-	UI_Vertex2f() {}
-	UI_Vertex2f(float pX, float pY, float UVx, float UVy, uint32_t tex_index) {
-		pos.x = pX; pos.y = pY;
-		UV.x = UVx; UV.y = UVy;
-		this->tex_index = tex_index;
-	}
-	UI_Vertex2f(float pX, float pY, float UVx, float UVy, uint32_t tex_index, glm::vec4 color) {
-		pos.x = pX; pos.y = pY;
-		UV.x = UVx; UV.y = UVy;
-		this->color = color;
-		this->tex_index = tex_index;
-	}
-	glm::vec2 pos{ 0.0f };
-	glm::vec2 UV{ 0.0f };
-	glm::vec4 color{ 1.0f };
-	uint32_t tex_index = 0;
-};
+	class UI_Renderer {
+	public:
+		static UI_Renderer& get_instance() {
+			static UI_Renderer ui;
+			return ui;
+		}
+		void init();
+		void update();
+		void render(std::unique_ptr<OpenGL_Renderer>& renderer);
 
-struct UI_Text_Vertex2f {
-	UI_Text_Vertex2f() {}
-	UI_Text_Vertex2f(float pX, float pY, float UVx, float UVy) {
-		pos.x = pX; pos.y = pY;
-		UV.x = UVx; UV.y = UVy;
-	}
-	UI_Text_Vertex2f(float pX, float pY, float UVx, float UVy, glm::vec4 color) {
-		pos.x = pX; pos.y = pY;
-		UV.x = UVx; UV.y = UVy;
-		this->color = color;
-	}
-	glm::vec2 pos{ 0.0f };
-	glm::vec2 UV{ 0.0f };
-	glm::vec4 color{ 1.0f };
-};
+		Canvas* add_canvas();
+		bool remove_canvas(uint32_t index);
+		Canvas* get_canvas(uint32_t index);
+	private:
+		UI_Renderer() {}
+		~UI_Renderer() {}
+		SDF_Font_Manager sdf_font_manager;
+		TextBufferBuilder text_builder;
 
-struct UI_UBO {
-	glm::mat4 viewMatrix;
-	glm::mat4 projectionMatrix;
-};
+		std::unique_ptr<UBO> ubo;
+		UI_UBO ubo_data{};
+		std::unique_ptr<EBO> ebo;
 
-struct Player;
+		std::unique_ptr<ShaderProgram> sprites_shader;
+		std::unique_ptr<VAO> sprites_vao;
+		std::unique_ptr<VBO> sprites_vbo;
 
-class UI_Renderer {
-public:
-	static UI_Renderer* get_instance() {
-		static UI_Renderer ui;
-		return &ui;
-	}
-	void init(Player* player);
-	void update();
-	void render(std::unique_ptr<OpenGL_Renderer>& renderer);
+		std::unique_ptr<ShaderProgram> sdf_text_shader;
+		std::unique_ptr<VAO> sdf_text_vao;
+		std::unique_ptr<VBO> sdf_text_vbo;
 
-	void init_basic_inventory_slots_data();
-	void init_icons_base_vertices();
-	void update_tooltip_data();
-	void update_cursor_item();
-	void update_hotbar_active_slot();
-	//adds new text to buffer, returns length of added text based on height parameter
-	float place_text_to_buffer(
-		std::vector<UI_Text_Vertex2f>& buffer,
-		std::string_view text, uint32_t text_size,
-		float lb_x, float lb_y, float height,
-		glm::vec4 color = glm::vec4(1.0f)
-	);
-	void adjust_tooltip_text_pos(float dX, float dY);
-	void update_items();
-	void update_craft_slots();
-	void update_icons();
-private:
-	UI_Renderer() {}
-	~UI_Renderer() {}
-	Player* main_player_ptr = nullptr;
-	SDF_Font_Manager sdf_font_manager;
-	TextBufferBuilder text_builder;
+		std::vector<UI_Vertex2f> sprites_buffer;
+		std::vector<UI_Text_Vertex2f> sdf_text_buffer;
+		uint32_t sprites_INDEX_OFFSET = 0;
+		uint32_t sdf_text_INDEX_OFFSET = 0;
 
-	std::unique_ptr<UBO> ui_ubo;
-	UI_UBO ubo_data{};
-	std::unique_ptr<EBO> ebo;
-
-	std::unique_ptr<ShaderProgram> ui_shader;
-	//slots vbo is used for base slots and tooltip
-	std::unique_ptr<VAO> slots_vao;
-	std::unique_ptr<VBO> slots_vbo;
-	std::unique_ptr<VAO> craft_slots_vao;
-	std::unique_ptr<VBO> craft_slots_vbo;
-	//items vbo is used for items and cursor item
-	std::unique_ptr<VAO> icons_vao;
-	std::unique_ptr<VBO> icons_vbo;
-	std::unique_ptr<VAO> items_vao;
-	std::unique_ptr<VBO> items_vbo;
-	std::unique_ptr<VAO> craft_items_vao;
-	std::unique_ptr<VBO> craft_items_vbo;
-
-	std::unique_ptr<ShaderProgram> sdf_text_shader;
-	//text vbo is used for items text and tooltip or cursor item text
-	std::unique_ptr<VAO> text_vao;
-	std::unique_ptr<VBO> text_vbo;
-	std::unique_ptr<VAO> craft_text_vao;
-	std::unique_ptr<VBO> craft_text_vbo;
-
-	std::vector<UI_Vertex2f> basic_slot_buffer;
-	std::vector<UI_Vertex2f> active_hotbar_slot_buffer;
-	std::vector<UI_Vertex2f> chest_slot_buffer;
-	std::vector<UI_Vertex2f> craft_borders_buffer;
-	std::vector<UI_Vertex2f> craft_slot_buffer;
-	std::vector<UI_Vertex2f> craft_info_slot_buffer;
-	std::vector<UI_Vertex2f> helper_craft_slot_buffer;
-	std::vector<UI_Vertex2f> tooltip_buffer;
-	std::vector<UI_Vertex2f> icons_buffer;
-
-	std::vector<UI_Vertex2f> basic_items_buffer;
-	std::vector<UI_Vertex2f> chest_items_buffer;
-	std::vector<UI_Vertex2f> craft_items_buffer;
-	std::vector<UI_Vertex2f> craft_info_items_buffer;
-	std::vector<UI_Vertex2f> craft_helper_items_buffer;
-	std::vector<UI_Vertex2f> cursor_item_buffer;
-
-	std::vector<UI_Text_Vertex2f> basic_text_buffer;
-	std::vector<UI_Text_Vertex2f> chest_text_buffer;
-	std::vector<UI_Text_Vertex2f> craft_text_buffer;
-	std::vector<UI_Text_Vertex2f> tooltip_text_buffer;
-	std::vector<UI_Text_Vertex2f> cursor_item_text_buffer;
-
-	uint32_t slots_INDEX_SIZE = 0;
-	uint32_t base_slots_INDEX_SIZE = 0;
-	uint32_t slots_VERTEX_SIZE = 0;
-	static uint32_t tooltip_slots_INDEX_SIZE;
-	uint32_t craft_slots_INDEX_SIZE = 0;
-	uint32_t craft_info_slots_INDEX_SIZE = 0;
-	uint32_t helper_slots_INDEX_SIZE = 0;
-	uint32_t icons_INDEX_SIZE = 0;
-
-	uint32_t items_INDEX_SIZE = 0;
-	uint32_t items_hotbar_INDEX_SIZE = 0;
-	uint32_t items_VERTEX_SIZE = 0;
-	uint32_t craft_items_INDEX_SIZE = 0;
-	uint32_t craft_info_items_INDEX_SIZE = 0;
-	uint32_t craft_helper_items_INDEX_SIZE = 0;
-	uint32_t chest_items_INDEX_SIZE = 0;
-	uint32_t chest_items_VERTEX_SIZE = 0;
-	uint32_t TOTAL_ITEMS_INDEX_SIZE = 0;
-	uint32_t TOTAL_ITEMS_VERTEX_SIZE = 0;
-
-	uint32_t text_INDEX_SIZE = 0;
-	uint32_t text_hotbar_INDEX_SIZE = 0;
-	uint32_t text_VERTEX_SIZE = 0;
-	uint32_t chest_text_INDEX_SIZE = 0;
-	uint32_t chest_text_VERTEX_SIZE = 0;
-	uint32_t TOTAL_TEXT_INDEX_SIZE = 0;
-	uint32_t TOTAL_TEXT_VERTEX_SIZE = 0;
-	uint32_t craft_text_INDEX_SIZE = 0;
-
-	uint32_t tooltip_text_INDEX_SIZE = 0;
-	uint32_t cursor_text_INDEX_SIZE = 0;
-
-	float tooltip_frame_size = 0.02f;
-	float tooltip_text_height = 0.04f;
-	uint32_t tooltip_first_sprite_id = 0;
-	uint32_t hotbar_frame_sprite_id = 0;
-	uint32_t craft_slot_sprite_id = 0;
-};
+		std::vector<UI_RenderEntry> render_queue;
+		// UI Renderer stores canvases in ordered container
+		std::vector<Canvas> canvases;
+	};
+}
