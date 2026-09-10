@@ -1,7 +1,11 @@
 #pragma once
 #include "Objects/Crafting.h"
-#include <glm/ext/vector_float2.hpp>
-#include <glm/ext/vector_float4.hpp>
+#include <UI/UI_ObjectManager.h>
+#include <UI/CanvasManager.h>
+#include <UI/Image.h>
+#include <UI/SDF_Text.h>
+#include <UI/Panel.h>
+#include <UI/NineSlicedImage.h>
 
 struct TooltipData {
 	glm::vec2 inner_size{ 0.f, 0.f };
@@ -19,12 +23,6 @@ public:
 	void init();
 	void toggle_inventory();
 	void update();
-
-	void add_basic_slot_bounds(float x0, float x1, float y0, float y1);
-	void add_chest_slot_bounds(float x0, float x1, float y0, float y1);
-	void add_helper_slot_bounds(float x0, float x1, float y0, float y1);
-	void add_craft_slot_bounds(float x0, float x1, float y0, float y1);
-	void add_craft_info_slot_bounds(float x0, float x1, float y0, float y1);
 	
 	bool place_item(uint16_t item_id, uint16_t& amount);
 	void craft_item();
@@ -61,24 +59,18 @@ public:
 	InventorySlot* active_chest_items_ptr = nullptr;
 	TooltipData tooltipData;
 
-	std::vector<glm::vec4> slots_bounds;
-	std::vector<glm::vec4> chest_slots_bounds;
-	std::vector<glm::vec4> craft_slots_bounds;
-	std::vector<glm::vec4> craft_info_slots_bounds;
-	std::vector<glm::vec4> craft_helper_slots_bounds;
-
 	DynamicSlot craft_slots[6];
 	bool craft_slots_move = false;
-	float craft_slots_scissor_rect_y0;
-	float craft_slots_scissor_rect_height;
-	bool helper_slots_are_visible = false;
+
 	uint32_t current_crafts_available = 160;
 	int current_craftable_item_index = 0;
 
 	uint32_t current_player_flags = 0;
 	uint32_t prev_player_flags = 0;
 private:
-	//50 main, 8 for coins and ammo, 16 for armor and accessories
+	// Inventory UI
+	CoreUI::UI_Canvas_Ptr main_canvas;
+
 	static const uint8_t hotbar_max_slot = 9;
 	//stores the index of the last slot where the object was taken with mouse (puts it back if leaving inventory with currently taken object)
 	uint32_t index_of_last_slot_picked = 0;

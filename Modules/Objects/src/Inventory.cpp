@@ -3,13 +3,6 @@
 #include <Utility/TimeManager.h>
 
 void Inventory::init() {
-	slots_bounds.reserve(INVENTORY_SIZE);
-	chest_slots_bounds.reserve(INVENTORY_CHEST_SIZE);
-
-	craft_slots_bounds.reserve(1); //just one main slot in the middle that is used for crafting
-	craft_info_slots_bounds.reserve(24); //max available slots amount is 24
-	craft_helper_slots_bounds.reserve(160); //max available helper slots amount is 160
-
 	should_update_base_items = true;
 
 	craft_slots_start_y = 0.83f - 0.11 * 10.f + 0.055f;
@@ -28,9 +21,6 @@ void Inventory::init() {
 		Ypos -= 0.14f;
 	}
 	craft_slots[2].current_size = 0.15f;
-
-	glm::vec2& main_slot_pos = craft_slots[2].current_pos;
-	add_craft_slot_bounds(main_slot_pos.x - 0.075f, main_slot_pos.x + 0.075f, main_slot_pos.y - 0.075f, main_slot_pos.y + 0.075f);
 }
 
 void Inventory::toggle_inventory() {

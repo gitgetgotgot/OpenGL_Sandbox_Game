@@ -70,6 +70,12 @@ void CoreResource::SpriteManager::add_sprite9sliced(
 	float w = float(width) * MAIN_PIXEL_UV_SIZE;
 	float y0 = float(V0) * MAIN_PIXEL_UV_SIZE;
 	float h = float(height) * MAIN_PIXEL_UV_SIZE;
+	float border_left = float(b_left) * MAIN_PIXEL_UV_SIZE;
+	float border_right = float(b_right) * MAIN_PIXEL_UV_SIZE;
+	float border_top = float(b_top) * MAIN_PIXEL_UV_SIZE;
+	float border_bottom = float(b_bottom) * MAIN_PIXEL_UV_SIZE;
+	sprite9sliced_UID_to_ID.emplace(UID, sprites.size());
+	sprites9sliced.emplace_back(x0, y0, w, h, border_left, border_right, border_top, border_bottom, texture_array_id);
 }
 
 CoreResource::Sprite9Sliced& CoreResource::SpriteManager::get_sprite9sliced(uint32_t id) {

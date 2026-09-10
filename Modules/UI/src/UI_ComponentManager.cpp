@@ -2,6 +2,7 @@
 
 void CoreUI::UI_ComponentManager::ClearData() {
 	components = {};
+	dirty_comps = {};
 }
 
 CoreUI::UI_Component* CoreUI::UI_ComponentManager::add(std::unique_ptr<UI_Component> comp) {
@@ -14,4 +15,8 @@ bool CoreUI::UI_ComponentManager::remove(uint32_t ui_object_id) {
 
 CoreUI::UI_Component* CoreUI::UI_ComponentManager::get(uint32_t ui_object_id) {
 	return components.get(ui_object_id)->get();
+}
+
+uint32_t CoreUI::UI_ComponentManager::size() {
+	return components.size();
 }

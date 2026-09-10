@@ -44,16 +44,16 @@ target_link_libraries(Audio PUBLIC ExternalLibs)
 
 target_link_libraries(Physics PUBLIC ExternalLibs)
 
-target_link_libraries(Objects PUBLIC Rendering)
-target_link_libraries(Objects PUBLIC IOSystem)
-target_link_libraries(Objects PUBLIC Audio)
+target_link_libraries(UI PUBLIC Rendering)
+target_link_libraries(UI PUBLIC IOSystem)
+target_link_libraries(UI PUBLIC Audio)
+
+target_link_libraries(Objects PUBLIC UI)
 target_link_libraries(Objects PUBLIC Physics)
 
 target_link_libraries(Entities PUBLIC Objects)
 
-target_link_libraries(UI PUBLIC Entities)
-
-target_link_libraries(Core PUBLIC UI)
+target_link_libraries(Core PUBLIC Entities)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Core)
 

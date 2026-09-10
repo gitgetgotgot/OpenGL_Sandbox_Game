@@ -9,11 +9,13 @@ class Screen {
 public:
     float width = 1920, height = 1080;
     float ratio = 1920.f / 1080.f;
+    float double_x_ratio = 1 / (2 * (1920.f / 1080.f));
     bool is_fullscreen = false;
     void update_resolution(int width, int height) {
         this->height = height;
         this->width = width;
-        this->ratio = (float)width / (float)height;
+        ratio = (float)width / (float)height;
+        double_x_ratio = 1 / (2 * ratio);
     }
 };
 

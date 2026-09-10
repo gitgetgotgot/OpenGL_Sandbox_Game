@@ -1196,8 +1196,6 @@ void Game::toggle_Fullscreen() {
 	}
 }
 
-#include <UI/UI_ObjectManager.h>
-#include <UI/Image.h>
 void Game::init() {
 	srand(time(NULL));
 
@@ -1220,22 +1218,6 @@ void Game::init() {
 
 	world = std::make_unique<World>();
 	world->init(&player);
-
-	CoreUI::Canvas* canvas = CoreUI::UI_Renderer::get_instance().add_canvas();
-	auto widget = CoreUI::UI_ObjectManager::get_instance().add();
-	widget->transform.set_local_pos(0.0f, 0.0f);
-	widget->transform.set_size(1.0f, 1.0f);
-	auto image = widget->add_component<CoreUI::Image>();
-	image->set_sprite(CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:Ice").value());
-	canvas->add_object(widget);
-
-	auto widget2 = CoreUI::UI_ObjectManager::get_instance().add();
-	widget2->transform.set_local_pos(0.25f, 0.25f);
-	widget2->transform.set_size(0.5f, 0.5f);
-	auto image2 = widget2->add_component<CoreUI::Image>();
-	image2->set_sprite(CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:Crimson Stone").value());
-
-
 
 	//openGL settings
 	glEnable(GL_BLEND);

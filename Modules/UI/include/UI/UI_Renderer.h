@@ -1,8 +1,6 @@
 #pragma once
 #include <Rendering/OpenGL_Renderer.h>
-#include <Utility/TextBufferBuilder.h>
-#include "UI/SDF_Font_Manager.h"
-#include "UI/Canvas.h"
+#include <Utility/UI_Data.h>
 
 namespace CoreUI {
 	constexpr uint16_t MAX_SPRITES_PER_DRAW = 2000;
@@ -17,15 +15,10 @@ namespace CoreUI {
 		void init();
 		void update();
 		void render(std::unique_ptr<OpenGL_Renderer>& renderer);
-
-		Canvas* add_canvas();
-		bool remove_canvas(uint32_t index);
-		Canvas* get_canvas(uint32_t index);
+		uint16_t add_clip_rect(uint32_t x, uint32_t y, uint32_t w, uint32_t h);
 	private:
 		UI_Renderer() {}
 		~UI_Renderer() {}
-		SDF_Font_Manager sdf_font_manager;
-		TextBufferBuilder text_builder;
 
 		std::unique_ptr<UBO> ubo;
 		UI_UBO ubo_data{};
@@ -45,7 +38,7 @@ namespace CoreUI {
 		uint32_t sdf_text_INDEX_OFFSET = 0;
 
 		std::vector<UI_RenderEntry> render_queue;
-		// UI Renderer stores canvases in ordered container
-		std::vector<Canvas> canvases;
+		std::vector<UI_Component*> hit_queue;
+		std::vector<ClipRectangle> clip_rects;
 	};
 }

@@ -3,22 +3,23 @@
 
 namespace CoreUI {
 	class NineSlicedImage : public UI_Component {
+		struct FrameSize {
+			float left = 0.05f, right = 0.05f,
+			top = 0.05f, bottom = 0.05f;
+		};
 	public:
-		NineSlicedImage(uint32_t object_id) : UI_Component(object_id) {}
+		NineSlicedImage(uint32_t object_id) :
+			UI_Component(object_id, UI_Component_Type::UI_WIDGET, UI_Render_Type::UI_SPRITE) {}
 		void set_sprite9sliced(uint32_t sprite_ID);
-		void flip(bool X, bool Y);
-		void set_frame_size(float size);
-		void set_inner_size(float width, float height);
-		void set_inner_size(glm::vec2 size);
+		void set_frame_size(float left, float right, float top, float bottom);
 		void _update_sprite_buffer(
 			std::vector<UI_RenderEntry>& render_queue,
-			std::vector<UI_Vertex2f>& sprites_buffer
+			std::vector<UI_Vertex2f>& sprites_buffer,
+			uint16_t clip_rect_id
 		) override;
 		void _update_render_data() override;
 		uint32_t sprite_ID = 0;
-		bool flip_x = false, flip_y = false;
-		float frame_size = 0.1f;
-		glm::vec2 inner_size{ 0.9f };
+		FrameSize frame;
 	private:
 		UI_Vertex2f sprite_vertices[36]; //9 sprites
 	};

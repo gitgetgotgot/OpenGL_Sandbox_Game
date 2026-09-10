@@ -16,7 +16,7 @@ namespace CoreUI {
 			return mgr;
 		}
 		void ClearData();
-		UI_Object* add();
+		UI_Obj_Ptr add();
 		bool remove(uint32_t ui_object_id);
 		UI_Object* get(uint32_t ui_object_id);
 		void mark_dirty_transform(uint32_t ui_object_id);

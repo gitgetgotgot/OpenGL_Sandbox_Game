@@ -14,6 +14,7 @@ namespace CoreUI {
 		UI_Component* add(std::unique_ptr<UI_Component> comp);
 		bool remove(uint32_t ui_object_id);
 		UI_Component* get(uint32_t ui_object_id);
+		uint32_t size();
 	private:
 		UI_ComponentManager() {}
 		~UI_ComponentManager() {}

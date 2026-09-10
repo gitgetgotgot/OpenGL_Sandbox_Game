@@ -27,6 +27,16 @@ void CoreUI::UI_Transform::add_child(UI_Transform& transform) {
 	if (!transform.is_dirty) transform.mark_dirty();
 }
 
+void CoreUI::UI_Transform::translate(float x, float y) {
+	local_pos.x += x; local_pos.y += y;
+	mark_dirty();
+}
+
+void CoreUI::UI_Transform::translate(glm::vec2 vec) {
+	local_pos += vec;
+	mark_dirty();
+}
+
 void CoreUI::UI_Transform::update_transform() {
 	if (parent_id != 0) global_pos = UI_ObjectManager::get_instance().get(parent_id)->transform.global_pos + local_pos;
 	else global_pos = local_pos;

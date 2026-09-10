@@ -1,12 +1,11 @@
 #include "UI/UI_Renderer.h"
 #include "UI/UI_ObjectManager.h"
+#include "UI/FontManager.h"
+#include "UI/CanvasManager.h"
 #include <IOSystem/SystemContext.h>
-#include <Objects/ObjectTypes/WeaponInfo.h>
-#include <Objects/ObjectManager.h>
-#include <Utility/Sprite.h>
 
 void CoreUI::UI_Renderer::init() {
-	sdf_font_manager.load_main_sdf_font("verdana_SDF");
+	FontManager::get_instance().load_main_sdf_font("verdana_SDF");
 
 	const uint32_t MAX_SPRITES_VERTEX_SIZE = MAX_SPRITES_PER_DRAW * 4;
 	const uint32_t MAX_SPRITES_INDEX_SIZE = MAX_SPRITES_PER_DRAW * 6;
@@ -68,7 +67,6 @@ void CoreUI::UI_Renderer::init() {
 	ubo->set_data(&ubo_data, sizeof(UI_UBO), GL_DYNAMIC_DRAW);
 
 	//reserve memory for buffers (this size should be enought for most scenarios)
-	canvases.reserve(10);
 	sprites_buffer.reserve(MAX_SPRITES_VERTEX_SIZE);
 	sdf_text_buffer.reserve(MAX_SDF_TEXT_VERTEX_SIZE);
 }
@@ -76,15 +74,23 @@ void CoreUI::UI_Renderer::init() {
 void CoreUI::UI_Renderer::update() {
 	sprites_buffer.clear();
 	sdf_text_buffer.clear();
-	render_queue.clear();
 	render_queue.resize(1);
+	clip_rects.clear();
+	hit_queue.clear();
+	uint32_t components_size = UI_ComponentManager::get_instance().size();
+	if (hit_queue.capacity() < components_size) {
+		hit_queue.resize(components_size);
+	}
+
+	//place default clip rect based on current screen data
+	clip_rects.emplace_back(0, 0, SystemContext::screen.width, SystemContext::screen.height);
 
 	// update all dirty UI objects
 	UI_ObjectManager::get_instance().update_dirty_objects();
 
 	// replace all UI objects in render buffers
-	for (auto& canvas : canvases) {
-		if (canvas.is_enabled) canvas.update_canvas_objects_data(render_queue, sprites_buffer, sdf_text_buffer);
+	for (auto& canvas : CanvasManager::get_instance().get_canvases()) {
+		if (canvas.is_enabled) canvas.update_canvas_objects_data(render_queue, sprites_buffer, sdf_text_buffer, hit_queue);
 	}
 
 	sprites_vbo->update_data(sprites_buffer.data(), sprites_buffer.size() * sizeof(UI_Vertex2f));
@@ -95,42 +101,32 @@ void CoreUI::UI_Renderer::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
 	sprites_INDEX_OFFSET = 0;
 	sdf_text_INDEX_OFFSET = 0;
 
+	renderer->useScissorTest(true);
+	renderer->setScissorRect(0, 0, SystemContext::screen.width, SystemContext::screen.height);
+
 	for (auto& render_entry : render_queue) {
+		//change clip rectangle
+		if (render_entry.change_clip_rect) {
+			ClipRectangle& rect = clip_rects[render_entry.clip_rect_id];
+			renderer->setScissorRect(rect.x, rect.y, rect.w, rect.h);
+		}
 		//render sprites
-		if (render_entry.type == UI_Component_Type::UI_SPRITE) {
+		if (render_entry.render_type == UI_Render_Type::UI_SPRITE) {
 			renderer->renderIndexedData(sprites_shader, sprites_vao, sprites_vbo, ebo, render_entry.index_count, sprites_INDEX_OFFSET);
 			sprites_INDEX_OFFSET += render_entry.index_count;
 		}
 		//render sdf text
-		else if (render_entry.type == UI_Component_Type::UI_TEXT) {
+		else if (render_entry.render_type == UI_Render_Type::UI_TEXT) {
 			renderer->renderIndexedData(sdf_text_shader, sdf_text_vao, sdf_text_vbo, ebo, render_entry.index_count, sdf_text_INDEX_OFFSET);
 			sdf_text_INDEX_OFFSET += render_entry.index_count;
 		}
 	}
-
-	/*
-	//scissor rect
-	renderer->useScissorTest(true);
-	renderer->setScissorRect(0, rect_y, SystemContext::screen.width, rect_height);
-	//--craft text
-	renderer->renderIndexedData(sdf_text_shader, craft_text_vao, craft_text_vbo, ebo, craft_text_INDEX_SIZE);
 	renderer->useScissorTest(false);
-	*/
 }
 
-CoreUI::Canvas* CoreUI::UI_Renderer::add_canvas() {
-	return &canvases.emplace_back();
-}
-
-bool CoreUI::UI_Renderer::remove_canvas(uint32_t index) {
-	if (index >= canvases.size()) return false;
-	canvases.erase(canvases.begin() + index);
-	return true;
-}
-
-CoreUI::Canvas* CoreUI::UI_Renderer::get_canvas(uint32_t index) {
-	if (index >= canvases.size()) return nullptr;
-	return &canvases[index];
+uint16_t CoreUI::UI_Renderer::add_clip_rect(uint32_t x, uint32_t y, uint32_t w, uint32_t h) {
+	clip_rects.emplace_back(x, y, w, h);
+	return clip_rects.size() - 1;
 }
 
 /*

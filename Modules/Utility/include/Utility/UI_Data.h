@@ -44,13 +44,30 @@ namespace CoreUI {
 	};
 
 	enum UI_Component_Type : uint8_t {
-		UI_QUEUE_START, UI_EMPTY, UI_SPRITE, UI_TEXT
+		UI_WIDGET, UI_PANEL, UI_SCROLL_VIEW
+	};
+
+	enum UI_Render_Type : uint8_t {
+		UI_NONE, UI_SPRITE, UI_TEXT
+	};
+
+	struct ClipRectangle {
+		ClipRectangle() {}
+		ClipRectangle(uint32_t x, uint32_t y, uint32_t w, uint32_t h) :
+			x{ x }, y{ y }, w{ w }, h{ h } {}
+		uint32_t x = 0, y = 0, w = 0, h = 0;
 	};
 
 	struct UI_RenderEntry {
 		UI_RenderEntry() {}
-		UI_RenderEntry(UI_Component_Type type, uint32_t index_count) : type{ type }, index_count{ index_count } {}
-		UI_Component_Type type = UI_Component_Type::UI_QUEUE_START; //for shader
+		UI_RenderEntry(
+			UI_Render_Type render_type, uint32_t index_count,
+			uint16_t clip_rect_id, bool change_clip_rect) :
+			render_type{ render_type }, index_count{ index_count }, clip_rect_id{ clip_rect_id },
+			change_clip_rect{ change_clip_rect } {}
 		uint32_t index_count = 0; //for render count
+		uint16_t clip_rect_id = 0;
+		UI_Render_Type render_type = UI_Render_Type::UI_NONE; //for shader
+		bool change_clip_rect = false;
 	};
 }

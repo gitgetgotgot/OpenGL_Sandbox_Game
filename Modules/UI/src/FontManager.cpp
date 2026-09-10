@@ -1,10 +1,10 @@
-#include <UI/SDF_Font_Manager.h>
+#include "UI/FontManager.h"
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 
-void SDF_Font_Manager::load_main_sdf_font(const char* fontName) {
+void FontManager::load_main_sdf_font(const char* fontName) {
 	//Font setup
 
 	uint32_t glyph_atlas_size = 0;
@@ -36,9 +36,12 @@ void SDF_Font_Manager::load_main_sdf_font(const char* fontName) {
 	}
 	meta_file.close();
 
-	mainFontTexture.bind(1);
 	mainFontTexture.add_R8_texture_from_buffer(sdf.data(), glyph_atlas_size, glyph_atlas_size, false);
 	mainFontTexture.bind(1);
 
 	std::cout << "SDF Font loaded successfully" << std::endl;
+}
+
+Font& FontManager::get_main_font() {
+	return mainFont;
 }

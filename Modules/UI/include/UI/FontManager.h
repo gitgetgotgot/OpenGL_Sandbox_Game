@@ -22,9 +22,17 @@ public:
 
 constexpr char SDFFontAtlasesDirectory[] = "Resources/SDF_Fonts/";
 
-class SDF_Font_Manager {
+class FontManager {
 public:
+	static FontManager& get_instance() {
+		static FontManager mgr;
+		return mgr;
+	}
 	void load_main_sdf_font(const char* fontName);
+	Font& get_main_font();
+private:
 	Font mainFont{};
 	Texture mainFontTexture{};
+	FontManager() {}
+	~FontManager() {}
 };

@@ -1,18 +1,28 @@
-#include "UI/Image.h"
+#include "UI/Panel.h"
 #include "UI/UI_ObjectManager.h"
 #include <Utility/Sprite.h>
 
-void CoreUI::Image::set_sprite(uint32_t sprite_ID) {
+void CoreUI::Panel::set_sprite(uint32_t sprite_ID) {
 	this->sprite_ID = sprite_ID;
 	mark_dirty();
 }
 
-void CoreUI::Image::flip(bool X, bool Y) {
+void CoreUI::Panel::set_color(glm::vec4 color) {
+	this->color = color;
+	mark_dirty();
+}
+
+void CoreUI::Panel::set_color(float r, float g, float b, float a) {
+	color.x = r, color.y = g, color.z = b, color.w = a;
+	mark_dirty();
+}
+
+void CoreUI::Panel::flip(bool X, bool Y) {
 	flip_x = X; flip_y = Y;
 	mark_dirty();
 }
 
-void CoreUI::Image::_update_sprite_buffer(
+void CoreUI::Panel::_update_sprite_buffer(
 	std::vector<UI_RenderEntry>& render_queue,
 	std::vector<UI_Vertex2f>& sprites_buffer,
 	uint16_t clip_rect_id
@@ -22,7 +32,7 @@ void CoreUI::Image::_update_sprite_buffer(
 	sprites_buffer.insert(sprites_buffer.end(), sprite_vertices, sprite_vertices + 4);
 }
 
-void CoreUI::Image::_update_render_data() {
+void CoreUI::Panel::_update_render_data() {
 	is_dirty = false;
 	if (sprite_ID == 0) return;
 
@@ -41,8 +51,8 @@ void CoreUI::Image::_update_render_data() {
 	y += (1.0f - size_ratio.y) * size_y * 0.5f;
 	size_x *= size_ratio.x;
 	size_y *= size_ratio.y;
-	sprite_vertices[0] = UI_Vertex2f(x, y,						sprite.U0, sprite.V0,						sprite.texture_id);
-	sprite_vertices[1] = UI_Vertex2f(x, y + size_y,				sprite.U0, sprite.V0 + sprite.H,			sprite.texture_id);
-	sprite_vertices[2] = UI_Vertex2f(x + size_x, y + size_y,	sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.texture_id);
-	sprite_vertices[3] = UI_Vertex2f(x + size_x, y,				sprite.U0 + sprite.W, sprite.V0,			sprite.texture_id);
+	sprite_vertices[0] = UI_Vertex2f(x, y, sprite.U0, sprite.V0, sprite.texture_id, color);
+	sprite_vertices[1] = UI_Vertex2f(x, y + size_y, sprite.U0, sprite.V0 + sprite.H, sprite.texture_id, color);
+	sprite_vertices[2] = UI_Vertex2f(x + size_x, y + size_y, sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.texture_id, color);
+	sprite_vertices[3] = UI_Vertex2f(x + size_x, y, sprite.U0 + sprite.W, sprite.V0, sprite.texture_id, color);
 }
