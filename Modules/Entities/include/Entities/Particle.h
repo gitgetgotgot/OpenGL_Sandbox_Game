@@ -1,9 +1,9 @@
 #pragma once
 #include <Rendering/OpenGL_Renderer.h>
 #include <Utility/Math.h>
-#include <Utility/Sprite.h>
+#include <Resources/Sprite.h>
+#include <Resources/Lights.h>
 #include <Utility/GameContext.h>
-#include <Utility/Lights.h>
 #include <glm/glm.hpp>
 
 struct ParticleInfo {

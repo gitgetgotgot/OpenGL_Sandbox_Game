@@ -1,4 +1,4 @@
-#include <Utility/Sprite.h>
+#include "Resources/Sprite.h"
 
 CoreResource::Sprite::Sprite(
 	float U0, float V0, float width, float height,

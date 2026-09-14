@@ -1,6 +1,4 @@
 #include <Core/GameCore.h>
-
-#include "Speaker.h"
 #include <Windows.h>
 
 //glfwSwapInterval(0); - remove FPS limiter
@@ -51,20 +49,6 @@ static void update_array_AVX256(float* array, size_t count, float multiplier) {
 		array[i] *= multiplier;
 	}
 }
-static void update_array_AVX512(float* array, size_t count, float multiplier) {
-	size_t i = 0;
-	size_t avx_count = count & ~size_t(15);
-
-	__m512 factor = _mm512_set1_ps(multiplier);
-	for (; i < avx_count; i += 16) {
-		__m512 v = _mm512_loadu_ps(&array[i]);
-		v = _mm512_mul_ps(v, factor);
-		_mm512_storeu_ps(&array[i], v);
-	}
-	for (; i < count; i++) {
-		array[i] *= multiplier;
-	}
-}
 static void update_array_AVX2_range(float* array, size_t begin, size_t end, float multiplier) {
 	size_t i = begin;
 	size_t avx_end = begin + ((end - begin) & ~size_t(7));
@@ -96,23 +80,6 @@ static void update_array_AVX2_mt(float* array, size_t count, float multiplier, u
 }
 
 int main() {
-	typedef SpeakerFactory* (*GET_SPEAKER_FACTORY)();
-	HMODULE lib = LoadLibraryA("library_test.dll");
-	if (!lib) {
-		std::cout << "Error: " << GetLastError() << std::endl;
-		return 1;
-	}
-	GET_SPEAKER_FACTORY factory = (GET_SPEAKER_FACTORY)GetProcAddress(lib, "GET_SPEAKER_FACTORY");
-	
-	SpeakerFactory* core_factory = new CoreSpeakerFactory();
-	SpeakerFactory* modded_factory = factory();
-	
-	BaseSpeaker* core_speaker = core_factory->create_speaker();
-	BaseSpeaker* modded_speaker = modded_factory->create_speaker();
-
-	core_speaker->speak();
-	modded_speaker->speak();
-
 	Game game;
 	try {
 		game.init();

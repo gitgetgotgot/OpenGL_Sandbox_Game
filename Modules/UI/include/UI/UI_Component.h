@@ -1,5 +1,6 @@
 #pragma once
 #include <Utility/UI_Data.h>
+#include <vector>
 
 namespace CoreUI {
 	class UI_Component {
@@ -12,6 +13,7 @@ namespace CoreUI {
 		UI_Render_Type render_type = UI_Render_Type::UI_NONE;
 		bool is_visible = true;
 		bool is_interactable = false;
+		bool blocks_input = false;
 		virtual void _update_sprite_buffer(
 			std::vector<UI_RenderEntry>& render_queue,
 			std::vector<UI_Vertex2f>& sprites_buffer,

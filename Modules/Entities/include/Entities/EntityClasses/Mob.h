@@ -1,6 +1,6 @@
 #pragma once
 #include "Entities/EntityBase.h"
-#include <Utility/Effects.h>
+#include <Resources/Effects.h>
 #include <Physics/EntityPhysics.h>
 #include <Physics/Colliders.h>
 

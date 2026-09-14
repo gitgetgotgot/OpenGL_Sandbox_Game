@@ -1,4 +1,4 @@
-#include <Utility/Effects.h>
+#include "Resources/Effects.h"
 
 bool CoreResource::Effect::updateEffect(float deltaTime) {
 	duration -= deltaTime;

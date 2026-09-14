@@ -159,8 +159,7 @@ void CoreEntity::EntitySystem::update() {
 			tr.pos += delta_move * TimeManager::deltaTime;
 			entity->hitbox.center = tr.pos + glm::vec2(0.0f, entity->hitbox.size.y * 0.5f);
 
-			if (GameMath::mouse_intersection(
-				glm::vec2(x, y), glm::vec2(width, height), glm::vec2(SystemContext::mouse.world_x_pos, SystemContext::mouse.world_y_pos))) {
+			if (true) {
 				//show text about this mob (Name HP/MAX_HP)
 			}
 		}

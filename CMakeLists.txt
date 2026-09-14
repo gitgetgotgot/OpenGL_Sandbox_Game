@@ -12,6 +12,7 @@ add_game_module(Entities)
 add_game_module(Objects)
 add_game_module(Physics)
 add_game_module(Rendering)
+add_game_module(Resources)
 add_game_module(UI)
 add_game_module(IOSystem)
 add_game_module(Utility)
@@ -37,6 +38,8 @@ target_sources(Rendering
 
 target_link_libraries(Utility PUBLIC ExternalLibs)
 
+target_link_libraries(Resources PUBLIC Utility)
+
 target_link_libraries(IOSystem PUBLIC ExternalLibs)
 target_link_libraries(IOSystem PUBLIC Utility)
 
@@ -45,6 +48,7 @@ target_link_libraries(Audio PUBLIC ExternalLibs)
 target_link_libraries(Physics PUBLIC ExternalLibs)
 
 target_link_libraries(UI PUBLIC Rendering)
+target_link_libraries(UI PUBLIC Resources)
 target_link_libraries(UI PUBLIC IOSystem)
 target_link_libraries(UI PUBLIC Audio)
 
@@ -79,19 +83,6 @@ foreach(dir ${GAME_DATA_DIRS})
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/${dir}
     )
 endforeach()
-
-
-add_library(library_test SHARED
-    test_lib.cpp
-)
-target_compile_definitions(library_test PRIVATE DLL_EXPORT)
-
-# Копирование DLL рядом с exe
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:library_test>
-            $<TARGET_FILE_DIR:${PROJECT_NAME}>
-)
 
 add_executable(DataCompiler
     "${PROJECT_SOURCE_DIR}/Tools/DataCompiler/DataCompilerMain.cpp"

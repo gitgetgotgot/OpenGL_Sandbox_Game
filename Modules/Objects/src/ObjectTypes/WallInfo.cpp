@@ -1,5 +1,5 @@
 #include "Objects/ObjectTypes/WallInfo.h"
-#include <Utility/ResourceErrors.h>
+#include <Resources/ResourceErrors.h>
 
 void CoreObject::WallInfo::fill_data(const DataNode& data) {
 	ObjectInfo::fill_data(data);

@@ -1,6 +1,6 @@
 #include "Core/GameCore.h"
 #include "Core/ResourceLoader.h"
-#include <UI/UI_Renderer.h>
+#include <UI/UI_System.h>
 #include <thread>
 
 Game::~Game() {
@@ -20,7 +20,7 @@ bool Game::update() {
 	}
 
 	world->update();
-	CoreUI::UI_Renderer::get_instance().update();
+	CoreUI::UI_System::get_instance().update();
 
 	return 1;
 	/*switch (game_update_state) {
@@ -936,7 +936,7 @@ void Game::render() {
 	renderer->clear(1.0, 1.0, 1.0);
 
 	world->render(renderer);
-	CoreUI::UI_Renderer::get_instance().render(renderer);
+	CoreUI::UI_System::get_instance().render(renderer);
 
 	renderer->present();
 	/*	
@@ -1196,6 +1196,11 @@ void Game::toggle_Fullscreen() {
 	}
 }
 
+#include <UI/CanvasManager.h>
+#include <UI/UI_ObjectManager.h>
+#include <UI/Image.h>
+#include <Objects/SlotScript.h>
+
 void Game::init() {
 	srand(time(NULL));
 
@@ -1204,7 +1209,7 @@ void Game::init() {
 
 	ResourceLoader::get_instance().Load_Resources();
 
-	CoreUI::UI_Renderer::get_instance().init();
+	CoreUI::UI_System::get_instance().init();
 
 	player.inventory.init();
 	for (int i = 2; i < 52; i++) {
@@ -1218,6 +1223,17 @@ void Game::init() {
 
 	world = std::make_unique<World>();
 	world->init(&player);
+
+	auto canvas = CoreUI::CanvasManager::get_instance().add();
+	auto img_obj = CoreUI::UI_ObjectManager::get_instance().add();
+	img_obj->transform.set_size(0.5f, 0.5f);
+	auto img = img_obj->add_component<CoreUI::Image>();
+	auto slot_script = img_obj->add_component_behaviour<CustomImageBehaviour>();
+	slot_script->image_object = img_obj;
+	slot_script->image = img;
+	img->set_sprite(CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:Oak Planks").value());
+	img->is_interactable = true;
+	canvas->add_object(img_obj);
 
 	//openGL settings
 	glEnable(GL_BLEND);

@@ -6,9 +6,6 @@ void Inventory::init() {
 	should_update_base_items = true;
 
 	craft_slots_start_y = 0.83f - 0.11 * 10.f + 0.055f;
-	craft_slots_scissor_rect_y0 = craft_slots_start_y - 0.14f * 4.5f;
-	craft_slots_scissor_rect_height = craft_slots_start_y + 0.07f - craft_slots_scissor_rect_y0;
-
 	last_craft_slot_up_y = craft_slots_start_y + 0.14f;
 	last_craft_slot_bottom_y = craft_slots_start_y - 0.14f * 5.f;
 
@@ -34,8 +31,7 @@ void Inventory::toggle_inventory() {
 }
 
 void Inventory::update() {
-	return;
-
+	/*
 	if (current_player_flags != prev_player_flags) {
 		should_update_available_crafts = true;
 		prev_player_flags = current_player_flags;
@@ -78,26 +74,7 @@ void Inventory::update() {
 		update_crafts();
 	//update dynamic craft slots
 	update_dynamic_craft_slots();
-}
-
-void Inventory::add_basic_slot_bounds(float x0, float x1, float y0, float y1) {
-	slots_bounds.emplace_back(glm::vec4(x0, x1, y0, y1));
-}
-
-void Inventory::add_chest_slot_bounds(float x0, float x1, float y0, float y1) {
-	chest_slots_bounds.emplace_back(glm::vec4(x0, x1, y0, y1));
-}
-
-void Inventory::add_helper_slot_bounds(float x0, float x1, float y0, float y1) {
-	craft_helper_slots_bounds.emplace_back(glm::vec4(x0, x1, y0, y1));
-}
-
-void Inventory::add_craft_slot_bounds(float x0, float x1, float y0, float y1) {
-	craft_slots_bounds.emplace_back(glm::vec4(x0, x1, y0, y1));
-}
-
-void Inventory::add_craft_info_slot_bounds(float x0, float x1, float y0, float y1) {
-	craft_info_slots_bounds.emplace_back(glm::vec4(x0, x1, y0, y1));
+	*/
 }
 
 bool Inventory::place_item(uint16_t item_id, uint16_t& amount) {
@@ -223,6 +200,7 @@ void Inventory::process_slot_RB_click(uint32_t slot_id, InventorySlot* slots_ptr
 	}
 }
 
+/*
 void Inventory::update_inventory_input() {
 	for (int i = 0; i < INVENTORY_SIZE; i++) {
 		glm::vec4& bounds = slots_bounds[i];
@@ -381,6 +359,7 @@ void Inventory::update_main_craft_slot_input() {
 	}
 	crafting_with_lb_hold = false;
 }
+*/
 
 uint16_t Inventory::get_active_item_id() const {
 	return items[current_active_hotbar_slot].item_id;

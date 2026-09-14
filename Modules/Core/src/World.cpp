@@ -1,7 +1,7 @@
 #include "Core/World.h"
 #include <Utility/GameContext.h>
 #include <Utility/TimeManager.h>
-#include <Utility/CoreTags.h>
+#include <Resources/CoreTags.h>
 #include <Objects/ObjectTypes/MultiBlockInfo.h>
 #include <Objects/ObjectTypes/WeaponInfo.h>
 #include <Objects/ObjectManager.h>

@@ -1,5 +1,5 @@
 #pragma once
-#include <Utility/ResourceData.h>
+#include <Resources/ResourceData.h>
 #include <Utility/DynamicArray.h>
 #include <Utility/DataParser.h>
 

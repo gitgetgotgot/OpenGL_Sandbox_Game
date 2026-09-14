@@ -1,6 +1,6 @@
 #include "UI/Panel.h"
 #include "UI/UI_ObjectManager.h"
-#include <Utility/Sprite.h>
+#include <Resources/Sprite.h>
 
 void CoreUI::Panel::set_sprite(uint32_t sprite_ID) {
 	this->sprite_ID = sprite_ID;

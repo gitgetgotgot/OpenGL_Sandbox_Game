@@ -1,10 +1,10 @@
 #include "Objects/ObjectInfo.h"
 #include "Objects/ObjectManager.h"
-#include <Utility/Sprite.h>
-#include <Utility/Lights.h>
-#include <Utility/Effects.h>
-#include <Utility/ResourceErrors.h>
-#include <Utility/TagRegistry.h>
+#include <Resources/Sprite.h>
+#include <Resources/Lights.h>
+#include <Resources/Effects.h>
+#include <Resources/TagRegistry.h>
+#include <Resources/ResourceErrors.h>
 
 CoreObject::ObjectInfo::ObjectInfo(ObjectType type) : objectType{ type } {}
 

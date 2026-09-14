@@ -1,4 +1,4 @@
-#include <Utility/Lights.h>
+#include "Resources/Lights.h"
 
 void CoreResource::LightsManager::ClearData() {
 	lights = {};

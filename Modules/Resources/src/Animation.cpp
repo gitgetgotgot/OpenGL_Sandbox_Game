@@ -1,4 +1,4 @@
-#include <Utility/Animation.h>
+#include "Resources/Animation.h"
 #include <Utility/TimeManager.h>
 
 void CoreAnimation::AnimationClip::add_sprite(uint32_t sprite_id) {

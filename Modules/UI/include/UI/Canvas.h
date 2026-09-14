@@ -1,6 +1,5 @@
 #pragma once
 #include "UI/UI_Object.h"
-#include <memory>
 
 namespace CoreUI {
 	class Canvas {
@@ -10,14 +9,14 @@ namespace CoreUI {
 			std::vector<UI_RenderEntry>& render_queue,
 			std::vector<UI_Vertex2f>& sprites_buffer,
 			std::vector<UI_Text_Vertex2f>& sdf_text_buffer,
-			std::vector<UI_Component*>& hit_queue
+			std::vector<UI_Object*>& hit_queue
 		);
 		void update_child_object(
 			UI_Object& object,
 			std::vector<UI_RenderEntry>& render_queue,
 			std::vector<UI_Vertex2f>& sprites_buffer,
 			std::vector<UI_Text_Vertex2f>& sdf_text_buffer,
-			std::vector<UI_Component*>& hit_queue,
+			std::vector<UI_Object*>& hit_queue,
 			uint16_t clip_rect_id
 		);
 		uint16_t add_clip_rect(UI_Transform& tr);

@@ -1,10 +1,11 @@
-#include "UI/UI_Renderer.h"
+#include "UI/UI_System.h"
 #include "UI/UI_ObjectManager.h"
 #include "UI/FontManager.h"
 #include "UI/CanvasManager.h"
+#include "UI/UI_BehaviourSystem.h"
 #include <IOSystem/SystemContext.h>
 
-void CoreUI::UI_Renderer::init() {
+void CoreUI::UI_System::init() {
 	FontManager::get_instance().load_main_sdf_font("verdana_SDF");
 
 	const uint32_t MAX_SPRITES_VERTEX_SIZE = MAX_SPRITES_PER_DRAW * 4;
@@ -71,18 +72,21 @@ void CoreUI::UI_Renderer::init() {
 	sdf_text_buffer.reserve(MAX_SDF_TEXT_VERTEX_SIZE);
 }
 
-void CoreUI::UI_Renderer::update() {
+void CoreUI::UI_System::update() {
 	sprites_buffer.clear();
 	sdf_text_buffer.clear();
 	render_queue.resize(1);
 	clip_rects.clear();
-	hit_queue.clear();
+
+	// update hit queue for interactable components
+	std::vector<UI_Object*>& hit_queue = UI_BehaviourSystem::get_instance().get_hit_queue();
 	uint32_t components_size = UI_ComponentManager::get_instance().size();
 	if (hit_queue.capacity() < components_size) {
 		hit_queue.resize(components_size);
 	}
+	hit_queue.clear();
 
-	//place default clip rect based on current screen data
+	// place default clip rect based on current screen data
 	clip_rects.emplace_back(0, 0, SystemContext::screen.width, SystemContext::screen.height);
 
 	// update all dirty UI objects
@@ -93,11 +97,20 @@ void CoreUI::UI_Renderer::update() {
 		if (canvas.is_enabled) canvas.update_canvas_objects_data(render_queue, sprites_buffer, sdf_text_buffer, hit_queue);
 	}
 
+	// update interactable components
+	UI_BehaviourSystem::get_instance().update();
+
+	if (SystemContext::keyBoard.key_is_pressed(Key::KeyI)) {
+		for (auto& c : hit_queue) {
+			std::cout << "[Render hit queue] ID = " << c->object_id << std::endl;
+		}
+	}
+
 	sprites_vbo->update_data(sprites_buffer.data(), sprites_buffer.size() * sizeof(UI_Vertex2f));
 	sdf_text_vbo->update_data(sdf_text_buffer.data(), sdf_text_buffer.size() * sizeof(UI_Text_Vertex2f));
 }
 
-void CoreUI::UI_Renderer::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
+void CoreUI::UI_System::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
 	sprites_INDEX_OFFSET = 0;
 	sdf_text_INDEX_OFFSET = 0;
 
@@ -124,7 +137,7 @@ void CoreUI::UI_Renderer::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
 	renderer->useScissorTest(false);
 }
 
-uint16_t CoreUI::UI_Renderer::add_clip_rect(uint32_t x, uint32_t y, uint32_t w, uint32_t h) {
+uint16_t CoreUI::UI_System::add_clip_rect(uint32_t x, uint32_t y, uint32_t w, uint32_t h) {
 	clip_rects.emplace_back(x, y, w, h);
 	return clip_rects.size() - 1;
 }

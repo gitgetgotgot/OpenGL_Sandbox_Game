@@ -1,5 +1,5 @@
 #pragma once
-#include <Utility/ResourceData.h>
+#include <Resources/ResourceData.h>
 
 namespace CoreObject {
 	class ObjectComponent {

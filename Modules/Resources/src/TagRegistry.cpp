@@ -1,4 +1,4 @@
-#include "Utility/TagRegistry.h"
+#include "Resources/TagRegistry.h"
 
 void TagRegistry::ClearData() {
 	current_tag_index = 0;

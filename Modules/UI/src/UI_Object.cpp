@@ -1,6 +1,7 @@
 #include "UI/UI_Object.h"
 #include "UI/UI_ObjectManager.h"
 #include "UI/UI_ComponentManager.h"
+#include "UI/UI_BehaviourSystem.h"
 
 CoreUI::UI_Object::UI_Object(uint32_t id) {
 	object_id = id;
@@ -9,6 +10,10 @@ CoreUI::UI_Object::UI_Object(uint32_t id) {
 
 void CoreUI::UI_Object::add_child(UI_Object* child) {
 	return transform.add_child(child->transform);
+}
+
+void CoreUI::UI_Object::add_behaviour(void* ptr, UI_Behaviour_VTable* vt) const {
+	UI_BehaviourSystem::get_instance().add(object_id, ptr, vt);
 }
 
 

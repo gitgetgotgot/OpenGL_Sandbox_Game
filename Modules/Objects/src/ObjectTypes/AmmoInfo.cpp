@@ -1,5 +1,5 @@
 #include "Objects/ObjectTypes/AmmoInfo.h"
-#include <Utility/ResourceErrors.h>
+#include <Resources/ResourceErrors.h>
 
 void CoreObject::AmmoInfo::fill_data(const DataNode& data) {
 	ObjectInfo::fill_data(data);

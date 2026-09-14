@@ -1,8 +1,8 @@
 #include "Entities/EntityInfo.h"
 #include "Entities/EntityFactory.h"
-#include <Utility/Lights.h>
-#include <Utility/TagRegistry.h>
-#include <Utility/ResourceErrors.h>
+#include <Resources/Lights.h>
+#include <Resources/TagRegistry.h>
+#include <Resources/ResourceErrors.h>
 
 CoreEntity::EntityInfo::EntityInfo(CoreEntity::EntityMainType type) : main_type{ type } {}
 

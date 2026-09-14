@@ -1,5 +1,5 @@
-#include "Utility/CoreTags.h"
-#include "Utility/TagRegistry.h"
+#include "Resources/CoreTags.h"
+#include "Resources/TagRegistry.h"
 
 void CoreTags::register_core_tags() {
 	//Block

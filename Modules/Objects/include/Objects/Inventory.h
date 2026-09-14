@@ -1,11 +1,6 @@
 #pragma once
 #include "Objects/Crafting.h"
-#include <UI/UI_ObjectManager.h>
-#include <UI/CanvasManager.h>
-#include <UI/Image.h>
-#include <UI/SDF_Text.h>
-#include <UI/Panel.h>
-#include <UI/NineSlicedImage.h>
+#include <glm/ext/vector_float2.hpp>
 
 struct TooltipData {
 	glm::vec2 inner_size{ 0.f, 0.f };
@@ -29,11 +24,6 @@ public:
 	void spend_active_item();
 	void process_slot_LB_click(uint32_t slot_id, InventorySlot* slots_ptr);
 	void process_slot_RB_click(uint32_t slot_id, InventorySlot* slots_ptr);
-	void update_inventory_input();
-	void update_chest_input();
-	void update_helper_slots_input();
-	void update_info_slots_input();
-	void update_main_craft_slot_input();
 
 	uint16_t get_active_item_id() const;
 	void open_chest(InventorySlot* chest_slots_ptr);
@@ -68,14 +58,12 @@ public:
 	uint32_t current_player_flags = 0;
 	uint32_t prev_player_flags = 0;
 private:
-	// Inventory UI
-	CoreUI::UI_Canvas_Ptr main_canvas;
-
 	static const uint8_t hotbar_max_slot = 9;
 	//stores the index of the last slot where the object was taken with mouse (puts it back if leaving inventory with currently taken object)
 	uint32_t index_of_last_slot_picked = 0;
 	bool can_scroll_craft_slots = false;
 	bool should_update_available_crafts = false;
+	bool helper_slots_are_visible = false;
 
 	bool craft_slots_move_up = false;
 	float craft_slots_move_speed = 0.84f;

@@ -1,5 +1,5 @@
 #include "Objects/ObjectTypes/BlockInfo.h"
-#include <Utility/ResourceErrors.h>
+#include <Resources/ResourceErrors.h>
 
 void CoreObject::BlockInfo::fill_data(const DataNode& data) {
 	ObjectInfo::fill_data(data);

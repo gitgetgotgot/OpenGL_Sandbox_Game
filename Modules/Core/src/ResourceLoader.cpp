@@ -1,10 +1,10 @@
 #include <Core/ResourceLoader.h>
-#include <Utility/Lights.h>
-#include <Utility/Effects.h>
-#include <Utility/ResourceErrors.h>
-#include <Utility/CoreTags.h>
-#include <Utility/TagRegistry.h>
-#include <Utility/ModsManager.h>
+#include <Resources/Lights.h>
+#include <Resources/Effects.h>
+#include <Resources/ResourceErrors.h>
+#include <Resources/CoreTags.h>
+#include <Resources/TagRegistry.h>
+#include <Resources/ModsManager.h>
 #include <Objects/ObjectRegistry.h>
 #include <Objects/ObjectManager.h>
 #include <Objects/ObjectFactory.h>

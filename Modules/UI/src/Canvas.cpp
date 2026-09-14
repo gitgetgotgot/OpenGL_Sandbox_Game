@@ -2,7 +2,7 @@
 #include "UI/UI_ComponentManager.h"
 #include "UI/UI_ObjectManager.h"
 #include "UI/CanvasManager.h"
-#include "UI/UI_Renderer.h"
+#include "UI/UI_System.h"
 #include <IOSystem/SystemContext.h>
 
 void CoreUI::Canvas::add_object(UI_Obj_Ptr& object) {
@@ -14,7 +14,7 @@ void CoreUI::Canvas::update_canvas_objects_data(
 	std::vector<UI_RenderEntry>& render_queue,
 	std::vector<UI_Vertex2f>& sprites_buffer,
 	std::vector<UI_Text_Vertex2f>& sdf_text_buffer,
-	std::vector<UI_Component*>& hit_queue
+	std::vector<UI_Object*>& hit_queue
 ) {
 	//every canvas always starts with default clip rectangle (id = 0), that can be changed in children
 	for (auto& obj_id : objects) {
@@ -28,7 +28,7 @@ void CoreUI::Canvas::update_child_object(
 	std::vector<UI_RenderEntry>& render_queue,
 	std::vector<UI_Vertex2f>& sprites_buffer,
 	std::vector<UI_Text_Vertex2f>& sdf_text_buffer,
-	std::vector<UI_Component*>& hit_queue,
+	std::vector<UI_Object*>& hit_queue,
 	uint16_t clip_rect_id
 ) {
 	if (!object.is_enabled) return;
@@ -39,7 +39,7 @@ void CoreUI::Canvas::update_child_object(
 			clip_rect_id = add_clip_rect(object.transform);
 		}
 		if (comp->is_interactable) {
-			hit_queue.push_back(comp);
+			hit_queue.push_back(&object);
 		}
 		if (comp->is_visible) {
 			if (comp->render_type == UI_Render_Type::UI_SPRITE) {
@@ -62,7 +62,7 @@ uint16_t CoreUI::Canvas::add_clip_rect(UI_Transform& tr) {
 	uint32_t y = ((tr.global_pos.y - tr.size.y * 0.5f) * 0.5f + 0.5f) * SystemContext::screen.height;
 	uint32_t w = tr.size.x * SystemContext::screen.double_x_ratio * SystemContext::screen.width;
 	uint32_t h = tr.size.y * 0.5f * SystemContext::screen.height;
-	return UI_Renderer::get_instance().add_clip_rect(x, y, w, h);
+	return UI_System::get_instance().add_clip_rect(x, y, w, h);
 }
 
 

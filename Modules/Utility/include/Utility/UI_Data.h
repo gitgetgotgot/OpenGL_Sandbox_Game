@@ -1,6 +1,5 @@
 #pragma once
 #include <glm/ext/matrix_float4x4.hpp>
-#include <vector>
 
 namespace CoreUI {
 	struct UI_Vertex2f {

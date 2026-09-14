@@ -1,6 +1,6 @@
 #pragma once
 #include <Entities/EntityInfoFactory.h>
-#include <Utility/ResourceData.h>
+#include <Resources/ResourceData.h>
 
 namespace CoreEntity {
 	class MobInfo : public EntityInfo {

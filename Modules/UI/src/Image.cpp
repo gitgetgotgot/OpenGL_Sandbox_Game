@@ -1,6 +1,6 @@
 #include "UI/Image.h"
 #include "UI/UI_ObjectManager.h"
-#include <Utility/Sprite.h>
+#include <Resources/Sprite.h>
 
 void CoreUI::Image::set_sprite(uint32_t sprite_ID) {
 	this->sprite_ID = sprite_ID;

@@ -1,5 +1,5 @@
 #pragma once
-#include <Utility/Animation.h>
+#include <Resources/Animation.h>
 #include <Utility/EntityData.h>
 
 namespace CoreEntity {
