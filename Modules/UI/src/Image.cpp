@@ -2,16 +2,6 @@
 #include "UI/UI_ObjectManager.h"
 #include <Resources/Sprite.h>
 
-void CoreUI::Image::set_sprite(uint32_t sprite_ID) {
-	this->sprite_ID = sprite_ID;
-	mark_dirty();
-}
-
-void CoreUI::Image::flip(bool X, bool Y) {
-	flip_x = X; flip_y = Y;
-	mark_dirty();
-}
-
 void CoreUI::Image::_update_sprite_buffer(
 	std::vector<UI_RenderEntry>& render_queue,
 	std::vector<UI_Vertex2f>& sprites_buffer,
@@ -41,8 +31,18 @@ void CoreUI::Image::_update_render_data() {
 	y += (1.0f - size_ratio.y) * size_y * 0.5f;
 	size_x *= size_ratio.x;
 	size_y *= size_ratio.y;
-	sprite_vertices[0] = UI_Vertex2f(x, y,						sprite.U0, sprite.V0,						sprite.texture_id);
-	sprite_vertices[1] = UI_Vertex2f(x, y + size_y,				sprite.U0, sprite.V0 + sprite.H,			sprite.texture_id);
-	sprite_vertices[2] = UI_Vertex2f(x + size_x, y + size_y,	sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.texture_id);
-	sprite_vertices[3] = UI_Vertex2f(x + size_x, y,				sprite.U0 + sprite.W, sprite.V0,			sprite.texture_id);
+	sprite_vertices[0] = UI_Vertex2f(x, y, sprite.U0, sprite.V0, sprite.texture_id);
+	sprite_vertices[1] = UI_Vertex2f(x, y + size_y, sprite.U0, sprite.V0 + sprite.H, sprite.texture_id);
+	sprite_vertices[2] = UI_Vertex2f(x + size_x, y + size_y, sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.texture_id);
+	sprite_vertices[3] = UI_Vertex2f(x + size_x, y, sprite.U0 + sprite.W, sprite.V0, sprite.texture_id);
+}
+
+void CoreUI::Image::set_sprite(uint32_t sprite_ID) {
+	this->sprite_ID = sprite_ID;
+	mark_dirty();
+}
+
+void CoreUI::Image::flip(bool X, bool Y) {
+	flip_x = X; flip_y = Y;
+	mark_dirty();
 }

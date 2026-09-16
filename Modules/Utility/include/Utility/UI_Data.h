@@ -43,11 +43,11 @@ namespace CoreUI {
 	};
 
 	enum UI_Component_Type : uint8_t {
-		UI_WIDGET, UI_PANEL, UI_SCROLL_VIEW
+		UI_WIDGET, UI_PANEL, UI_SCROLL_VIEW, UI_INPUT_FIELD, UI_BUTTON
 	};
 
 	enum UI_Render_Type : uint8_t {
-		UI_NONE, UI_SPRITE, UI_TEXT
+		UI_NONE, UI_SPRITE, UI_TEXT, UI_COMPLEX
 	};
 
 	struct ClipRectangle {

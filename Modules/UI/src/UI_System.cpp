@@ -100,12 +100,6 @@ void CoreUI::UI_System::update() {
 	// update interactable components
 	UI_BehaviourSystem::get_instance().update();
 
-	if (SystemContext::keyBoard.key_is_pressed(Key::KeyI)) {
-		for (auto& c : hit_queue) {
-			std::cout << "[Render hit queue] ID = " << c->object_id << std::endl;
-		}
-	}
-
 	sprites_vbo->update_data(sprites_buffer.data(), sprites_buffer.size() * sizeof(UI_Vertex2f));
 	sdf_text_vbo->update_data(sdf_text_buffer.data(), sdf_text_buffer.size() * sizeof(UI_Text_Vertex2f));
 }

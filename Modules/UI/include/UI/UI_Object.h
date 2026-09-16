@@ -1,5 +1,4 @@
 #pragma once
-#include <memory>
 #include "UI/UI_Transform.h"
 #include "UI/UI_Comp_Ptr.h"
 #include "UI/UI_Behaviour.h"
@@ -21,9 +20,9 @@ namespace CoreUI {
 
 	template<typename T>
 	inline UI_Component_Ptr<T> UI_Object::add_component() {
-		static_assert(std::is_base_of_v<UI_Component, T>, "T must inherit from UI_Component");
-		std::unique_ptr<UI_Component> comp = std::make_unique<T>(object_id);
-		UI_ComponentManager::get_instance().add(std::move(comp));
+		static_assert(std::is_base_of_v<UI_Component<T>, T>, "T must inherit from UI_Component<T>");
+		void* comp = new T(object_id);
+		UI_ComponentManager::get_instance().add(comp, T::get_vt(), object_id);
 		return UI_Component_Ptr<T>(object_id);
 	}
 
@@ -35,6 +34,7 @@ namespace CoreUI {
 
 	template<typename T>
 	inline T* UI_Object::add_component_behaviour() {
+		static_assert(std::is_base_of_v<UI_Behaviour<T>, T>, "T must inherit from UI_Behaviour<T>");
 		void* obj = new T();
 		add_behaviour(obj, T::get_vt());
 		return static_cast<T*>(obj);

@@ -2,26 +2,6 @@
 #include "UI/UI_ObjectManager.h"
 #include <Resources/Sprite.h>
 
-void CoreUI::Panel::set_sprite(uint32_t sprite_ID) {
-	this->sprite_ID = sprite_ID;
-	mark_dirty();
-}
-
-void CoreUI::Panel::set_color(glm::vec4 color) {
-	this->color = color;
-	mark_dirty();
-}
-
-void CoreUI::Panel::set_color(float r, float g, float b, float a) {
-	color.x = r, color.y = g, color.z = b, color.w = a;
-	mark_dirty();
-}
-
-void CoreUI::Panel::flip(bool X, bool Y) {
-	flip_x = X; flip_y = Y;
-	mark_dirty();
-}
-
 void CoreUI::Panel::_update_sprite_buffer(
 	std::vector<UI_RenderEntry>& render_queue,
 	std::vector<UI_Vertex2f>& sprites_buffer,
@@ -55,4 +35,24 @@ void CoreUI::Panel::_update_render_data() {
 	sprite_vertices[1] = UI_Vertex2f(x, y + size_y, sprite.U0, sprite.V0 + sprite.H, sprite.texture_id, color);
 	sprite_vertices[2] = UI_Vertex2f(x + size_x, y + size_y, sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.texture_id, color);
 	sprite_vertices[3] = UI_Vertex2f(x + size_x, y, sprite.U0 + sprite.W, sprite.V0, sprite.texture_id, color);
+}
+
+void CoreUI::Panel::set_sprite(uint32_t sprite_ID) {
+	this->sprite_ID = sprite_ID;
+	mark_dirty();
+}
+
+void CoreUI::Panel::set_color(glm::vec4 color) {
+	this->color = color;
+	mark_dirty();
+}
+
+void CoreUI::Panel::set_color(float r, float g, float b, float a) {
+	color.x = r, color.y = g, color.z = b, color.w = a;
+	mark_dirty();
+}
+
+void CoreUI::Panel::flip(bool X, bool Y) {
+	flip_x = X; flip_y = Y;
+	mark_dirty();
 }

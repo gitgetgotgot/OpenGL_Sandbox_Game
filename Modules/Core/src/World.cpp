@@ -141,7 +141,7 @@ void World::update() {
 	update_chunks(camera_chunk_x, camera_chunk_y);
 
 	if (SystemContext::keyBoard.key_is_pressed(Key::KeyP)) {
-		CoreEntity::EntitySystem::get_instance()->spawn_entity(0, main_camera.pos);
+		//CoreEntity::EntitySystem::get_instance()->spawn_entity(0, main_camera.pos);
 	}
 	CoreEntity::EntitySystem::get_instance()->update();
 

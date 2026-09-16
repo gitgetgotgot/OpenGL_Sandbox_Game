@@ -33,20 +33,21 @@ void CoreUI::Canvas::update_child_object(
 ) {
 	if (!object.is_enabled) return;
 
-	UI_Component* comp = UI_ComponentManager::get_instance().get(object.object_id);
+	UI_ComponentEntry* comp = UI_ComponentManager::get_instance().get(object.object_id);
 	if (comp) {
-		if (comp->type == UI_Component_Type::UI_PANEL) {
+		UI_ComponentBase* base_comp = static_cast<UI_ComponentBase*>(comp->component);
+		if (base_comp->type == UI_Component_Type::UI_PANEL) {
 			clip_rect_id = add_clip_rect(object.transform);
 		}
-		if (comp->is_interactable) {
+		if (base_comp->is_interactable) {
 			hit_queue.push_back(&object);
 		}
-		if (comp->is_visible) {
-			if (comp->render_type == UI_Render_Type::UI_SPRITE) {
-				comp->_update_sprite_buffer(render_queue, sprites_buffer, clip_rect_id);
+		if (base_comp->is_visible) {
+			if (base_comp->render_type == UI_Render_Type::UI_SPRITE) {
+				comp->vt->update_sprite_data(comp->component, render_queue, sprites_buffer, clip_rect_id);
 			}
-			else if (comp->render_type == UI_Render_Type::UI_TEXT) {
-				comp->_update_sdf_text_buffer(render_queue, sdf_text_buffer, clip_rect_id);
+			else if (base_comp->render_type == UI_Render_Type::UI_TEXT) {
+				comp->vt->update_text_data(comp->component, render_queue, sdf_text_buffer, clip_rect_id);
 			}
 		}
 	}

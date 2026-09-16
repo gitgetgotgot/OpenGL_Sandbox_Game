@@ -1199,7 +1199,11 @@ void Game::toggle_Fullscreen() {
 #include <UI/CanvasManager.h>
 #include <UI/UI_ObjectManager.h>
 #include <UI/Image.h>
+#include <UI/NineSlicedImage.h>
+#include <UI/SDF_Text.h>
+#include <UI/InputField.h>
 #include <Objects/SlotScript.h>
+#include <IOSystem/SystemContext.h>
 
 void Game::init() {
 	srand(time(NULL));
@@ -1225,15 +1229,39 @@ void Game::init() {
 	world->init(&player);
 
 	auto canvas = CoreUI::CanvasManager::get_instance().add();
-	auto img_obj = CoreUI::UI_ObjectManager::get_instance().add();
-	img_obj->transform.set_size(0.5f, 0.5f);
-	auto img = img_obj->add_component<CoreUI::Image>();
-	auto slot_script = img_obj->add_component_behaviour<CustomImageBehaviour>();
-	slot_script->image_object = img_obj;
-	slot_script->image = img;
-	img->set_sprite(CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:Oak Planks").value());
-	img->is_interactable = true;
-	canvas->add_object(img_obj);
+
+	//console input field test
+	auto console_field_obj = CoreUI::UI_ObjectManager::get_instance().add();
+	console_field_obj->transform.set_size(SystemContext::screen.ratio * 2.0f * 0.99f, 0.15f);
+	console_field_obj->transform.set_local_pos(0.0f, -0.9f);
+	auto console_field = console_field_obj->add_component<CoreUI::InputField>();
+
+	auto console_back_obj = CoreUI::UI_ObjectManager::get_instance().add();
+	console_back_obj->transform.set_size(SystemContext::screen.ratio * 2.0f * 0.99f, 0.15f);
+	auto console_back_img = console_back_obj->add_component<CoreUI::NineSlicedImage>();
+	CoreResource::SpriteManager::get_instance().add_sprite9sliced("", 0, 0, 32, 32, 4, 4, 4, 4, 2);
+	CoreResource::SpriteManager::get_instance().add_sprite9sliced("", 0, 0, 32, 32, 4, 4, 4, 4, 2);
+	console_back_img->set_sprite9sliced(1);
+	console_back_img->set_frame_size(0.03f, 0.03f, 0.03f, 0.03f);
+
+	auto console_text_obj = CoreUI::UI_ObjectManager::get_instance().add();
+	console_text_obj->transform.set_size(SystemContext::screen.ratio * 2.0f * 0.975f, 0.15f);
+	auto console_text = console_text_obj->add_component<CoreUI::SDF_Text>();
+	console_text->set_text_height(0.09f);
+	console_text->set_alignment(CoreUI::SDF_Text::TextHorizAlign::Left_Align, CoreUI::SDF_Text::TextVertAlign::Middle_Align);
+
+	auto console_cursor_obj = CoreUI::UI_ObjectManager::get_instance().add();
+	console_cursor_obj->transform.set_size(0.005f, 0.09f);
+	auto console_cursor = console_cursor_obj->add_component<CoreUI::Image>();
+	console_cursor->set_sprite(CoreResource::SpriteManager::get_instance().get_sprite_id("Sprite:Core:White").value());
+
+	console_field_obj.add_child(console_back_obj);
+	console_field_obj.add_child(console_text_obj);
+	console_field_obj.add_child(console_cursor_obj);
+	console_field->is_interactable = true;
+	console_field->bind_components(console_text, console_cursor);
+
+	canvas->add_object(console_field_obj);
 
 	//openGL settings
 	glEnable(GL_BLEND);

@@ -19,12 +19,12 @@ namespace CoreUI {
 	};
 	template<typename T>
 	inline T* UI_Component_Ptr<T>::operator->() const {
-		return static_cast<T*>(UI_ComponentManager::get_instance().get(obj_id));
+		return static_cast<T*>(UI_ComponentManager::get_instance().get(obj_id)->component);
 	}
 
 	template<typename T>
 	inline T& UI_Component_Ptr<T>::operator*() const {
-		return static_cast<T&>(*UI_ComponentManager::get_instance().get(obj_id));
+		return *static_cast<T*>(UI_ComponentManager::get_instance().get(obj_id)->component);
 	}
 
 	template<typename T>

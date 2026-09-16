@@ -1,5 +1,17 @@
 [
   {
+    "UID": "Sprite:Core:White",
+    "texture": "Texture:Core:UI.png",
+    "padding": 0,
+    "sprite": {
+      "U0": 0,
+      "V0": 32,
+      "w": 16,
+      "h": 16,
+      "base_size": 1.0
+    }
+  },
+  {
     "UID": "Sprite:Core:BasicSlot",
     "texture": "Texture:Core:UI.png",
     "padding": 0,

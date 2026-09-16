@@ -30,7 +30,7 @@ namespace CoreUI {
 				[] { if constexpr (requires(Derived d) { d.OnPointerDown();  }) return +[](void* p) { static_cast<Derived*>(p)->OnPointerDown();  }; else return nullptr; }(),
 				[] { if constexpr (requires(Derived d) { d.OnPointerHeld();  }) return +[](void* p) { static_cast<Derived*>(p)->OnPointerHeld();  }; else return nullptr; }(),
 				[] { if constexpr (requires(Derived d) { d.OnPointerUp();    }) return +[](void* p) { static_cast<Derived*>(p)->OnPointerUp();    }; else return nullptr; }(),
-				[](void* p) { static_cast<Derived*>(p)->~Derived(); }
+				[](void* p) { delete static_cast<Derived*>(p); }
 			};
 			return &vt;
 		}

@@ -45,11 +45,14 @@ void CoreUI::UI_ObjectManager::update_dirty_objects() {
 		if (it.second.dirty_transform) {
 			//update transform and component
 			get(it.first)->transform.update_transform();
-			UI_ComponentManager::get_instance().get(it.first)->_update_render_data();
+			UI_ComponentEntry* entry = UI_ComponentManager::get_instance().get(it.first);
+			if(static_cast<UI_ComponentBase*>(entry->component)->render_type != UI_Render_Type::UI_NONE)
+				entry->vt->update_render_data(entry->component);
 		}
 		else if (it.second.dirty_component) {
 			//update only component
-			UI_ComponentManager::get_instance().get(it.first)->_update_render_data();
+			UI_ComponentEntry* entry = UI_ComponentManager::get_instance().get(it.first);
+			entry->vt->update_render_data(entry->component);
 		}
 	}
 	dirty_objects.clear();
