@@ -26,8 +26,8 @@ namespace CoreUI {
 		void _on_cursor_position_changed(bool backwards);
 
 		float cursor_blink_cd = 0.5f;
-		UI_Component_Ptr<SDF_Text> text_comp;
-		UI_Component_Ptr<Image> cursor_comp;
+		UI_Component_Ptr<SDF_Text> field_text;
+		UI_Component_Ptr<Image> field_cursor;
 	private:
 		float cursor_initial_x_pos;
 		float current_cursor_cd = 0.0f;

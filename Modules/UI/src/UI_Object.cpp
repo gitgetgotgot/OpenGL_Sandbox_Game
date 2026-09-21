@@ -17,6 +17,12 @@ void CoreUI::UI_Object::add_behaviour(void* ptr, UI_Behaviour_VTable* vt) const 
 }
 
 
+CoreUI::UI_Obj_Ptr::UI_Obj_Ptr(const UI_Obj_Ptr& other) noexcept {
+	if (this != &other) {
+		this->obj_id = other.obj_id;
+	}
+}
+
 CoreUI::UI_Object* CoreUI::UI_Obj_Ptr::operator->() const {
 	return UI_ObjectManager::get_instance().get(obj_id);
 }

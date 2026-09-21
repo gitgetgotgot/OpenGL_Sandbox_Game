@@ -16,7 +16,6 @@ namespace CoreUI {
 		void init();
 		void update();
 		void render(std::unique_ptr<OpenGL_Renderer>& renderer);
-		uint16_t add_clip_rect(uint32_t x, uint32_t y, uint32_t w, uint32_t h);
 	private:
 		UI_System() {}
 		~UI_System() {}
@@ -40,5 +39,6 @@ namespace CoreUI {
 
 		std::vector<UI_RenderEntry> render_queue;
 		std::vector<ClipRectangle> clip_rects;
+		std::vector<glm::vec2> content_offsets;
 	};
 }

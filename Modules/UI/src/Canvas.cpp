@@ -3,6 +3,7 @@
 #include "UI/UI_ObjectManager.h"
 #include "UI/CanvasManager.h"
 #include "UI/UI_System.h"
+#include "UI/ScrollView.h"
 #include <IOSystem/SystemContext.h>
 
 void CoreUI::Canvas::add_object(UI_Obj_Ptr& object) {
@@ -10,37 +11,26 @@ void CoreUI::Canvas::add_object(UI_Obj_Ptr& object) {
 	objects.emplace_back(object.get_id());
 }
 
-void CoreUI::Canvas::update_canvas_objects_data(
-	std::vector<UI_RenderEntry>& render_queue,
-	std::vector<UI_Vertex2f>& sprites_buffer,
-	std::vector<UI_Text_Vertex2f>& sdf_text_buffer,
-	std::vector<UI_Object*>& hit_queue
-) {
+void CoreUI::Canvas::update_canvas_objects_data(UI_RenderContext& ctx, UI_RenderState state) {
 	//every canvas always starts with default clip rectangle (id = 0), that can be changed in children
 	for (auto& obj_id : objects) {
 		UI_Object* obj = UI_ObjectManager::get_instance().get(obj_id);
-		if(obj) update_child_object(*obj, render_queue, sprites_buffer, sdf_text_buffer, hit_queue, 0);
+		if(obj && obj->is_enabled) update_child_object(*obj, ctx, state);
 	}
 }
 
-void CoreUI::Canvas::update_child_object(
-	UI_Object& object,
-	std::vector<UI_RenderEntry>& render_queue,
-	std::vector<UI_Vertex2f>& sprites_buffer,
-	std::vector<UI_Text_Vertex2f>& sdf_text_buffer,
-	std::vector<UI_Object*>& hit_queue,
-	uint16_t clip_rect_id
-) {
-	if (!object.is_enabled) return;
-
+void CoreUI::Canvas::update_child_object(UI_Object& object, UI_RenderContext& ctx, UI_RenderState state) {
 	UI_ComponentEntry* comp = UI_ComponentManager::get_instance().get(object.object_id);
 	if (comp) {
 		UI_ComponentBase* base_comp = static_cast<UI_ComponentBase*>(comp->component);
 		if (base_comp->type == UI_Component_Type::UI_PANEL) {
-			clip_rect_id = add_clip_rect(object.transform);
+			state.clip_rect_id = add_clip_rect(object.transform, ctx.clip_rects);
+		}
+		else if (base_comp->type == UI_Component_Type::UI_SCROLL_VIEW) {
+			state.content_offset_id = add_content_offset(static_cast<ScrollView*>(base_comp)->get_content_offset(), ctx.content_offsets);
 		}
 		if (base_comp->is_interactable) {
-			hit_queue.push_back(&object);
+			ctx.hit_queue.push_back(&object);
 		}
 		if (base_comp->is_visible) {
 			if (base_comp->render_type == UI_Render_Type::UI_SPRITE) {
@@ -54,17 +44,24 @@ void CoreUI::Canvas::update_child_object(
 
 	for (auto& child_id : object.transform.children) {
 		UI_Object* child = UI_ObjectManager::get_instance().get(child_id);
-		if (child) update_child_object(*child, render_queue, sprites_buffer, sdf_text_buffer, hit_queue, clip_rect_id);
+		if (child) update_child_object(*child, ctx, state);
 	}
 }
 
-uint16_t CoreUI::Canvas::add_clip_rect(UI_Transform& tr) {
+uint16_t CoreUI::Canvas::add_clip_rect(UI_Transform& tr, std::vector<ClipRectangle>& clip_rects) {
 	uint32_t x = ((tr.global_pos.x - tr.size.x * 0.5f) * SystemContext::screen.double_x_ratio + 0.5f) * SystemContext::screen.width;
 	uint32_t y = ((tr.global_pos.y - tr.size.y * 0.5f) * 0.5f + 0.5f) * SystemContext::screen.height;
 	uint32_t w = tr.size.x * SystemContext::screen.double_x_ratio * SystemContext::screen.width;
 	uint32_t h = tr.size.y * 0.5f * SystemContext::screen.height;
-	return UI_System::get_instance().add_clip_rect(x, y, w, h);
+	clip_rects.emplace_back(x, y, w, h);
+	return clip_rects.size() - 1;
 }
+
+uint16_t CoreUI::Canvas::add_content_offset(glm::vec2& offset, std::vector<glm::vec2>& content_offsets) {
+	content_offsets.emplace_back(offset);
+	return content_offsets.size() - 1;
+}
+
 
 
 CoreUI::Canvas* CoreUI::UI_Canvas_Ptr::operator->() const {

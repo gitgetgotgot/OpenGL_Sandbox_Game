@@ -1,5 +1,6 @@
 #include "UI/UI_Transform.h"
 #include "UI/UI_ObjectManager.h"
+#include "UI/UI_ComponentManager.h"
 
 void CoreUI::UI_Transform::set_local_pos(float x, float y) {
 	local_pos.x = x; local_pos.y = y;
@@ -46,6 +47,9 @@ void CoreUI::UI_Transform::update_transform() {
 void CoreUI::UI_Transform::mark_dirty() {
 	if (is_dirty) return;
 	is_dirty = true;
+	UI_ComponentEntry* comp = UI_ComponentManager::get_instance().get(object_id);
+	if (comp) static_cast<UI_ComponentBase*>(comp->component)->dirty_mask |= COMPONENT_TRANSFORM;
+
 	UI_ObjectManager::get_instance().mark_dirty_transform(object_id);
 	for (auto& child_id : children) {
 		UI_Transform& tr = UI_ObjectManager::get_instance().get(child_id)->transform;

@@ -44,6 +44,7 @@ namespace CoreUI {
 	public:
 		UI_Obj_Ptr() {}
 		UI_Obj_Ptr(uint32_t obj_id) : obj_id{ obj_id } {}
+		UI_Obj_Ptr(const UI_Obj_Ptr&) noexcept;
 		UI_Object* operator->() const;
 		UI_Object& operator*() const;
 		operator bool() const;

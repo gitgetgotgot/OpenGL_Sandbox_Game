@@ -25,12 +25,21 @@ namespace CoreResource {
 		Sprite9Sliced() {}
 		Sprite9Sliced(
 			float U0, float V0, float width, float height,
-			float b_left, float b_right, float b_top, float b_bottom,
+			float uv_margin_left, float uv_margin_right, float uv_margin_top, float uv_margin_bottom,
 			uint32_t texture_array_id
 		);
 		uint32_t texture_id = 0; //index in texture array [0, N]
 		float U0 = 0.0f, V0 = 0.0f, W = 0.0f, H = 0.0f;
-		float b_left = 0.0f, b_right = 0.0f, b_top = 0.0f, b_bottom = 0.0f;
+		float
+			uv_margin_left = 0.0f,
+			uv_margin_right = 0.0f,
+			uv_margin_top = 0.0f,
+			uv_margin_bottom = 0.0f;
+		float
+			ratio_left = 0.0f,
+			ratio_right = 0.0f,
+			ratio_top = 0.0f,
+			ratio_bottom = 0.0f;
 	};
 
 	class SpriteManager {
@@ -49,7 +58,7 @@ namespace CoreResource {
 
 		void add_sprite9sliced(
 			std::string UID, uint32_t U0, uint32_t V0, uint32_t width, uint32_t height,
-			uint32_t b_left, uint32_t b_right, uint32_t b_top, uint32_t b_bottom,
+			uint32_t b_left, uint32_t uv_margin_right, uint32_t uv_margin_top, uint32_t uv_margin_bottom,
 			uint32_t texture_array_id
 		);
 		Sprite9Sliced& get_sprite9sliced(uint32_t id);

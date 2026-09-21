@@ -21,6 +21,7 @@ namespace CoreUI {
 		uint32_t parent_id = 0; //0 means empty
 		uint32_t object_id = 0;
 	private:
+		inline static uint8_t COMPONENT_TRANSFORM = 1 << 0;
 		bool is_dirty = false;
 		void update_transform();
 		void mark_dirty();

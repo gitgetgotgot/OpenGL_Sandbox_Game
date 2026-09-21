@@ -6,6 +6,11 @@ namespace CoreUI {
 	class SDF_Text : public UI_Component<SDF_Text> {
 		friend class InputField;
 	public:
+		enum TextMask : uint8_t {
+			TEXT_CLEAN = 0,
+			TEXT_TRANSFORM = 1 << 0,
+			TEXT_COLOR = 1 << 1
+		};
 		enum TextVertAlign : uint8_t { Bottom_Align, Middle_Align, Top_Align };
 		enum TextHorizAlign : uint8_t { Left_Align, Center_Align, Right_Align };
 
@@ -32,7 +37,7 @@ namespace CoreUI {
 		std::string text{};
 		glm::vec4 color{ 1.0f };
 		float text_height = 0.1f;
-		TextVertAlign align_vertical = TextVertAlign::Top_Align;
+		TextVertAlign align_vertical = TextVertAlign::Middle_Align;
 		TextHorizAlign align_horizontal = TextHorizAlign::Left_Align;
 	private:
 		std::vector<UI_Text_Vertex2f> text_vertices;

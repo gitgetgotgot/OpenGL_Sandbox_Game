@@ -1,6 +1,7 @@
 #include "UI/UI_BehaviourSystem.h"
 #include "UI/UI_ComponentManager.h"
 #include "UI/InputField.h"
+#include "UI/Button.h"
 #include <Utility/Math.h>
 #include <IOSystem/SystemContext.h>
 
@@ -99,7 +100,30 @@ std::vector<CoreUI::UI_Object*>& CoreUI::UI_BehaviourSystem::get_hit_queue() {
 }
 
 void CoreUI::UI_BehaviourSystem::process_BUTTON_event(UI_ComponentBase*& comp_base, bool& pointed_now) {
-
+	auto btn = static_cast<Button*>(comp_base);
+	// on hover
+	if (pointed_now && !btn->_is_pointed) {
+		btn->_is_pointed = true;
+		if(btn->_is_pressed)
+			btn->_on_cursor_pressed();
+		else
+			btn->_on_cursor_enter();
+	}
+	// on exit
+	if (!pointed_now && btn->_is_pointed) {
+		btn->_is_pointed = false;
+		btn->_on_cursor_exit();
+	}
+	// on press
+	if (pointed_now && SystemContext::mouse.lb_is_pressed()) {
+		btn->_is_pressed = true;
+		btn->_on_cursor_pressed();
+	}
+	// on release
+	if (SystemContext::mouse.lb_is_released() && btn->_is_pressed) {
+		btn->_is_pressed = false;
+		if (pointed_now) btn->_on_callback_use();
+	}
 }
 
 void CoreUI::UI_BehaviourSystem::process_INPUT_FIELD_event(UI_ComponentBase* comp_base, bool& pointed_now) {

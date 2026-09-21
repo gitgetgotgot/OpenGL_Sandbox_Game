@@ -40,6 +40,7 @@ namespace CoreUI {
 	struct UI_UBO {
 		glm::mat4 viewMatrix;
 		glm::mat4 projectionMatrix;
+		glm::vec2 content_offset;
 	};
 
 	enum UI_Component_Type : uint8_t {
@@ -47,7 +48,7 @@ namespace CoreUI {
 	};
 
 	enum UI_Render_Type : uint8_t {
-		UI_NONE, UI_SPRITE, UI_TEXT, UI_COMPLEX
+		UI_NONE, UI_SPRITE, UI_TEXT
 	};
 
 	struct ClipRectangle {
@@ -61,12 +62,38 @@ namespace CoreUI {
 		UI_RenderEntry() {}
 		UI_RenderEntry(
 			UI_Render_Type render_type, uint32_t index_count,
-			uint16_t clip_rect_id, bool change_clip_rect) :
+			uint16_t clip_rect_id, bool change_clip_rect,
+			float content_x_offset, float content_y_offset) :
 			render_type{ render_type }, index_count{ index_count }, clip_rect_id{ clip_rect_id },
-			change_clip_rect{ change_clip_rect } {}
+			change_clip_rect{ change_clip_rect }
+		{}
 		uint32_t index_count = 0; //for render count
 		uint16_t clip_rect_id = 0;
+		uint16_t content_offset_id = 0;
 		UI_Render_Type render_type = UI_Render_Type::UI_NONE; //for shader
 		bool change_clip_rect = false;
+		bool change_content_offset = false;
+	};
+
+	struct UI_RenderContext {
+		UI_RenderContext(
+			std::vector<UI_RenderEntry>& render_queue,
+			std::vector<UI_Vertex2f>& sprites_buffer,
+			std::vector<UI_Text_Vertex2f>& sdf_text_buffer,
+			std::vector<UI_Object*>& hit_queue
+		) : render_queue{ render_queue }, sprites_buffer{ sprites_buffer },
+			sdf_text_buffer{ sdf_text_buffer }, hit_queue{ hit_queue }
+		{}
+		std::vector<UI_RenderEntry>& render_queue;
+		std::vector<UI_Vertex2f>& sprites_buffer;
+		std::vector<UI_Text_Vertex2f>& sdf_text_buffer;
+		std::vector<UI_Object*>& hit_queue;
+		std::vector<ClipRectangle>& clip_rects;
+		std::vector<glm::vec2>& content_offsets;
+	};
+
+	struct UI_RenderState {
+		uint16_t clip_rect_id = 0;
+		uint16_t content_offset_id = 0;
 	};
 }

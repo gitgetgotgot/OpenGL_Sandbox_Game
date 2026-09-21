@@ -8,7 +8,7 @@
 #include <filesystem>
 
 enum Game_State : uint8_t { inMainMenu, inOptions, inControlsOptions, inAudioOptions, inRenderingOptions,
-	inWorldExplorer, WorldIsLoading, WorldIsSaving, WorldIsCreating, inWorldCreator, inGame, inGamePause };
+	inWorldExplorer, WorldIsLoading, WorldIsSaving, WorldIsCreating, inWorldCreator, inWorld, inGamePause };
 
 class Game {
 public:
@@ -62,5 +62,5 @@ private:
 	bool saving_the_world = false;
 	bool creating_the_world = false;
 	//game state
-	Game_State game_update_state = inMainMenu, game_render_state = inMainMenu;
+	Game_State game_update_state = inWorld, game_render_state = inMainMenu;
 };

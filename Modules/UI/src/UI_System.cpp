@@ -75,8 +75,10 @@ void CoreUI::UI_System::init() {
 void CoreUI::UI_System::update() {
 	sprites_buffer.clear();
 	sdf_text_buffer.clear();
-	render_queue.resize(1);
+	render_queue.resize(1); //each new frame at least one empty should remain
+
 	clip_rects.clear();
+	content_offsets.clear();
 
 	// update hit queue for interactable components
 	std::vector<UI_Object*>& hit_queue = UI_BehaviourSystem::get_instance().get_hit_queue();
@@ -86,15 +88,18 @@ void CoreUI::UI_System::update() {
 	}
 	hit_queue.clear();
 
-	// place default clip rect based on current screen data
+	// place default clip rect and content offset
 	clip_rects.emplace_back(0, 0, SystemContext::screen.width, SystemContext::screen.height);
+	content_offsets.emplace_back(0.0f, 0.0f);
 
 	// update all dirty UI objects
 	UI_ObjectManager::get_instance().update_dirty_objects();
 
-	// replace all UI objects in render buffers
+	// update all UI object buffers, build render queue and hit queue
+	UI_RenderContext ctx(render_queue, sprites_buffer, sdf_text_buffer, hit_queue);
+	UI_RenderState state;
 	for (auto& canvas : CanvasManager::get_instance().get_canvases()) {
-		if (canvas.is_enabled) canvas.update_canvas_objects_data(render_queue, sprites_buffer, sdf_text_buffer, hit_queue);
+		if (canvas.is_enabled) canvas.update_canvas_objects_data(ctx, state);
 	}
 
 	// update interactable components
@@ -111,11 +116,19 @@ void CoreUI::UI_System::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
 	renderer->useScissorTest(true);
 	renderer->setScissorRect(0, 0, SystemContext::screen.width, SystemContext::screen.height);
 
+	ubo_data.content_offset = glm::vec2(0.0f);
+	ubo->update_data(&ubo_data, sizeof(UI_UBO));
+
 	for (auto& render_entry : render_queue) {
 		//change clip rectangle
 		if (render_entry.change_clip_rect) {
 			ClipRectangle& rect = clip_rects[render_entry.clip_rect_id];
 			renderer->setScissorRect(rect.x, rect.y, rect.w, rect.h);
+		}
+		//change content offset in UBO
+		if (render_entry.change_content_offset) {
+			ubo_data.content_offset = content_offsets[render_entry.content_offset_id];
+			ubo->update_data(&ubo_data, sizeof(UI_UBO));
 		}
 		//render sprites
 		if (render_entry.render_type == UI_Render_Type::UI_SPRITE) {
@@ -129,11 +142,6 @@ void CoreUI::UI_System::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
 		}
 	}
 	renderer->useScissorTest(false);
-}
-
-uint16_t CoreUI::UI_System::add_clip_rect(uint32_t x, uint32_t y, uint32_t w, uint32_t h) {
-	clip_rects.emplace_back(x, y, w, h);
-	return clip_rects.size() - 1;
 }
 
 /*

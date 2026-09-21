@@ -30,6 +30,8 @@ namespace CoreUI {
 		bool is_visible = true;
 		bool is_interactable = false;
 		bool blocks_input = false;
+
+		uint8_t dirty_mask = 255U;
 	protected:
 		bool is_dirty = false;
 		void mark_dirty();

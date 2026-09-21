@@ -186,8 +186,9 @@ void ResourceLoader::load_textures(std::unordered_map<std::string, uint32_t>& te
 }
 
 void ResourceLoader::load_sprites(std::unordered_map<std::string, uint32_t>& texture_layers) const {
-	//add empty sprite with global_ID = 0
+	//add empty sprites with global_ID = 0
 	CoreResource::SpriteManager::get_instance().add_sprite("Sprite:Core:Empty", 0, 0, 0, 0, 0.0f, 0);
+	CoreResource::SpriteManager::get_instance().add_sprite9sliced("Sprite:Core:Empty", 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
 	auto _load_sprites = [&](std::filesystem::path& sprites_path) {
 		for (const auto& entry : std::filesystem::directory_iterator(sprites_path)) {
@@ -214,9 +215,20 @@ void ResourceLoader::load_sprites(std::unordered_map<std::string, uint32_t>& tex
 					uint32_t v0 = sprite["V0"].get_as<uint32_t>();
 					uint32_t w = sprite["w"].get_as<uint32_t>();
 					uint32_t h = sprite["h"].get_as<uint32_t>();
-					float base_size = sprite["base_size"].get_as<float>();
-
-					CoreResource::SpriteManager::get_instance().add_sprite(UID, u0, v0, w, h, base_size, texture_array_id);
+					//9-sliced sprite
+					if (sprite.has_child("border")) {
+						auto& border = sprite["border"];
+						uint32_t left = border["left"].get_as<uint32_t>();
+						uint32_t right = border["right"].get_as<uint32_t>();
+						uint32_t top = border["top"].get_as<uint32_t>();
+						uint32_t bottom = border["bottom"].get_as<uint32_t>();
+						CoreResource::SpriteManager::get_instance().add_sprite9sliced(UID, u0, v0, w, h, left, right, top, bottom, texture_array_id);
+					}
+					//regular sprite
+					else {
+						float base_size = sprite["base_size"].get_as<float>();
+						CoreResource::SpriteManager::get_instance().add_sprite(UID, u0, v0, w, h, base_size, texture_array_id);
+					}
 				}
 				catch (const std::exception& e) {
 					ResourceLoading::throw_resource_error(UID, std::string("In file ") + file_path.string() + ": " + e.what());
@@ -227,6 +239,7 @@ void ResourceLoader::load_sprites(std::unordered_map<std::string, uint32_t>& tex
 	
 	std::filesystem::path sprites_path = resources_root / "Resources/data/sprites_data";
 	_load_sprites(sprites_path);
+
 	for (const auto& mod_info : ModsManager::get_instance().get_mods()) {
 		sprites_path = mod_info.mod_folder_path / "Resources/data/sprites_data";
 		if (!std::filesystem::exists(sprites_path)) continue;
