@@ -47,21 +47,19 @@ namespace CoreUI {
 			static UI_BehaviourSystem sys;
 			return sys;
 		}
-		void update();
+		void update(UI_RenderContext& ctx);
 		UI_BehaviourEntry* add(uint32_t ui_object_id, void* ptr, UI_Behaviour_VTable* vt);
 		UI_BehaviourEntry* get(uint32_t ui_object_id);
 		bool remove(uint32_t ui_object_id);
-		std::vector<UI_Object*>& get_hit_queue();
 	private:
 		UI_BehaviourSystem() {}
 		~UI_BehaviourSystem() {}
 
 		void process_BUTTON_event(UI_ComponentBase*& comp_base, bool& pointed_now);
 		void process_INPUT_FIELD_event(UI_ComponentBase* comp_base, bool& pointed_now);
-		void process_SCROLL_VIEW_event(UI_ComponentBase*& comp_base, bool& pointed_now);
+		void process_SCROLL_VIEW_event(UI_ComponentBase*& comp_base, bool& pointed_now, UI_Transform& tr);
 
 		sparse_set<UI_BehaviourEntry> behaviours;
-		std::vector<UI_Object*> hit_queue;
 		uint32_t focused_component_id = 0;
 		uint32_t prev_focused_id = 0;
 		bool focus_changed_in_frame = false;

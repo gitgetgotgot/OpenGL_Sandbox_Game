@@ -5,10 +5,27 @@
     "padding": 0,
     "sprite": {
       "U0": 0,
-      "V0": 32,
-      "w": 16,
-      "h": 16,
+      "V0": 0,
+      "w": 32,
+      "h": 32,
       "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Core:Button",
+    "texture": "Texture:Core:UI.png",
+    "padding": 0,
+    "sprite": {
+      "U0": 32,
+      "V0": 0,
+      "w": 32,
+      "h": 32,
+      "border": {
+        "left": 4,
+        "right": 4,
+        "top": 4,
+        "bottom": 4
+      }
     }
   },
   {
@@ -16,7 +33,7 @@
     "texture": "Texture:Core:UI.png",
     "padding": 0,
     "sprite": {
-      "U0": 0,
+      "U0": 64,
       "V0": 0,
       "w": 32,
       "h": 32,

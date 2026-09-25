@@ -92,10 +92,10 @@ void Game::init() {
 	auto canvas = CoreUI::UI_Creator::Instance().create_canvas();
 
 	// button test
-	auto test_button = CoreUI::UI_Creator::Instance().create_button_image(
+	auto test_button = CoreUI::UI_Creator::Instance().create_button_image9sliced(
 		glm::vec2(1.0f, 0.25f),
 		glm::vec2(0.0f),
-		CoreResource::SpriteManager::get_instance().get_sprite_id("Core:White").value(),
+		CoreResource::SpriteManager::get_instance().get_sprite9sliced_id("Core:Button").value(),
 		glm::vec4(0.0f, 0.0f, 0.0f, 1.0f),
 		0.1f
 	);
@@ -109,8 +109,44 @@ void Game::init() {
 		0.09f
 	);
 
-	canvas->add_object(test_button);
-	canvas->add_object(test_input_field);
+
+	// scroll view test
+	auto panel_obj = CoreUI::UI_Creator::Instance().create_panel(
+		glm::vec2(1.5f, 1.5f),
+		glm::vec2(0.0f),
+		CoreResource::SpriteManager::get_instance().get_sprite_id("Core:White").value(),
+		glm::vec4(1.0f, 1.0f, 0.0f, 0.5f)
+	);
+
+	auto scroll_view_obj = CoreUI::UI_Creator::Instance().create_scroll_view(
+		glm::vec2(1.5f, 1.5f),
+		glm::vec2(0.0f)
+	);
+
+	for (uint32_t i = 0; i < 6; i++) {
+		auto content_obj = CoreUI::UI_Creator::Instance().create_image9sliced(
+			CoreResource::SpriteManager::get_instance().get_sprite9sliced_id("Core:Tooltip").value(),
+			glm::vec2(1.8f, 0.35f),
+			glm::vec2(0.0f)
+		);
+
+		auto content_obj_button = CoreUI::UI_Creator::Instance().create_button_image9sliced(
+			glm::vec2(0.5f, 0.15f),
+			glm::vec2(-0.55f, 0.0f),
+			CoreResource::SpriteManager::get_instance().get_sprite9sliced_id("Core:Button").value(),
+			glm::vec4(0.0f, 0.0f, 0.0f, 1.0f),
+			0.1f
+		);
+
+		content_obj.add_child(content_obj_button);
+		scroll_view_obj.add_child(content_obj);
+	}
+
+	panel_obj.add_child(scroll_view_obj);
+	canvas->add_object(panel_obj);
+
+	//canvas->add_object(test_button);
+	//canvas->add_object(test_input_field);
 
 	//openGL settings
 	glEnable(GL_BLEND);

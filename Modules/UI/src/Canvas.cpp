@@ -23,45 +23,53 @@ void CoreUI::Canvas::update_child_object(UI_Object& object, UI_RenderContext& ct
 	UI_ComponentEntry* comp = UI_ComponentManager::get_instance().get(object.object_id);
 	if (comp) {
 		UI_ComponentBase* base_comp = static_cast<UI_ComponentBase*>(comp->component);
-		if (base_comp->type == UI_Component_Type::UI_PANEL) {
-			state.clip_rect_id = add_clip_rect(object.transform, ctx.clip_rects);
+		const bool is_renderable = base_comp->render_type != UI_Render_Type::UI_NONE;
+		const bool is_interactable = base_comp->is_interactable;
+		bool is_inside_clip_rect_area = false;
+
+		if (is_renderable || is_interactable) {
+			const glm::vec2& pos = object.transform.global_pos + ctx.content_offsets[state.content_offset_id];
+			if (ctx.clip_rects[state.clip_rect_id].overlaps_with_box(pos, object.transform.size)) is_inside_clip_rect_area = true;
 		}
-		else if (base_comp->type == UI_Component_Type::UI_SCROLL_VIEW) {
-			state.content_offset_id = add_content_offset(static_cast<ScrollView*>(base_comp)->get_content_offset(), ctx.content_offsets);
-		}
-		if (base_comp->is_interactable) {
-			ctx.hit_queue.push_back(&object);
-		}
-		if (base_comp->is_visible) {
-			if (base_comp->render_type == UI_Render_Type::UI_SPRITE) {
-				comp->vt->update_sprite_data(comp->component, render_queue, sprites_buffer, clip_rect_id);
+		if (is_inside_clip_rect_area) {
+			if (is_interactable) {
+				if (ctx.clip_rects[state.clip_rect_id].overlaps_with_mouse(
+					SystemContext::mouse.ortho_x_pos, SystemContext::mouse.ortho_y_pos
+				)) ctx.hit_queue.emplace_back(comp->component, state.content_offset_id);
 			}
-			else if (base_comp->render_type == UI_Render_Type::UI_TEXT) {
-				comp->vt->update_text_data(comp->component, render_queue, sdf_text_buffer, clip_rect_id);
+			if (is_renderable && base_comp->is_visible) {
+				comp->vt->update_buffer_data(comp->component, ctx, state);
 			}
+			if (base_comp->type == UI_Component_Type::UI_PANEL) {
+				state.clip_rect_id = add_clip_rect(object.transform, ctx.clip_rects);
+			}
+			else if (base_comp->type == UI_Component_Type::UI_SCROLL_VIEW) {
+				state.content_offset_id = add_content_offset(static_cast<ScrollView*>(base_comp)->_get_content_offset(), ctx.content_offsets);
+			}
+		}
+		else {
+			return; //just stop if parent is not inside a clip rect
 		}
 	}
-
 	for (auto& child_id : object.transform.children) {
 		UI_Object* child = UI_ObjectManager::get_instance().get(child_id);
 		if (child) update_child_object(*child, ctx, state);
 	}
 }
 
-uint16_t CoreUI::Canvas::add_clip_rect(UI_Transform& tr, std::vector<ClipRectangle>& clip_rects) {
+uint16_t CoreUI::Canvas::add_clip_rect(const UI_Transform& tr, std::vector<ClipRectangle>& clip_rects) {
 	uint32_t x = ((tr.global_pos.x - tr.size.x * 0.5f) * SystemContext::screen.double_x_ratio + 0.5f) * SystemContext::screen.width;
 	uint32_t y = ((tr.global_pos.y - tr.size.y * 0.5f) * 0.5f + 0.5f) * SystemContext::screen.height;
 	uint32_t w = tr.size.x * SystemContext::screen.double_x_ratio * SystemContext::screen.width;
 	uint32_t h = tr.size.y * 0.5f * SystemContext::screen.height;
-	clip_rects.emplace_back(x, y, w, h);
+	clip_rects.emplace_back(x, y, w, h, tr.global_pos.x, tr.global_pos.y, tr.size.x, tr.size.y);
 	return clip_rects.size() - 1;
 }
 
-uint16_t CoreUI::Canvas::add_content_offset(glm::vec2& offset, std::vector<glm::vec2>& content_offsets) {
-	content_offsets.emplace_back(offset);
+uint16_t CoreUI::Canvas::add_content_offset(const glm::vec2& offset, std::vector<glm::vec2>& content_offsets) {
+	content_offsets.emplace_back(offset.x, offset.y);
 	return content_offsets.size() - 1;
 }
-
 
 
 CoreUI::Canvas* CoreUI::UI_Canvas_Ptr::operator->() const {

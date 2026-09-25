@@ -38,6 +38,7 @@ namespace CoreUI {
 		uint32_t sdf_text_INDEX_OFFSET = 0;
 
 		std::vector<UI_RenderEntry> render_queue;
+		std::vector<UI_HitEntry> hit_queue;
 		std::vector<ClipRectangle> clip_rects;
 		std::vector<glm::vec2> content_offsets;
 	};

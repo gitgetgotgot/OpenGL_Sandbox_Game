@@ -7,6 +7,7 @@ layout (location = 3) in uint aTexID;
 layout(std140, binding = 1) uniform UI_UBO {
 	mat4 viewMatrix;
 	mat4 projectionMatrix;
+	vec2 content_offset;
 };
 
 out vec2 texCoord;
@@ -15,7 +16,7 @@ out vec4 Color;
 
 void main()
 {
-	gl_Position = projectionMatrix * viewMatrix * vec4(aPos, 0.0, 1.0);
+	gl_Position = projectionMatrix * viewMatrix * vec4(aPos.x + content_offset.x, aPos.y + content_offset.y, 0.0, 1.0);
 	texCoord = aTex;
 	texID = aTexID;
 	Color = aColor;

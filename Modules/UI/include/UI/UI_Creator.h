@@ -40,6 +40,9 @@ namespace CoreUI {
 		UI_Obj_Ptr create_input_field_image9sliced(
 			glm::vec2 size, glm::vec2 local_pos, uint32_t back_sprite9sliced_id, glm::vec4 text_color, float text_height
 		);
+
+		UI_Obj_Ptr create_scroll_view();
+		UI_Obj_Ptr create_scroll_view(glm::vec2 size, glm::vec2 local_pos);
 	private:
 		UI_Creator() = default;
 		~UI_Creator() = default;

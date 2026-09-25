@@ -2,22 +2,17 @@
 #include "UI/UI_ObjectManager.h"
 #include <Resources/Sprite.h>
 
-void CoreUI::Panel::_update_sprite_buffer(
-	std::vector<UI_RenderEntry>& render_queue,
-	std::vector<UI_Vertex2f>& sprites_buffer,
-	uint16_t clip_rect_id
-) {
+void CoreUI::Panel::_update_buffer_data(UI_RenderContext& c, UI_RenderState& s) {
 	if (sprite_ID == 0) return;
-	update_render_queue(render_queue, clip_rect_id, 6);
-	sprites_buffer.insert(sprites_buffer.end(), sprite_vertices, sprite_vertices + 4);
+	update_render_queue(c, s, 6);
+	c.sprites_buffer.insert(c.sprites_buffer.end(), sprite_vertices, sprite_vertices + 4);
 }
 
-void CoreUI::Panel::_update_render_data() {
+void CoreUI::Panel::_update_data() {
 	is_dirty = false;
 	if (sprite_ID == 0) return;
 
 	UI_Object* obj = UI_ObjectManager::get_instance().get(object_id);
-	if (!obj) return;
 
 	UI_Transform& tr = obj->transform;
 	float x = tr.global_pos.x - tr.size.x * 0.5f;

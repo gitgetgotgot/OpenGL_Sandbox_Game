@@ -47,12 +47,12 @@ void CoreUI::UI_ObjectManager::update_dirty_objects() {
 			get(it.first)->transform.update_transform();
 			UI_ComponentEntry* entry = UI_ComponentManager::get_instance().get(it.first);
 			if(static_cast<UI_ComponentBase*>(entry->component)->render_type != UI_Render_Type::UI_NONE)
-				entry->vt->update_render_data(entry->component);
+				entry->vt->update_data(entry->component);
 		}
 		else if (it.second.dirty_component) {
 			//update only component
 			UI_ComponentEntry* entry = UI_ComponentManager::get_instance().get(it.first);
-			entry->vt->update_render_data(entry->component);
+			entry->vt->update_data(entry->component);
 		}
 	}
 	dirty_objects.clear();

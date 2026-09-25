@@ -1,25 +1,29 @@
 #include "UI/UI_BehaviourSystem.h"
 #include "UI/UI_ComponentManager.h"
+#include "UI/UI_ObjectManager.h"
 #include "UI/InputField.h"
 #include "UI/Button.h"
+#include "UI/ScrollView.h"
 #include <Utility/Math.h>
 #include <IOSystem/SystemContext.h>
+#include <Utility/TimeManager.h>
 
-void CoreUI::UI_BehaviourSystem::update() {
+void CoreUI::UI_BehaviourSystem::update(UI_RenderContext& ctx) {
 	bool raycast_is_captured = false;
 	focus_changed_in_frame = false;
 	prev_focused_id = focused_component_id;
 
-	for (size_t i = hit_queue.size(); i-- > 0; ) {
+	for (size_t i = ctx.hit_queue.size(); i-- > 0; ) {
 		// take component
-		UI_Object* obj = hit_queue[i];
-		UI_ComponentBase* comp_base = static_cast<UI_ComponentBase*>
-			(UI_ComponentManager::get_instance().get(obj->object_id)->component);
+		UI_HitEntry& hit_entry = ctx.hit_queue[i];
+		UI_ComponentBase* comp_base = static_cast<UI_ComponentBase*>(hit_entry.component);
+		UI_Object* obj = UI_ObjectManager::get_instance().get(comp_base->object_id);
 
 		// check if it is pointed by cursor (only if raycast is not blocked already)
+		const glm::vec2& obj_offset = ctx.content_offsets[hit_entry.content_offset_id];
 		bool pointed_now = !raycast_is_captured && GameMath::mouse_overlaps_ortho_square(
 			obj->transform.global_pos, obj->transform.size,
-			SystemContext::mouse.ortho_x_pos, SystemContext::mouse.ortho_y_pos);
+			SystemContext::mouse.ortho_x_pos - obj_offset.x, SystemContext::mouse.ortho_y_pos - obj_offset.y);
 
 		// process system behaviour for specific UI components
 		switch (comp_base->type) {
@@ -30,7 +34,7 @@ void CoreUI::UI_BehaviourSystem::update() {
 			process_INPUT_FIELD_event(comp_base, pointed_now);
 			break;
 		case UI_Component_Type::UI_SCROLL_VIEW:
-			process_SCROLL_VIEW_event(comp_base, pointed_now);
+			process_SCROLL_VIEW_event(comp_base, pointed_now, obj->transform);
 			break;
 		}
 
@@ -95,10 +99,6 @@ bool CoreUI::UI_BehaviourSystem::remove(uint32_t ui_object_id) {
 	return behaviours.remove(ui_object_id);
 }
 
-std::vector<CoreUI::UI_Object*>& CoreUI::UI_BehaviourSystem::get_hit_queue() {
-	return hit_queue;
-}
-
 void CoreUI::UI_BehaviourSystem::process_BUTTON_event(UI_ComponentBase*& comp_base, bool& pointed_now) {
 	auto btn = static_cast<Button*>(comp_base);
 	// on hover
@@ -127,40 +127,107 @@ void CoreUI::UI_BehaviourSystem::process_BUTTON_event(UI_ComponentBase*& comp_ba
 }
 
 void CoreUI::UI_BehaviourSystem::process_INPUT_FIELD_event(UI_ComponentBase* comp_base, bool& pointed_now) {
+	auto field = static_cast<InputField*>(comp_base);
 	// lose focus
 	if (SystemContext::mouse.lb_is_pressed() && !pointed_now && prev_focused_id == comp_base->object_id) {
-		static_cast<InputField*>(comp_base)->_on_focus_lose();
+		field->_on_focus_lose();
 		return;
 	}
 	// get focus
 	else if (SystemContext::mouse.lb_is_pressed() && pointed_now && focused_component_id != comp_base->object_id) {
-		static_cast<InputField*>(comp_base)->_on_focus_get();
+		field->_on_focus_get();
 		focused_component_id = comp_base->object_id;
 		focus_changed_in_frame = true;
 		return;
 	}
 	
-	static_cast<InputField*>(comp_base)->_update_cursor();
+	field->_update_cursor();
 
 	// process input character if has focus
 	if (focused_component_id == comp_base->object_id) {
 		for (uint32_t& code : SystemContext::keyBoard.currentPressedChars) {
-			static_cast<InputField*>(comp_base)->_on_char_input(code);
+			field->_on_char_input(code);
 		}
 
 		if (SystemContext::keyBoard.key_is_pressed(Key::KeyLeft)) {
-			static_cast<InputField*>(comp_base)->_on_cursor_position_changed(true);
+			field->_on_cursor_position_changed(true);
 		}
 		else if (SystemContext::keyBoard.key_is_pressed(Key::KeyRight)) {
-			static_cast<InputField*>(comp_base)->_on_cursor_position_changed(false);
+			field->_on_cursor_position_changed(false);
 		}
 
 		if (SystemContext::keyBoard.key_is_pressed(Key::KeyBackspace)) {
-			static_cast<InputField*>(comp_base)->_on_char_remove();
+			field->_on_char_remove();
 		}
 	}
 }
 
-void CoreUI::UI_BehaviourSystem::process_SCROLL_VIEW_event(UI_ComponentBase*& comp_base, bool& pointed_now) {
+void CoreUI::UI_BehaviourSystem::process_SCROLL_VIEW_event(UI_ComponentBase*& comp_base, bool& pointed_now, UI_Transform& tr) {
+	auto scroll_view = static_cast<ScrollView*>(comp_base);
 
+	//amount of children is changed -> replace all children
+	if (scroll_view->last_children_size != tr.children.size()) {
+		scroll_view->last_children_size = tr.children.size();
+		//alignment is always Top Left
+		const float initial_x_pos = tr.local_pos.x - tr.size.x * 0.5f + scroll_view->border_x_offset;
+		const float initial_y_pos = tr.local_pos.y + tr.size.y * 0.5f - scroll_view->border_y_offset;
+		
+		float current_x_offset = initial_x_pos;
+		float current_y_offset = initial_y_pos;
+
+		float max_element_x_size = 0.0f;
+		float max_element_y_size = 0.0f;
+
+		const bool is_horizontal = scroll_view->layout == ScrollView::GroupLayout::LAYOUT_HORIZONTAL;
+		const bool is_vertical   = scroll_view->layout == ScrollView::GroupLayout::LAYOUT_VERTICAL;
+
+		for (auto& child_id : tr.children) {
+			UI_Transform& child_tr = UI_ObjectManager::get_instance().get(child_id)->transform;
+			child_tr.set_local_pos(
+				current_x_offset + child_tr.size.x * 0.5f,
+				current_y_offset - child_tr.size.y * 0.5f
+			);
+			if (is_horizontal) current_x_offset += child_tr.size.x + scroll_view->content_children_offset;
+			if (is_vertical)   current_y_offset -= child_tr.size.y + scroll_view->content_children_offset;
+
+			max_element_x_size = child_tr.size.x > max_element_x_size ? child_tr.size.x : max_element_x_size;
+			max_element_y_size = child_tr.size.y > max_element_y_size ? child_tr.size.y : max_element_y_size;
+		}
+		current_x_offset += scroll_view->border_x_offset;
+		current_y_offset -= scroll_view->border_y_offset;
+
+		if (!is_horizontal) current_x_offset += max_element_x_size;
+		if (!is_vertical) current_y_offset -= max_element_y_size;
+
+		scroll_view->current_max_content_offset.x = tr.local_pos.x - tr.size.x * 0.5f - current_x_offset + tr.size.x;
+		scroll_view->current_max_content_offset.y = tr.local_pos.y + tr.size.y * 0.5f - current_y_offset - tr.size.y;
+
+		if (scroll_view->current_max_content_offset.x > 0.0f) scroll_view->current_max_content_offset.x = 0.0f;
+		if (scroll_view->current_max_content_offset.y < 0.0f) scroll_view->current_max_content_offset.y = 0.0f;
+	}
+
+	if (pointed_now && SystemContext::mouse.wheel_offset != 0) {
+		if (SystemContext::mouse.wheel_offset > 0.0f) {
+			if (SystemContext::keyBoard.key_is_held(Key::KeyLeftShift)) {
+				scroll_view->content_offset.x += SystemContext::mouse.wheel_offset * scroll_view->mouse__wheel_scroll_speed;
+				if (scroll_view->content_offset.x > 0.0f) scroll_view->content_offset.x = 0.0f;
+			}
+			else {
+				scroll_view->content_offset.y -= SystemContext::mouse.wheel_offset * scroll_view->mouse__wheel_scroll_speed;
+				if (scroll_view->content_offset.y < 0.0f) scroll_view->content_offset.y = 0.0f;
+			}
+		}
+		else {
+			if (SystemContext::keyBoard.key_is_held(Key::KeyLeftShift)) {
+				scroll_view->content_offset.x += SystemContext::mouse.wheel_offset * scroll_view->mouse__wheel_scroll_speed;
+				if (scroll_view->content_offset.x < scroll_view->current_max_content_offset.x)
+					scroll_view->content_offset.x = scroll_view->current_max_content_offset.x;
+			}
+			else {
+				scroll_view->content_offset.y -= SystemContext::mouse.wheel_offset * scroll_view->mouse__wheel_scroll_speed;
+				if (scroll_view->content_offset.y > scroll_view->current_max_content_offset.y)
+					scroll_view->content_offset.y = scroll_view->current_max_content_offset.y;
+			}
+		}
+	}
 }

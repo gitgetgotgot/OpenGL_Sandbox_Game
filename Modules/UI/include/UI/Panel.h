@@ -9,12 +9,8 @@ namespace CoreUI {
 			UI_Component(object_id, UI_Component_Type::UI_PANEL, UI_Render_Type::UI_SPRITE) {}
 		~Panel() = default;
 		
-		void _update_sprite_buffer(
-			std::vector<UI_RenderEntry>& render_queue,
-			std::vector<UI_Vertex2f>& sprites_buffer,
-			uint16_t clip_rect_id
-		);
-		void _update_render_data();
+		void _update_buffer_data(UI_RenderContext& c, UI_RenderState& s);
+		void _update_data();
 
 		void set_sprite(uint32_t sprite_ID);
 		void set_color(glm::vec4 color);

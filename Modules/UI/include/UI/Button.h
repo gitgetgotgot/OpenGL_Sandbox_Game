@@ -34,8 +34,8 @@ namespace CoreUI {
 		UI_Component_Ptr<Image> button_image;
 		UI_Component_Ptr<SDF_Text> button_text;
 	private:
-		glm::vec4 color_base{ 1.0f };
-		glm::vec4 color_hover{ 0.9f, 0.9f, 0.9f, 1.0f };
+		glm::vec4 color_base{ 0.9f, 0.9f, 0.9f, 1.0f };
+		glm::vec4 color_hover{ 1.0f };
 		glm::vec4 color_press{ 0.7f, 0.7f, 0.7f, 1.0f };
 	};
 }

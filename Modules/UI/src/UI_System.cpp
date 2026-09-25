@@ -81,7 +81,6 @@ void CoreUI::UI_System::update() {
 	content_offsets.clear();
 
 	// update hit queue for interactable components
-	std::vector<UI_Object*>& hit_queue = UI_BehaviourSystem::get_instance().get_hit_queue();
 	uint32_t components_size = UI_ComponentManager::get_instance().size();
 	if (hit_queue.capacity() < components_size) {
 		hit_queue.resize(components_size);
@@ -89,21 +88,24 @@ void CoreUI::UI_System::update() {
 	hit_queue.clear();
 
 	// place default clip rect and content offset
-	clip_rects.emplace_back(0, 0, SystemContext::screen.width, SystemContext::screen.height);
+	clip_rects.emplace_back(
+		0, 0, SystemContext::screen.width, SystemContext::screen.height,
+		0.0f, 0.0f, SystemContext::screen.ratio * 2.0f, 2.0f
+	);
 	content_offsets.emplace_back(0.0f, 0.0f);
 
 	// update all dirty UI objects
 	UI_ObjectManager::get_instance().update_dirty_objects();
 
 	// update all UI object buffers, build render queue and hit queue
-	UI_RenderContext ctx(render_queue, sprites_buffer, sdf_text_buffer, hit_queue);
+	UI_RenderContext ctx{ render_queue, sprites_buffer, sdf_text_buffer, hit_queue, clip_rects, content_offsets };
 	UI_RenderState state;
 	for (auto& canvas : CanvasManager::get_instance().get_canvases()) {
 		if (canvas.is_enabled) canvas.update_canvas_objects_data(ctx, state);
 	}
 
 	// update interactable components
-	UI_BehaviourSystem::get_instance().update();
+	UI_BehaviourSystem::get_instance().update(ctx);
 
 	sprites_vbo->update_data(sprites_buffer.data(), sprites_buffer.size() * sizeof(UI_Vertex2f));
 	sdf_text_vbo->update_data(sdf_text_buffer.data(), sdf_text_buffer.size() * sizeof(UI_Text_Vertex2f));

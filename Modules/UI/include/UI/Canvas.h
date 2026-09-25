@@ -12,8 +12,8 @@ namespace CoreUI {
 		std::vector<uint32_t> objects;
 		bool is_enabled = true;
 	private:
-		uint16_t add_clip_rect(UI_Transform& tr, std::vector<ClipRectangle>& clip_rects);
-		uint16_t add_content_offset(glm::vec2& offset, std::vector<glm::vec2>& content_offsets);
+		uint16_t add_clip_rect(const UI_Transform& tr, std::vector<ClipRectangle>& clip_rects);
+		uint16_t add_content_offset(const glm::vec2& offset, std::vector<glm::vec2>& content_offsets);
 	};
 
 	class UI_Canvas_Ptr {

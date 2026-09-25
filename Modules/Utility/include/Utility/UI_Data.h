@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/ext/matrix_float4x4.hpp>
+#include <vector>
 
 namespace CoreUI {
 	struct UI_Vertex2f {
@@ -53,19 +54,41 @@ namespace CoreUI {
 
 	struct ClipRectangle {
 		ClipRectangle() {}
-		ClipRectangle(uint32_t x, uint32_t y, uint32_t w, uint32_t h) :
-			x{ x }, y{ y }, w{ w }, h{ h } {}
+		ClipRectangle(
+			uint32_t x, uint32_t y, uint32_t w, uint32_t h,
+			float ortho_x, float ortho_y, float ortho_size_x, float ortho_size_y
+		) :
+			x{ x }, y{ y }, w{ w }, h{ h },
+			ortho_x{ ortho_x }, ortho_y{ ortho_y }, ortho_size_x{ ortho_size_x }, ortho_size_y{ ortho_size_y }
+		{}
+		bool overlaps_with_box(const glm::vec2& ortho_pos, const glm::vec2& ortho_size) const {
+			float x_dist = ortho_pos.x - ortho_x; if (x_dist < 0.0f) x_dist = -x_dist;
+			float y_dist = ortho_pos.y - ortho_y; if (y_dist < 0.0f) y_dist = -y_dist;
+			return
+				x_dist <= (ortho_size.x + ortho_size_x) * 0.5f &&
+				y_dist <= (ortho_size.y + ortho_size_y) * 0.5f;
+		}
+		bool overlaps_with_mouse(const float mouse_ortho_x, const float mouse_ortho_y) const {
+			const float x_left = ortho_x - ortho_size_x * 0.5f;
+			const float y_bottom = ortho_y - ortho_size_y * 0.5f;
+			return
+				mouse_ortho_x > x_left && mouse_ortho_x < x_left + ortho_size_x &&
+				mouse_ortho_y > y_bottom && mouse_ortho_y < y_bottom + ortho_size_y;
+		}
 		uint32_t x = 0, y = 0, w = 0, h = 0;
+		float ortho_x = 0.0f, ortho_y = 0.0f, ortho_size_x = 0.0f, ortho_size_y = 0.0f;
 	};
 
 	struct UI_RenderEntry {
 		UI_RenderEntry() {}
 		UI_RenderEntry(
 			UI_Render_Type render_type, uint32_t index_count,
-			uint16_t clip_rect_id, bool change_clip_rect,
-			float content_x_offset, float content_y_offset) :
-			render_type{ render_type }, index_count{ index_count }, clip_rect_id{ clip_rect_id },
-			change_clip_rect{ change_clip_rect }
+			uint16_t clip_rect_id, uint16_t content_offset_id,
+			bool change_clip_rect, bool change_content_offset
+		) :
+			render_type{ render_type }, index_count{ index_count },
+			clip_rect_id{ clip_rect_id }, content_offset_id{ content_offset_id },
+			change_clip_rect{ change_clip_rect }, change_content_offset{ change_content_offset }
 		{}
 		uint32_t index_count = 0; //for render count
 		uint16_t clip_rect_id = 0;
@@ -75,19 +98,19 @@ namespace CoreUI {
 		bool change_content_offset = false;
 	};
 
+	struct UI_HitEntry {
+		UI_HitEntry() {}
+		UI_HitEntry(void* component, uint16_t content_offset_id) :
+			component{ component }, content_offset_id{ content_offset_id } {}
+		void* component = nullptr;
+		uint16_t content_offset_id = 0;
+	};
+
 	struct UI_RenderContext {
-		UI_RenderContext(
-			std::vector<UI_RenderEntry>& render_queue,
-			std::vector<UI_Vertex2f>& sprites_buffer,
-			std::vector<UI_Text_Vertex2f>& sdf_text_buffer,
-			std::vector<UI_Object*>& hit_queue
-		) : render_queue{ render_queue }, sprites_buffer{ sprites_buffer },
-			sdf_text_buffer{ sdf_text_buffer }, hit_queue{ hit_queue }
-		{}
 		std::vector<UI_RenderEntry>& render_queue;
 		std::vector<UI_Vertex2f>& sprites_buffer;
 		std::vector<UI_Text_Vertex2f>& sdf_text_buffer;
-		std::vector<UI_Object*>& hit_queue;
+		std::vector<UI_HitEntry>& hit_queue;
 		std::vector<ClipRectangle>& clip_rects;
 		std::vector<glm::vec2>& content_offsets;
 	};

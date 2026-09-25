@@ -2,18 +2,14 @@
 #include "UI/UI_ObjectManager.h"
 #include "UI/FontManager.h"
 
-void CoreUI::SDF_Text::_update_sdf_text_buffer(
-	std::vector<UI_RenderEntry>& render_queue,
-	std::vector<UI_Text_Vertex2f>& sdf_text_buffer,
-	uint16_t clip_rect_id
-) {
+void CoreUI::SDF_Text::_update_buffer_data(UI_RenderContext& c, UI_RenderState& s) {
 	if (text.empty()) return;
 	size_t text_size = text.size();
-	update_render_queue(render_queue, clip_rect_id, 6 * text_size);
-	sdf_text_buffer.insert(sdf_text_buffer.end(), text_vertices.begin(), text_vertices.begin() + text_size * 4);
+	update_render_queue(c, s, 6 * text_size);
+	c.sdf_text_buffer.insert(c.sdf_text_buffer.end(), text_vertices.begin(), text_vertices.begin() + text_size * 4);
 }
 
-void CoreUI::SDF_Text::_update_render_data() {
+void CoreUI::SDF_Text::_update_data() {
 	is_dirty = false;
 	if (text.empty()) return;
 	UI_Object* obj = UI_ObjectManager::get_instance().get(object_id);

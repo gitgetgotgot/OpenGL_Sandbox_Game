@@ -6,6 +6,7 @@
 #include "UI/InputField.h"
 #include "UI/Panel.h"
 #include "UI/Button.h"
+#include "UI/ScrollView.h"
 #include <Resources/Sprite.h>
 #include <IOSystem/SystemContext.h>
 
@@ -226,4 +227,18 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_input_field_image9sliced(
 	field_obj.add_child(cursor_obj);
 	field->bind_components(field_text, cursor_img);
 	return field_obj;
+}
+
+CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_scroll_view() {
+	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
+	obj->add_component<ScrollView>();
+	return obj;
+}
+
+CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_scroll_view(glm::vec2 size, glm::vec2 local_pos) {
+	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
+	obj->transform.set_local_pos(local_pos);
+	obj->transform.set_size(size);
+	obj->add_component<ScrollView>()->is_interactable = true;
+	return obj;
 }

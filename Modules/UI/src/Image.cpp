@@ -2,17 +2,13 @@
 #include "UI/UI_ObjectManager.h"
 #include <Resources/Sprite.h>
 
-void CoreUI::Image::_update_sprite_buffer(
-	std::vector<UI_RenderEntry>& render_queue,
-	std::vector<UI_Vertex2f>& sprites_buffer,
-	uint16_t clip_rect_id
-) {
+void CoreUI::Image::_update_buffer_data(UI_RenderContext& c, UI_RenderState& s) {
 	if (sprite_ID == 0) return;
-	update_render_queue(render_queue, clip_rect_id, INDEX_SIZE);
-	sprites_buffer.insert(sprites_buffer.end(), image_vertices.data, image_vertices.data + image_vertices.size); // THINK ABOUT std::memcpy!!!
+	update_render_queue(c, s, INDEX_SIZE);
+	c.sprites_buffer.insert(c.sprites_buffer.end(), image_vertices.data, image_vertices.data + image_vertices.size); // THINK ABOUT std::memcpy!!!
 }
 
-void CoreUI::Image::_update_render_data() {
+void CoreUI::Image::_update_data() {
 	is_dirty = false;
 	if (sprite_ID == 0) return;
 	data_updater(*this);

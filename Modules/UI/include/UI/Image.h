@@ -18,12 +18,8 @@ namespace CoreUI {
 			UI_Component<Image>(object_id, UI_Component_Type::UI_WIDGET, UI_Render_Type::UI_SPRITE) {}
 		~Image() = default;
 
-		void _update_sprite_buffer(
-			std::vector<UI_RenderEntry>& render_queue,
-			std::vector<UI_Vertex2f>& sprites_buffer,
-			uint16_t clip_rect_id
-		);
-		void _update_render_data();
+		void _update_buffer_data(UI_RenderContext& c, UI_RenderState& s);
+		void _update_data();
 
 		void Setup_As_Regular();
 		void Setup_As_Nine_Sliced();
