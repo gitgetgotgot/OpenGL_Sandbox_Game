@@ -11,6 +11,8 @@ namespace CoreUI {
 		void set_local_pos(glm::vec2 pos);
 		void set_size(float width, float height);
 		void set_size(glm::vec2 size);
+		void set_width(float width);
+		void set_height(float height);
 		void add_child(UI_Transform& transform);
 		void translate(float x, float y);
 		void translate(glm::vec2 vec);

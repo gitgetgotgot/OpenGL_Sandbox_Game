@@ -56,7 +56,7 @@ void World::init(Player* player) {
 
 	//camera base options
 	main_camera.zoom = MIN_ZOOM;
-	main_camera.set_ortho_projection(-SystemContext::screen.ratio, SystemContext::screen.ratio, -1.0f, 1.0f);
+	main_camera.set_ortho_projection(-SystemContext::display.ratio, SystemContext::display.ratio, -1.0f, 1.0f);
 
 	sprites_ubo_data.day_ratio = 1.0f; //1 for now;
 	sprites_ubo_data.world_size = { width, height };
@@ -109,14 +109,14 @@ void World::update() {
 	if (SystemContext::keyBoard.key_is_pressed(Key::KeyPageUp)) {
 		main_camera.zoom += 0.2f;
 		if (main_camera.zoom > MAX_ZOOM) main_camera.zoom = MAX_ZOOM;
-		main_camera.set_ortho_projection(-SystemContext::screen.ratio, SystemContext::screen.ratio, -1.0f, 1.0f);
+		main_camera.set_ortho_projection(-SystemContext::display.ratio, SystemContext::display.ratio, -1.0f, 1.0f);
 		sprites_ubo_data.projectionMatrix = main_camera.projectionMatrix;
 		std::cout << "camera zoom = " << main_camera.zoom << std::endl;
 	}
 	else if (SystemContext::keyBoard.key_is_pressed(Key::KeyPageDown)) {
 		main_camera.zoom -= 0.2f;
 		if (main_camera.zoom < MIN_ZOOM) main_camera.zoom = MIN_ZOOM;
-		main_camera.set_ortho_projection(-SystemContext::screen.ratio, SystemContext::screen.ratio, -1.0f, 1.0f);
+		main_camera.set_ortho_projection(-SystemContext::display.ratio, SystemContext::display.ratio, -1.0f, 1.0f);
 		sprites_ubo_data.projectionMatrix = main_camera.projectionMatrix;
 		std::cout << "camera zoom = " << main_camera.zoom << std::endl;
 	}

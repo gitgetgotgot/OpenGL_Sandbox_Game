@@ -33,9 +33,7 @@ void CoreUI::Canvas::update_child_object(UI_Object& object, UI_RenderContext& ct
 		}
 		if (is_inside_clip_rect_area) {
 			if (is_interactable) {
-				if (ctx.clip_rects[state.clip_rect_id].overlaps_with_mouse(
-					SystemContext::mouse.ortho_x_pos, SystemContext::mouse.ortho_y_pos
-				)) ctx.hit_queue.emplace_back(comp->component, state.content_offset_id);
+				ctx.hit_queue.emplace_back(comp->component, state.clip_rect_id, state.content_offset_id);
 			}
 			if (is_renderable && base_comp->is_visible) {
 				comp->vt->update_buffer_data(comp->component, ctx, state);
@@ -58,11 +56,13 @@ void CoreUI::Canvas::update_child_object(UI_Object& object, UI_RenderContext& ct
 }
 
 uint16_t CoreUI::Canvas::add_clip_rect(const UI_Transform& tr, std::vector<ClipRectangle>& clip_rects) {
-	uint32_t x = ((tr.global_pos.x - tr.size.x * 0.5f) * SystemContext::screen.double_x_ratio + 0.5f) * SystemContext::screen.width;
-	uint32_t y = ((tr.global_pos.y - tr.size.y * 0.5f) * 0.5f + 0.5f) * SystemContext::screen.height;
-	uint32_t w = tr.size.x * SystemContext::screen.double_x_ratio * SystemContext::screen.width;
-	uint32_t h = tr.size.y * 0.5f * SystemContext::screen.height;
-	clip_rects.emplace_back(x, y, w, h, tr.global_pos.x, tr.global_pos.y, tr.size.x, tr.size.y);
+	uint32_t x = ((tr.global_pos.x - tr.size.x * 0.5f) * SystemContext::display.double_x_ratio + 0.5f) * SystemContext::display.width;
+	uint32_t y = ((tr.global_pos.y - tr.size.y * 0.5f) * 0.5f + 0.5f) * SystemContext::display.height;
+	uint32_t w = tr.size.x * SystemContext::display.double_x_ratio * SystemContext::display.width;
+	uint32_t h = tr.size.y * 0.5f * SystemContext::display.height;
+	clip_rects.emplace_back(x, y, w, h, tr.global_pos.x, tr.global_pos.y, tr.size.x, tr.size.y).overlaps_with_mouse(
+		SystemContext::mouse.ortho_x_pos, SystemContext::mouse.ortho_y_pos
+	);
 	return clip_rects.size() - 1;
 }
 

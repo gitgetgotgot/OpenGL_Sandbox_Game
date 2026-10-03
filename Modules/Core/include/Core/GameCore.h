@@ -1,11 +1,7 @@
 #pragma once
-
-#include <glm/gtc/type_ptr.hpp>
-#include <Audio/AudioManager.h>
 #include "World.h"
 #include <Utility/TimeManager.h>
 #include <IOSystem/InputHandler.h>
-#include <filesystem>
 
 enum Game_State : uint8_t { inMainMenu, inOptions, inControlsOptions, inAudioOptions, inRenderingOptions,
 	inWorldExplorer, WorldIsLoading, WorldIsSaving, WorldIsCreating, inWorldCreator, inWorld, inGamePause };
@@ -16,7 +12,6 @@ public:
 	bool update();
 	void render();
 	void input_end_frame();
-	void toggle_Fullscreen();
 	void init();
 	void main_loop();
 	void uninit();
@@ -62,5 +57,5 @@ private:
 	bool saving_the_world = false;
 	bool creating_the_world = false;
 	//game state
-	Game_State game_update_state = inWorld, game_render_state = inMainMenu;
+	Game_State game_update_state = inMainMenu, game_render_state = inMainMenu;
 };

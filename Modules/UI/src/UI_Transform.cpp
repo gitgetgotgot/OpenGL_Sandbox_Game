@@ -22,6 +22,16 @@ void CoreUI::UI_Transform::set_size(glm::vec2 size) {
 	if (!is_dirty) mark_dirty();
 }
 
+void CoreUI::UI_Transform::set_width(float width) {
+	size.x = width;
+	if (!is_dirty) mark_dirty();
+}
+
+void CoreUI::UI_Transform::set_height(float height) {
+	size.y = height;
+	if (!is_dirty) mark_dirty();
+}
+
 void CoreUI::UI_Transform::add_child(UI_Transform& transform) {
 	children.emplace_back(transform.object_id);
 	transform.parent_id = object_id;

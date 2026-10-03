@@ -7,6 +7,7 @@
 #include "UI/Panel.h"
 #include "UI/Button.h"
 #include "UI/ScrollView.h"
+#include "UI/ScrollBar.h"
 #include <Resources/Sprite.h>
 #include <IOSystem/SystemContext.h>
 
@@ -25,7 +26,7 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_image() {
 }
 
 CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_image(
-	uint32_t sprite_id, glm::vec2 size, glm::vec2 local_pos
+	uint32_t sprite_id, glm::vec2 size, glm::vec2 local_pos, glm::vec4 color
 ) {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
 	obj->transform.set_local_pos(local_pos);
@@ -33,6 +34,7 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_image(
 	auto img = obj->add_component<Image>();
 	img->Setup_As_Regular();
 	img->set_sprite(sprite_id);
+	img->set_color(color);
 	return obj;
 }
 
@@ -43,7 +45,7 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_image9sliced() {
 }
 
 CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_image9sliced(
-	uint32_t sprite9sliced_id, glm::vec2 size, glm::vec2 local_pos
+	uint32_t sprite9sliced_id, glm::vec2 size, glm::vec2 local_pos, glm::vec4 color
 ) {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
 	obj->transform.set_local_pos(local_pos);
@@ -51,6 +53,7 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_image9sliced(
 	auto img = obj->add_component<Image>();
 	img->Setup_As_Nine_Sliced();
 	img->set_sprite(sprite9sliced_id);
+	img->set_color(color);
 	return obj;
 }
 
@@ -61,14 +64,15 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_SDF_text() {
 }
 
 CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_SDF_text(
-	glm::vec2 size, glm::vec2 local_pos, std::string text, glm::vec4 color
+	glm::vec2 size, glm::vec2 local_pos, std::string text, glm::vec4 text_color, float text_height
 ) {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
 	obj->transform.set_local_pos(local_pos);
 	obj->transform.set_size(size);
 	auto obj_text = obj->add_component<SDF_Text>();
 	obj_text->set_text(text);
-	obj_text->set_color(color);
+	obj_text->set_color(text_color);
+	obj_text->set_text_height(text_height);
 	return obj;
 }
 
@@ -97,7 +101,7 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_button() {
 }
 
 CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_button_image(
-	glm::vec2 size, glm::vec2 local_pos, uint32_t sprite_id, glm::vec4 text_color, float text_height
+	glm::vec2 size, glm::vec2 local_pos, uint32_t sprite_id, std::string txt, glm::vec4 text_color, float text_height
 ) {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
 	obj->transform.set_local_pos(local_pos);
@@ -117,7 +121,7 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_button_image(
 	text->set_text_height(text_height);
 	text->set_color(text_color);
 	text->set_alignment(SDF_Text::TextHorizAlign::Center_Align, SDF_Text::TextVertAlign::Middle_Align);
-	text->set_text("Button");
+	text->set_text(txt);
 
 	obj.add_child(img_obj);
 	obj.add_child(text_obj);
@@ -127,7 +131,7 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_button_image(
 }
 
 CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_button_image9sliced(
-	glm::vec2 size, glm::vec2 local_pos, uint32_t sprite_id, glm::vec4 text_color, float text_height
+	glm::vec2 size, glm::vec2 local_pos, uint32_t sprite_id, std::string txt, glm::vec4 text_color, float text_height
 ) {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
 	obj->transform.set_local_pos(local_pos);
@@ -147,7 +151,7 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_button_image9sliced(
 	text->set_text_height(text_height);
 	text->set_color(text_color);
 	text->set_alignment(SDF_Text::TextHorizAlign::Center_Align, SDF_Text::TextVertAlign::Middle_Align);
-	text->set_text("Button");
+	text->set_text(txt);
 
 	obj.add_child(img_obj);
 	obj.add_child(text_obj);
@@ -240,5 +244,53 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_scroll_view(glm::vec2 size, glm::v
 	obj->transform.set_local_pos(local_pos);
 	obj->transform.set_size(size);
 	obj->add_component<ScrollView>()->is_interactable = true;
+	return obj;
+}
+
+CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_scroll_bar() {
+	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
+	obj->add_component<ScrollBar>();
+	return obj;
+}
+
+CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_scroll_bar(
+	glm::vec2 scroll_area_size, glm::vec2 track_size, glm::vec2 thumb_size, glm::vec2 local_pos,
+	bool track_9_sliced, bool thumb_9_sliced, uint32_t track_sprite_id, uint32_t thumb_sprite_id,
+	glm::vec4 track_color, glm::vec4 thumb_color,
+	bool vertical
+) {
+	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
+	obj->transform.set_size(scroll_area_size);
+	obj->transform.set_local_pos(local_pos);
+
+	auto scroll_bar = obj->add_component<ScrollBar>();
+	UI_Obj_Ptr track_obj = UI_ObjectManager::get_instance().add();
+	track_obj->transform.set_size(track_size);
+	auto track_image = track_obj->add_component<Image>();
+	if (track_9_sliced)
+		track_image->Setup_As_Nine_Sliced();
+	else
+		track_image->Setup_As_Regular();
+	track_image->set_sprite(track_sprite_id);
+	track_image->set_color(track_color);
+
+	UI_Obj_Ptr thumb_obj = UI_ObjectManager::get_instance().add();
+	thumb_obj->transform.set_size(thumb_size);
+	auto thumb_image = thumb_obj->add_component<Image>();
+	if (thumb_9_sliced)
+		thumb_image->Setup_As_Nine_Sliced();
+	else
+		thumb_image->Setup_As_Regular();
+	thumb_image->set_sprite(thumb_sprite_id);
+	thumb_image->set_color(thumb_color);
+
+	obj.add_child(track_obj);
+	obj.add_child(thumb_obj);
+
+	scroll_bar->is_interactable = true;
+	scroll_bar->set_direction(vertical ? ScrollBar::SCROLLBAR_VERTICAL : ScrollBar::SCROLLBAR_HORIZONTAL);
+	scroll_bar->bind_components(track_image, thumb_image);
+	scroll_bar->set_value(0.0f);
+
 	return obj;
 }

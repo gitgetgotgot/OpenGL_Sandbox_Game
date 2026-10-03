@@ -1,7 +1,7 @@
 #include "Core/GameCore.h"
 #include "Core/ResourceLoader.h"
+#include "Core/MainMenu.h"
 #include <UI/UI_System.h>
-#include <UI/UI_Creator.h>
 #include <thread>
 
 Game::~Game() {
@@ -11,19 +11,20 @@ Game::~Game() {
 bool Game::update() {
 	timeMgr.update();
 
-	SystemContext::mouse.get_mouse_ortho_coords(SystemContext::screen);
+	SystemContext::mouse.get_mouse_ortho_coords(SystemContext::display);
 
-	if (SystemContext::keyBoard.key_is_pressed(Key::KeyEscape)) {
-		return 0;
-	}
-	if (SystemContext::keyBoard.key_is_pressed(Key::KeyF)) {
-		toggle_Fullscreen();
-	}
+	if (SystemContext::should_exit()) return 0;
 
-	if (game_update_state == Game_State::inWorld) {
+	switch (game_update_state) {
+	case Game_State::inWorld:
 		world->update();
+		break;
+	case Game_State::inMainMenu:
+		MainMenuManager::Instance().update();
+		break;
 	}
-	CoreUI::UI_System::get_instance().update();
+
+	CoreUI::UI_System::Instance().update();
 
 	return 1;
 }
@@ -31,8 +32,8 @@ bool Game::update() {
 void Game::render() {
 	renderer->clear(1.0, 1.0, 1.0);
 
-	world->render(renderer);
-	CoreUI::UI_System::get_instance().render(renderer);
+	//world->render(renderer);
+	CoreUI::UI_System::Instance().render(renderer);
 
 	renderer->present();
 }
@@ -52,20 +53,6 @@ void Game::input_end_frame() {
 	SystemContext::keyBoard.currentPressedChars.clear();
 }
 
-void Game::toggle_Fullscreen() {
-	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-
-	if (glfwGetWindowMonitor(window) == nullptr) {
-		// Switch to full screen
-		glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
-	}
-	else {
-		// Switch back to windowed mode with Full HD resolution
-		glfwSetWindowMonitor(window, nullptr, 100, 100, 1920, 1080, GLFW_DONT_CARE);
-	}
-}
-
 void Game::init() {
 	srand(time(NULL));
 
@@ -74,7 +61,9 @@ void Game::init() {
 
 	ResourceLoader::get_instance().Load_Resources();
 
-	CoreUI::UI_System::get_instance().init();
+	CoreUI::UI_System::Instance().init();
+
+	MainMenuManager::Instance().init();
 
 	player.inventory.init();
 	for (int i = 2; i < 52; i++) {
@@ -88,65 +77,6 @@ void Game::init() {
 
 	world = std::make_unique<World>();
 	world->init(&player);
-
-	auto canvas = CoreUI::UI_Creator::Instance().create_canvas();
-
-	// button test
-	auto test_button = CoreUI::UI_Creator::Instance().create_button_image9sliced(
-		glm::vec2(1.0f, 0.25f),
-		glm::vec2(0.0f),
-		CoreResource::SpriteManager::get_instance().get_sprite9sliced_id("Core:Button").value(),
-		glm::vec4(0.0f, 0.0f, 0.0f, 1.0f),
-		0.1f
-	);
-
-	// input field test
-	auto test_input_field = CoreUI::UI_Creator::Instance().create_input_field_image9sliced(
-		glm::vec2(SystemContext::screen.ratio * 2.0f * 0.99f, 0.15f),
-		glm::vec2(0.0f, -0.9f),
-		CoreResource::SpriteManager::get_instance().get_sprite9sliced_id("Core:Tooltip").value(),
-		glm::vec4(1.0f),
-		0.09f
-	);
-
-
-	// scroll view test
-	auto panel_obj = CoreUI::UI_Creator::Instance().create_panel(
-		glm::vec2(1.5f, 1.5f),
-		glm::vec2(0.0f),
-		CoreResource::SpriteManager::get_instance().get_sprite_id("Core:White").value(),
-		glm::vec4(1.0f, 1.0f, 0.0f, 0.5f)
-	);
-
-	auto scroll_view_obj = CoreUI::UI_Creator::Instance().create_scroll_view(
-		glm::vec2(1.5f, 1.5f),
-		glm::vec2(0.0f)
-	);
-
-	for (uint32_t i = 0; i < 6; i++) {
-		auto content_obj = CoreUI::UI_Creator::Instance().create_image9sliced(
-			CoreResource::SpriteManager::get_instance().get_sprite9sliced_id("Core:Tooltip").value(),
-			glm::vec2(1.8f, 0.35f),
-			glm::vec2(0.0f)
-		);
-
-		auto content_obj_button = CoreUI::UI_Creator::Instance().create_button_image9sliced(
-			glm::vec2(0.5f, 0.15f),
-			glm::vec2(-0.55f, 0.0f),
-			CoreResource::SpriteManager::get_instance().get_sprite9sliced_id("Core:Button").value(),
-			glm::vec4(0.0f, 0.0f, 0.0f, 1.0f),
-			0.1f
-		);
-
-		content_obj.add_child(content_obj_button);
-		scroll_view_obj.add_child(content_obj);
-	}
-
-	panel_obj.add_child(scroll_view_obj);
-	canvas->add_object(panel_obj);
-
-	//canvas->add_object(test_button);
-	//canvas->add_object(test_input_field);
 
 	//openGL settings
 	glEnable(GL_BLEND);
@@ -183,7 +113,6 @@ void Game::init_open_gl() {
 
 	glfwMakeContextCurrent(window);
 	glfwSetWindowAspectRatio(window, 16, 9);
-	//glfwSwapInterval(0);
 
 	gladLoadGL();
 
@@ -196,4 +125,6 @@ void Game::init_open_gl() {
 
 void Game::init_input() {
 	InputHandler::setGLFWwindowCallbacks(window);
+	SystemContext::display.window = window;
+	SystemContext::display.setup_monitor_video_modes();
 }

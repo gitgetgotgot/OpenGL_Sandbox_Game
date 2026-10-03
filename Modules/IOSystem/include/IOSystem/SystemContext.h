@@ -4,19 +4,98 @@
 #include <cstdint>
 #include <vector>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
-class Screen {
+class DisplayController {
 public:
-    float width = 1920, height = 1080;
-    float ratio = 1920.f / 1080.f;
-    float double_x_ratio = 1 / (2 * (1920.f / 1080.f));
-    bool is_fullscreen = false;
+    struct Resolution {
+        int width = 0, height = 0, max_refresh_rate = 0, video_mode_index = 0;
+    };
+public:
     void update_resolution(int width, int height) {
         this->height = height;
         this->width = width;
         ratio = (float)width / (float)height;
         double_x_ratio = 1 / (2 * ratio);
     }
+    void setup_monitor_video_modes() {
+        primary_monitor = glfwGetPrimaryMonitor();
+        modes = glfwGetVideoModes(primary_monitor, &modes_count);
+        if (!modes) throw std::runtime_error("Can't load monitor video modes");
+
+        resolutions.emplace_back();
+        for (int i = 0; i < modes_count; i++) {
+            const GLFWvidmode& mode = modes[i];
+            if (mode.redBits < 8 || mode.greenBits < 8 || mode.blueBits < 8) {
+                continue;
+            }
+            Resolution& last_res = resolutions.back();
+            if (last_res.width == mode.width && last_res.height == mode.height && last_res.max_refresh_rate < mode.refreshRate) {
+                last_res.max_refresh_rate = mode.refreshRate;
+                last_res.video_mode_index = i;
+            }
+            else {
+                resolutions.emplace_back(Resolution{ mode.width, mode.height, mode.refreshRate, i });
+            }
+        }
+        resolutions.erase(resolutions.begin());
+
+        for (const auto& res : resolutions) {
+            std::cout << res.width << "x" << res.height << ", " << res.max_refresh_rate << "hz\n";
+        }
+    }
+    void toggle_fullscreen(bool state) {
+        if (is_fullscreen == state) return;
+        is_fullscreen = state;
+        const GLFWvidmode& mode = modes[resolutions[current_video_mode].video_mode_index];
+
+        if (is_fullscreen) {
+            // Switch to full screen
+            glfwSetWindowMonitor(window, primary_monitor, 0, 0, mode.width, mode.height, mode.refreshRate);
+        }
+        else {
+            // Switch to windowed mode
+            glfwSetWindowMonitor(window, nullptr, 100, 100, mode.width, mode.height, mode.refreshRate);
+        }
+    }
+    void toggle_VSYNC(bool state) {
+        if (vsync_on == state) return;
+        vsync_on = state;
+        glfwSwapInterval(vsync_on ? 1 : 0);
+    }
+    void change_resolution(bool next) {
+        if (next) {
+            current_video_mode++;
+            if (current_video_mode == resolutions.size()) {
+                current_video_mode = 0;
+            }
+        }
+        else {
+            current_video_mode--;
+            if (current_video_mode < 0) {
+                current_video_mode = resolutions.size() - 1;
+            }
+        }
+
+        const GLFWvidmode& mode = modes[resolutions[current_video_mode].video_mode_index];
+        if (is_fullscreen)
+            glfwSetWindowMonitor(window, primary_monitor, 0, 0, mode.width, mode.height, mode.refreshRate);
+        else
+            glfwSetWindowMonitor(window, nullptr, 100, 100, mode.width, mode.height, mode.refreshRate);
+    }
+    Resolution& get_current_video_mode() { return resolutions[current_video_mode]; }
+public:
+    float width = 1920, height = 1080;
+    float ratio = 1920.f / 1080.f;
+    float double_x_ratio = 1 / (2 * (1920.f / 1080.f));
+    bool is_fullscreen = false;
+    bool vsync_on = true;
+    GLFWwindow* window;
+    GLFWmonitor* primary_monitor = nullptr;
+    const GLFWvidmode* modes = nullptr;
+    int modes_count = 0;
+    std::vector<Resolution> resolutions;
+    int current_video_mode = 0;
 };
 
 enum Key : uint16_t {
@@ -130,7 +209,7 @@ public:
     float delta_x = 0, delta_y = 0;
     float wheel_offset = 0;
     bool overlapped_by_UI_layer = false;
-    void get_mouse_ortho_coords(Screen& screen) {
+    void get_mouse_ortho_coords(DisplayController& screen) {
         ortho_x_pos = ((x_pos / screen.width) * 2.f - 1.f) * screen.ratio;
         ortho_y_pos = (y_pos / screen.height) * 2.f - 1.f;
     }
@@ -164,8 +243,13 @@ public:
     }
 };
 
-struct SystemContext {
-    inline static Screen screen;
+class SystemContext {
+public:
+    inline static DisplayController display;
     inline static Keyboard keyBoard;
     inline static Mouse mouse;
+    static void exit_application() { should_exit_application = true; }
+    static bool should_exit() { return should_exit_application; }
+private:
+    inline static bool should_exit_application = false;
 };

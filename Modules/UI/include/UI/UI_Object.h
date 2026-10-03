@@ -28,7 +28,7 @@ namespace CoreUI {
 
 	template<typename T>
 	inline UI_Component_Ptr<T> UI_Object::get_component() {
-		static_assert(std::is_base_of_v<UI_Component, T>, "T must inherit from UI_Component");
+		static_assert(std::is_base_of_v<UI_Component<T>, T>, "T must inherit from UI_Component<T>");
 		return UI_Component_Ptr<T>(object_id);
 	}
 

@@ -64,51 +64,50 @@ void CoreUI::UI_System::init() {
 	ubo = std::make_unique<UBO>();
 	ubo->bind_UBO(1);
 	ubo_data.viewMatrix = glm::mat4(1.0f);
-	ubo_data.projectionMatrix = glm::ortho(-SystemContext::screen.ratio, SystemContext::screen.ratio, -1.0f, 1.0f);
+	ubo_data.projectionMatrix = glm::ortho(-SystemContext::display.ratio, SystemContext::display.ratio, -1.0f, 1.0f);
 	ubo->set_data(&ubo_data, sizeof(UI_UBO), GL_DYNAMIC_DRAW);
 
 	//reserve memory for buffers (this size should be enought for most scenarios)
-	sprites_buffer.reserve(MAX_SPRITES_VERTEX_SIZE);
-	sdf_text_buffer.reserve(MAX_SDF_TEXT_VERTEX_SIZE);
+	render_context.sprites_buffer.reserve(MAX_SPRITES_VERTEX_SIZE);
+	render_context.sdf_text_buffer.reserve(MAX_SDF_TEXT_VERTEX_SIZE);
 }
 
 void CoreUI::UI_System::update() {
-	sprites_buffer.clear();
-	sdf_text_buffer.clear();
-	render_queue.resize(1); //each new frame at least one empty should remain
+	render_context.sprites_buffer.clear();
+	render_context.sdf_text_buffer.clear();
+	render_context.render_queue.resize(1); //each new frame at least one empty should remain
 
-	clip_rects.clear();
-	content_offsets.clear();
+	render_context.clip_rects.clear();
+	render_context.content_offsets.clear();
 
 	// update hit queue for interactable components
 	uint32_t components_size = UI_ComponentManager::get_instance().size();
-	if (hit_queue.capacity() < components_size) {
-		hit_queue.resize(components_size);
+	if (render_context.hit_queue.capacity() < components_size) {
+		render_context.hit_queue.resize(components_size);
 	}
-	hit_queue.clear();
+	render_context.hit_queue.clear();
 
 	// place default clip rect and content offset
-	clip_rects.emplace_back(
-		0, 0, SystemContext::screen.width, SystemContext::screen.height,
-		0.0f, 0.0f, SystemContext::screen.ratio * 2.0f, 2.0f
-	);
-	content_offsets.emplace_back(0.0f, 0.0f);
+	render_context.clip_rects.emplace_back(
+		0, 0, SystemContext::display.width, SystemContext::display.height,
+		0.0f, 0.0f, SystemContext::display.ratio * 2.0f, 2.0f
+	).mouse_inside = true;
+	render_context.content_offsets.emplace_back(0.0f, 0.0f);
 
 	// update all dirty UI objects
 	UI_ObjectManager::get_instance().update_dirty_objects();
 
 	// update all UI object buffers, build render queue and hit queue
-	UI_RenderContext ctx{ render_queue, sprites_buffer, sdf_text_buffer, hit_queue, clip_rects, content_offsets };
 	UI_RenderState state;
 	for (auto& canvas : CanvasManager::get_instance().get_canvases()) {
-		if (canvas.is_enabled) canvas.update_canvas_objects_data(ctx, state);
+		if (canvas.is_enabled) canvas.update_canvas_objects_data(render_context, state);
 	}
 
 	// update interactable components
-	UI_BehaviourSystem::get_instance().update(ctx);
+	UI_BehaviourSystem::get_instance().update(render_context);
 
-	sprites_vbo->update_data(sprites_buffer.data(), sprites_buffer.size() * sizeof(UI_Vertex2f));
-	sdf_text_vbo->update_data(sdf_text_buffer.data(), sdf_text_buffer.size() * sizeof(UI_Text_Vertex2f));
+	sprites_vbo->update_data(render_context.sprites_buffer.data(), render_context.sprites_buffer.size() * sizeof(UI_Vertex2f));
+	sdf_text_vbo->update_data(render_context.sdf_text_buffer.data(), render_context.sdf_text_buffer.size() * sizeof(UI_Text_Vertex2f));
 }
 
 void CoreUI::UI_System::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
@@ -116,20 +115,20 @@ void CoreUI::UI_System::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
 	sdf_text_INDEX_OFFSET = 0;
 
 	renderer->useScissorTest(true);
-	renderer->setScissorRect(0, 0, SystemContext::screen.width, SystemContext::screen.height);
+	renderer->setScissorRect(0, 0, SystemContext::display.width, SystemContext::display.height);
 
 	ubo_data.content_offset = glm::vec2(0.0f);
 	ubo->update_data(&ubo_data, sizeof(UI_UBO));
 
-	for (auto& render_entry : render_queue) {
+	for (auto& render_entry : render_context.render_queue) {
 		//change clip rectangle
 		if (render_entry.change_clip_rect) {
-			ClipRectangle& rect = clip_rects[render_entry.clip_rect_id];
+			ClipRectangle& rect = render_context.clip_rects[render_entry.clip_rect_id];
 			renderer->setScissorRect(rect.x, rect.y, rect.w, rect.h);
 		}
 		//change content offset in UBO
 		if (render_entry.change_content_offset) {
-			ubo_data.content_offset = content_offsets[render_entry.content_offset_id];
+			ubo_data.content_offset = render_context.content_offsets[render_entry.content_offset_id];
 			ubo->update_data(&ubo_data, sizeof(UI_UBO));
 		}
 		//render sprites

@@ -4,9 +4,11 @@
 #include "UI/InputField.h"
 #include "UI/Button.h"
 #include "UI/ScrollView.h"
+#include "UI/ScrollBar.h"
 #include <Utility/Math.h>
 #include <IOSystem/SystemContext.h>
 #include <Utility/TimeManager.h>
+#include <algorithm>
 
 void CoreUI::UI_BehaviourSystem::update(UI_RenderContext& ctx) {
 	bool raycast_is_captured = false;
@@ -19,9 +21,10 @@ void CoreUI::UI_BehaviourSystem::update(UI_RenderContext& ctx) {
 		UI_ComponentBase* comp_base = static_cast<UI_ComponentBase*>(hit_entry.component);
 		UI_Object* obj = UI_ObjectManager::get_instance().get(comp_base->object_id);
 
-		// check if it is pointed by cursor (only if raycast is not blocked already)
+		// check if it is pointed by cursor (only if raycast is not blocked already and cursor is in clip rect)
 		const glm::vec2& obj_offset = ctx.content_offsets[hit_entry.content_offset_id];
-		bool pointed_now = !raycast_is_captured && GameMath::mouse_overlaps_ortho_square(
+		const bool cursor_in_clip_rect = ctx.clip_rects[hit_entry.clip_rect_id].mouse_inside;
+		bool pointed_now = !raycast_is_captured && cursor_in_clip_rect && GameMath::mouse_overlaps_ortho_square(
 			obj->transform.global_pos, obj->transform.size,
 			SystemContext::mouse.ortho_x_pos - obj_offset.x, SystemContext::mouse.ortho_y_pos - obj_offset.y);
 
@@ -35,6 +38,9 @@ void CoreUI::UI_BehaviourSystem::update(UI_RenderContext& ctx) {
 			break;
 		case UI_Component_Type::UI_SCROLL_VIEW:
 			process_SCROLL_VIEW_event(comp_base, pointed_now, obj->transform);
+			break;
+		case UI_Component_Type::UI_SCROLL_BAR:
+			process_SCROLL_BAR_event(comp_base, pointed_now);
 			break;
 		}
 
@@ -204,6 +210,13 @@ void CoreUI::UI_BehaviourSystem::process_SCROLL_VIEW_event(UI_ComponentBase*& co
 
 		if (scroll_view->current_max_content_offset.x > 0.0f) scroll_view->current_max_content_offset.x = 0.0f;
 		if (scroll_view->current_max_content_offset.y < 0.0f) scroll_view->current_max_content_offset.y = 0.0f;
+
+		if (scroll_view->has_horizontal_scrollbar && scroll_view->scrollbar_X && scroll_view->current_max_content_offset.x != 0.0f) {
+			scroll_view->scrollbar_X->set_thumb_size_ratio(tr.size.x / -scroll_view->current_max_content_offset.x);
+		}
+		if (scroll_view->has_vertical_scrollbar && scroll_view->scrollbar_Y) {
+			scroll_view->scrollbar_Y->set_thumb_size_ratio(tr.size.y / (tr.local_pos.y + tr.size.y * 0.5f - current_y_offset));
+		}
 	}
 
 	if (pointed_now && SystemContext::mouse.wheel_offset != 0) {
@@ -228,6 +241,54 @@ void CoreUI::UI_BehaviourSystem::process_SCROLL_VIEW_event(UI_ComponentBase*& co
 				if (scroll_view->content_offset.y > scroll_view->current_max_content_offset.y)
 					scroll_view->content_offset.y = scroll_view->current_max_content_offset.y;
 			}
+		}
+
+		if (scroll_view->has_vertical_scrollbar && scroll_view->scrollbar_Y) {
+			scroll_view->scrollbar_Y->set_value(scroll_view->content_offset.y / scroll_view->current_max_content_offset.y);
+		}
+	}
+}
+
+void CoreUI::UI_BehaviourSystem::process_SCROLL_BAR_event(UI_ComponentBase*& comp_base, bool& pointed_now) {
+	auto scroll_bar = static_cast<ScrollBar*>(comp_base);
+
+	if (scroll_bar->scroll_mode == ScrollBar::ScrollMode::SLIDER_MODE) {
+		if (pointed_now && SystemContext::mouse.lb_is_pressed()) {
+			scroll_bar->_on_track_held();
+			scroll_bar->_is_dragged = true;
+		}
+		if (scroll_bar->_is_dragged) {
+			if (SystemContext::mouse.lb_is_released()) {
+				scroll_bar->_is_dragged = false;
+			}
+			else {
+				scroll_bar->_on_track_held();
+			}
+		}
+	}
+	else { // PAGEABLE_MODE
+		UI_Object* thumb_obj = UI_ObjectManager::get_instance().get(scroll_bar->thumb_img.get_id());
+		if (!thumb_obj) return;
+
+		UI_Transform& thumb_tr = thumb_obj->transform;
+		const bool cursor_over_thumb = GameMath::mouse_overlaps_ortho_square(
+			thumb_tr.global_pos, thumb_tr.size, SystemContext::mouse.ortho_x_pos, SystemContext::mouse.ortho_y_pos
+		);
+		if (scroll_bar->_is_dragged) {
+			scroll_bar->_on_thumb_drag(thumb_tr.local_pos.x, thumb_tr.local_pos.y, prev_mouse_ortho_x, prev_mouse_ortho_y);
+			prev_mouse_ortho_x = SystemContext::mouse.ortho_x_pos;
+			prev_mouse_ortho_y = SystemContext::mouse.ortho_y_pos;
+		}
+		if (scroll_bar->_is_dragged && SystemContext::mouse.lb_is_released()) {
+			scroll_bar->_is_dragged = false;
+		}
+		else if (cursor_over_thumb && SystemContext::mouse.lb_is_pressed()) {
+			scroll_bar->_is_dragged = true;
+			prev_mouse_ortho_x = SystemContext::mouse.ortho_x_pos;
+			prev_mouse_ortho_y = SystemContext::mouse.ortho_y_pos;
+		}
+		else if (pointed_now && SystemContext::mouse.lb_is_pressed()) {
+			scroll_bar->_on_thumb_step(thumb_tr.global_pos.x, thumb_tr.global_pos.y);
 		}
 	}
 }

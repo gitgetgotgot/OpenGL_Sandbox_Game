@@ -45,7 +45,7 @@ namespace CoreUI {
 	};
 
 	enum UI_Component_Type : uint8_t {
-		UI_WIDGET, UI_PANEL, UI_SCROLL_VIEW, UI_INPUT_FIELD, UI_BUTTON
+		UI_WIDGET, UI_PANEL, UI_SCROLL_VIEW, UI_INPUT_FIELD, UI_BUTTON, UI_SCROLL_BAR, UI_DROPDOWN
 	};
 
 	enum UI_Render_Type : uint8_t {
@@ -55,7 +55,7 @@ namespace CoreUI {
 	struct ClipRectangle {
 		ClipRectangle() {}
 		ClipRectangle(
-			uint32_t x, uint32_t y, uint32_t w, uint32_t h,
+			uint16_t x, uint16_t y, uint16_t w, uint16_t h,
 			float ortho_x, float ortho_y, float ortho_size_x, float ortho_size_y
 		) :
 			x{ x }, y{ y }, w{ w }, h{ h },
@@ -68,15 +68,14 @@ namespace CoreUI {
 				x_dist <= (ortho_size.x + ortho_size_x) * 0.5f &&
 				y_dist <= (ortho_size.y + ortho_size_y) * 0.5f;
 		}
-		bool overlaps_with_mouse(const float mouse_ortho_x, const float mouse_ortho_y) const {
+		void overlaps_with_mouse(const float mouse_ortho_x, const float mouse_ortho_y) {
 			const float x_left = ortho_x - ortho_size_x * 0.5f;
 			const float y_bottom = ortho_y - ortho_size_y * 0.5f;
-			return
-				mouse_ortho_x > x_left && mouse_ortho_x < x_left + ortho_size_x &&
-				mouse_ortho_y > y_bottom && mouse_ortho_y < y_bottom + ortho_size_y;
+			mouse_inside = mouse_ortho_x > x_left && mouse_ortho_x < x_left + ortho_size_x && mouse_ortho_y > y_bottom && mouse_ortho_y < y_bottom + ortho_size_y;
 		}
-		uint32_t x = 0, y = 0, w = 0, h = 0;
+		uint16_t x = 0, y = 0, w = 0, h = 0;
 		float ortho_x = 0.0f, ortho_y = 0.0f, ortho_size_x = 0.0f, ortho_size_y = 0.0f;
+		bool mouse_inside = false;
 	};
 
 	struct UI_RenderEntry {
@@ -100,19 +99,20 @@ namespace CoreUI {
 
 	struct UI_HitEntry {
 		UI_HitEntry() {}
-		UI_HitEntry(void* component, uint16_t content_offset_id) :
-			component{ component }, content_offset_id{ content_offset_id } {}
+		UI_HitEntry(void* component, uint16_t clip_rect_id, uint16_t content_offset_id) :
+			component{ component }, clip_rect_id{ clip_rect_id }, content_offset_id{ content_offset_id } {}
 		void* component = nullptr;
+		uint16_t clip_rect_id = 0;
 		uint16_t content_offset_id = 0;
 	};
 
 	struct UI_RenderContext {
-		std::vector<UI_RenderEntry>& render_queue;
-		std::vector<UI_Vertex2f>& sprites_buffer;
-		std::vector<UI_Text_Vertex2f>& sdf_text_buffer;
-		std::vector<UI_HitEntry>& hit_queue;
-		std::vector<ClipRectangle>& clip_rects;
-		std::vector<glm::vec2>& content_offsets;
+		std::vector<UI_RenderEntry> render_queue;
+		std::vector<UI_Vertex2f> sprites_buffer;
+		std::vector<UI_Text_Vertex2f> sdf_text_buffer;
+		std::vector<UI_HitEntry> hit_queue;
+		std::vector<ClipRectangle> clip_rects;
+		std::vector<glm::vec2> content_offsets;
 	};
 
 	struct UI_RenderState {

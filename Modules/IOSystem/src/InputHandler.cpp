@@ -10,7 +10,7 @@ void InputHandler::setGLFWwindowCallbacks(GLFWwindow* window) {
 }
 
 void InputHandler::glfwWindowSizeCallback(GLFWwindow* window, int width, int height) {
-	SystemContext::screen.update_resolution(width, height);
+	SystemContext::display.update_resolution(width, height);
 	glViewport(0, 0, width, height);
 }
 
@@ -28,7 +28,7 @@ void InputHandler::char_callback(GLFWwindow* window, unsigned int codepoint) {
 
 void InputHandler::cursor_position_callback(GLFWwindow* window, double mX, double mY) {
 	SystemContext::mouse.x_pos = (float)mX;
-	SystemContext::mouse.y_pos = SystemContext::screen.height - (float)mY;
+	SystemContext::mouse.y_pos = SystemContext::display.height - (float)mY;
 
 	SystemContext::mouse.delta_x = mX - SystemContext::mouse.last_x_pos;
 	SystemContext::mouse.delta_y = mY - SystemContext::mouse.last_y_pos;

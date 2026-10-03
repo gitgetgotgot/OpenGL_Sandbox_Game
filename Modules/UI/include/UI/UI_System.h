@@ -9,7 +9,7 @@ namespace CoreUI {
 
 	class UI_System {
 	public:
-		static UI_System& get_instance() {
+		static UI_System& Instance() {
 			static UI_System ui;
 			return ui;
 		}
@@ -32,14 +32,8 @@ namespace CoreUI {
 		std::unique_ptr<VAO> sdf_text_vao;
 		std::unique_ptr<VBO> sdf_text_vbo;
 
-		std::vector<UI_Vertex2f> sprites_buffer;
-		std::vector<UI_Text_Vertex2f> sdf_text_buffer;
+		UI_RenderContext render_context;
 		uint32_t sprites_INDEX_OFFSET = 0;
 		uint32_t sdf_text_INDEX_OFFSET = 0;
-
-		std::vector<UI_RenderEntry> render_queue;
-		std::vector<UI_HitEntry> hit_queue;
-		std::vector<ClipRectangle> clip_rects;
-		std::vector<glm::vec2> content_offsets;
 	};
 }

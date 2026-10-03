@@ -10,7 +10,7 @@ void Inventory::init() {
 	last_craft_slot_bottom_y = craft_slots_start_y - 0.14f * 5.f;
 
 	//init slots initial pos
-	float Xpos = -SystemContext::screen.ratio * 0.97f + 0.11f, Ypos = craft_slots_start_y;
+	float Xpos = -SystemContext::display.ratio * 0.97f + 0.11f, Ypos = craft_slots_start_y;
 	for (int i = 0; i < 5; i++) {
 		DynamicSlot& slot = craft_slots[i];
 		slot.current_pos = glm::vec2(Xpos, Ypos);
@@ -381,7 +381,7 @@ void Inventory::update_dynamic_craft_slots() {
 		craft_slots_move = false;
 
 		//return slots back to initial pos
-		float Xpos = -SystemContext::screen.ratio * 0.97f + 0.11f, Ypos = craft_slots_start_y;
+		float Xpos = -SystemContext::display.ratio * 0.97f + 0.11f, Ypos = craft_slots_start_y;
 		for (int i = 0; i < 5; i++) {
 			DynamicSlot& slot = craft_slots[i];
 			slot.current_pos = glm::vec2(Xpos, Ypos);
@@ -398,7 +398,7 @@ void Inventory::update_dynamic_craft_slots() {
 				craft_slots_move = true;
 				craft_slots_move_up = true;
 				DynamicSlot& last_slot = craft_slots[5];
-				last_slot.current_pos = glm::vec2(-SystemContext::screen.ratio * 0.97f + 0.11f, last_craft_slot_bottom_y);
+				last_slot.current_pos = glm::vec2(-SystemContext::display.ratio * 0.97f + 0.11f, last_craft_slot_bottom_y);
 				if (current_craftable_item_index + 3 < current_crafts_available) {
 					CraftableItem& item = CraftingSystem::get_instance().get_available_craft(current_craftable_item_index + 3);
 					last_slot.item_data.item_id = item.item_id;
@@ -416,7 +416,7 @@ void Inventory::update_dynamic_craft_slots() {
 				craft_slots_move = true;
 				craft_slots_move_up = false;
 				DynamicSlot& last_slot = craft_slots[5];
-				last_slot.current_pos = glm::vec2(-SystemContext::screen.ratio * 0.97f + 0.11f, last_craft_slot_up_y);
+				last_slot.current_pos = glm::vec2(-SystemContext::display.ratio * 0.97f + 0.11f, last_craft_slot_up_y);
 				if (current_craftable_item_index - 3 >= 0) {
 					CraftableItem& item = CraftingSystem::get_instance().get_available_craft(current_craftable_item_index - 3);
 					last_slot.item_data.item_id = item.item_id;

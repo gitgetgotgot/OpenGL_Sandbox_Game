@@ -58,10 +58,14 @@ namespace CoreUI {
 		void process_BUTTON_event(UI_ComponentBase*& comp_base, bool& pointed_now);
 		void process_INPUT_FIELD_event(UI_ComponentBase* comp_base, bool& pointed_now);
 		void process_SCROLL_VIEW_event(UI_ComponentBase*& comp_base, bool& pointed_now, UI_Transform& tr);
+		void process_SCROLL_BAR_event(UI_ComponentBase*& comp_base, bool& pointed_now);
 
 		sparse_set<UI_BehaviourEntry> behaviours;
 		uint32_t focused_component_id = 0;
 		uint32_t prev_focused_id = 0;
 		bool focus_changed_in_frame = false;
+
+		float prev_mouse_ortho_x = 0.0f;
+		float prev_mouse_ortho_y = 0.0f;
 	};
 }
