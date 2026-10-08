@@ -13,8 +13,8 @@ void World::init(Player* player) {
 	MAX_CHUNK_X = width / CHUNK_SIZE;
 	MAX_CHUNK_Y = height / CHUNK_SIZE;
 
-	CoreEntity::EntitySystem::get_instance()->init();
-	CoreEntity::EntitySystem::get_instance()->set_world_data(world_slots, width, height, &object_components);
+	CoreEntity::EntitySystem::Instance().init();
+	CoreEntity::EntitySystem::Instance().set_world_data(world_slots, width, height, &object_components);
 
 	//CONSTRAINTS
 	const uint32_t MAX_SQUARES = CHUNK_SIZE * CHUNK_SIZE * 2;
@@ -88,6 +88,23 @@ void World::init(Player* player) {
 	//main_camera.pos = glm::vec2(2000.0f, 900.0f);
 }
 
+void World::uninit() {
+	shader.reset();
+	sprites_ubo.reset();
+	ebo.reset();
+
+	spriteLightMapSSBO->bind_SSBO();
+	if (lightMap_data)
+		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+	lightMap_data = nullptr;
+	spriteLightMapSSBO.reset();
+
+	for (uint32_t i = 0; i < RENDERABLE_CHUNKS_SIZE; ++i) {
+		render_buffers[i]->vao.reset();
+		render_buffers[i]->vbo.reset();
+	}
+}
+
 void World::update() {
 	//update camera pos
 	float v_multiplier = 1.0f;
@@ -143,7 +160,7 @@ void World::update() {
 	if (SystemContext::keyBoard.key_is_pressed(Key::KeyP)) {
 		//CoreEntity::EntitySystem::get_instance()->spawn_entity(0, main_camera.pos);
 	}
-	CoreEntity::EntitySystem::get_instance()->update();
+	CoreEntity::EntitySystem::Instance().update();
 
 	if (SystemContext::keyBoard.key_is_pressed(Key::KeyE))
 		main_player_ptr->inventory.toggle_inventory();
@@ -178,7 +195,7 @@ void World::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
 		}
 	}
 
-	CoreEntity::EntitySystem::get_instance()->render(renderer);
+	CoreEntity::EntitySystem::Instance().render(renderer);
 }
 
 void World::update_chunks(uint32_t& camera_chunk_x, uint32_t& camera_chunk_y) {
@@ -747,11 +764,5 @@ World::~World() {
 	for (int i = 0; i < RENDERABLE_CHUNKS_SIZE; i++) {
 		delete render_buffers[i];
 	}
-
-	spriteLightMapSSBO->bind_SSBO();
-	if (lightMap_data)
-		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-	lightMap_data = nullptr;
-
 	main_player_ptr = nullptr;
 }

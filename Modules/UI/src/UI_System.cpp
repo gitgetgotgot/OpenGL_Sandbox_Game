@@ -72,6 +72,17 @@ void CoreUI::UI_System::init() {
 	render_context.sdf_text_buffer.reserve(MAX_SDF_TEXT_VERTEX_SIZE);
 }
 
+void CoreUI::UI_System::uninit() {
+	ubo.reset();
+	ebo.reset();
+	sprites_shader.reset();
+	sdf_text_shader.reset();
+	sprites_vao.reset();
+	sdf_text_vao.reset();
+	sprites_vbo.reset();
+	sdf_text_vbo.reset();
+}
+
 void CoreUI::UI_System::update() {
 	render_context.sprites_buffer.clear();
 	render_context.sdf_text_buffer.clear();

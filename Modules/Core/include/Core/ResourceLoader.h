@@ -16,12 +16,13 @@ constexpr bool DEBUG = false;
 
 class ResourceLoader {
 public:
-	static ResourceLoader& get_instance() {
+	static ResourceLoader& Instance() {
 		static ResourceLoader loader;
 		return loader;
 	}
 	void Load_Resources();
 	void Hot_Reload();
+	void Unload();
 	void find_mods() const;
 	void load_libraries();
 	void load_textures(std::unordered_map<std::string, uint32_t>& texture_layers);

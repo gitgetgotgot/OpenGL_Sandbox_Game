@@ -20,11 +20,12 @@ namespace CoreEntity {
 
 	class EntitySystem {
 	public:
-		static EntitySystem* get_instance() {
-			static EntitySystem entityMgr;
-			return &entityMgr;
+		static EntitySystem& Instance() {
+			static EntitySystem sys;
+			return sys;
 		}
 		void init();
+		void uninit();
 		void update();
 		void render(std::unique_ptr<OpenGL_Renderer>& renderer);
 		void set_world_data(
@@ -41,7 +42,7 @@ namespace CoreEntity {
 		uint32_t world_width = 0, world_height = 0;
 		std::unordered_map<uint32_t, std::unique_ptr<CoreObject::ObjectComponent>>* obj_comps_ptr;
 
-		std::unique_ptr<ShaderProgram> entity_sp;
+		std::unique_ptr<ShaderProgram> entity_shader;
 		std::unique_ptr<SSBO> entity_ssbo;
 		std::unique_ptr<VAO> instance_vao;
 		std::unique_ptr<VBO> instance_vbo;

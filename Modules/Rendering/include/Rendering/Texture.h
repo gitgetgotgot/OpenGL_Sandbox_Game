@@ -1,6 +1,6 @@
 #pragma once
-#include <glad/glad.h>
-#include <stb/stb_image.h>
+#include <glad/gl.h>
+#include <stb_image.h>
 #include <cstdint>
 
 class Texture {

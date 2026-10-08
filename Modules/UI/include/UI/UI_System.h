@@ -14,6 +14,7 @@ namespace CoreUI {
 			return ui;
 		}
 		void init();
+		void uninit();
 		void update();
 		void render(std::unique_ptr<OpenGL_Renderer>& renderer);
 	private:

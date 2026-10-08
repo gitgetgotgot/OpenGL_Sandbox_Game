@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
-#include <json/json.hpp>
+#include <nlohmann/json.hpp>
 
 enum DataNodeType : uint8_t {
 	Node_NULL, Node_Value, Node_Object, Node_Array
@@ -71,4 +71,3 @@ public:
 	void write_from_binary(std::ifstream& in, DataNode& data);
 	void read_text_file(std::filesystem::path& path, std::string& str);
 };
-

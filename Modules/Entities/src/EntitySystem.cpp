@@ -13,7 +13,7 @@ void CoreEntity::EntitySystem::init() {
 	entity_render_buf.reserve(MAX_ENTITIES_RENDER);
 	entity_render_buf.resize(MAX_ENTITIES_RENDER);
 
-	entity_sp = std::make_unique<ShaderProgram>("Resources/shaders/sprites_entity.vert", "Resources/shaders/sprites.frag");
+	entity_shader = std::make_unique<ShaderProgram>("Resources/shaders/sprites_entity.vert", "Resources/shaders/sprites.frag");
 
 	entity_ssbo = std::make_unique<SSBO>();
 	entity_ssbo->bind_SSBO(0);
@@ -37,6 +37,14 @@ void CoreEntity::EntitySystem::init() {
 	instance_vao->unbind_VAO();
 	instance_vbo->unbind_VBO();
 	instance_ebo->unbind_EBO();
+}
+
+void CoreEntity::EntitySystem::uninit() {
+	entity_shader.reset();
+	entity_ssbo.reset();
+	instance_ebo.reset();
+	instance_vao.reset();
+	instance_vbo.reset();
 }
 
 void CoreEntity::EntitySystem::update() {
@@ -186,7 +194,7 @@ void CoreEntity::EntitySystem::update() {
 }
 
 void CoreEntity::EntitySystem::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
-	renderer->renderInstancedData(entity_sp, instance_vao, instance_vbo, instance_ebo, 6U, entities.size());
+	renderer->renderInstancedData(entity_shader, instance_vao, instance_vbo, instance_ebo, 6U, entities.size());
 }
 
 void CoreEntity::EntitySystem::set_world_data(

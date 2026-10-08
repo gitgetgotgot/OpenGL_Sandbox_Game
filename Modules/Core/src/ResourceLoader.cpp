@@ -75,6 +75,10 @@ void ResourceLoader::Hot_Reload() {
 	Load_Resources();
 }
 
+void ResourceLoader::Unload() {
+	textures_array.reset();
+}
+
 void ResourceLoader::find_mods() const {
 	std::filesystem::path info_file = "mod.json";
 	std::filesystem::path description_file = "description.txt";

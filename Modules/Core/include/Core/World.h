@@ -23,6 +23,7 @@ struct ChunkRenderBuffer {
 class World {
 public:
 	void init(Player* player);
+	void uninit();
 	void update();
 	void render(std::unique_ptr<OpenGL_Renderer>& renderer);
 

@@ -29,39 +29,39 @@ void MainMenuManager::update() {
 
 
 void MainMenuManager::setup_main_page() {
-	canvas_main = CoreUI::UI_Creator::Instance().create_canvas();
+	canvas_main = CoreUI::UI_Creator::create_canvas();
 
 	uint32_t button_sprite_id = CoreResource::SpriteManager::get_instance().get_sprite9sliced_id("Core:Button").value();
 	uint32_t sprite_white_id = CoreResource::SpriteManager::get_instance().get_sprite_id("Core:White").value();
 
-	auto background = CoreUI::UI_Creator::Instance().create_image(
+	auto background = CoreUI::UI_Creator::create_image(
 		sprite_white_id, glm::vec2(SystemContext::display.ratio * 2.0f, 2.0f), glm::vec2(0.0f), glm::vec4(0.3f, 0.3f, 0.3f, 1.0f)
 	);
 
-	auto button_play = CoreUI::UI_Creator::Instance().create_button_image9sliced(
+	auto button_play = CoreUI::UI_Creator::create_button_image9sliced(
 		glm::vec2(0.7f, 0.1f), glm::vec2(0.0f, 0.4f), button_sprite_id,
 		"Play", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.08f
 	);
-	auto button_settings = CoreUI::UI_Creator::Instance().create_button_image9sliced(
+	auto button_settings = CoreUI::UI_Creator::create_button_image9sliced(
 		glm::vec2(0.7f, 0.1f), glm::vec2(0.0f, 0.275f), button_sprite_id,
 		"Settings", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.08f
 	);
-	auto button_mods = CoreUI::UI_Creator::Instance().create_button_image9sliced(
+	auto button_mods = CoreUI::UI_Creator::create_button_image9sliced(
 		glm::vec2(0.7f, 0.1f), glm::vec2(0.0f, 0.15f), button_sprite_id,
 		"Mods", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.08f
 	);
-	auto button_exit = CoreUI::UI_Creator::Instance().create_button_image9sliced(
+	auto button_exit = CoreUI::UI_Creator::create_button_image9sliced(
 		glm::vec2(0.7f, 0.1f), glm::vec2(0.0f, 0.025f), button_sprite_id,
 		"Exit", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.08f
 	);
 
-	auto menu_logo = CoreUI::UI_Creator::Instance().create_SDF_text(
+	auto menu_logo = CoreUI::UI_Creator::create_SDF_text(
 		glm::vec2(1.0f, 0.1f), glm::vec2(0.0f, 0.8f), "Main Menu", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), 0.2f
 	);
 	auto _menu_logo_text = menu_logo->get_component<CoreUI::SDF_Text>();
 	_menu_logo_text->set_alignment(CoreUI::SDF_Text::TextHorizAlign::Center_Align, CoreUI::SDF_Text::TextVertAlign::Middle_Align);
 
-	auto version = CoreUI::UI_Creator::Instance().create_SDF_text(
+	auto version = CoreUI::UI_Creator::create_SDF_text(
 		glm::vec2(0.05f, 0.1f), glm::vec2(-SystemContext::display.ratio + 0.05f, -0.95f), "Version 1.0.0", glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), 0.075f
 	);
 
@@ -79,11 +79,11 @@ void MainMenuManager::setup_main_page() {
 	canvas_main->add_object(version);
 
 	//test junk
-	auto scroll_bar_h = CoreUI::UI_Creator::Instance().create_scroll_bar(
+	auto scroll_bar_h = CoreUI::UI_Creator::create_scroll_bar(
 		glm::vec2(1.0f, 0.05f), glm::vec2(1.0f, 0.05f), glm::vec2(0.1f, 0.1f), glm::vec2(0.0f, -0.8f),
 		false, true, sprite_white_id, button_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), false
 	);
-	auto scroll_bar_v = CoreUI::UI_Creator::Instance().create_scroll_bar(
+	auto scroll_bar_v = CoreUI::UI_Creator::create_scroll_bar(
 		glm::vec2(0.05f, 1.0f), glm::vec2(0.05f, 1.0f), glm::vec2(0.1f, 0.1f), glm::vec2(1.0f, 0.0f),
 		false, true, sprite_white_id, button_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), true
 	);
@@ -92,34 +92,34 @@ void MainMenuManager::setup_main_page() {
 }
 
 void MainMenuManager::setup_settings_page() {
-	canvas_settings = CoreUI::UI_Creator::Instance().create_canvas();
+	canvas_settings = CoreUI::UI_Creator::create_canvas();
 
 	uint32_t button_sprite_id = CoreResource::SpriteManager::get_instance().get_sprite9sliced_id("Core:Button").value();
 	uint32_t sprite_white_id = CoreResource::SpriteManager::get_instance().get_sprite_id("Core:White").value();
 
-	auto background = CoreUI::UI_Creator::Instance().create_image(
+	auto background = CoreUI::UI_Creator::create_image(
 		sprite_white_id, glm::vec2(SystemContext::display.ratio * 2.0f, 2.0f), glm::vec2(0.0f), glm::vec4(0.3f, 0.3f, 0.3f, 1.0f)
 	);
 
-	auto settings_logo = CoreUI::UI_Creator::Instance().create_SDF_text(
+	auto settings_logo = CoreUI::UI_Creator::create_SDF_text(
 		glm::vec2(1.0f, 0.1f), glm::vec2(0.0f, 0.8f), "Settings", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), 0.2f
 	);
 	settings_logo->get_component<CoreUI::SDF_Text>()->set_alignment(
 		CoreUI::SDF_Text::TextHorizAlign::Center_Align, CoreUI::SDF_Text::TextVertAlign::Middle_Align);
 
-	auto button_resolution = CoreUI::UI_Creator::Instance().create_button_image9sliced(
+	auto button_resolution = CoreUI::UI_Creator::create_button_image9sliced(
 		glm::vec2(1.5f, 0.1f), glm::vec2(0.0f, 0.545f), button_sprite_id,
 		"Resolution: 1920x1080", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
-	auto button_fullscreen = CoreUI::UI_Creator::Instance().create_button_image9sliced(
+	auto button_fullscreen = CoreUI::UI_Creator::create_button_image9sliced(
 		glm::vec2(0.7f, 0.1f), glm::vec2(-0.4f, 0.42f), button_sprite_id,
 		"Fullscreen: OFF", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
-	auto button_vsync = CoreUI::UI_Creator::Instance().create_button_image9sliced(
+	auto button_vsync = CoreUI::UI_Creator::create_button_image9sliced(
 		glm::vec2(0.7f, 0.1f), glm::vec2(0.4f, 0.42f), button_sprite_id,
 		"Vsync: ON", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
-	auto button_exit = CoreUI::UI_Creator::Instance().create_button_image9sliced(
+	auto button_exit = CoreUI::UI_Creator::create_button_image9sliced(
 		glm::vec2(0.7f, 0.1f), glm::vec2(0.0f, -0.8f), button_sprite_id,
 		"Save&Exit", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
@@ -145,21 +145,21 @@ void MainMenuManager::setup_settings_page() {
 }
 
 void MainMenuManager::setup_saves_page() {
-	canvas_saves = CoreUI::UI_Creator::Instance().create_canvas();
+	canvas_saves = CoreUI::UI_Creator::create_canvas();
 
 	uint32_t tooltip_sprite_id = CoreResource::SpriteManager::get_instance().get_sprite9sliced_id("Core:Tooltip").value();
 	uint32_t button_sprite_id = CoreResource::SpriteManager::get_instance().get_sprite9sliced_id("Core:Button").value();
 	uint32_t sprite_white_id = CoreResource::SpriteManager::get_instance().get_sprite_id("Core:White").value();
 
-	auto background = CoreUI::UI_Creator::Instance().create_image(
+	auto background = CoreUI::UI_Creator::create_image(
 		sprite_white_id, glm::vec2(SystemContext::display.ratio * 2.0f, 2.0f), glm::vec2(0.0f), glm::vec4(0.3f, 0.3f, 0.3f, 1.0f)
 	);
 
-	auto button_back = CoreUI::UI_Creator::Instance().create_button_image9sliced(
+	auto button_back = CoreUI::UI_Creator::create_button_image9sliced(
 		glm::vec2(0.9f, 0.1f), glm::vec2(-0.5f, -0.8f), button_sprite_id,
 		"Back", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
-	auto button_create = CoreUI::UI_Creator::Instance().create_button_image9sliced(
+	auto button_create = CoreUI::UI_Creator::create_button_image9sliced(
 		glm::vec2(0.9f, 0.1f), glm::vec2(0.5f, -0.8f), button_sprite_id,
 		"Create", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
@@ -167,18 +167,18 @@ void MainMenuManager::setup_saves_page() {
 	button_back->get_component<CoreUI::Button>()->on_button_click.set_callback_method<MainMenuManager, &MainMenuManager::close_saves_page>(&Instance());
 	button_create->get_component<CoreUI::Button>()->on_button_click.set_callback_method<MainMenuManager, &MainMenuManager::open_creator_page>(&Instance());
 
-	auto saves_panel = CoreUI::UI_Creator::Instance().create_panel(
+	auto saves_panel = CoreUI::UI_Creator::create_panel(
 		glm::vec2(2.0f, 1.4f), glm::vec2(0.0f), sprite_white_id, glm::vec4(1.0f, 1.0f, 1.0f, 0.5f)
 	);
 
-	auto saves_scroll_view = CoreUI::UI_Creator::Instance().create_scroll_view(
+	auto saves_scroll_view = CoreUI::UI_Creator::create_scroll_view(
 		glm::vec2(2.0f, 1.4f), glm::vec2(0.0f)
 	);
 	auto scroll_view = saves_scroll_view->get_component<CoreUI::ScrollView>();
 	scroll_view->set_group_layout(CoreUI::ScrollView::GroupLayout::LAYOUT_VERTICAL);
 
 	for (int i = 0; i < 30; ++i) {
-		auto save_image_obj = CoreUI::UI_Creator::Instance().create_image9sliced(
+		auto save_image_obj = CoreUI::UI_Creator::create_image9sliced(
 			tooltip_sprite_id, glm::vec2(1.9f, 0.35f), glm::vec2(0.0f), glm::vec4(1.0f)
 		);
 
@@ -191,7 +191,7 @@ void MainMenuManager::setup_saves_page() {
 	canvas_saves->add_object(button_create);
 	canvas_saves->add_object(saves_panel);
 
-	auto scroll_bar_Y = CoreUI::UI_Creator::Instance().create_scroll_bar(
+	auto scroll_bar_Y = CoreUI::UI_Creator::create_scroll_bar(
 		glm::vec2(0.08f, 1.4f), glm::vec2(0.08f, 1.4f), glm::vec2(0.08f, 0.08f), glm::vec2(0.96f, 0.0f),
 		false, true, sprite_white_id, button_sprite_id, glm::vec4(0.0f, 0.3f, 0.7f, 1.0f), glm::vec4(0.0f, 0.0f, 0.6f, 1.0f), true
 	);
@@ -203,11 +203,11 @@ void MainMenuManager::setup_saves_page() {
 }
 
 void MainMenuManager::setup_mods_page() {
-	canvas_mods = CoreUI::UI_Creator::Instance().create_canvas();
+	canvas_mods = CoreUI::UI_Creator::create_canvas();
 }
 
 void MainMenuManager::setup_creator_page() {
-	canvas_creator = CoreUI::UI_Creator::Instance().create_canvas();
+	canvas_creator = CoreUI::UI_Creator::create_canvas();
 }
 
 

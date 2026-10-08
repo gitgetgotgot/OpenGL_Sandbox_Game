@@ -59,7 +59,7 @@ void Game::init() {
 	init_open_gl();
 	init_input();
 
-	ResourceLoader::get_instance().Load_Resources();
+	ResourceLoader::Instance().Load_Resources();
 
 	CoreUI::UI_System::Instance().init();
 
@@ -97,6 +97,11 @@ void Game::main_loop() {
 }
 
 void Game::uninit() {
+	ResourceLoader::Instance().Unload();
+	CoreUI::UI_System::Instance().uninit();
+	CoreEntity::EntitySystem::Instance().uninit();
+	if (world) world->uninit();
+
 	glfwDestroyWindow(window);
 	glfwTerminate();
 }
@@ -114,7 +119,9 @@ void Game::init_open_gl() {
 	glfwMakeContextCurrent(window);
 	glfwSetWindowAspectRatio(window, 16, 9);
 
-	gladLoadGL();
+	int version = gladLoadGL((GLADloadfunc)glfwGetProcAddress);
+	if (!version)
+		throw std::runtime_error("Failed to initialize GLAD 2!");
 
 	//openGL version and GPU info
 	std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
