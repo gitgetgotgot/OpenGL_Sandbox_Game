@@ -1,3 +1,4 @@
 # C++-OpenGL-Sandbox-Game
-Simple 2d sandbox, inspired by Terraria, written in C++/C and OpenGL
-Uses CMake and preloaded libraries
+Custom engine written in C++/C and OpenGL for simple 2d sandbox game, inspired by Terraria.</br>
+Uses CMake & Conan for build.</br>
+Also has built-in mods system.
