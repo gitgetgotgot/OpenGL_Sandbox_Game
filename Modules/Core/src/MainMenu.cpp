@@ -8,6 +8,8 @@
 #include <UI/UI_ObjectManager.h>
 #include <Resources/Sprite.h>
 #include <IOSystem/SystemContext.h>
+#include <filesystem>
+#include <Audio/AudioSystem.h>
 
 void MainMenuManager::init() {
 	setup_main_page();
@@ -21,6 +23,8 @@ void MainMenuManager::init() {
 	canvas_saves->is_enabled = false;
 	canvas_mods->is_enabled = false;
 	canvas_creator->is_enabled = false;
+
+	button_click_sound.setup_audio_source("Core:Button");
 }
 
 void MainMenuManager::update() {
@@ -77,18 +81,6 @@ void MainMenuManager::setup_main_page() {
 	canvas_main->add_object(button_exit);
 	canvas_main->add_object(menu_logo);
 	canvas_main->add_object(version);
-
-	//test junk
-	auto scroll_bar_h = CoreUI::UI_Creator::create_scroll_bar(
-		glm::vec2(1.0f, 0.05f), glm::vec2(1.0f, 0.05f), glm::vec2(0.1f, 0.1f), glm::vec2(0.0f, -0.8f),
-		false, true, sprite_white_id, button_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), false
-	);
-	auto scroll_bar_v = CoreUI::UI_Creator::create_scroll_bar(
-		glm::vec2(0.05f, 1.0f), glm::vec2(0.05f, 1.0f), glm::vec2(0.1f, 0.1f), glm::vec2(1.0f, 0.0f),
-		false, true, sprite_white_id, button_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), true
-	);
-	canvas_main->add_object(scroll_bar_h);
-	canvas_main->add_object(scroll_bar_v);
 }
 
 void MainMenuManager::setup_settings_page() {
@@ -124,12 +116,43 @@ void MainMenuManager::setup_settings_page() {
 		"Save&Exit", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
 
+	auto scroll_master_volume = CoreUI::UI_Creator::create_scroll_bar(
+		glm::vec2(1.0f, 0.075f), glm::vec2(1.0f, 0.025f), glm::vec2(0.075f, 0.075f), glm::vec2(0.3f, 0.295f),
+		false, true, sprite_white_id, button_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), false
+	);
+	auto scroll_music_volume = CoreUI::UI_Creator::create_scroll_bar(
+		glm::vec2(1.0f, 0.075f), glm::vec2(1.0f, 0.025f), glm::vec2(0.075f, 0.075f), glm::vec2(0.3f, 0.17f),
+		false, true, sprite_white_id, button_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), false
+	);
+	auto scroll_sfx_volume = CoreUI::UI_Creator::create_scroll_bar(
+		glm::vec2(1.0f, 0.075f), glm::vec2(1.0f, 0.025f), glm::vec2(0.075f, 0.075f), glm::vec2(0.3f, 0.045f),
+		false, true, sprite_white_id, button_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), false
+	);
+
+	auto master_volume_text = CoreUI::UI_Creator::create_SDF_text(
+		glm::vec2(1.0f, 0.1f), glm::vec2(-0.3f, 0.295f), "Master Volume:", glm::vec4(1.0f), 0.07f
+	);
+	auto music_volume_text = CoreUI::UI_Creator::create_SDF_text(
+		glm::vec2(1.0f, 0.1f), glm::vec2(-0.3f, 0.17f), "Music Volume:", glm::vec4(1.0f), 0.07f
+	);
+	auto sfx_volume_text = CoreUI::UI_Creator::create_SDF_text(
+		glm::vec2(1.0f, 0.1f), glm::vec2(-0.3f, 0.045f), "SFX Volume:", glm::vec4(1.0f), 0.07f
+	);
+
 	SettingsManager::Instance().resolution_text = CoreUI::UI_ObjectManager::get_instance().get(
 		button_resolution->transform.children[1])->get_component<CoreUI::SDF_Text>();
 	SettingsManager::Instance().fullscreen_text = CoreUI::UI_ObjectManager::get_instance().get(
 		button_fullscreen->transform.children[1])->get_component<CoreUI::SDF_Text>();
 	SettingsManager::Instance().vsync_text = CoreUI::UI_ObjectManager::get_instance().get(
 		button_vsync->transform.children[1])->get_component<CoreUI::SDF_Text>();
+
+	auto master_volume_slider = scroll_master_volume->get_component<CoreUI::ScrollBar>();
+	auto music_volume_slider = scroll_music_volume->get_component<CoreUI::ScrollBar>();
+	auto sfx_volume_slider = scroll_sfx_volume->get_component<CoreUI::ScrollBar>();
+	SettingsManager::Instance().volume_slider_master = master_volume_slider;
+	SettingsManager::Instance().volume_slider_music = music_volume_slider;
+	SettingsManager::Instance().volume_slider_sfx = sfx_volume_slider;
+	master_volume_slider->on_value_changed.set_callback_method<SettingsManager, &SettingsManager::set_master_volume>(&SettingsManager::Instance());
 
 	button_resolution->get_component<CoreUI::Button>()->on_button_click.set_callback_method<SettingsManager, &SettingsManager::change_resolution>(&SettingsManager::Instance());
 	button_fullscreen->get_component<CoreUI::Button>()->on_button_click.set_callback_method<SettingsManager, &SettingsManager::toggle_fullscreen>(&SettingsManager::Instance());
@@ -141,6 +164,12 @@ void MainMenuManager::setup_settings_page() {
 	canvas_settings->add_object(button_resolution);
 	canvas_settings->add_object(button_fullscreen);
 	canvas_settings->add_object(button_vsync);
+	canvas_settings->add_object(scroll_master_volume);
+	canvas_settings->add_object(scroll_music_volume);
+	canvas_settings->add_object(scroll_sfx_volume);
+	canvas_settings->add_object(master_volume_text);
+	canvas_settings->add_object(music_volume_text);
+	canvas_settings->add_object(sfx_volume_text);
 	canvas_settings->add_object(button_exit);
 }
 
@@ -225,35 +254,43 @@ void MainMenuManager::close_main_page() {
 void MainMenuManager::open_settings_page() {
 	canvas_main->is_enabled = false;
 	canvas_settings->is_enabled = true;
+	button_click_sound.play(true);
 }
 void MainMenuManager::close_settings_page() {
 	canvas_main->is_enabled = true;
 	canvas_settings->is_enabled = false;
+	button_click_sound.stop();
 }
 
 void MainMenuManager::open_saves_page() {
 	canvas_main->is_enabled = false;
 	canvas_saves->is_enabled = true;
+	button_click_sound.play();
 }
 void MainMenuManager::close_saves_page() {
 	canvas_main->is_enabled = true;
 	canvas_saves->is_enabled = false;
+	button_click_sound.play();
 }
 
 void MainMenuManager::open_mods_page() {
 	canvas_main->is_enabled = false;
 	canvas_mods->is_enabled = true;
+	button_click_sound.play();
 }
 void MainMenuManager::close_mods_page() {
 	canvas_main->is_enabled = true;
 	canvas_mods->is_enabled = false;
+	button_click_sound.play();
 }
 
 void MainMenuManager::open_creator_page() {
 	canvas_saves->is_enabled = false;
 	canvas_saves->is_enabled = true;
+	button_click_sound.play();
 }
 void MainMenuManager::close_creator_page() {
 	canvas_saves->is_enabled = true;
 	canvas_saves->is_enabled = false;
+	button_click_sound.play();
 }

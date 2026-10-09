@@ -101,7 +101,7 @@ void CoreUI::ScrollBar::_on_track_held() {
 	if (current_scroll_value != scroll_value) {
 		scroll_value = current_scroll_value;
 		_update_thumb_pos();
-		on_value_changed();
+		on_value_changed(scroll_value);
 	}
 }
 
@@ -120,7 +120,7 @@ void CoreUI::ScrollBar::_on_thumb_drag(float thumb_x, float thumb_y, float prev_
 	if (is_discrete)
 		scroll_value = std::round(scroll_value / thumb_step_size) * thumb_step_size;
 	_update_thumb_pos();
-	on_value_changed();
+	on_value_changed(scroll_value);
 }
 
 void CoreUI::ScrollBar::_on_thumb_step(float thumb_x, float thumb_y) {
@@ -139,7 +139,7 @@ void CoreUI::ScrollBar::_on_thumb_step(float thumb_x, float thumb_y) {
 	if (is_discrete)
 		scroll_value = std::round(scroll_value / thumb_step_size) * thumb_step_size;
 	_update_thumb_pos();
-	on_value_changed();
+	on_value_changed(scroll_value);
 }
 
 /*

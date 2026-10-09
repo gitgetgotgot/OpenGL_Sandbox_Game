@@ -1,5 +1,6 @@
 #pragma once
 #include <UI/Canvas.h>
+#include <Audio/AudioSource.h>
 
 class MainMenuManager {
 public:
@@ -36,5 +37,5 @@ private:
 	CoreUI::UI_Canvas_Ptr canvas_saves;
 	CoreUI::UI_Canvas_Ptr canvas_mods;
 	CoreUI::UI_Canvas_Ptr canvas_creator;
-
+	AudioSource button_click_sound;
 };

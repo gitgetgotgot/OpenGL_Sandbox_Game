@@ -51,7 +51,7 @@ target_link_libraries(IOSystem
 )
 target_link_libraries(IOSystem PUBLIC Utility)
 
-target_link_libraries(Audio PRIVATE miniaudio::miniaudio)
+target_link_libraries(Audio PUBLIC miniaudio::miniaudio)
 
 target_link_libraries(Physics PUBLIC glm::glm)
 
@@ -78,19 +78,6 @@ target_compile_definitions(Core PRIVATE
     $<$<CONFIG:Debug>:DEBUG_MODE=1>
     $<$<CONFIG:Release>:DEBUG_MODE=0>
 )
-
-set(GAME_DATA_DIRS
-    Resources
-    Saves
-)
-
-foreach(dir ${GAME_DATA_DIRS})
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-            "${PROJECT_SOURCE_DIR}/${dir}"
-            $<TARGET_FILE_DIR:${PROJECT_NAME}>/${dir}
-    )
-endforeach()
 
 add_executable(DataCompiler
     "${PROJECT_SOURCE_DIR}/Tools/DataCompiler/DataCompilerMain.cpp"

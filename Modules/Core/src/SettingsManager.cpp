@@ -1,5 +1,6 @@
 #include "Core/SettingsManager.h"
 #include <IOSystem/SystemContext.h>
+#include <Audio/AudioSystem.h>
 
 void SettingsManager::load_settings() {
 
@@ -29,4 +30,16 @@ void SettingsManager::toggle_vsync() {
 		vsync_text->set_text("Vsync: ON");
 	else
 		vsync_text->set_text("Vsync: OFF");
+}
+
+void SettingsManager::set_master_volume(float volume) {
+	AudioSystem::Instance().set_global_volume(volume);
+}
+
+void SettingsManager::set_music_volume(float volume) {
+
+}
+
+void SettingsManager::set_sfx_volume(float volume) {
+
 }

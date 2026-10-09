@@ -28,9 +28,9 @@ namespace CoreUI {
 		bool _is_pointed = false;
 		bool _is_pressed = false;
 
-		FunctionWrapper on_button_click;
-		FunctionWrapper on_cursor_enter;
-		FunctionWrapper on_cursor_exit;
+		FunctionWrapper<> on_button_click;
+		FunctionWrapper<> on_cursor_enter;
+		FunctionWrapper<> on_cursor_exit;
 		UI_Component_Ptr<Image> button_image;
 		UI_Component_Ptr<SDF_Text> button_text;
 	private:

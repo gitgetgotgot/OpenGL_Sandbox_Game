@@ -25,8 +25,8 @@ namespace CoreUI {
 		bool has_vertical_scrollbar = false;
 		bool has_horizontal_scrollbar = false;
 	private:
-		void _set_normalized_offset_x();
-		void _set_normalized_offset_y();
+		void _set_normalized_offset_x(float value);
+		void _set_normalized_offset_y(float value);
 
 		bool _is_pointed = false;
 		bool _is_pressed = false;

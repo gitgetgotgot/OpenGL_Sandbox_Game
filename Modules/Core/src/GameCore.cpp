@@ -2,6 +2,8 @@
 #include "Core/ResourceLoader.h"
 #include "Core/MainMenu.h"
 #include <UI/UI_System.h>
+#include <Audio/AudioSystem.h>
+#include <Utility/TimeManager.h>
 #include <thread>
 
 Game::~Game() {
@@ -9,7 +11,7 @@ Game::~Game() {
 }
 
 bool Game::update() {
-	timeMgr.update();
+	TimeManager::Instance().update();
 
 	SystemContext::mouse.get_mouse_ortho_coords(SystemContext::display);
 
@@ -25,6 +27,7 @@ bool Game::update() {
 	}
 
 	CoreUI::UI_System::Instance().update();
+	AudioSystem::Instance().update();
 
 	return 1;
 }
@@ -58,6 +61,15 @@ void Game::init() {
 
 	init_open_gl();
 	init_input();
+
+	AudioSystem::Instance().init();
+
+	std::filesystem::path base_path = RESOURCE_ROOT;
+	std::filesystem::path p;
+	p = base_path / "Resources/audio/sounds/click_stereo.ogg";
+	AudioSystem::Instance().load_audio_as_pcm(p, "Core:Button");
+	p = base_path / "Resources/audio/sounds/Item_36_shotgun.wav";
+	AudioSystem::Instance().load_audio_as_pcm(p, "Core:Shotgun");
 
 	ResourceLoader::Instance().Load_Resources();
 
@@ -98,8 +110,10 @@ void Game::main_loop() {
 
 void Game::uninit() {
 	ResourceLoader::Instance().Unload();
+	AudioSystem::Instance().uninit();
 	CoreUI::UI_System::Instance().uninit();
 	CoreEntity::EntitySystem::Instance().uninit();
+
 	if (world) world->uninit();
 
 	glfwDestroyWindow(window);
