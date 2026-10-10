@@ -24,7 +24,8 @@ void CoreAudio::AudioSystem::init() {
         free_stream_sounds[i] = i;
     }
 
-    sounds.emplace_back();
+    audio_pcm_database.emplace_back();
+    audio_stream_database.emplace_back();
     sound_groups.emplace_back();
 }
 
@@ -97,23 +98,15 @@ void CoreAudio::AudioSystem::load_audio_as_pcm(
     audio_res->frames_read = frames_read;
     audio_res->channels = decoder.outputChannels;
     audio_res->sample_rate = decoder.outputSampleRate;
-    audio_res->MAX_INSTANCE_COUNT = MAX_INSTANCE;
-    auto group_id = get_id_with_uid(group_UID);
-    if (group_id.has_value())
-        audio_res->sound_group_ID = group_id.value();
-    else {
-        std::cerr << "[AudioSystem] Failed to get group for PCM sound: " << filePath << std::endl;
-        return;
-    }
 
     ma_decoder_uninit(&decoder);
 
-    std::string_view uid_view = sound_UID.emplace_back(UID);
-    UID_to_ID.emplace(uid_view, sounds.size());
-    sounds.emplace_back(SoundEntry{ SoundType::SOUND_PCM,static_cast<uint16_t>(audio_pcm_database.size()) });
+    audio_UID.push_back(UID);
+    std::string_view uid_view = audio_UID.back();
+    UID_to_ID.emplace(uid_view, audio_pcm_database.size());
     auto& new_audio_res = audio_pcm_database.emplace_back(std::move(audio_res));
 
-    std::cout << "[AudioSystem] Loaded PCM sound: <" << uid_view << "> (" <<
+    std::cout << "[AudioSystem] Loaded audio PCM: <" << uid_view << "> (" <<
         (new_audio_res->pcm_data.size() * sizeof(float)) / 1024.0f << " KB)\n";
 }
 
@@ -123,29 +116,7 @@ void CoreAudio::AudioSystem::load_audio_as_stream(
     const std::string group_UID,
     uint8_t MAX_INSTANCE
 ) {
-    if (!std::filesystem::exists(filePath)) {
-        std::cerr << "[AudioSystem] File doesnt exist or currupted: " << filePath << std::endl;
-        return;
-    }
 
-    auto audio_res = std::make_unique<AudioStreamResource>();
-    audio_res->file_path = filePath;
-    audio_res->MAX_INSTANCE_COUNT = MAX_INSTANCE;
-
-    auto group_id = get_id_with_uid(group_UID);
-    if (group_id.has_value())
-        audio_res->sound_group_ID = group_id.value();
-    else {
-        std::cerr << "[AudioSystem] Failed to get group for Stream sound: " << filePath << std::endl;
-        return;
-    }
-
-    std::string_view uid_view = sound_UID.emplace_back(UID);
-    UID_to_ID.emplace(uid_view, sounds.size());
-    sounds.emplace_back(SoundEntry{ SoundType::SOUND_STREAM,static_cast<uint16_t>(audio_stream_database.size()) });
-    audio_stream_database.emplace_back(std::move(audio_res));
-
-    std::cout << "[AudioSystem] Loaded stream sound : <" << uid_view << ">\n";
 }
 
 void CoreAudio::AudioSystem::add_sound_group(const std::string UID) {
@@ -164,7 +135,8 @@ void CoreAudio::AudioSystem::play_audio_directly(const std::filesystem::path& pa
 }
 
 CoreAudio::Sound_Instance_ID CoreAudio::AudioSystem::play_audio_pcm(
-    const uint16_t& sound_ID, bool loop, bool positioned, float x, float y, float z
+    const uint16_t& sound_ID, bool loop, bool positioned = false,
+    float x = 0.0f, float y = 0.0f, float z = 0.0f
 ) {
     if (free_sounds.empty())
         return Sound_Instance_ID{ 0, 0 };
@@ -199,7 +171,8 @@ CoreAudio::Sound_Instance_ID CoreAudio::AudioSystem::play_audio_pcm(
 }
 
 CoreAudio::Sound_Instance_ID CoreAudio::AudioSystem::play_audio_stream(
-    const uint16_t& sound_ID, bool loop, bool positioned, float x, float y, float z
+    const uint16_t& sound_ID, bool loop, bool positioned = false,
+    float x = 0.0f, float y = 0.0f, float z = 0.0f
 ) {
     if (free_stream_sounds.empty())
         return Sound_Instance_ID{ 0, 0 };
@@ -236,7 +209,8 @@ CoreAudio::Sound_Instance_ID CoreAudio::AudioSystem::play_audio_stream(
 }
 
 CoreAudio::Sound_Instance_ID CoreAudio::AudioSystem::play_sound(
-    const uint16_t& sound_ID, bool loop, bool positioned, float x, float y, float z
+    const uint16_t& sound_ID, bool loop, bool positioned = false,
+    float x = 0.0f, float y = 0.0f, float z = 0.0f
 ) {
     SoundEntry& entry = sounds[sound_ID];
     if (entry.type == SOUND_PCM) return play_audio_pcm(entry.id, loop, positioned, x, y, z);
@@ -305,7 +279,7 @@ void CoreAudio::AudioSystem::set_master_volume(float volume) {
     ma_engine_set_volume(&audio_engine, volume);
 }
 float CoreAudio::AudioSystem::get_master_volume() {
-    return ma_engine_get_volume(&audio_engine);
+    ma_engine_get_volume(&audio_engine);
 }
 
 void CoreAudio::AudioSystem::set_group_volume(uint32_t ID, float volume) {

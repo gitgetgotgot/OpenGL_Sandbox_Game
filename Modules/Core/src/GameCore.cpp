@@ -27,7 +27,7 @@ bool Game::update() {
 	}
 
 	CoreUI::UI_System::Instance().update();
-	AudioSystem::Instance().update();
+	CoreAudio::AudioSystem::Instance().update();
 
 	return 1;
 }
@@ -62,14 +62,23 @@ void Game::init() {
 	init_open_gl();
 	init_input();
 
-	AudioSystem::Instance().init();
+	CoreAudio::AudioSystem::Instance().init();
+	CoreAudio::AudioSystem::Instance().add_sound_group("Core:UI");
+	CoreAudio::AudioSystem::Instance().add_sound_group("Core:Music");
+	CoreAudio::AudioSystem::Instance().add_sound_group("Core:SFX");
 
 	std::filesystem::path base_path = RESOURCE_ROOT;
 	std::filesystem::path p;
 	p = base_path / "Resources/audio/sounds/click_stereo.ogg";
-	AudioSystem::Instance().load_audio_as_pcm(p, "Core:Button");
+	CoreAudio::AudioSystem::Instance().load_audio_as_pcm(p, "Core:Button", "Core:SFX", 5);
 	p = base_path / "Resources/audio/sounds/Item_36_shotgun.wav";
-	AudioSystem::Instance().load_audio_as_pcm(p, "Core:Shotgun");
+	CoreAudio::AudioSystem::Instance().load_audio_as_pcm(p, "Core:Shotgun", "Core:SFX", 5);
+	p = base_path / "Resources/audio/music/Music-Overworld_Day.mp3";
+	CoreAudio::AudioSystem::Instance().load_audio_as_stream(p, "Core:Music1", "Core:Music", 1);
+
+	CoreAudio::AudioSource music_s;
+	music_s.setup_source("Core:Music1");
+	music_s.play(true);
 
 	ResourceLoader::Instance().Load_Resources();
 
@@ -110,7 +119,7 @@ void Game::main_loop() {
 
 void Game::uninit() {
 	ResourceLoader::Instance().Unload();
-	AudioSystem::Instance().uninit();
+	CoreAudio::AudioSystem::Instance().uninit();
 	CoreUI::UI_System::Instance().uninit();
 	CoreEntity::EntitySystem::Instance().uninit();
 

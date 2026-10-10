@@ -58,14 +58,14 @@ void CoreAudio::AudioSource::play(bool loop) {
 
 void CoreAudio::AudioSource::stop() {
 	if (sound_ID && sound_generation) {
-		AudioSystem::Instance().stop_sound(sound_ID, sound_instance_ID, sound_generation);
+		AudioSystem::Instance().stop_sound(sound_instance_ID, sound_generation);
 		sound_generation = 0;
 	}
 }
 
 bool CoreAudio::AudioSource::is_playing() const {
 	if (sound_ID && sound_generation)
-		return AudioSystem::Instance().sound_is_playing(sound_ID, sound_instance_ID, sound_generation);
+		return AudioSystem::Instance().sound_is_playing(sound_instance_ID, sound_generation);
 	else
 		return false;
 }

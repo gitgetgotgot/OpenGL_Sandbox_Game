@@ -3,6 +3,7 @@
 #include <UI/SDF_Text.h>
 #include <UI/ScrollBar.h>
 #include <Utility/TextBufferBuilder.h>
+#include <Audio/AudioGroupMixer.h>
 
 class SettingsManager {
 	friend class MainMenuManager;
@@ -22,9 +23,15 @@ private:
 	CoreUI::UI_Component_Ptr<CoreUI::SDF_Text> resolution_text;
 	CoreUI::UI_Component_Ptr<CoreUI::SDF_Text> fullscreen_text;
 	CoreUI::UI_Component_Ptr<CoreUI::SDF_Text> vsync_text;
+
 	CoreUI::UI_Component_Ptr<CoreUI::ScrollBar> volume_slider_master;
 	CoreUI::UI_Component_Ptr<CoreUI::ScrollBar> volume_slider_sfx;
 	CoreUI::UI_Component_Ptr<CoreUI::ScrollBar> volume_slider_music;
+
+	CoreAudio::AudioGroupMixer mixer_ui;
+	CoreAudio::AudioGroupMixer mixer_music;
+	CoreAudio::AudioGroupMixer mixer_sfx;
+
 	bool fullscreen = false;
 	bool vsync_on = true;
 	uint32_t current_resolution_index = 0;

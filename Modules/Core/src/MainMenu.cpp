@@ -12,6 +12,8 @@
 #include <Audio/AudioSystem.h>
 
 void MainMenuManager::init() {
+	SettingsManager::Instance().load_settings();
+
 	setup_main_page();
 	setup_settings_page();
 	setup_saves_page();
@@ -24,7 +26,7 @@ void MainMenuManager::init() {
 	canvas_mods->is_enabled = false;
 	canvas_creator->is_enabled = false;
 
-	button_click_sound.setup_audio_source("Core:Button");
+	button_click_sound.setup_source("Core:Button");
 }
 
 void MainMenuManager::update() {
@@ -153,6 +155,8 @@ void MainMenuManager::setup_settings_page() {
 	SettingsManager::Instance().volume_slider_music = music_volume_slider;
 	SettingsManager::Instance().volume_slider_sfx = sfx_volume_slider;
 	master_volume_slider->on_value_changed.set_callback_method<SettingsManager, &SettingsManager::set_master_volume>(&SettingsManager::Instance());
+	music_volume_slider->on_value_changed.set_callback_method<SettingsManager, &SettingsManager::set_music_volume>(&SettingsManager::Instance());
+	sfx_volume_slider->on_value_changed.set_callback_method<SettingsManager, &SettingsManager::set_sfx_volume>(&SettingsManager::Instance());
 
 	button_resolution->get_component<CoreUI::Button>()->on_button_click.set_callback_method<SettingsManager, &SettingsManager::change_resolution>(&SettingsManager::Instance());
 	button_fullscreen->get_component<CoreUI::Button>()->on_button_click.set_callback_method<SettingsManager, &SettingsManager::toggle_fullscreen>(&SettingsManager::Instance());
@@ -254,12 +258,12 @@ void MainMenuManager::close_main_page() {
 void MainMenuManager::open_settings_page() {
 	canvas_main->is_enabled = false;
 	canvas_settings->is_enabled = true;
-	button_click_sound.play(true);
+	button_click_sound.play();
 }
 void MainMenuManager::close_settings_page() {
 	canvas_main->is_enabled = true;
 	canvas_settings->is_enabled = false;
-	button_click_sound.stop();
+	button_click_sound.play();
 }
 
 void MainMenuManager::open_saves_page() {

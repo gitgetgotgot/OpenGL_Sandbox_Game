@@ -1,0 +1,9 @@
+[
+  {
+    "UID": "Core:Button",
+    "file": "sounds/click_stereo.ogg",
+    "group": "Core:UI",
+    "PCM": true,
+    "MAX_INSTANCE": 5
+  }
+]
