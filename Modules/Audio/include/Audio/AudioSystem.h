@@ -55,6 +55,7 @@ namespace CoreAudio {
         void free_stream_sound(const uint8_t& instance);
 
         void set_listener_pos(float x, float y, float z);
+        void set_listener_direction(float x, float y, float z);
 
         void set_master_volume(float volume);
         float get_master_volume();

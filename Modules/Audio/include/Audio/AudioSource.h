@@ -13,7 +13,10 @@ namespace CoreAudio {
 
 		void setup_source(uint16_t sound_ID);
 		void setup_source(std::string_view sound_UID);
-		void play(bool loop = false);
+		void play(
+			bool loop = false, bool positioned = false,
+			float x = 0.0f, float y = 0.0f, float z = 0.0f
+		);
 		void stop();
 		bool is_playing() const;
 		void set_volume(float volume);

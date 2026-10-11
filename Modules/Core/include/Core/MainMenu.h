@@ -38,4 +38,5 @@ private:
 	CoreUI::UI_Canvas_Ptr canvas_mods;
 	CoreUI::UI_Canvas_Ptr canvas_creator;
 	CoreAudio::AudioSource button_click_sound;
+	CoreAudio::AudioSource music_test;
 };

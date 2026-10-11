@@ -192,6 +192,10 @@ CoreAudio::Sound_Instance_ID CoreAudio::AudioSystem::play_audio_pcm(
 
     ma_sound_init_from_data_source(&audio_engine, &sound_slot.audio_buffer, 0, &sound_groups[audio_res.sound_group_ID]->group, &sound_slot.sound);
     ma_sound_set_looping(&sound_slot.sound, loop ? MA_TRUE : MA_FALSE);
+    if (positioned) {
+        ma_sound_set_spatialization_enabled(&sound_slot.sound, MA_TRUE);
+        ma_sound_set_position(&sound_slot.sound, x, y, z);
+    }
     ma_sound_start(&sound_slot.sound);
 
     ++audio_res.current_instance_count;
@@ -228,6 +232,10 @@ CoreAudio::Sound_Instance_ID CoreAudio::AudioSystem::play_audio_stream(
 
     ma_sound_init_from_data_source(&audio_engine, &sound_slot.decoder, 0, &sound_groups[audio_res.sound_group_ID]->group, &sound_slot.sound);
     ma_sound_set_looping(&sound_slot.sound, loop ? MA_TRUE : MA_FALSE);
+    if (positioned) {
+        ma_sound_set_spatialization_enabled(&sound_slot.sound, MA_TRUE);
+        ma_sound_set_position(&sound_slot.sound, x, y, z);
+    }
     ma_sound_start(&sound_slot.sound);
 
     ++audio_res.current_instance_count;
@@ -299,6 +307,9 @@ void CoreAudio::AudioSystem::free_stream_sound(const uint8_t& instance) {
 
 void CoreAudio::AudioSystem::set_listener_pos(float x, float y, float z) {
     ma_engine_listener_set_position(&audio_engine, 0, x, y, z);
+}
+void CoreAudio::AudioSystem::set_listener_direction(float x, float y, float z) {
+    ma_engine_listener_set_direction(&audio_engine, 0, x, y, z);
 }
 
 void CoreAudio::AudioSystem::set_master_volume(float volume) {

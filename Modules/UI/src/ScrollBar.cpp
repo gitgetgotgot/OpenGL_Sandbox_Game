@@ -141,17 +141,3 @@ void CoreUI::ScrollBar::_on_thumb_step(float thumb_x, float thumb_y) {
 	_update_thumb_pos();
 	on_value_changed(scroll_value);
 }
-
-/*
-// 2. Радуга охватывает спектр H (Hue) от 0.0 до 1.0
-// Умножение на 6.0f разбивает спектр на 6 цветовых секторов (R->Y->G->C->B->M->R)
-float hue = current_value * 6.0f;
-
-// 3. Вычисляем компоненты RGB через смещение фаз
-float r = std::clamp(std::abs(hue - 3.0f) - 1.0f, 0.0f, 1.0f);
-float g = std::clamp(2.0f - std::abs(hue - 2.0f), 0.0f, 1.0f);
-float b = std::clamp(2.0f - std::abs(hue - 4.0f), 0.0f, 1.0f);
-glm::vec4 color(r, g, b, 1.0f);
-
-thumb_img->set_color(color);
-*/

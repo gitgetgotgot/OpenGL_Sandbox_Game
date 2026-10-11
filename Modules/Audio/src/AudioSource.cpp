@@ -47,7 +47,7 @@ void CoreAudio::AudioSource::setup_source(std::string_view sound_UID) {
 		this->sound_ID = 0;
 }
 
-void CoreAudio::AudioSource::play(bool loop) {
+void CoreAudio::AudioSource::play(bool loop, bool positioned, float x, float y, float z) {
 	if (sound_ID) {
 		stop();
 		auto result = AudioSystem::Instance().play_sound(sound_ID, loop);
@@ -72,10 +72,10 @@ bool CoreAudio::AudioSource::is_playing() const {
 
 void CoreAudio::AudioSource::set_volume(float volume) {
 	this->volume = volume;
-
+	//
 }
 
 void CoreAudio::AudioSource::set_pitch(float pitch) {
 	this->pitch = pitch;
-
+	//
 }

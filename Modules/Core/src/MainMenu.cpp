@@ -27,6 +27,7 @@ void MainMenuManager::init() {
 	canvas_creator->is_enabled = false;
 
 	button_click_sound.setup_source("Core:Button");
+	music_test.setup_source("Core:MusicTest");
 }
 
 void MainMenuManager::update() {
@@ -269,12 +270,12 @@ void MainMenuManager::close_settings_page() {
 void MainMenuManager::open_saves_page() {
 	canvas_main->is_enabled = false;
 	canvas_saves->is_enabled = true;
-	button_click_sound.play();
+	music_test.play(true);
 }
 void MainMenuManager::close_saves_page() {
 	canvas_main->is_enabled = true;
 	canvas_saves->is_enabled = false;
-	button_click_sound.play();
+	music_test.stop();
 }
 
 void MainMenuManager::open_mods_page() {

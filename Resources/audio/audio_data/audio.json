@@ -2,8 +2,15 @@
   {
     "UID": "Core:Button",
     "file": "sounds/click_stereo.ogg",
-    "group": "Core:UI",
+    "group": "Core:SFX",
     "PCM": true,
-    "MAX_INSTANCE": 5
+    "MAX_INSTANCE": 2
+  },
+  {
+    "UID": "Core:MusicTest",
+    "file": "music/Music-Overworld_Day.mp3",
+    "group": "Core:Music",
+    "PCM": false,
+    "MAX_INSTANCE": 1
   }
 ]
