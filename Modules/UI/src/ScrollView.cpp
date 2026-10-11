@@ -31,10 +31,10 @@ void CoreUI::ScrollView::bind_horizontal_scrollbar(UI_Component_Ptr<ScrollBar>& 
 	scrollbar_X->on_value_changed.set_callback_method<ScrollView, &ScrollView::_set_normalized_offset_x>(this);
 }
 
-void CoreUI::ScrollView::_set_normalized_offset_x() {
-	content_offset.x = scrollbar_X->scroll_value * current_max_content_offset.x;
+void CoreUI::ScrollView::_set_normalized_offset_x(float value) {
+	content_offset.x = value * current_max_content_offset.x;
 }
 
-void CoreUI::ScrollView::_set_normalized_offset_y() {
-	content_offset.y = scrollbar_Y->scroll_value * current_max_content_offset.y;
+void CoreUI::ScrollView::_set_normalized_offset_y(float value) {
+	content_offset.y = value * current_max_content_offset.y;
 }

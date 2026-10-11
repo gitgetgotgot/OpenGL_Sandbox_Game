@@ -8,8 +8,10 @@ constexpr float rainbow_period = 2.f * PI;
 
 class TimeManager {
 public:
-	TimeManager();
-	~TimeManager();
+	static TimeManager& Instance() {
+		static TimeManager mgr;
+		return mgr;
+	}
 	void update();
 	void update_world_time();
 	float get_rainbow_time();
@@ -21,6 +23,8 @@ public:
 	inline static float deltaTime = 0.0f;
 	inline static float deltaTimeScale = 1.0f;
 private:
+	TimeManager();
+	~TimeManager();
 	glm::vec3 skyColor{}; //current color of the sky
 	glm::vec3 dayColor{ 0.53, 0.81, 0.92 };
 	glm::vec3 nightColor{ 0.0, 0.0, 0.05 };

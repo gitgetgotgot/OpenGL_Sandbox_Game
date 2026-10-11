@@ -2,6 +2,8 @@
 #include "Core/ResourceLoader.h"
 #include "Core/MainMenu.h"
 #include <UI/UI_System.h>
+#include <Audio/AudioSystem.h>
+#include <Utility/TimeManager.h>
 #include <thread>
 
 Game::~Game() {
@@ -9,7 +11,7 @@ Game::~Game() {
 }
 
 bool Game::update() {
-	timeMgr.update();
+	TimeManager::Instance().update();
 
 	SystemContext::mouse.get_mouse_ortho_coords(SystemContext::display);
 
@@ -25,6 +27,7 @@ bool Game::update() {
 	}
 
 	CoreUI::UI_System::Instance().update();
+	CoreAudio::AudioSystem::Instance().update();
 
 	return 1;
 }
@@ -58,6 +61,11 @@ void Game::init() {
 
 	init_open_gl();
 	init_input();
+
+	CoreAudio::AudioSystem::Instance().init();
+	CoreAudio::AudioSystem::Instance().add_sound_group("Core:UI");
+	CoreAudio::AudioSystem::Instance().add_sound_group("Core:Music");
+	CoreAudio::AudioSystem::Instance().add_sound_group("Core:SFX");
 
 	ResourceLoader::Instance().Load_Resources();
 
@@ -98,8 +106,10 @@ void Game::main_loop() {
 
 void Game::uninit() {
 	ResourceLoader::Instance().Unload();
+	CoreAudio::AudioSystem::Instance().uninit();
 	CoreUI::UI_System::Instance().uninit();
 	CoreEntity::EntitySystem::Instance().uninit();
+
 	if (world) world->uninit();
 
 	glfwDestroyWindow(window);

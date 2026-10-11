@@ -22,7 +22,7 @@ namespace CoreUI {
 		void set_thumb_size_ratio(float ratio);
 		void bind_components(UI_Component_Ptr<Image>& track_img, UI_Component_Ptr<Image>& thumb_img);
 
-		FunctionWrapper on_value_changed;
+		FunctionWrapper<float> on_value_changed;
 		float scroll_value = 0.0f;
 		bool is_discrete = true;
 	private:

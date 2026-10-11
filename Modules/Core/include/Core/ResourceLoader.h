@@ -27,6 +27,7 @@ public:
 	void load_libraries();
 	void load_textures(std::unordered_map<std::string, uint32_t>& texture_layers);
 	void load_sprites(std::unordered_map<std::string, uint32_t>& texture_layers) const;
+	void load_audio() const;
 	void load_lights() const;
 	void load_particles();
 	void load_effects() const;

@@ -1,8 +1,11 @@
 #include "Core/SettingsManager.h"
 #include <IOSystem/SystemContext.h>
+#include <Audio/AudioSystem.h>
 
 void SettingsManager::load_settings() {
-
+	mixer_ui.setup_mixer("Core:UI");
+	mixer_music.setup_mixer("Core:Music");
+	mixer_sfx.setup_mixer("Core:SFX");
 }
 
 void SettingsManager::change_resolution() {
@@ -29,4 +32,16 @@ void SettingsManager::toggle_vsync() {
 		vsync_text->set_text("Vsync: ON");
 	else
 		vsync_text->set_text("Vsync: OFF");
+}
+
+void SettingsManager::set_master_volume(float volume) {
+	CoreAudio::AudioSystem::Instance().set_master_volume(volume);
+}
+
+void SettingsManager::set_music_volume(float volume) {
+	mixer_music.set_volume(volume);
+}
+
+void SettingsManager::set_sfx_volume(float volume) {
+	mixer_sfx.set_volume(volume);
 }

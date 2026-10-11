@@ -1,4 +1,5 @@
 #include <Core/ResourceLoader.h>
+#include <Audio/AudioSystem.h>
 #include <Resources/Lights.h>
 #include <Resources/Effects.h>
 #include <Resources/ResourceErrors.h>
@@ -44,6 +45,7 @@ void ResourceLoader::Load_Resources() {
 	// LOAD ORDER IS IMPORTANT
 	load_textures(texture_layers);
 	load_sprites(texture_layers);
+	load_audio();
 	load_lights();
 	load_particles();
 	load_effects();
@@ -248,6 +250,46 @@ void ResourceLoader::load_sprites(std::unordered_map<std::string, uint32_t>& tex
 		sprites_path = mod_info.mod_folder_path / "Resources/data/sprites_data";
 		if (!std::filesystem::exists(sprites_path)) continue;
 		_load_sprites(sprites_path);
+	}
+}
+
+void ResourceLoader::load_audio() const {
+	auto _load_audio = [&](std::filesystem::path& audio_path) {
+		std::filesystem::path audio_data_path = audio_path / "audio_data";
+		for (const auto& entry : std::filesystem::directory_iterator(audio_data_path)) {
+			if (!entry.is_regular_file()) continue;
+			std::filesystem::path file_path = entry.path();
+			if (file_path.extension() != data_extension) continue;
+
+			DataParser parser;
+			parser.parse_data(file_path, DEBUG);
+			for (const auto& audio : parser.node_root.array) {
+				if (!audio.has_child("UID"))
+					throw std::runtime_error("Audio entry in " + file_path.string() + " has no UID!");
+				std::string UID = audio["UID"].get_as<std::string>();
+				try {
+					std::filesystem::path file_path = audio_path / audio["file"].get_as<std::string>();
+					std::string sound_group = audio["group"].get_as<std::string>();
+					bool load_as_PCM = audio["PCM"].get_as<bool>();
+					uint8_t max_instance = audio["MAX_INSTANCE"].get_as<uint8_t>();
+					if (load_as_PCM)
+						CoreAudio::AudioSystem::Instance().load_audio_as_pcm(file_path, UID, sound_group, max_instance);
+					else
+						CoreAudio::AudioSystem::Instance().load_audio_as_stream(file_path, UID, sound_group, max_instance);
+				}
+				catch (const std::exception& e) {
+					ResourceLoading::throw_resource_error(UID, std::string("In file ") + file_path.string() + ": " + e.what());
+				}
+			}
+		}
+		};
+
+	std::filesystem::path audio_path = resources_root / "Resources/audio";
+	_load_audio(audio_path);
+	for (const auto& mod_info : ModsManager::get_instance().get_mods()) {
+		audio_path = mod_info.mod_folder_path / "Resources/audio";
+		if (!std::filesystem::exists(audio_path)) continue;
+		_load_audio(audio_path);
 	}
 }
 
