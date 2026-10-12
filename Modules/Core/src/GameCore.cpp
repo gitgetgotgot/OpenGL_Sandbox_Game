@@ -3,14 +3,15 @@
 #include "Core/MainMenu.h"
 #include <UI/UI_System.h>
 #include <Audio/AudioSystem.h>
+#include <Resources/TextureArrayMgr.h>
 #include <Utility/TimeManager.h>
 #include <thread>
 
-Game::~Game() {
+GameEngine::~GameEngine() {
 	uninit();
 }
 
-bool Game::update() {
+bool GameEngine::update() {
 	TimeManager::Instance().update();
 
 	SystemContext::mouse.get_mouse_ortho_coords(SystemContext::display);
@@ -18,12 +19,19 @@ bool Game::update() {
 	if (SystemContext::should_exit()) return 0;
 
 	switch (game_update_state) {
-	case Game_State::inWorld:
-		world->update();
+	case Game_State::LoadingResources: {
+		MainMenuManager::Instance().update();
+
 		break;
-	case Game_State::inMainMenu:
+	}
+	case Game_State::inMainMenu: {
 		MainMenuManager::Instance().update();
 		break;
+	}
+	case Game_State::inWorld: {
+		world->update();
+		break;
+	}
 	}
 
 	CoreUI::UI_System::Instance().update();
@@ -32,8 +40,8 @@ bool Game::update() {
 	return 1;
 }
 
-void Game::render() {
-	renderer->clear(1.0, 1.0, 1.0);
+void GameEngine::render() {
+	renderer->clear(0.0, 0.0, 0.0);
 
 	//world->render(renderer);
 	CoreUI::UI_System::Instance().render(renderer);
@@ -41,7 +49,7 @@ void Game::render() {
 	renderer->present();
 }
 
-void Game::input_end_frame() {
+void GameEngine::input_end_frame() {
 	SystemContext::mouse.lb_prev = SystemContext::mouse.lb_curr;
 	SystemContext::mouse.rb_prev = SystemContext::mouse.rb_curr;
 	SystemContext::mouse.wheel_offset = 0;
@@ -56,42 +64,16 @@ void Game::input_end_frame() {
 	SystemContext::keyBoard.currentPressedChars.clear();
 }
 
-void Game::init() {
+void GameEngine::init() {
 	srand(time(NULL));
 
-	init_open_gl();
+	init_MainWindow();
+	init_OpenGL();
 	init_input();
-
-	CoreAudio::AudioSystem::Instance().init();
-	CoreAudio::AudioSystem::Instance().add_sound_group("Core:UI");
-	CoreAudio::AudioSystem::Instance().add_sound_group("Core:Music");
-	CoreAudio::AudioSystem::Instance().add_sound_group("Core:SFX");
-
-	ResourceLoader::Instance().Load_Resources();
-
-	CoreUI::UI_System::Instance().init();
-
-	MainMenuManager::Instance().init();
-
-	player.inventory.init();
-	for (int i = 2; i < 52; i++) {
-		uint16_t amount = rand() % 10000;
-		player.inventory.place_item(i, amount);
-	}
-
-	player.inventory.update_crafts();
-	player.inventory.update_dynamic_craft_slots_items();
-	player.inventory.current_player_flags = (uint32_t)CraftCondition::c_WORKBENCH;
-
-	world = std::make_unique<World>();
-	world->init(&player);
-
-	//openGL settings
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	init_main_resources();
 }
 
-void Game::main_loop() {
+void GameEngine::main_loop() {
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 
@@ -104,8 +86,8 @@ void Game::main_loop() {
 	}
 }
 
-void Game::uninit() {
-	ResourceLoader::Instance().Unload();
+void GameEngine::uninit() {
+	CoreResource::TextureArrayManager::Instance().uninit();
 	CoreAudio::AudioSystem::Instance().uninit();
 	CoreUI::UI_System::Instance().uninit();
 	CoreEntity::EntitySystem::Instance().uninit();
@@ -116,32 +98,75 @@ void Game::uninit() {
 	glfwTerminate();
 }
 
-void Game::init_open_gl() {
+void GameEngine::init_MainWindow() {
 	glfwInit();
-	//version of OpenGL (version 4.6)
+
+	// OpenGL Core 4.6
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-	//using the core profile for only modern functions
+
+	// using the core profile for only modern functions
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	window = glfwCreateWindow(1920, 1080, "Sandbox Game?", NULL, NULL);
+	// create main window and hide before minimum game data is loaded
+	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+
+	window = glfwCreateWindow(1920, 1080, "2D Sandbox", NULL, NULL);
 
 	glfwMakeContextCurrent(window);
 	glfwSetWindowAspectRatio(window, 16, 9);
+}
 
+void GameEngine::init_OpenGL() {
 	int version = gladLoadGL((GLADloadfunc)glfwGetProcAddress);
 	if (!version)
-		throw std::runtime_error("Failed to initialize GLAD 2!");
-
-	//openGL version and GPU info
+		throw std::runtime_error("Failed to initialize GLAD for OpenGL!");
 	std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 	std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
 
+	// setup main renderer with OpenGL
 	renderer = std::make_unique<OpenGL_Renderer>(window);
+
+	// OpenGL base settings
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void Game::init_input() {
+void GameEngine::init_input() {
 	InputHandler::setGLFWwindowCallbacks(window);
 	SystemContext::display.window = window;
 	SystemContext::display.setup_monitor_video_modes();
+}
+
+void GameEngine::init_main_resources() {
+	CoreResource::TextureArrayManager::Instance().init();
+
+	CoreAudio::AudioSystem::Instance().init();
+	CoreAudio::AudioSystem::Instance().add_sound_group("Core:UI");
+	CoreAudio::AudioSystem::Instance().add_sound_group("Core:Music");
+	CoreAudio::AudioSystem::Instance().add_sound_group("Core:SFX");
+
+	CoreUI::UI_System::Instance().init();
+
+	ResourceLoader::Instance().load_minimal_core_resources();
+	ResourceLoader::Instance().Load_Resources();
+
+	MainMenuManager::Instance().init();
+
+	glfwShowWindow(window);
+
+	/*
+	player.inventory.init();
+	for (int i = 2; i < 52; i++) {
+		uint16_t amount = rand() % 10000;
+		player.inventory.place_item(i, amount);
+	}
+
+	player.inventory.update_crafts();
+	player.inventory.update_dynamic_craft_slots_items();
+	player.inventory.current_player_flags = (uint32_t)CraftCondition::c_WORKBENCH;
+
+	world = std::make_unique<World>();
+	world->init(&player);
+	*/
 }

@@ -7,6 +7,10 @@
 #include <optional>
 
 namespace CoreResource {
+	namespace Limits {
+		constexpr uint8_t MINIMUM_9SLICED_SPRITES_SIZE = 1;
+		constexpr uint8_t MINIMUM_SPRITES_SIZE = 1;
+	}
 	class Sprite {
 	public:
 		Sprite() {}
@@ -68,9 +72,8 @@ namespace CoreResource {
 	private:
 		SpriteManager() {}
 		~SpriteManager() {}
-		std::unordered_map<std::string, uint32_t> sprite_UID_to_ID;
+		std::unordered_map<std::string, uint32_t> UID_to_ID;
 		std::vector<Sprite> sprites;
-		std::unordered_map<std::string, uint32_t> sprite9sliced_UID_to_ID;
 		std::vector<Sprite9Sliced> sprites9sliced;
 	};
 }

@@ -42,7 +42,13 @@ target_link_libraries(Utility
         stb::stb
 )
 
-target_link_libraries(Resources PUBLIC Utility)
+target_link_libraries(Resources
+    PUBLIC
+        Utility
+    PRIVATE
+        stb::stb
+        Rendering
+)
 
 target_link_libraries(IOSystem
     PRIVATE

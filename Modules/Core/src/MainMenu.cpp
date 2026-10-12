@@ -20,7 +20,7 @@ void MainMenuManager::init() {
 	setup_mods_page();
 	setup_creator_page();
 
-	canvas_main->is_enabled = true;
+	canvas_main_menu->is_enabled = true;
 	canvas_settings->is_enabled = false;
 	canvas_saves->is_enabled = false;
 	canvas_mods->is_enabled = false;
@@ -36,7 +36,7 @@ void MainMenuManager::update() {
 
 
 void MainMenuManager::setup_main_page() {
-	canvas_main = CoreUI::UI_Creator::create_canvas();
+	canvas_main_menu = CoreUI::UI_Creator::create_canvas();
 
 	uint32_t button_sprite_id = CoreResource::SpriteManager::get_instance().get_sprite9sliced_id("Core:Button").value();
 	uint32_t sprite_white_id = CoreResource::SpriteManager::get_instance().get_sprite_id("Core:White").value();
@@ -77,13 +77,13 @@ void MainMenuManager::setup_main_page() {
 	button_mods->get_component<CoreUI::Button>()->on_button_click.set_callback_method<MainMenuManager, &MainMenuManager::open_mods_page>(&Instance());
 	button_exit->get_component<CoreUI::Button>()->on_button_click.set_callback_method<MainMenuManager, &MainMenuManager::exit_game>(&Instance());
 
-	canvas_main->add_object(background);
-	canvas_main->add_object(button_play);
-	canvas_main->add_object(button_settings);
-	canvas_main->add_object(button_mods);
-	canvas_main->add_object(button_exit);
-	canvas_main->add_object(menu_logo);
-	canvas_main->add_object(version);
+	canvas_main_menu->add_object(background);
+	canvas_main_menu->add_object(button_play);
+	canvas_main_menu->add_object(button_settings);
+	canvas_main_menu->add_object(button_mods);
+	canvas_main_menu->add_object(button_exit);
+	canvas_main_menu->add_object(menu_logo);
+	canvas_main_menu->add_object(version);
 }
 
 void MainMenuManager::setup_settings_page() {
@@ -250,41 +250,41 @@ void MainMenuManager::exit_game() {
 }
 
 void MainMenuManager::open_main_page() {
-	canvas_main->is_enabled = true;
+	canvas_main_menu->is_enabled = true;
 }
 void MainMenuManager::close_main_page() {
-	canvas_main->is_enabled = false;
+	canvas_main_menu->is_enabled = false;
 }
 
 void MainMenuManager::open_settings_page() {
-	canvas_main->is_enabled = false;
+	canvas_main_menu->is_enabled = false;
 	canvas_settings->is_enabled = true;
 	button_click_sound.play();
 }
 void MainMenuManager::close_settings_page() {
-	canvas_main->is_enabled = true;
+	canvas_main_menu->is_enabled = true;
 	canvas_settings->is_enabled = false;
 	button_click_sound.play();
 }
 
 void MainMenuManager::open_saves_page() {
-	canvas_main->is_enabled = false;
+	canvas_main_menu->is_enabled = false;
 	canvas_saves->is_enabled = true;
 	music_test.play(true);
 }
 void MainMenuManager::close_saves_page() {
-	canvas_main->is_enabled = true;
+	canvas_main_menu->is_enabled = true;
 	canvas_saves->is_enabled = false;
 	music_test.stop();
 }
 
 void MainMenuManager::open_mods_page() {
-	canvas_main->is_enabled = false;
+	canvas_main_menu->is_enabled = false;
 	canvas_mods->is_enabled = true;
 	button_click_sound.play();
 }
 void MainMenuManager::close_mods_page() {
-	canvas_main->is_enabled = true;
+	canvas_main_menu->is_enabled = true;
 	canvas_mods->is_enabled = false;
 	button_click_sound.play();
 }

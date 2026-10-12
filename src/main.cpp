@@ -80,7 +80,7 @@ static void update_array_AVX2_mt(float* array, size_t count, float multiplier, u
 }
 
 int main() {
-	Game game;
+	GameEngine game;
 	try {
 		game.init();
 	}

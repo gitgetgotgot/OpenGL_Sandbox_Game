@@ -6,7 +6,7 @@
 #include <Rendering/VBO.h>
 #include <Rendering/EBO.h>
 #include <Rendering/Texture.h>
-#include <Rendering/Texture3D.h>
+#include <Rendering/TextureArray.h>
 #include <GLFW/glfw3.h>
 
 class OpenGL_Renderer {

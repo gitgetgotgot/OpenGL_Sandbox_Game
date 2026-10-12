@@ -4,7 +4,6 @@
 #include <string>
 #include <cstdint>
 #include <memory>
-#include <Rendering/Texture3D.h>
 #include <Utility/DataParser.h>
 #include <Utility/DynamicLib.h>
 
@@ -20,13 +19,13 @@ public:
 		static ResourceLoader loader;
 		return loader;
 	}
+	void load_minimal_core_resources();
 	void Load_Resources();
 	void Hot_Reload();
-	void Unload();
 	void find_mods() const;
 	void load_libraries();
-	void load_textures(std::unordered_map<std::string, uint32_t>& texture_layers);
-	void load_sprites(std::unordered_map<std::string, uint32_t>& texture_layers) const;
+	void load_textures() const;
+	void load_sprites() const;
 	void load_audio() const;
 	void load_lights() const;
 	void load_particles();
@@ -43,7 +42,6 @@ private:
 	ResourceLoader() {}
 	~ResourceLoader();
 	std::vector<LibraryHandle> library_handles;
-	std::unique_ptr<Texture3D> textures_array;
 	std::filesystem::path data_extension;
 	std::filesystem::path resources_root;
 };

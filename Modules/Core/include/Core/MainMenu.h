@@ -32,7 +32,7 @@ private:
 	void open_creator_page();
 	void close_creator_page();
 
-	CoreUI::UI_Canvas_Ptr canvas_main;
+	CoreUI::UI_Canvas_Ptr canvas_main_menu;
 	CoreUI::UI_Canvas_Ptr canvas_settings;
 	CoreUI::UI_Canvas_Ptr canvas_saves;
 	CoreUI::UI_Canvas_Ptr canvas_mods;

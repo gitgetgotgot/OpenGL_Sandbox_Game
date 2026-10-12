@@ -2,22 +2,23 @@
 #include "World.h"
 #include <IOSystem/InputHandler.h>
 
-enum Game_State : uint8_t { inMainMenu, inOptions, inControlsOptions, inAudioOptions, inRenderingOptions,
-	inWorldExplorer, WorldIsLoading, WorldIsSaving, WorldIsCreating, inWorldCreator, inWorld, inGamePause };
-
-class Game {
+class GameEngine {
+	enum Game_State : uint8_t {
+		inMainMenu, inWorld, LoadingResources
+	};
 public:
-	~Game();
+	~GameEngine();
 	bool update();
 	void render();
 	void input_end_frame();
 	void init();
 	void main_loop();
 	void uninit();
-	//init
-	void init_open_gl();
-	void init_input();
 	
+	void init_MainWindow();
+	void init_OpenGL();
+	void init_input();
+	void init_main_resources();
 private:
 	GLFWwindow* window;
 

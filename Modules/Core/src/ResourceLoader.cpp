@@ -1,5 +1,6 @@
 #include <Core/ResourceLoader.h>
 #include <Audio/AudioSystem.h>
+#include <Resources/TextureArrayMgr.h>
 #include <Resources/Lights.h>
 #include <Resources/Effects.h>
 #include <Resources/ResourceErrors.h>
@@ -22,16 +23,32 @@ ResourceLoader::~ResourceLoader() {
 	}
 }
 
-void ResourceLoader::Load_Resources() {
+void ResourceLoader::load_minimal_core_resources() {
 	if (DEBUG)
 		data_extension = ".json";
 	else
 		data_extension = ".DATA";
 	resources_root = RESOURCE_ROOT;
 
+	// add empty sprites with global_ID = 0
+	CoreResource::SpriteManager::get_instance().add_sprite("Core:Empty", 0, 0, 0, 0, 0.0f, 0);
+	CoreResource::SpriteManager::get_instance().add_sprite9sliced("Core:Empty", 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+	// load base UI texture
+	std::filesystem::path file_path = resources_root / "Resources/Base/UI.png";
+	if (!std::filesystem::exists(file_path)) {
+		throw std::runtime_error("Fatal Error: Couldn't load base UI texture");
+	}
+
+	// load base sprites
+
+	// load base audio
+
+}
+
+void ResourceLoader::Load_Resources() {
 	std::vector<DataParser> item_data_parsers;
 	std::vector<DataParser> entity_data_parsers;
-	std::unordered_map<std::string, uint32_t> texture_layers;
 
 	find_mods();
 	CoreObject::register_core_object_factories();
@@ -43,8 +60,8 @@ void ResourceLoader::Load_Resources() {
 	CoreResource::SpriteManager::MAIN_PIXEL_UV_SIZE = pixel_UV_size;
 
 	// LOAD ORDER IS IMPORTANT
-	load_textures(texture_layers);
-	load_sprites(texture_layers);
+	load_textures();
+	load_sprites();
 	load_audio();
 	load_lights();
 	load_particles();
@@ -60,7 +77,7 @@ void ResourceLoader::Load_Resources() {
 }
 
 void ResourceLoader::Hot_Reload() {
-	textures_array.reset();
+	//textures_array.reset();
 	CoreResource::SpriteManager::get_instance().ClearData();
 	CoreResource::LightsManager::get_instance().ClearData();
 	//particles mgr
@@ -75,10 +92,6 @@ void ResourceLoader::Hot_Reload() {
 	CoreEntity::EntityInfoManager::get_instance().ClearData();
 	TagRegistry::get_instance().ClearData();
 	Load_Resources();
-}
-
-void ResourceLoader::Unload() {
-	textures_array.reset();
 }
 
 void ResourceLoader::find_mods() const {
@@ -159,11 +172,7 @@ void ResourceLoader::load_libraries() {
 	}
 }
 
-void ResourceLoader::load_textures(std::unordered_map<std::string, uint32_t>& texture_layers) {
-	//SHOULD REMAKE THIS TO ALLOCATE APPROPRIATE TEXTURE ARRAY DEPTH
-	textures_array = std::make_unique<Texture3D>();
-	textures_array->setup_texture_array(512, 512, 5, false);
-
+void ResourceLoader::load_textures() const {
 	auto _load_textures = [&](std::filesystem::path& textures_path, std::string& source_name) {
 		for (const auto& entry : std::filesystem::directory_iterator(textures_path)) {
 			if (!entry.is_regular_file()) continue;
@@ -187,15 +196,9 @@ void ResourceLoader::load_textures(std::unordered_map<std::string, uint32_t>& te
 		source_name = mod_info.mod_folder_path.filename().string();
 		_load_textures(textures_path, source_name);
 	}
-
-	textures_array->bind(0);
 }
 
-void ResourceLoader::load_sprites(std::unordered_map<std::string, uint32_t>& texture_layers) const {
-	//add empty sprites with global_ID = 0
-	CoreResource::SpriteManager::get_instance().add_sprite("Sprite:Core:Empty", 0, 0, 0, 0, 0.0f, 0);
-	CoreResource::SpriteManager::get_instance().add_sprite9sliced("Sprite:Core:Empty", 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
+void ResourceLoader::load_sprites() const {
 	auto _load_sprites = [&](std::filesystem::path& sprites_path) {
 		for (const auto& entry : std::filesystem::directory_iterator(sprites_path)) {
 			if (!entry.is_regular_file()) continue;

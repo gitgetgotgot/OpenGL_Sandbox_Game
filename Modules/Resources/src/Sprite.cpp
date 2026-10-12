@@ -39,10 +39,8 @@ CoreResource::Sprite9Sliced::Sprite9Sliced(
 }
 
 void CoreResource::SpriteManager::ClearData() {
-	sprites = {};
-	sprite_UID_to_ID = {};
-	sprites9sliced = {};
-	sprite9sliced_UID_to_ID = {};
+	sprites.resize(Limits::MINIMUM_SPRITES_SIZE);
+	sprites9sliced.resize(Limits::MINIMUM_9SLICED_SPRITES_SIZE);
 }
 
 void CoreResource::SpriteManager::add_sprite(
@@ -53,7 +51,7 @@ void CoreResource::SpriteManager::add_sprite(
 	float w = float(width) * MAIN_PIXEL_UV_SIZE;
 	float y0 = float(V0) * MAIN_PIXEL_UV_SIZE;
 	float h = float(height) * MAIN_PIXEL_UV_SIZE;
-	sprite_UID_to_ID.emplace(UID, sprites.size());
+	UID_to_ID[UID] = sprites.size();
 	sprites.emplace_back(x0, y0, w, h, base_world_size, texture_array_id);
 }
 
@@ -62,8 +60,8 @@ CoreResource::Sprite& CoreResource::SpriteManager::get_sprite(uint32_t id) {
 }
 
 std::optional<uint32_t> CoreResource::SpriteManager::get_sprite_id(std::string uid) {
-	auto it = sprite_UID_to_ID.find(uid);
-	if (it != sprite_UID_to_ID.end()) {
+	auto it = UID_to_ID.find(uid);
+	if (it != UID_to_ID.end()) {
 		return it->second;
 	}
 	else {
@@ -84,7 +82,7 @@ void CoreResource::SpriteManager::add_sprite9sliced(
 	float border_right = float(uv_margin_right) * MAIN_PIXEL_UV_SIZE;
 	float border_top = float(uv_margin_top) * MAIN_PIXEL_UV_SIZE;
 	float border_bottom = float(b_bottom) * MAIN_PIXEL_UV_SIZE;
-	sprite9sliced_UID_to_ID.emplace(UID, sprites9sliced.size());
+	UID_to_ID[UID] = sprites9sliced.size();
 	sprites9sliced.emplace_back(x0, y0, w, h, border_left, border_right, border_top, border_bottom, texture_array_id);
 }
 
@@ -93,8 +91,8 @@ CoreResource::Sprite9Sliced& CoreResource::SpriteManager::get_sprite9sliced(uint
 }
 
 std::optional<uint32_t> CoreResource::SpriteManager::get_sprite9sliced_id(std::string uid) {
-	auto it = sprite9sliced_UID_to_ID.find(uid);
-	if (it != sprite9sliced_UID_to_ID.end()) {
+	auto it = UID_to_ID.find(uid);
+	if (it != UID_to_ID.end()) {
 		return it->second;
 	}
 	else {
