@@ -85,6 +85,14 @@ target_compile_definitions(Core PRIVATE
     $<$<CONFIG:Release>:DEBUG_MODE=0>
 )
 
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/Resources"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/Resources"
+    COMMENT "Copy Resources folder in build folder"
+)
+
 add_executable(DataCompiler
     "${PROJECT_SOURCE_DIR}/Tools/DataCompiler/DataCompilerMain.cpp"
 )

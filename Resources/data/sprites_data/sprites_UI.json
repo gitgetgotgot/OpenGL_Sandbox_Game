@@ -1,7 +1,7 @@
 [
   {
-    "UID": "Sprite:Core:BasicSlot",
-    "texture": "Texture:Core:UI.png",
+    "UID": "Core:BasicSlot",
+    "texture": "Core:UI.png",
     "padding": 0,
     "sprite": {
       "U0": 32,
@@ -12,8 +12,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:ChestSlot",
-    "texture": "Texture:Core:UI.png",
+    "UID": "Core:ChestSlot",
+    "texture": "Core:UI.png",
     "padding": 0,
     "sprite": {
       "U0": 64,
@@ -24,8 +24,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:HotbarFrame",
-    "texture": "Texture:Core:UI.png",
+    "UID": "Core:HotbarFrame",
+    "texture": "Core:UI.png",
     "padding": 0,
     "sprite": {
       "U0": 96,
@@ -36,8 +36,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:CraftSlot",
-    "texture": "Texture:Core:UI.png",
+    "UID": "Core:CraftSlot",
+    "texture": "Core:UI.png",
     "padding": 0,
     "sprite": {
       "U0": 128,
@@ -48,8 +48,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:CraftBorder",
-    "texture": "Texture:Core:UI.png",
+    "UID": "Core:CraftBorder",
+    "texture": "Core:UI.png",
     "padding": 0,
     "sprite": {
       "U0": 160,
@@ -60,8 +60,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:HeartFull",
-    "texture": "Texture:Core:UI.png",
+    "UID": "Core:HeartFull",
+    "texture": "Core:UI.png",
     "padding": 0,
     "sprite": {
       "U0": 224,
@@ -72,8 +72,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:HeartHalf",
-    "texture": "Texture:Core:UI.png",
+    "UID": "Core:HeartHalf",
+    "texture": "Core:UI.png",
     "padding": 0,
     "sprite": {
       "U0": 256,
@@ -84,8 +84,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:HeartEmpty",
-    "texture": "Texture:Core:UI.png",
+    "UID": "Core:HeartEmpty",
+    "texture": "Core:UI.png",
     "padding": 0,
     "sprite": {
       "U0": 288,
@@ -96,8 +96,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:ManaFull",
-    "texture": "Texture:Core:UI.png",
+    "UID": "Core:ManaFull",
+    "texture": "Core:UI.png",
     "padding": 0,
     "sprite": {
       "U0": 320,
@@ -108,8 +108,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:ManaHalf",
-    "texture": "Texture:Core:UI.png",
+    "UID": "Core:ManaHalf",
+    "texture": "Core:UI.png",
     "padding": 0,
     "sprite": {
       "U0": 352,
@@ -120,8 +120,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:ManaEmpty",
-    "texture": "Texture:Core:UI.png",
+    "UID": "Core:ManaEmpty",
+    "texture": "Core:UI.png",
     "padding": 0,
     "sprite": {
       "U0": 384,

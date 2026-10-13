@@ -71,7 +71,7 @@ void CoreAnimation::AnimatorController::update() {
 				return;
 			}
 		}
-		current_sprite = &CoreResource::SpriteManager::get_instance().get_sprite(current_clip->sprites[current_sprite_index]);
+		current_sprite = &CoreResource::SpriteManager::Instance().get_sprite(current_clip->sprites[current_sprite_index]);
 	}
 }
 
@@ -82,7 +82,7 @@ void CoreAnimation::AnimatorController::play(uint32_t clip_id) {
 	max_sprite_index = current_clip->sprites.size();
 	current_sprite_index = 0;
 	current_frame_time = 0.0f;
-	current_sprite = &CoreResource::SpriteManager::get_instance().get_sprite(current_clip->sprites[current_sprite_index]);
+	current_sprite = &CoreResource::SpriteManager::Instance().get_sprite(current_clip->sprites[current_sprite_index]);
 }
 
 uint32_t CoreAnimation::AnimatorController::get_clip_id(uint32_t animator_clip_index) {

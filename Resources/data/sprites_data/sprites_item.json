@@ -1,7 +1,7 @@
 [
   {
-    "UID": "Sprite:Core:Stone",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Stone",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 1,
@@ -12,8 +12,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Dirt",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Dirt",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 19,
@@ -24,8 +24,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Grass Dirt",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Grass Dirt",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 37,
@@ -36,8 +36,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Sand",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Sand",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 55,
@@ -48,8 +48,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Oak",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Oak",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 73,
@@ -60,8 +60,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Oak Planks",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Oak Planks",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 91,
@@ -72,8 +72,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Crimson Stone",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Crimson Stone",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 109,
@@ -84,8 +84,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Corrupted Stone",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Corrupted Stone",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 127,
@@ -96,8 +96,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Copper Ore",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Copper Ore",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 145,
@@ -108,8 +108,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Iron Ore",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Iron Ore",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 163,
@@ -120,8 +120,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Gold Ore",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Gold Ore",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 181,
@@ -132,8 +132,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Water",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Water",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 199,
@@ -144,8 +144,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Snow",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Snow",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 217,
@@ -156,8 +156,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Ice",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Ice",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 235,
@@ -168,8 +168,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Snow Grass Dirt",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Snow Grass Dirt",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 253,
@@ -180,8 +180,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Crimson Grass Dirt",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Crimson Grass Dirt",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 271,
@@ -192,8 +192,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Corrupted Grass Dirt",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Corrupted Grass Dirt",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 289,
@@ -204,8 +204,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Grass",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Grass",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 307,
@@ -216,8 +216,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Corrupted Grass",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Corrupted Grass",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 325,
@@ -228,8 +228,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Crimson Grass",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Crimson Grass",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 343,
@@ -240,8 +240,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Day Flower",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Day Flower",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 361,
@@ -252,8 +252,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Torch",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Torch",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 379,
@@ -264,8 +264,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Torch(L)",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Torch(L)",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 397,
@@ -276,8 +276,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Torch(R)",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Torch(R)",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 415,
@@ -288,8 +288,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Ice Torch",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Ice Torch",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 433,
@@ -300,8 +300,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Ice Torch(L)",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Ice Torch(L)",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 451,
@@ -312,8 +312,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Ice Torch(R)",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Ice Torch(R)",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 469,
@@ -324,8 +324,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Glass",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Glass",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 487,
@@ -336,8 +336,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Oak Platform",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Oak Platform",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 1,
@@ -348,8 +348,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Oak Platform(L)",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Oak Platform(L)",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 19,
@@ -360,8 +360,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Oak Platform(R)",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Oak Platform(R)",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 37,
@@ -372,8 +372,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Mushroom",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Mushroom",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 55,
@@ -384,8 +384,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Glowing Mushroom",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Glowing Mushroom",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 73,
@@ -396,8 +396,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Hardened Sand",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Hardened Sand",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 91,
@@ -408,8 +408,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Stone Wall",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Stone Wall",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 1,
@@ -420,8 +420,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Dirt Wall",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Dirt Wall",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 37,
@@ -432,8 +432,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Oak Wall",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Oak Wall",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 73,
@@ -444,8 +444,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Crimson Wall",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Crimson Wall",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 109,
@@ -456,8 +456,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Corrupted Wall",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Corrupted Wall",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 145,
@@ -468,8 +468,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Snow Wall",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Snow Wall",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 181,
@@ -480,8 +480,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Sand Wall",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Sand Wall",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 217,
@@ -492,8 +492,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Workbench",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Workbench",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 1,
@@ -504,8 +504,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Furnace",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Furnace",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 37,
@@ -516,8 +516,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Anvil",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Anvil",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 91,
@@ -528,8 +528,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Oak Table",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Oak Table",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 127,
@@ -540,8 +540,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Oak Chair",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Oak Chair",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 181,
@@ -552,8 +552,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Oak Chair(R)",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Oak Chair(R)",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 199,
@@ -564,8 +564,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Chest",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Chest",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 217,
@@ -576,8 +576,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:ChestOpen",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:ChestOpen",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 253,
@@ -588,8 +588,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Life Crystal",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Life Crystal",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 289,
@@ -600,8 +600,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Oak Door",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Oak Door",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 1,
@@ -612,8 +612,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Oak Door(R)",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Oak Door(R)",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 37,
@@ -624,8 +624,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Oak Door(C)",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Oak Door(C)",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 73,
@@ -636,8 +636,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Oak Tree Top",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Oak Tree Top",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 91,
@@ -648,8 +648,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Oak Branch(L)",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Oak Branch(L)",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 145,
@@ -660,8 +660,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Oak Branch(R)",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Oak Branch(R)",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 145,
@@ -672,8 +672,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Copper Pickaxe",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Copper Pickaxe",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 1,
@@ -684,8 +684,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Copper Axe",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Copper Axe",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 19,
@@ -696,8 +696,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Copper Dagger",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Copper Dagger",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 37,
@@ -708,8 +708,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Copper Sword",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Copper Sword",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 55,
@@ -720,8 +720,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Copper Hammer",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Copper Hammer",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 73,
@@ -732,8 +732,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Copper Bow",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Copper Bow",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 91,
@@ -744,8 +744,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Iron Pickaxe",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Iron Pickaxe",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 109,
@@ -756,8 +756,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Iron Axe",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Iron Axe",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 127,
@@ -768,8 +768,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Iron Dagger",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Iron Dagger",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 145,
@@ -780,8 +780,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Iron Sword",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Iron Sword",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 163,
@@ -792,8 +792,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Iron Hammer",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Iron Hammer",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 181,
@@ -804,8 +804,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Iron Bow",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Iron Bow",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 199,
@@ -816,8 +816,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Golden Pickaxe",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Golden Pickaxe",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 217,
@@ -828,8 +828,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Golden Axe",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Golden Axe",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 235,
@@ -840,8 +840,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Golden Dagger",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Golden Dagger",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 253,
@@ -852,8 +852,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Golden Sword",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Golden Sword",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 271,
@@ -864,8 +864,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Golden Hammer",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Golden Hammer",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 289,
@@ -876,8 +876,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Golden Bow",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Golden Bow",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 307,
@@ -888,8 +888,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Copper Coin",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Copper Coin",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 325,
@@ -900,8 +900,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Silver Coin",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Silver Coin",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 343,
@@ -912,8 +912,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Gold Coin",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Gold Coin",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 361,
@@ -924,8 +924,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Platinum Coin",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Platinum Coin",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 379,
@@ -936,8 +936,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Copper Ingot",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Copper Ingot",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 397,
@@ -948,8 +948,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Iron Ingot",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Iron Ingot",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 415,
@@ -960,8 +960,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Gold Ingot",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Gold Ingot",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 433,
@@ -972,8 +972,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Gel",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Gel",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 451,
@@ -984,8 +984,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Bottle",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Bottle",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 469,
@@ -996,8 +996,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Bottle of Water",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Bottle of Water",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 487,
@@ -1008,8 +1008,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Lens",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Lens",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 1,
@@ -1020,8 +1020,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Fallen Star",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Fallen Star",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 19,
@@ -1032,8 +1032,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Mana Crystal",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Mana Crystal",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 37,
@@ -1044,8 +1044,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Healing Potion",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Healing Potion",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 55,
@@ -1056,8 +1056,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Speed Potion",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Speed Potion",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 73,
@@ -1068,8 +1068,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Defense Potion",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Defense Potion",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 91,
@@ -1080,8 +1080,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Regeneration Potion",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Regeneration Potion",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 109,
@@ -1092,8 +1092,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Better Healing Potion",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Better Healing Potion",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 127,
@@ -1104,8 +1104,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Magic Wand",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Magic Wand",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 145,
@@ -1116,8 +1116,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Shuriken",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Shuriken",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 163,
@@ -1128,8 +1128,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Throwable Knife",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Throwable Knife",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 181,
@@ -1140,8 +1140,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Game.cpp",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Game.cpp",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 199,
@@ -1152,8 +1152,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Pistol",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Pistol",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 235,
@@ -1164,8 +1164,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Shotgun",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Shotgun",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 271,
@@ -1176,8 +1176,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Trident",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Trident",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 1,
@@ -1188,8 +1188,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Arrow",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Arrow",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 109,
@@ -1200,8 +1200,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Flaming Arrow",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Flaming Arrow",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 127,
@@ -1212,8 +1212,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Frostburn Arrow",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Frostburn Arrow",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 145,
@@ -1224,8 +1224,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Star Arrow",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Star Arrow",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 163,
@@ -1236,8 +1236,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Dark Arrow",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Dark Arrow",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 181,
@@ -1248,8 +1248,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Hell Arrow",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Hell Arrow",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 199,
@@ -1260,8 +1260,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:Bullet",
-    "texture": "Texture:Core:Items.png",
+    "UID": "Core:Bullet",
+    "texture": "Core:Items.png",
     "padding": 1,
     "sprite": {
       "U0": 217,

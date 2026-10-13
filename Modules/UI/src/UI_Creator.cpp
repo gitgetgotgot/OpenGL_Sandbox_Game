@@ -191,7 +191,7 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_input_field_image(
 	cursor_obj->transform.set_size(0.005f, text_height);
 	auto cursor_img = cursor_obj->add_component<Image>();
 	cursor_img->Setup_As_Regular();
-	cursor_img->set_sprite(CoreResource::SpriteManager::get_instance().get_sprite_id("Core:White").value());
+	cursor_img->set_sprite(CoreResource::SpriteManager::Instance().get_sprite_id("Core:White").value());
 
 	field_obj.add_child(img_obj);
 	field_obj.add_child(text_obj);
@@ -224,7 +224,7 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_input_field_image9sliced(
 	cursor_obj->transform.set_size(0.005f, text_height);
 	auto cursor_img = cursor_obj->add_component<Image>();
 	cursor_img->Setup_As_Regular();
-	cursor_img->set_sprite(CoreResource::SpriteManager::get_instance().get_sprite_id("Core:White").value());
+	cursor_img->set_sprite(CoreResource::SpriteManager::Instance().get_sprite_id("Core:White").value());
 
 	field_obj.add_child(img_obj);
 	field_obj.add_child(text_obj);

@@ -20,16 +20,16 @@ void CoreUI::Panel::_update_data() {
 	float size_x = tr.size.x;
 	float size_y = tr.size.y;
 
-	CoreResource::Sprite& sprite = CoreResource::SpriteManager::get_instance().get_sprite(sprite_ID);
+	CoreResource::Sprite& sprite = CoreResource::SpriteManager::Instance().get_sprite(sprite_ID);
 	glm::vec2& size_ratio = sprite.ratio;
 	x += (1.0f - size_ratio.x) * size_x * 0.5f;
 	y += (1.0f - size_ratio.y) * size_y * 0.5f;
 	size_x *= size_ratio.x;
 	size_y *= size_ratio.y;
-	sprite_vertices[0] = UI_Vertex2f(x, y, sprite.U0, sprite.V0, sprite.texture_id, color);
-	sprite_vertices[1] = UI_Vertex2f(x, y + size_y, sprite.U0, sprite.V0 + sprite.H, sprite.texture_id, color);
-	sprite_vertices[2] = UI_Vertex2f(x + size_x, y + size_y, sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.texture_id, color);
-	sprite_vertices[3] = UI_Vertex2f(x + size_x, y, sprite.U0 + sprite.W, sprite.V0, sprite.texture_id, color);
+	sprite_vertices[0] = UI_Vertex2f(x, y, sprite.U0, sprite.V0, sprite.tex_array_id, sprite.tex_id, color);
+	sprite_vertices[1] = UI_Vertex2f(x, y + size_y, sprite.U0, sprite.V0 + sprite.H, sprite.tex_array_id, sprite.tex_id, color);
+	sprite_vertices[2] = UI_Vertex2f(x + size_x, y + size_y, sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.tex_array_id, sprite.tex_id, color);
+	sprite_vertices[3] = UI_Vertex2f(x + size_x, y, sprite.U0 + sprite.W, sprite.V0, sprite.tex_array_id, sprite.tex_id, color);
 }
 
 void CoreUI::Panel::set_sprite(uint32_t sprite_ID) {

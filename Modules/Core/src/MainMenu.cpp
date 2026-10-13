@@ -38,8 +38,8 @@ void MainMenuManager::update() {
 void MainMenuManager::setup_main_page() {
 	canvas_main_menu = CoreUI::UI_Creator::create_canvas();
 
-	uint32_t button_sprite_id = CoreResource::SpriteManager::get_instance().get_sprite9sliced_id("Core:Button").value();
-	uint32_t sprite_white_id = CoreResource::SpriteManager::get_instance().get_sprite_id("Core:White").value();
+	uint32_t button_sprite_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:Button").value();
+	uint32_t sprite_white_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:White").value();
 
 	auto background = CoreUI::UI_Creator::create_image(
 		sprite_white_id, glm::vec2(SystemContext::display.ratio * 2.0f, 2.0f), glm::vec2(0.0f), glm::vec4(0.3f, 0.3f, 0.3f, 1.0f)
@@ -89,8 +89,8 @@ void MainMenuManager::setup_main_page() {
 void MainMenuManager::setup_settings_page() {
 	canvas_settings = CoreUI::UI_Creator::create_canvas();
 
-	uint32_t button_sprite_id = CoreResource::SpriteManager::get_instance().get_sprite9sliced_id("Core:Button").value();
-	uint32_t sprite_white_id = CoreResource::SpriteManager::get_instance().get_sprite_id("Core:White").value();
+	uint32_t button_sprite_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:Button").value();
+	uint32_t sprite_white_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:White").value();
 
 	auto background = CoreUI::UI_Creator::create_image(
 		sprite_white_id, glm::vec2(SystemContext::display.ratio * 2.0f, 2.0f), glm::vec2(0.0f), glm::vec4(0.3f, 0.3f, 0.3f, 1.0f)
@@ -181,9 +181,9 @@ void MainMenuManager::setup_settings_page() {
 void MainMenuManager::setup_saves_page() {
 	canvas_saves = CoreUI::UI_Creator::create_canvas();
 
-	uint32_t tooltip_sprite_id = CoreResource::SpriteManager::get_instance().get_sprite9sliced_id("Core:Tooltip").value();
-	uint32_t button_sprite_id = CoreResource::SpriteManager::get_instance().get_sprite9sliced_id("Core:Button").value();
-	uint32_t sprite_white_id = CoreResource::SpriteManager::get_instance().get_sprite_id("Core:White").value();
+	uint32_t tooltip_sprite_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:Tooltip").value();
+	uint32_t button_sprite_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:Button").value();
+	uint32_t sprite_white_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:White").value();
 
 	auto background = CoreUI::UI_Creator::create_image(
 		sprite_white_id, glm::vec2(SystemContext::display.ratio * 2.0f, 2.0f), glm::vec2(0.0f), glm::vec4(0.3f, 0.3f, 0.3f, 1.0f)

@@ -30,20 +30,28 @@ void ResourceLoader::load_minimal_core_resources() {
 		data_extension = ".DATA";
 	resources_root = RESOURCE_ROOT;
 
-	// add empty sprites with global_ID = 0
-	CoreResource::SpriteManager::get_instance().add_sprite("Core:Empty", 0, 0, 0, 0, 0.0f, 0);
-	CoreResource::SpriteManager::get_instance().add_sprite9sliced("Core:Empty", 0, 0, 0, 0, 0, 0, 0, 0, 0);
+	CoreResource::SpriteManager::Instance().setup();
 
 	// load base UI texture
-	std::filesystem::path file_path = resources_root / "Resources/Base/UI.png";
-	if (!std::filesystem::exists(file_path)) {
+	std::filesystem::path resource_path = resources_root / "Resources/BaseData/textures/UI.png";
+	if (!std::filesystem::exists(resource_path)) {
 		throw std::runtime_error("Fatal Error: Couldn't load base UI texture");
 	}
+	CoreResource::TextureArrayManager::Instance().load_texture(resource_path, "Core:UI.png");
 
 	// load base sprites
+	resource_path = resources_root / "Resources/BaseData/sprites";
+	if (!std::filesystem::exists(resource_path / "base_sprites.json")) {
+		throw std::runtime_error("Fatal Error: Couldn't load base sprites");
+	}
+	_LOAD_SPRITES(resource_path);
 
 	// load base audio
-
+	resource_path = resources_root / "Resources/BaseData/audio";
+	if (!std::filesystem::exists(resource_path / "audio_data/base_audio.json")) {
+		throw std::runtime_error("Fatal Error: Couldn't load base audio");
+	}
+	_LOAD_AUDIO(resource_path);
 }
 
 void ResourceLoader::Load_Resources() {
@@ -55,9 +63,6 @@ void ResourceLoader::Load_Resources() {
 	CoreEntity::register_core_entity_info_factories();
 	CoreEntity::register_core_entity_factories();
 	CoreTags::register_core_tags();
-
-	const float pixel_UV_size = 1.f / 512.f;
-	CoreResource::SpriteManager::MAIN_PIXEL_UV_SIZE = pixel_UV_size;
 
 	// LOAD ORDER IS IMPORTANT
 	load_textures();
@@ -78,7 +83,7 @@ void ResourceLoader::Load_Resources() {
 
 void ResourceLoader::Hot_Reload() {
 	//textures_array.reset();
-	CoreResource::SpriteManager::get_instance().ClearData();
+	CoreResource::SpriteManager::Instance().ClearData();
 	CoreResource::LightsManager::get_instance().ClearData();
 	//particles mgr
 	CoreResource::EffectsManager::get_instance().ClearData();
@@ -178,11 +183,8 @@ void ResourceLoader::load_textures() const {
 			if (!entry.is_regular_file()) continue;
 			std::filesystem::path file_path = entry.path();
 			if (file_path.extension() == ".png") {
-				std::string texture_UID = "Texture:" + source_name + ":" + file_path.filename().string();
-				texture_layers.emplace(texture_UID, textures_array->get_current_size());
-				bool success = textures_array->add_2D_texture(file_path.string().c_str());
-				if (!success)
-					throw std::runtime_error(std::string("Can't load texture ") + file_path.filename().string());
+				std::string texture_UID = source_name + ":" + file_path.filename().string();
+				CoreResource::TextureArrayManager::Instance().load_texture(file_path, texture_UID);
 			}
 		}
 	};
@@ -199,100 +201,23 @@ void ResourceLoader::load_textures() const {
 }
 
 void ResourceLoader::load_sprites() const {
-	auto _load_sprites = [&](std::filesystem::path& sprites_path) {
-		for (const auto& entry : std::filesystem::directory_iterator(sprites_path)) {
-			if (!entry.is_regular_file()) continue;
-			std::filesystem::path file_path = entry.path();
-			if (file_path.extension() != data_extension) continue;
-
-			DataParser parser;
-			parser.parse_data(file_path, DEBUG);
-			for (const auto& s : parser.node_root.array) {
-				if (!s.has_child("UID"))
-					throw std::runtime_error("Sprite entry in " + file_path.string() + " has no UID!");
-				std::string UID = s["UID"].get_as<std::string>();
-				try {
-					std::string texture_UID = s["texture"].get_as<std::string>();
-					uint32_t padding = s["padding"].get_as<uint32_t>();
-					auto it = texture_layers.find(texture_UID);
-					if (it == texture_layers.end())
-						ResourceLoading::throw_reference_error(UID, texture_UID);
-					uint32_t texture_array_id = it->second;
-
-					auto& sprite = s["sprite"];
-					uint32_t u0 = sprite["U0"].get_as<uint32_t>();
-					uint32_t v0 = sprite["V0"].get_as<uint32_t>();
-					uint32_t w = sprite["w"].get_as<uint32_t>();
-					uint32_t h = sprite["h"].get_as<uint32_t>();
-					//9-sliced sprite
-					if (sprite.has_child("border")) {
-						auto& border = sprite["border"];
-						uint32_t left = border["left"].get_as<uint32_t>();
-						uint32_t right = border["right"].get_as<uint32_t>();
-						uint32_t top = border["top"].get_as<uint32_t>();
-						uint32_t bottom = border["bottom"].get_as<uint32_t>();
-						CoreResource::SpriteManager::get_instance().add_sprite9sliced(UID, u0, v0, w, h, left, right, top, bottom, texture_array_id);
-					}
-					//regular sprite
-					else {
-						float base_size = sprite["base_size"].get_as<float>();
-						CoreResource::SpriteManager::get_instance().add_sprite(UID, u0, v0, w, h, base_size, texture_array_id);
-					}
-				}
-				catch (const std::exception& e) {
-					ResourceLoading::throw_resource_error(UID, std::string("In file ") + file_path.string() + ": " + e.what());
-				}
-			}
-		}
-	};
-	
 	std::filesystem::path sprites_path = resources_root / "Resources/data/sprites_data";
-	_load_sprites(sprites_path);
+	_LOAD_SPRITES(sprites_path);
 
 	for (const auto& mod_info : ModsManager::get_instance().get_mods()) {
 		sprites_path = mod_info.mod_folder_path / "Resources/data/sprites_data";
 		if (!std::filesystem::exists(sprites_path)) continue;
-		_load_sprites(sprites_path);
+		_LOAD_SPRITES(sprites_path);
 	}
 }
 
 void ResourceLoader::load_audio() const {
-	auto _load_audio = [&](std::filesystem::path& audio_path) {
-		std::filesystem::path audio_data_path = audio_path / "audio_data";
-		for (const auto& entry : std::filesystem::directory_iterator(audio_data_path)) {
-			if (!entry.is_regular_file()) continue;
-			std::filesystem::path file_path = entry.path();
-			if (file_path.extension() != data_extension) continue;
-
-			DataParser parser;
-			parser.parse_data(file_path, DEBUG);
-			for (const auto& audio : parser.node_root.array) {
-				if (!audio.has_child("UID"))
-					throw std::runtime_error("Audio entry in " + file_path.string() + " has no UID!");
-				std::string UID = audio["UID"].get_as<std::string>();
-				try {
-					std::filesystem::path file_path = audio_path / audio["file"].get_as<std::string>();
-					std::string sound_group = audio["group"].get_as<std::string>();
-					bool load_as_PCM = audio["PCM"].get_as<bool>();
-					uint8_t max_instance = audio["MAX_INSTANCE"].get_as<uint8_t>();
-					if (load_as_PCM)
-						CoreAudio::AudioSystem::Instance().load_audio_as_pcm(file_path, UID, sound_group, max_instance);
-					else
-						CoreAudio::AudioSystem::Instance().load_audio_as_stream(file_path, UID, sound_group, max_instance);
-				}
-				catch (const std::exception& e) {
-					ResourceLoading::throw_resource_error(UID, std::string("In file ") + file_path.string() + ": " + e.what());
-				}
-			}
-		}
-		};
-
 	std::filesystem::path audio_path = resources_root / "Resources/audio";
-	_load_audio(audio_path);
+	_LOAD_AUDIO(audio_path);
 	for (const auto& mod_info : ModsManager::get_instance().get_mods()) {
 		audio_path = mod_info.mod_folder_path / "Resources/audio";
 		if (!std::filesystem::exists(audio_path)) continue;
-		_load_audio(audio_path);
+		_LOAD_AUDIO(audio_path);
 	}
 }
 
@@ -358,7 +283,7 @@ void ResourceLoader::load_effects() const {
 				std::string UID = effect["UID"].get_as<std::string>();
 				try {
 					std::string sprite_UID = effect["sprite_UID"].get_as<std::string>();
-					auto sprite_global_id = CoreResource::SpriteManager::get_instance().get_sprite_id(sprite_UID);
+					auto sprite_global_id = CoreResource::SpriteManager::Instance().get_sprite_id(sprite_UID);
 					if (!sprite_global_id)
 						ResourceLoading::throw_reference_error(UID, sprite_UID);
 					uint8_t effect_type_id = effect["effect_type"].get_as<uint8_t>();
@@ -507,7 +432,7 @@ void ResourceLoader::load_animation_clips_data() const {
 					clip.set_frame_time(frame_time);
 					for (uint32_t i = 0; i < sprites_size; i++) {
 						std::string sprite_UID = sprites[i].get_as<std::string>();
-						auto sprite_global_id = CoreResource::SpriteManager::get_instance().get_sprite_id(sprite_UID);
+						auto sprite_global_id = CoreResource::SpriteManager::Instance().get_sprite_id(sprite_UID);
 						if (!sprite_global_id.has_value())
 							ResourceLoading::throw_reference_error(UID, sprite_UID);
 						else clip.sprites.emplace_back(sprite_global_id.value());
@@ -618,6 +543,87 @@ void ResourceLoader::resolve_entities_dependencies(const std::vector<DataParser>
 		for (const auto& data_node : parser.node_root.array) {
 			CoreEntity::EntityInfoManager::get_instance().get_entity_info(entity_ID)->fill_dependent_data(data_node);
 			entity_ID++;
+		}
+	}
+}
+
+void ResourceLoader::_LOAD_SPRITES(std::filesystem::path& sprites_path) const {
+	for (const auto& entry : std::filesystem::directory_iterator(sprites_path)) {
+		if (!entry.is_regular_file()) continue;
+
+		std::filesystem::path file_path = entry.path();
+		if (file_path.extension() != data_extension) continue;
+
+		DataParser parser;
+		parser.parse_data(file_path, DEBUG);
+
+		for (const auto& s : parser.node_root.array) {
+			if (!s.has_child("UID"))
+				throw std::runtime_error("Sprite entry in " + file_path.string() + " has no UID!");
+			std::string UID = s["UID"].get_as<std::string>();
+			try {
+				std::string texture_UID = s["texture"].get_as<std::string>();
+				uint32_t padding = s["padding"].get_as<uint32_t>();
+
+				auto tex_id_opt = CoreResource::TextureArrayManager::Instance().get_texture_id(texture_UID);
+				if (!tex_id_opt.has_value())
+					ResourceLoading::throw_reference_error(UID, texture_UID);
+				uint32_t tex_array_id = tex_id_opt.value().array_id;
+				uint32_t tex_id = tex_id_opt.value().index;
+
+				auto& sprite = s["sprite"];
+				uint32_t u0 = sprite["U0"].get_as<uint32_t>();
+				uint32_t v0 = sprite["V0"].get_as<uint32_t>();
+				uint32_t w = sprite["w"].get_as<uint32_t>();
+				uint32_t h = sprite["h"].get_as<uint32_t>();
+				//9-sliced sprite
+				if (sprite.has_child("border")) {
+					auto& border = sprite["border"];
+					uint32_t left = border["left"].get_as<uint32_t>();
+					uint32_t right = border["right"].get_as<uint32_t>();
+					uint32_t top = border["top"].get_as<uint32_t>();
+					uint32_t bottom = border["bottom"].get_as<uint32_t>();
+					CoreResource::SpriteManager::Instance().add_sprite9sliced(UID, u0, v0, w, h, left, right, top, bottom, tex_array_id, tex_id);
+				}
+				//regular sprite
+				else {
+					float base_size = sprite["base_size"].get_as<float>();
+					CoreResource::SpriteManager::Instance().add_sprite(UID, u0, v0, w, h, base_size, tex_array_id, tex_id);
+				}
+			}
+			catch (const std::exception& e) {
+				ResourceLoading::throw_resource_error(UID, std::string("In file ") + file_path.string() + ": " + e.what());
+			}
+		}
+	}
+}
+
+void ResourceLoader::_LOAD_AUDIO(std::filesystem::path& audio_path) const {
+	std::filesystem::path audio_data_path = audio_path / "audio_data";
+	for (const auto& entry : std::filesystem::directory_iterator(audio_data_path)) {
+		if (!entry.is_regular_file()) continue;
+		std::filesystem::path file_path = entry.path();
+		if (file_path.extension() != data_extension) continue;
+
+		DataParser parser;
+		parser.parse_data(file_path, DEBUG);
+		for (const auto& audio : parser.node_root.array) {
+			if (!audio.has_child("UID"))
+				throw std::runtime_error("Audio entry in " + file_path.string() + " has no UID!");
+			std::string UID = audio["UID"].get_as<std::string>();
+			try {
+				std::filesystem::path file_path = audio_path / audio["file"].get_as<std::string>();
+				std::string sound_group = audio["group"].get_as<std::string>();
+				bool load_as_PCM = audio["PCM"].get_as<bool>();
+				uint8_t max_instance = audio["MAX_INSTANCE"].get_as<uint8_t>();
+				if (load_as_PCM)
+					CoreAudio::AudioSystem::Instance().load_audio_as_pcm(file_path, UID, sound_group, max_instance);
+				else
+					CoreAudio::AudioSystem::Instance().load_audio_as_stream(file_path, UID, sound_group, max_instance);
+			}
+			catch (const std::exception& e) {
+				ResourceLoading::throw_resource_error(UID, std::string("In file ") + file_path.string() + ": " + e.what());
+			}
 		}
 	}
 }

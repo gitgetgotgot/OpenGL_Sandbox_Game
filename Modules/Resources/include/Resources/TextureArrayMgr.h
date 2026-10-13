@@ -21,6 +21,7 @@ namespace CoreResource {
 		void uninit();
 		void load_texture(std::filesystem::path file_path, std::string UID);
 		std::optional<TextureID> get_texture_id(std::string& UID);
+		uint32_t get_texture_array_res(uint16_t tex_array_id);
 	private:
 		int get_array_index(uint32_t tex_width, uint32_t tex_height);
 		TextureArrayManager() = default;

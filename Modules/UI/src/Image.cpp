@@ -59,27 +59,27 @@ void CoreUI::Image::update_as_regular(Image& img) {
 
 	if (img.dirty_mask & ImageMask::IMAGE_TRANSFORM || img.dirty_mask & ImageMask::IMAGE_SPRITE) {
 		UI_Transform& tr = obj->transform;
-		CoreResource::Sprite& sprite = CoreResource::SpriteManager::get_instance().get_sprite(img.sprite_ID);
+		CoreResource::Sprite& s = CoreResource::SpriteManager::Instance().get_sprite(img.sprite_ID);
 
 		float size_x = tr.size.x;
 		float size_y = tr.size.y;
 		float x = tr.global_pos.x - size_x * 0.5f;
 		float y = tr.global_pos.y - size_y * 0.5f;
 
-		glm::vec2& size_ratio = sprite.ratio;
+		glm::vec2& size_ratio = s.ratio;
 		x += (1.0f - size_ratio.x) * size_x * 0.5f;
 		y += (1.0f - size_ratio.y) * size_y * 0.5f;
 		size_x *= size_ratio.x;
 		size_y *= size_ratio.y;
 		
 		UI_Vertex2f& v1 = vertex[0];
-		v1.pos = { x, y };						v1.UV = { sprite.U0, sprite.V0 };						v1.tex_index = sprite.texture_id;
+		v1.pos = { x, y };						v1.UV = { s.U0, s.V0 };					v1.tex_array_id = s.tex_array_id; v1.tex_id = s.tex_id;
 		UI_Vertex2f& v2 = vertex[1];
-		v2.pos = { x, y + size_y };				v2.UV = { sprite.U0, sprite.V0 + sprite.H };			v2.tex_index = sprite.texture_id;
+		v2.pos = { x, y + size_y };				v2.UV = { s.U0, s.V0 + s.H };			v2.tex_array_id = s.tex_array_id; v2.tex_id = s.tex_id;
 		UI_Vertex2f& v3 = vertex[2];
-		v3.pos = { x + size_x, y + size_y };	v3.UV = { sprite.U0 + sprite.W, sprite.V0 + sprite.H }; v3.tex_index = sprite.texture_id;
+		v3.pos = { x + size_x, y + size_y };	v3.UV = { s.U0 + s.W, s.V0 + s.H };		v3.tex_array_id = s.tex_array_id; v3.tex_id = s.tex_id;
 		UI_Vertex2f& v4 = vertex[3];
-		v4.pos = { x + size_x, y };				v4.UV = { sprite.U0 + sprite.W, sprite.V0 };			v4.tex_index = sprite.texture_id;
+		v4.pos = { x + size_x, y };				v4.UV = { s.U0 + s.W, s.V0 };			v4.tex_array_id = s.tex_array_id; v4.tex_id = s.tex_id;
 	}
 	if (img.dirty_mask & ImageMask::IMAGE_COLOR) {
 		vertex[0].color = img.image_color;
@@ -94,7 +94,7 @@ void CoreUI::Image::update_as_nine_sliced(Image& img) {
 	UI_Vertex2f* v_buf = nullptr;
 
 	if (img.dirty_mask & ImageMask::IMAGE_TRANSFORM || img.dirty_mask & ImageMask::IMAGE_BORDER) {
-		CoreResource::Sprite9Sliced& sprite = CoreResource::SpriteManager::get_instance().get_sprite9sliced(img.sprite_ID);
+		CoreResource::Sprite9Sliced& sprite = CoreResource::SpriteManager::Instance().get_sprite9sliced(img.sprite_ID);
 		float margin_left	= sprite.ratio_left * img.border_normalized_size;
 		float margin_right	= sprite.ratio_right * img.border_normalized_size;
 		float margin_top	= sprite.ratio_top * img.border_normalized_size;
@@ -145,7 +145,7 @@ void CoreUI::Image::update_as_nine_sliced(Image& img) {
 		update_buffer_transform_part(); //RT
 	}
 	if (img.dirty_mask & ImageMask::IMAGE_SPRITE) {
-		CoreResource::Sprite9Sliced& sprite = CoreResource::SpriteManager::get_instance().get_sprite9sliced(img.sprite_ID);
+		CoreResource::Sprite9Sliced& sprite = CoreResource::SpriteManager::Instance().get_sprite9sliced(img.sprite_ID);
 		float
 			U_0 = sprite.U0, U_1 = U_0 + sprite.W,
 			V_0 = sprite.V0, V_1 = V_0 + sprite.H;
@@ -155,10 +155,10 @@ void CoreUI::Image::update_as_nine_sliced(Image& img) {
 		v_buf = img.image_vertices.data;
 
 		auto update_buffer_sprite_part = [&]() {
-			v_buf->UV = { u0, v0 }; v_buf++->tex_index = sprite.texture_id;
-			v_buf->UV = { u0, v1 }; v_buf++->tex_index = sprite.texture_id;
-			v_buf->UV = { u1, v1 }; v_buf++->tex_index = sprite.texture_id;
-			v_buf->UV = { u1, v0 }; v_buf++->tex_index = sprite.texture_id;
+			v_buf->UV = { u0, v0 }; v_buf->tex_array_id = sprite.tex_array_id; v_buf++->tex_id = sprite.tex_id;
+			v_buf->UV = { u0, v1 }; v_buf->tex_array_id = sprite.tex_array_id; v_buf++->tex_id = sprite.tex_id;
+			v_buf->UV = { u1, v1 }; v_buf->tex_array_id = sprite.tex_array_id; v_buf++->tex_id = sprite.tex_id;
+			v_buf->UV = { u1, v0 }; v_buf->tex_array_id = sprite.tex_array_id; v_buf++->tex_id = sprite.tex_id;
 		};
 
 		update_buffer_sprite_part(); //LB

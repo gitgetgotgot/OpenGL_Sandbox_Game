@@ -8,7 +8,7 @@
     "width": 2,
     "height": 1,
     "platform_collision": true,
-    "sprites": [ "Sprite:Core:Workbench" ]
+    "sprites": [ "Core:Workbench" ]
   },
   {
     "UID": "Item:Core:Furnace",
@@ -19,7 +19,7 @@
     "width": 3,
     "height": 2,
     "lights": [ "Light:Core:Fire" ],
-    "sprites": [ "Sprite:Core:Furnace" ]
+    "sprites": [ "Core:Furnace" ]
   },
   {
     "UID": "Item:Core:Anvil",
@@ -29,7 +29,7 @@
     "drop_UID": "Item:Core:Anvil",
     "width": 2,
     "height": 1,
-    "sprites": [ "Sprite:Core:Anvil" ]
+    "sprites": [ "Core:Anvil" ]
   },
   {
     "UID": "Item:Core:Oak Table",
@@ -39,7 +39,7 @@
     "drop_UID": "Item:Core:Oak Table",
     "width": 3,
     "height": 2,
-    "sprites": [ "Sprite:Core:Oak Table" ]
+    "sprites": [ "Core:Oak Table" ]
   },
   {
     "UID": "Item:Core:Oak Chair",
@@ -49,7 +49,7 @@
     "drop_UID": "Item:Core:Oak Chair",
     "width": 1,
     "height": 2,
-    "sprites": [ "Sprite:Core:Oak Chair" ]
+    "sprites": [ "Core:Oak Chair" ]
   },
   {
     "UID": "Item:Core:Oak Chair(R)",
@@ -59,7 +59,7 @@
     "drop_UID": "Item:Core:Oak Chair(R)",
     "width": 1,
     "height": 2,
-    "sprites": [ "Sprite:Core:Oak Chair(R)" ]
+    "sprites": [ "Core:Oak Chair(R)" ]
   },
   {
     "UID": "Item:Core:Chest",
@@ -69,7 +69,7 @@
     "drop_UID": "Item:Core:Chest",
     "width": 2,
     "height": 2,
-    "sprites": [ "Sprite:Core:Chest" ]
+    "sprites": [ "Core:Chest" ]
   },
   {
     "UID": "Item:Core:ChestOpen",
@@ -79,7 +79,7 @@
     "drop_UID": "Item:Core:Chest",
     "width": 2,
     "height": 2,
-    "sprites": [ "Sprite:Core:ChestOpen" ]
+    "sprites": [ "Core:ChestOpen" ]
   },
   {
     "UID": "Item:Core:Life Crystal",
@@ -96,7 +96,7 @@
       }
     ],
     "lights": [ "Light:Core:RedLight" ],
-    "sprites": [ "Sprite:Core:Life Crystal" ]
+    "sprites": [ "Core:Life Crystal" ]
   },
   {
     "UID": "Item:Core:Oak Door",
@@ -106,7 +106,7 @@
     "drop_UID": "Item:Core:Oak Door",
     "width": 2,
     "height": 3,
-    "sprites": [ "Sprite:Core:Oak Door" ]
+    "sprites": [ "Core:Oak Door" ]
   },
   {
     "UID": "Item:Core:Oak Door(R)",
@@ -116,7 +116,7 @@
     "drop_UID": "Item:Core:Oak Door",
     "width": 2,
     "height": 3,
-    "sprites": [ "Sprite:Core:Oak Door(R)" ]
+    "sprites": [ "Core:Oak Door(R)" ]
   },
   {
     "UID": "Item:Core:Oak Door(C)",
@@ -127,6 +127,6 @@
     "width": 1,
     "height": 3,
     "collision": true,
-    "sprites": [ "Sprite:Core:Oak Door(C)" ]
+    "sprites": [ "Core:Oak Door(C)" ]
   }
 ]

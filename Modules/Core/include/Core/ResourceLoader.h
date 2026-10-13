@@ -41,6 +41,10 @@ public:
 private:
 	ResourceLoader() {}
 	~ResourceLoader();
+
+	void _LOAD_SPRITES(std::filesystem::path& sprites_path) const;
+	void _LOAD_AUDIO(std::filesystem::path& sprites_path) const;
+
 	std::vector<LibraryHandle> library_handles;
 	std::filesystem::path data_extension;
 	std::filesystem::path resources_root;

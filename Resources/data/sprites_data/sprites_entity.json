@@ -1,7 +1,7 @@
 [
   {
-    "UID": "Sprite:Core:GreenSlime",
-    "texture": "Texture:Core:Entities.png",
+    "UID": "Core:GreenSlime",
+    "texture": "Core:Entities.png",
     "padding": 1,
     "sprite": {
       "U0": 127,
@@ -12,8 +12,8 @@
     }
   },
   {
-    "UID": "Sprite:Core:GreenSlime2",
-    "texture": "Texture:Core:Entities.png",
+    "UID": "Core:GreenSlime2",
+    "texture": "Core:Entities.png",
     "padding": 1,
     "sprite": {
       "U0": 145,

@@ -28,7 +28,7 @@ void CoreObject::ObjectInfo::fill_data(const DataNode& data) {
 	this->sprites = DynamicArray<uint32_t>(size);
 	for (uint32_t i = 0; i < size; i++) {
 		std::string sprite_UID = sprites_v[i].get_as<std::string>();
-		auto sprite_global_id = CoreResource::SpriteManager::get_instance().get_sprite_id(sprite_UID);
+		auto sprite_global_id = CoreResource::SpriteManager::Instance().get_sprite_id(sprite_UID);
 		if (sprite_global_id.has_value())
 			this->sprites[i] = sprite_global_id.value();
 		else

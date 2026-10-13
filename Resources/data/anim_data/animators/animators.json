@@ -1,9 +1,9 @@
 [
   {
-    "UID": "Animator:Core:Slime",
+    "UID": "Core:Slime",
     "clips": [
-      "Clip:Core:SlimeIdle",
-      "Clip:Core:SlimeJump"
+      "Core:SlimeIdle",
+      "Core:SlimeJump"
     ]
   }
 ]

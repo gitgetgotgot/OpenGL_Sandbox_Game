@@ -12,7 +12,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Copper Pickaxe" ]
+    "sprites": [ "Core:Copper Pickaxe" ]
   },
   {
     "UID": "Item:Core:Copper Axe",
@@ -27,7 +27,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Copper Axe" ]
+    "sprites": [ "Core:Copper Axe" ]
   },
   {
     "UID": "Item:Core:Copper Dagger",
@@ -40,7 +40,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Copper Dagger" ]
+    "sprites": [ "Core:Copper Dagger" ]
   },
   {
     "UID": "Item:Core:Copper Sword",
@@ -53,7 +53,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Copper Sword" ]
+    "sprites": [ "Core:Copper Sword" ]
   },
   {
     "UID": "Item:Core:Copper Hammer",
@@ -68,7 +68,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Copper Hammer" ]
+    "sprites": [ "Core:Copper Hammer" ]
   },
   {
     "UID": "Item:Core:Copper Bow",
@@ -81,7 +81,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Copper Bow" ]
+    "sprites": [ "Core:Copper Bow" ]
   },
   {
     "UID": "Item:Core:Iron Pickaxe",
@@ -96,7 +96,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Iron Pickaxe" ]
+    "sprites": [ "Core:Iron Pickaxe" ]
   },
   {
     "UID": "Item:Core:Iron Axe",
@@ -111,7 +111,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Iron Axe" ]
+    "sprites": [ "Core:Iron Axe" ]
   },
   {
     "UID": "Item:Core:Iron Dagger",
@@ -124,7 +124,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Iron Dagger" ]
+    "sprites": [ "Core:Iron Dagger" ]
   },
   {
     "UID": "Item:Core:Iron Sword",
@@ -137,7 +137,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Iron Sword" ]
+    "sprites": [ "Core:Iron Sword" ]
   },
   {
     "UID": "Item:Core:Iron Hammer",
@@ -152,7 +152,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Iron Hammer" ]
+    "sprites": [ "Core:Iron Hammer" ]
   },
   {
     "UID": "Item:Core:Iron Bow",
@@ -165,7 +165,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Iron Bow" ]
+    "sprites": [ "Core:Iron Bow" ]
   },
   {
     "UID": "Item:Core:Golden Pickaxe",
@@ -180,7 +180,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Golden Pickaxe" ]
+    "sprites": [ "Core:Golden Pickaxe" ]
   },
   {
     "UID": "Item:Core:Golden Axe",
@@ -195,7 +195,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Golden Axe" ]
+    "sprites": [ "Core:Golden Axe" ]
   },
   {
     "UID": "Item:Core:Golden Dagger",
@@ -208,7 +208,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Golden Dagger" ]
+    "sprites": [ "Core:Golden Dagger" ]
   },
   {
     "UID": "Item:Core:Golden Sword",
@@ -221,7 +221,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Golden Sword" ]
+    "sprites": [ "Core:Golden Sword" ]
   },
   {
     "UID": "Item:Core:Golden Hammer",
@@ -236,7 +236,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Golden Hammer" ]
+    "sprites": [ "Core:Golden Hammer" ]
   },
   {
     "UID": "Item:Core:Golden Bow",
@@ -249,7 +249,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Golden Bow" ]
+    "sprites": [ "Core:Golden Bow" ]
   },
   {
     "UID": "Item:Core:Magic Wand",
@@ -265,7 +265,7 @@
     "use_sound_id": 3,
     "proj_UID": "Item:Core:Arrow",
     "proj_cd": 1.0,
-    "sprites": [ "Sprite:Core:Magic Wand" ]
+    "sprites": [ "Core:Magic Wand" ]
   },
   {
     "UID": "Item:Core:Shuriken",
@@ -278,7 +278,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Shuriken" ]
+    "sprites": [ "Core:Shuriken" ]
   },
   {
     "UID": "Item:Core:Throwable Knife",
@@ -291,7 +291,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Throwable Knife" ]
+    "sprites": [ "Core:Throwable Knife" ]
   },
   {
     "UID": "Item:Core:Game.cpp",
@@ -307,7 +307,7 @@
     "use_sound_id": 3,
     "proj_UID": "Item:Core:Arrow",
     "proj_cd": 1.0,
-    "sprites": [ "Sprite:Core:Game.cpp" ]
+    "sprites": [ "Core:Game.cpp" ]
   },
   {
     "UID": "Item:Core:Pistol",
@@ -320,7 +320,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Pistol" ]
+    "sprites": [ "Core:Pistol" ]
   },
   {
     "UID": "Item:Core:Shotgun",
@@ -333,7 +333,7 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Shotgun" ]
+    "sprites": [ "Core:Shotgun" ]
   },
   {
     "UID": "Item:Core:Trident",
@@ -346,6 +346,6 @@
     "crit_chance": 5.0,
     "stackable": false,
     "use_sound_id": 3,
-    "sprites": [ "Sprite:Core:Trident" ]
+    "sprites": [ "Core:Trident" ]
   }
 ]

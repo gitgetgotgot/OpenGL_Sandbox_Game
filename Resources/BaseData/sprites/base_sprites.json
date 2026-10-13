@@ -1,7 +1,7 @@
 [
   {
     "UID": "Core:White",
-    "texture": "Texture:Core:UI.png",
+    "texture": "Core:UI.png",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -13,7 +13,7 @@
   },
   {
     "UID": "Core:Button",
-    "texture": "Texture:Core:UI.png",
+    "texture": "Core:UI.png",
     "padding": 0,
     "sprite": {
       "U0": 32,
@@ -30,7 +30,7 @@
   },
   {
     "UID": "Core:Tooltip",
-    "texture": "Texture:Core:UI.png",
+    "texture": "Core:UI.png",
     "padding": 0,
     "sprite": {
       "U0": 64,

@@ -35,10 +35,11 @@ void CoreUI::UI_System::init() {
 	sprites_vbo->set_data(nullptr, MAX_SPRITES_VERTEX_SIZE * sizeof(UI_Vertex2f), GL_DYNAMIC_DRAW);
 	ebo->bind_EBO();
 
-	sprites_vao->link_Attribute(0, 2, GL_FLOAT, sizeof(UI_Vertex2f), (void*)0);
-	sprites_vao->link_Attribute(1, 2, GL_FLOAT, sizeof(UI_Vertex2f), (void*)(2 * sizeof(float)));
-	sprites_vao->link_Attribute(2, 4, GL_FLOAT, sizeof(UI_Vertex2f), (void*)(4 * sizeof(float)));
-	sprites_vao->link_Attribute(3, 1, GL_UNSIGNED_INT, sizeof(UI_Vertex2f), (void*)(8 * sizeof(float)));
+	sprites_vao->link_Attribute(0, 2, GL_FLOAT, sizeof(UI_Vertex2f), (void*)offsetof(UI_Vertex2f, pos));
+	sprites_vao->link_Attribute(1, 2, GL_FLOAT, sizeof(UI_Vertex2f), (void*)offsetof(UI_Vertex2f, UV));
+	sprites_vao->link_Attribute(2, 4, GL_FLOAT, sizeof(UI_Vertex2f), (void*)offsetof(UI_Vertex2f, color));
+	sprites_vao->link_Attribute(3, 1, GL_UNSIGNED_INT, sizeof(UI_Vertex2f), (void*)offsetof(UI_Vertex2f, tex_array_id));
+	sprites_vao->link_Attribute(4, 1, GL_UNSIGNED_INT, sizeof(UI_Vertex2f), (void*)offsetof(UI_Vertex2f, tex_id));
 
 	sprites_vao->unbind_VAO();
 	sprites_vbo->unbind_VBO();

@@ -11,7 +11,7 @@
       }
     ],
     "collision": true,
-    "sprites": [ "Sprite:Core:Stone" ]
+    "sprites": [ "Core:Stone" ]
   },
   {
     "UID": "Item:Core:Dirt",
@@ -25,7 +25,7 @@
       }
     ],
     "collision": true,
-    "sprites": [ "Sprite:Core:Dirt" ]
+    "sprites": [ "Core:Dirt" ]
   },
   {
     "UID": "Item:Core:Grass Dirt",
@@ -39,7 +39,7 @@
       }
     ],
     "collision": true,
-    "sprites": [ "Sprite:Core:Grass Dirt" ]
+    "sprites": [ "Core:Grass Dirt" ]
   },
   {
     "UID": "Item:Core:Sand",
@@ -53,7 +53,7 @@
       }
     ],
     "collision": true,
-    "sprites": [ "Sprite:Core:Sand" ]
+    "sprites": [ "Core:Sand" ]
   },
   {
     "UID": "Item:Core:Oak",
@@ -67,7 +67,7 @@
       }
     ],
     "collision": false,
-    "sprites": [ "Sprite:Core:Oak" ]
+    "sprites": [ "Core:Oak" ]
   },
   {
     "UID": "Item:Core:Oak Planks",
@@ -81,7 +81,7 @@
       }
     ],
     "collision": true,
-    "sprites": [ "Sprite:Core:Oak Planks" ]
+    "sprites": [ "Core:Oak Planks" ]
   },
   {
     "UID": "Item:Core:Crimson Stone",
@@ -95,7 +95,7 @@
       }
     ],
     "collision": true,
-    "sprites": [ "Sprite:Core:Crimson Stone" ]
+    "sprites": [ "Core:Crimson Stone" ]
   },
   {
     "UID": "Item:Core:Corrupted Stone",
@@ -109,7 +109,7 @@
       }
     ],
     "collision": true,
-    "sprites": [ "Sprite:Core:Corrupted Stone" ]
+    "sprites": [ "Core:Corrupted Stone" ]
   },
   {
     "UID": "Item:Core:Copper Ore",
@@ -123,7 +123,7 @@
       }
     ],
     "collision": true,
-    "sprites": [ "Sprite:Core:Copper Ore" ]
+    "sprites": [ "Core:Copper Ore" ]
   },
   {
     "UID": "Item:Core:Iron Ore",
@@ -137,7 +137,7 @@
       }
     ],
     "collision": true,
-    "sprites": [ "Sprite:Core:Iron Ore" ]
+    "sprites": [ "Core:Iron Ore" ]
   },
   {
     "UID": "Item:Core:Gold Ore",
@@ -151,7 +151,7 @@
       }
     ],
     "collision": true,
-    "sprites": [ "Sprite:Core:Gold Ore" ]
+    "sprites": [ "Core:Gold Ore" ]
   },
   {
     "UID": "Item:Core:Water",
@@ -165,7 +165,7 @@
       }
     ],
     "collision": false,
-    "sprites": [ "Sprite:Core:Water" ]
+    "sprites": [ "Core:Water" ]
   },
   {
     "UID": "Item:Core:Snow",
@@ -179,7 +179,7 @@
       }
     ],
     "collision": true,
-    "sprites": [ "Sprite:Core:Snow" ]
+    "sprites": [ "Core:Snow" ]
   },
   {
     "UID": "Item:Core:Ice",
@@ -193,7 +193,7 @@
       }
     ],
     "collision": true,
-    "sprites": [ "Sprite:Core:Ice" ]
+    "sprites": [ "Core:Ice" ]
   },
   {
     "UID": "Item:Core:Snow Grass Dirt",
@@ -207,7 +207,7 @@
       }
     ],
     "collision": true,
-    "sprites": [ "Sprite:Core:Snow Grass Dirt" ]
+    "sprites": [ "Core:Snow Grass Dirt" ]
   },
   {
     "UID": "Item:Core:Crimson Grass Dirt",
@@ -221,7 +221,7 @@
       }
     ],
     "collision": true,
-    "sprites": [ "Sprite:Core:Crimson Grass Dirt" ]
+    "sprites": [ "Core:Crimson Grass Dirt" ]
   },
   {
     "UID": "Item:Core:Corrupted Grass Dirt",
@@ -235,7 +235,7 @@
       }
     ],
     "collision": true,
-    "sprites": [ "Sprite:Core:Corrupted Grass Dirt" ]
+    "sprites": [ "Core:Corrupted Grass Dirt" ]
   },
   {
     "UID": "Item:Core:Grass",
@@ -249,7 +249,7 @@
       }
     ],
     "collision": false,
-    "sprites": [ "Sprite:Core:Grass" ]
+    "sprites": [ "Core:Grass" ]
   },
   {
     "UID": "Item:Core:Corrupted Grass",
@@ -263,7 +263,7 @@
       }
     ],
     "collision": false,
-    "sprites": [ "Sprite:Core:Corrupted Grass" ]
+    "sprites": [ "Core:Corrupted Grass" ]
   },
   {
     "UID": "Item:Core:Crimson Grass",
@@ -277,7 +277,7 @@
       }
     ],
     "collision": false,
-    "sprites": [ "Sprite:Core:Crimson Grass" ]
+    "sprites": [ "Core:Crimson Grass" ]
   },
   {
     "UID": "Item:Core:Day Flower",
@@ -291,7 +291,7 @@
       }
     ],
     "collision": false,
-    "sprites": [ "Sprite:Core:Day Flower" ]
+    "sprites": [ "Core:Day Flower" ]
   },
   {
     "UID": "Item:Core:Torch",
@@ -306,7 +306,7 @@
     ],
     "collision": false,
     "lights": [ "Light:Core:Torch" ],
-    "sprites": [ "Sprite:Core:Torch" ]
+    "sprites": [ "Core:Torch" ]
   },
   {
     "UID": "Item:Core:Torch(L)",
@@ -321,7 +321,7 @@
     ],
     "collision": false,
     "lights": [ "Light:Core:Torch" ],
-    "sprites": [ "Sprite:Core:Torch(L)" ]
+    "sprites": [ "Core:Torch(L)" ]
   },
   {
     "UID": "Item:Core:Torch(R)",
@@ -336,7 +336,7 @@
     ],
     "collision": false,
     "lights": [ "Light:Core:Torch" ],
-    "sprites": [ "Sprite:Core:Torch(R)" ]
+    "sprites": [ "Core:Torch(R)" ]
   },
   {
     "UID": "Item:Core:Ice Torch",
@@ -351,7 +351,7 @@
     ],
     "collision": false,
     "lights": [ "Light:Core:IceTorch" ],
-    "sprites": [ "Sprite:Core:Ice Torch" ]
+    "sprites": [ "Core:Ice Torch" ]
   },
   {
     "UID": "Item:Core:Ice Torch(L)",
@@ -366,7 +366,7 @@
     ],
     "collision": false,
     "lights": [ "Light:Core:IceTorch" ],
-    "sprites": [ "Sprite:Core:Ice Torch(L)" ]
+    "sprites": [ "Core:Ice Torch(L)" ]
   },
   {
     "UID": "Item:Core:Ice Torch(R)",
@@ -381,7 +381,7 @@
     ],
     "collision": false,
     "lights": [ "Light:Core:IceTorch" ],
-    "sprites": [ "Sprite:Core:Ice Torch(R)" ]
+    "sprites": [ "Core:Ice Torch(R)" ]
   },
   {
     "UID": "Item:Core:Glass",
@@ -395,7 +395,7 @@
       }
     ],
     "collision": true,
-    "sprites": [ "Sprite:Core:Glass" ]
+    "sprites": [ "Core:Glass" ]
   },
   {
     "UID": "Item:Core:Oak Platform",
@@ -410,7 +410,7 @@
     ],
     "collision": false,
     "platform_collision": true,
-    "sprites": [ "Sprite:Core:Oak Platform" ]
+    "sprites": [ "Core:Oak Platform" ]
   },
   {
     "UID": "Item:Core:Oak Platform(L)",
@@ -425,7 +425,7 @@
     ],
     "collision": false,
     "platform_collision": true,
-    "sprites": [ "Sprite:Core:Oak Platform(L)" ]
+    "sprites": [ "Core:Oak Platform(L)" ]
   },
   {
     "UID": "Item:Core:Oak Platform(R)",
@@ -440,7 +440,7 @@
     ],
     "collision": false,
     "platform_collision": true,
-    "sprites": [ "Sprite:Core:Oak Platform(R)" ]
+    "sprites": [ "Core:Oak Platform(R)" ]
   },
   {
     "UID": "Item:Core:Mushroom",
@@ -454,7 +454,7 @@
       }
     ],
     "collision": false,
-    "sprites": [ "Sprite:Core:Mushroom" ]
+    "sprites": [ "Core:Mushroom" ]
   },
   {
     "UID": "Item:Core:Glowing Mushroom",
@@ -468,7 +468,7 @@
       }
     ],
     "collision": false,
-    "sprites": [ "Sprite:Core:Glowing Mushroom" ]
+    "sprites": [ "Core:Glowing Mushroom" ]
   },
   {
     "UID": "Item:Core:Hardened Sand",
@@ -482,7 +482,7 @@
       }
     ],
     "collision": true,
-    "sprites": [ "Sprite:Core:Hardened Sand" ]
+    "sprites": [ "Core:Hardened Sand" ]
   },
   {
     "UID": "Item:Core:Stone Wall",
@@ -494,7 +494,7 @@
         "Amount": 1
       }
     ],
-    "sprites": [ "Sprite:Core:Stone Wall" ]
+    "sprites": [ "Core:Stone Wall" ]
   },
   {
     "UID": "Item:Core:Dirt Wall",
@@ -506,7 +506,7 @@
         "Amount": 1
       }
     ],
-    "sprites": [ "Sprite:Core:Dirt Wall" ]
+    "sprites": [ "Core:Dirt Wall" ]
   },
   {
     "UID": "Item:Core:Oak Wall",
@@ -518,7 +518,7 @@
         "Amount": 1
       }
     ],
-    "sprites": [ "Sprite:Core:Oak Wall" ]
+    "sprites": [ "Core:Oak Wall" ]
   },
   {
     "UID": "Item:Core:Crimson Wall",
@@ -530,7 +530,7 @@
         "Amount": 1
       }
     ],
-    "sprites": [ "Sprite:Core:Crimson Wall" ]
+    "sprites": [ "Core:Crimson Wall" ]
   },
   {
     "UID": "Item:Core:Corrupted Wall",
@@ -542,7 +542,7 @@
         "Amount": 1
       }
     ],
-    "sprites": [ "Sprite:Core:Corrupted Wall" ]
+    "sprites": [ "Core:Corrupted Wall" ]
   },
   {
     "UID": "Item:Core:Snow Wall",
@@ -554,7 +554,7 @@
         "Amount": 1
       }
     ],
-    "sprites": [ "Sprite:Core:Snow Wall" ]
+    "sprites": [ "Core:Snow Wall" ]
   },
   {
     "UID": "Item:Core:Sand Wall",
@@ -566,7 +566,7 @@
         "Amount": 1
       }
     ],
-    "sprites": [ "Sprite:Core:Sand Wall" ]
+    "sprites": [ "Core:Sand Wall" ]
   },
   {
     "UID": "Item:Core:Oak Tree Top",
@@ -579,7 +579,7 @@
         "Amount": 1
       }
     ],
-    "sprites": [ "Sprite:Core:Oak Tree Top" ]
+    "sprites": [ "Core:Oak Tree Top" ]
   },
   {
     "UID": "Item:Core:Oak Branch(L)",
@@ -592,7 +592,7 @@
         "Amount": 1
       }
     ],
-    "sprites": [ "Sprite:Core:Oak Branch(L)" ]
+    "sprites": [ "Core:Oak Branch(L)" ]
   },
   {
     "UID": "Item:Core:Oak Branch(R)",
@@ -605,55 +605,55 @@
         "Amount": 1
       }
     ],
-    "sprites": [ "Sprite:Core:Oak Branch(R)" ]
+    "sprites": [ "Core:Oak Branch(R)" ]
   },
   {
     "UID": "Item:Core:Copper Coin",
     "class_UID": "Class:Core:Item",
     "sub_type": 9,
-    "sprites": [ "Sprite:Core:Copper Coin" ]
+    "sprites": [ "Core:Copper Coin" ]
   },
   {
     "UID": "Item:Core:Silver Coin",
     "class_UID": "Class:Core:Item",
     "sub_type": 9,
-    "sprites": [ "Sprite:Core:Silver Coin" ]
+    "sprites": [ "Core:Silver Coin" ]
   },
   {
     "UID": "Item:Core:Gold Coin",
     "class_UID": "Class:Core:Item",
     "sub_type": 9,
-    "sprites": [ "Sprite:Core:Gold Coin" ]
+    "sprites": [ "Core:Gold Coin" ]
   },
   {
     "UID": "Item:Core:Platinum Coin",
     "class_UID": "Class:Core:Item",
     "sub_type": 9,
-    "sprites": [ "Sprite:Core:Platinum Coin" ]
+    "sprites": [ "Core:Platinum Coin" ]
   },
   {
     "UID": "Item:Core:Copper Ingot",
     "class_UID": "Class:Core:Item",
     "sub_type": 8,
-    "sprites": [ "Sprite:Core:Copper Ingot" ]
+    "sprites": [ "Core:Copper Ingot" ]
   },
   {
     "UID": "Item:Core:Iron Ingot",
     "class_UID": "Class:Core:Item",
     "sub_type": 8,
-    "sprites": [ "Sprite:Core:Iron Ingot" ]
+    "sprites": [ "Core:Iron Ingot" ]
   },
   {
     "UID": "Item:Core:Gold Ingot",
     "class_UID": "Class:Core:Item",
     "sub_type": 8,
-    "sprites": [ "Sprite:Core:Gold Ingot" ]
+    "sprites": [ "Core:Gold Ingot" ]
   },
   {
     "UID": "Item:Core:Gel",
     "class_UID": "Class:Core:Item",
     "sub_type": 8,
-    "sprites": [ "Sprite:Core:Gel" ]
+    "sprites": [ "Core:Gel" ]
   },
   {
     "UID": "Item:Core:Bottle",
@@ -667,7 +667,7 @@
       }
     ],
     "collision": false,
-    "sprites": [ "Sprite:Core:Bottle" ]
+    "sprites": [ "Core:Bottle" ]
   },
   {
     "UID": "Item:Core:Bottle of Water",
@@ -681,19 +681,19 @@
       }
     ],
     "collision": false,
-    "sprites": [ "Sprite:Core:Bottle of Water" ]
+    "sprites": [ "Core:Bottle of Water" ]
   },
   {
     "UID": "Item:Core:Lens",
     "class_UID": "Class:Core:Item",
     "sub_type": 8,
-    "sprites": [ "Sprite:Core:Lens" ]
+    "sprites": [ "Core:Lens" ]
   },
   {
     "UID": "Item:Core:Fallen Star",
     "class_UID": "Class:Core:Item",
     "sub_type": 8,
-    "sprites": [ "Sprite:Core:Fallen Star" ]
+    "sprites": [ "Core:Fallen Star" ]
   },
   {
     "UID": "Item:Core:Mana Crystal",
@@ -705,7 +705,7 @@
         "duration": 10.0
       }
     ],
-    "sprites": [ "Sprite:Core:Mana Crystal" ]
+    "sprites": [ "Core:Mana Crystal" ]
   },
   {
     "UID": "Item:Core:Healing Potion",
@@ -717,7 +717,7 @@
         "duration": 10.0
       }
     ],
-    "sprites": [ "Sprite:Core:Healing Potion" ]
+    "sprites": [ "Core:Healing Potion" ]
   },
   {
     "UID": "Item:Core:Speed Potion",
@@ -729,7 +729,7 @@
         "duration": 10.0
       }
     ],
-    "sprites": [ "Sprite:Core:Speed Potion" ]
+    "sprites": [ "Core:Speed Potion" ]
   },
   {
     "UID": "Item:Core:Defense Potion",
@@ -741,7 +741,7 @@
         "duration": 10.0
       }
     ],
-    "sprites": [ "Sprite:Core:Defense Potion" ]
+    "sprites": [ "Core:Defense Potion" ]
   },
   {
     "UID": "Item:Core:Regeneration Potion",
@@ -753,7 +753,7 @@
         "duration": 10.0
       }
     ],
-    "sprites": [ "Sprite:Core:Regeneration Potion" ]
+    "sprites": [ "Core:Regeneration Potion" ]
   },
   {
     "UID": "Item:Core:Better Healing Potion",
@@ -765,7 +765,7 @@
         "duration": 10.0
       }
     ],
-    "sprites": [ "Sprite:Core:Better Healing Potion" ]
+    "sprites": [ "Core:Better Healing Potion" ]
   },
   {
     "UID": "Item:Core:Arrow",
@@ -773,7 +773,7 @@
     "tags": [ "Core:Arrow" ],
     "dmg": 5,
     "entity_UID": "Entity:Core:Slime",
-    "sprites": [ "Sprite:Core:Arrow" ]
+    "sprites": [ "Core:Arrow" ]
   },
   {
     "UID": "Item:Core:Flaming Arrow",
@@ -781,7 +781,7 @@
     "tags": [ "Core:Arrow" ],
     "dmg": 5,
     "entity_UID": "Entity:Core:Slime",
-    "sprites": [ "Sprite:Core:Flaming Arrow" ]
+    "sprites": [ "Core:Flaming Arrow" ]
   },
   {
     "UID": "Item:Core:Frostburn Arrow",
@@ -789,7 +789,7 @@
     "tags": [ "Core:Arrow" ],
     "dmg": 5,
     "entity_UID": "Entity:Core:Slime",
-    "sprites": [ "Sprite:Core:Frostburn Arrow" ]
+    "sprites": [ "Core:Frostburn Arrow" ]
   },
   {
     "UID": "Item:Core:Star Arrow",
@@ -797,7 +797,7 @@
     "tags": [ "Core:Arrow" ],
     "dmg": 5,
     "entity_UID": "Entity:Core:Slime",
-    "sprites": [ "Sprite:Core:Star Arrow" ]
+    "sprites": [ "Core:Star Arrow" ]
   },
   {
     "UID": "Item:Core:Dark Arrow",
@@ -805,7 +805,7 @@
     "tags": [ "Core:Arrow" ],
     "dmg": 5,
     "entity_UID": "Entity:Core:Slime",
-    "sprites": [ "Sprite:Core:Dark Arrow" ]
+    "sprites": [ "Core:Dark Arrow" ]
   },
   {
     "UID": "Item:Core:Hell Arrow",
@@ -813,7 +813,7 @@
     "tags": [ "Core:Arrow" ],
     "dmg": 5,
     "entity_UID": "Entity:Core:Slime",
-    "sprites": [ "Sprite:Core:Hell Arrow" ]
+    "sprites": [ "Core:Hell Arrow" ]
   },
   {
     "UID": "Item:Core:Bullet",
@@ -821,6 +821,6 @@
     "tags": [ "Core:Bullet" ],
     "dmg": 5,
     "entity_UID": "Entity:Core:Slime",
-    "sprites": [ "Sprite:Core:Bullet" ]
+    "sprites": [ "Core:Bullet" ]
   }
 ]

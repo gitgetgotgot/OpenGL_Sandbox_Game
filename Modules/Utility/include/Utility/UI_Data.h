@@ -4,26 +4,29 @@
 
 namespace CoreUI {
 	struct UI_Vertex2f {
-		UI_Vertex2f() {}
-		UI_Vertex2f(float pX, float pY, float UVx, float UVy, uint32_t tex_index) {
+		UI_Vertex2f() = default;
+		UI_Vertex2f(float pX, float pY, float UVx, float UVy, uint32_t tex_array_id, uint32_t tex_id) {
 			pos.x = pX; pos.y = pY;
 			UV.x = UVx; UV.y = UVy;
-			this->tex_index = tex_index;
+			this->tex_array_id = tex_array_id;
+			this->tex_id = tex_id;
 		}
-		UI_Vertex2f(float pX, float pY, float UVx, float UVy, uint32_t tex_index, glm::vec4 color) {
+		UI_Vertex2f(float pX, float pY, float UVx, float UVy, uint32_t tex_array_id, uint32_t tex_id, glm::vec4 color) {
 			pos.x = pX; pos.y = pY;
 			UV.x = UVx; UV.y = UVy;
 			this->color = color;
-			this->tex_index = tex_index;
+			this->tex_array_id = tex_array_id;
+			this->tex_id = tex_id;
 		}
 		glm::vec2 pos{ 0.0f };
 		glm::vec2 UV{ 0.0f };
 		glm::vec4 color{ 1.0f };
-		uint32_t tex_index = 0;
+		uint32_t tex_array_id = 0;
+		uint32_t tex_id = 0;
 	};
 
 	struct UI_Text_Vertex2f {
-		UI_Text_Vertex2f() {}
+		UI_Text_Vertex2f() = default;
 		UI_Text_Vertex2f(float pX, float pY, float UVx, float UVy) {
 			pos.x = pX; pos.y = pY;
 			UV.x = UVx; UV.y = UVy;

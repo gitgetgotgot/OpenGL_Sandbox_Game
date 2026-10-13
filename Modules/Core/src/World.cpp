@@ -282,21 +282,21 @@ void World::load_chunk_buffer(uint32_t chunk_world_x, uint32_t chunk_world_y, ui
 			}
 			//add tile sprite data
 			CoreObject::ObjectInfo* object_info = CoreObject::ObjectManager::get_instance().get_object_info(slot->tile_id);
-			CoreResource::Sprite& sprite = CoreResource::SpriteManager::get_instance().get_sprite(object_info->sprites[0]);
+			CoreResource::Sprite& sprite = CoreResource::SpriteManager::Instance().get_sprite(object_info->sprites[0]);
 
 			if (object_info->objectType == CoreObject::ObjectType::isBlock) {
-				vertices.add(Vertex2f(x, y,					sprite.U0, sprite.V0,						sprite.texture_id),	base_index);
-				vertices.add(Vertex2f(x, y + 1.0f,			sprite.U0, sprite.V0 + sprite.H,			sprite.texture_id),	base_index + 1);
-				vertices.add(Vertex2f(x + 1.0f, y + 1.0f,	sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.texture_id),	base_index + 2);
-				vertices.add(Vertex2f(x + 1.0f, y,			sprite.U0 + sprite.W, sprite.V0,			sprite.texture_id),	base_index + 3);
+				vertices.add(Vertex2f(x, y,					sprite.U0, sprite.V0,						sprite.tex_array_id, sprite.tex_id),	base_index);
+				vertices.add(Vertex2f(x, y + 1.0f,			sprite.U0, sprite.V0 + sprite.H,			sprite.tex_array_id, sprite.tex_id),	base_index + 1);
+				vertices.add(Vertex2f(x + 1.0f, y + 1.0f,	sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.tex_array_id, sprite.tex_id),	base_index + 2);
+				vertices.add(Vertex2f(x + 1.0f, y,			sprite.U0 + sprite.W, sprite.V0,			sprite.tex_array_id, sprite.tex_id),	base_index + 3);
 			}
 			else if (object_info->objectType == CoreObject::ObjectType::isMultiBlock) {
 				float x_size = static_cast<CoreObject::MultiBlockInfo*>(object_info)->tiles_width;
 				float y_size = static_cast<CoreObject::MultiBlockInfo*>(object_info)->tiles_height;
-				vertices.add(Vertex2f(x, y,						sprite.U0, sprite.V0,						sprite.texture_id),	base_index);
-				vertices.add(Vertex2f(x, y + y_size,			sprite.U0, sprite.V0 + sprite.H,			sprite.texture_id),	base_index + 1);
-				vertices.add(Vertex2f(x + x_size, y + y_size,	sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.texture_id),	base_index + 2);
-				vertices.add(Vertex2f(x + x_size, y,			sprite.U0 + sprite.W, sprite.V0,			sprite.texture_id),	base_index + 3);
+				vertices.add(Vertex2f(x, y,						sprite.U0, sprite.V0,						sprite.tex_array_id, sprite.tex_id),	base_index);
+				vertices.add(Vertex2f(x, y + y_size,			sprite.U0, sprite.V0 + sprite.H,			sprite.tex_array_id, sprite.tex_id),	base_index + 1);
+				vertices.add(Vertex2f(x + x_size, y + y_size,	sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.tex_array_id, sprite.tex_id),	base_index + 2);
+				vertices.add(Vertex2f(x + x_size, y,			sprite.U0 + sprite.W, sprite.V0,			sprite.tex_array_id, sprite.tex_id),	base_index + 3);
 			}
 			base_index += 4;
 		}
@@ -491,21 +491,21 @@ bool World::place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id) {
 		uint32_t tile_chunk_y = world_y - chunk_y * CHUNK_SIZE;
 		uint32_t tile_index = (tile_chunk_x * CHUNK_SIZE + tile_chunk_y) * 4;
 
-		CoreResource::Sprite& sprite = CoreResource::SpriteManager::get_instance().get_sprite(object_info->sprites[0]);
+		CoreResource::Sprite& sprite = CoreResource::SpriteManager::Instance().get_sprite(object_info->sprites[0]);
 
 		if (object_info->objectType == CoreObject::ObjectType::isBlock) {
-			vertices.add(Vertex2f(world_x, world_y,					sprite.U0, sprite.V0,						sprite.texture_id), tile_index);
-			vertices.add(Vertex2f(world_x, world_y + 1.0f,			sprite.U0, sprite.V0 + sprite.H,			sprite.texture_id), tile_index + 1);
-			vertices.add(Vertex2f(world_x + 1.0f, world_y + 1.0f,	sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.texture_id), tile_index + 2);
-			vertices.add(Vertex2f(world_x + 1.0f, world_y,			sprite.U0 + sprite.W, sprite.V0,			sprite.texture_id), tile_index + 3);
+			vertices.add(Vertex2f(world_x, world_y,					sprite.U0, sprite.V0,						sprite.tex_array_id, sprite.tex_id), tile_index);
+			vertices.add(Vertex2f(world_x, world_y + 1.0f,			sprite.U0, sprite.V0 + sprite.H,			sprite.tex_array_id, sprite.tex_id), tile_index + 1);
+			vertices.add(Vertex2f(world_x + 1.0f, world_y + 1.0f,	sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.tex_array_id, sprite.tex_id), tile_index + 2);
+			vertices.add(Vertex2f(world_x + 1.0f, world_y,			sprite.U0 + sprite.W, sprite.V0,			sprite.tex_array_id, sprite.tex_id), tile_index + 3);
 		}
 		else if (object_info->objectType == CoreObject::ObjectType::isMultiBlock) {
 			float x_size = static_cast<CoreObject::MultiBlockInfo*>(object_info)->tiles_width;
 			float y_size = static_cast<CoreObject::MultiBlockInfo*>(object_info)->tiles_height;
-			vertices.add(Vertex2f(world_x, world_y,						sprite.U0, sprite.V0,						sprite.texture_id),	tile_index);
-			vertices.add(Vertex2f(world_x, world_y + y_size,			sprite.U0, sprite.V0 + sprite.H,			sprite.texture_id),	tile_index + 1);
-			vertices.add(Vertex2f(world_x + x_size, world_y + y_size,	sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.texture_id),	tile_index + 2);
-			vertices.add(Vertex2f(world_x + x_size, world_y,			sprite.U0 + sprite.W, sprite.V0,			sprite.texture_id),	tile_index + 3);
+			vertices.add(Vertex2f(world_x, world_y,						sprite.U0, sprite.V0,						sprite.tex_array_id, sprite.tex_id),	tile_index);
+			vertices.add(Vertex2f(world_x, world_y + y_size,			sprite.U0, sprite.V0 + sprite.H,			sprite.tex_array_id, sprite.tex_id),	tile_index + 1);
+			vertices.add(Vertex2f(world_x + x_size, world_y + y_size,	sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.tex_array_id, sprite.tex_id),	tile_index + 2);
+			vertices.add(Vertex2f(world_x + x_size, world_y,			sprite.U0 + sprite.W, sprite.V0,			sprite.tex_array_id, sprite.tex_id),	tile_index + 3);
 		}
 		buffer.vbo->update_data(vertices.data(), sizeof(Vertex2f) * vertices.size());
 		buffer.index_count += 6;
