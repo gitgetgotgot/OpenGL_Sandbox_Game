@@ -1,6 +1,6 @@
 #include "Core/GameCore.h"
 #include "Core/ResourceLoader.h"
-#include "Core/MainMenu.h"
+#include "Core/MainMenuManager.h"
 #include <UI/UI_System.h>
 #include <Audio/AudioSystem.h>
 #include <Resources/TextureArrayMgr.h>
@@ -18,24 +18,7 @@ bool GameEngine::update() {
 
 	if (SystemContext::should_exit()) return 0;
 
-	switch (game_update_state) {
-	case Game_State::LoadingResources: {
-		MainMenuManager::Instance().update();
-
-		break;
-	}
-	case Game_State::inMainMenu: {
-		MainMenuManager::Instance().update();
-		break;
-	}
-	case Game_State::inWorld: {
-		world->update();
-		break;
-	}
-	}
-
-	CoreUI::UI_System::Instance().update();
-	CoreAudio::AudioSystem::Instance().update();
+	(this->*update_proc)();
 
 	return 1;
 }
@@ -149,11 +132,13 @@ void GameEngine::init_main_resources() {
 	CoreUI::UI_System::Instance().init();
 
 	ResourceLoader::Instance().load_minimal_core_resources();
-	ResourceLoader::Instance().Load_Resources();
 
 	MainMenuManager::Instance().init();
 
 	glfwShowWindow(window);
+
+	update_proc = &GameEngine::loading_update;
+	ResourceLoader::Instance().start_resources_loading();
 
 	/*
 	player.inventory.init();
@@ -169,4 +154,41 @@ void GameEngine::init_main_resources() {
 	world = std::make_unique<World>();
 	world->init(&player);
 	*/
+}
+
+void GameEngine::loading_update() {
+	// lock mutex for resources loader when updating systems
+	ResourceLoader::Instance().lock_resources_mutex();
+	MainMenuManager::Instance().update();
+	CoreUI::UI_System::Instance().update();
+	CoreAudio::AudioSystem::Instance().update();
+	ResourceLoader::Instance().unlock_resources_mutex();
+
+	// load availale resources from queue in main thread (textures)
+	ResourceLoader::Instance().load_resources_from_queue();
+
+	// change update proc if resources are loaded
+	if (ResourceLoader::Instance().resources_loading_ready()) {
+		ResourceLoader::Instance().stop_resources_loading();
+		MainMenuManager::Instance().stop_loading();
+		MainMenuManager::Instance().open_main_page();
+		game_update_state = Game_State::inMainMenu;
+		update_proc = &GameEngine::gameplay_update;
+	}
+}
+
+void GameEngine::gameplay_update() {
+	switch (game_update_state) {
+	case Game_State::inMainMenu: {
+		MainMenuManager::Instance().update();
+		break;
+	}
+	case Game_State::inWorld: {
+		world->update();
+		break;
+	}
+	}
+
+	CoreUI::UI_System::Instance().update();
+	CoreAudio::AudioSystem::Instance().update();
 }

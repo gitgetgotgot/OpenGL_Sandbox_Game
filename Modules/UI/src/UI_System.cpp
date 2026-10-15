@@ -54,9 +54,9 @@ void CoreUI::UI_System::init() {
 	sdf_text_vbo->set_data(nullptr, MAX_SDF_TEXT_VERTEX_SIZE * sizeof(UI_Text_Vertex2f), GL_DYNAMIC_DRAW);
 	ebo->bind_EBO();
 
-	sdf_text_vao->link_Attribute(0, 2, GL_FLOAT, sizeof(UI_Text_Vertex2f), (void*)0);
-	sdf_text_vao->link_Attribute(1, 2, GL_FLOAT, sizeof(UI_Text_Vertex2f), (void*)(2 * sizeof(float)));
-	sdf_text_vao->link_Attribute(2, 4, GL_FLOAT, sizeof(UI_Text_Vertex2f), (void*)(4 * sizeof(float)));
+	sdf_text_vao->link_Attribute(0, 2, GL_FLOAT, sizeof(UI_Text_Vertex2f), (void*)offsetof(UI_Text_Vertex2f, UI_Text_Vertex2f::pos));
+	sdf_text_vao->link_Attribute(1, 2, GL_FLOAT, sizeof(UI_Text_Vertex2f), (void*)offsetof(UI_Text_Vertex2f, UI_Text_Vertex2f::UV));
+	sdf_text_vao->link_Attribute(2, 4, GL_FLOAT, sizeof(UI_Text_Vertex2f), (void*)offsetof(UI_Text_Vertex2f, UI_Text_Vertex2f::color));
 
 	sdf_text_vao->unbind_VAO();
 	sdf_text_vbo->unbind_VBO();
@@ -68,7 +68,7 @@ void CoreUI::UI_System::init() {
 	ubo_data.projectionMatrix = glm::ortho(-SystemContext::display.ratio, SystemContext::display.ratio, -1.0f, 1.0f);
 	ubo->set_data(&ubo_data, sizeof(UI_UBO), GL_DYNAMIC_DRAW);
 
-	//reserve memory for buffers (this size should be enought for most scenarios)
+	//reserve memory for buffers (this size should be enough for most scenarios)
 	render_context.sprites_buffer.reserve(MAX_SPRITES_VERTEX_SIZE);
 	render_context.sdf_text_buffer.reserve(MAX_SDF_TEXT_VERTEX_SIZE);
 }

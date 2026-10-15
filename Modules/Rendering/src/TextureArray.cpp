@@ -117,11 +117,13 @@ void TextureArray::resize_array() {
 
     create_tex_array(new_tex_array_id);
 
-    glCopyImageSubData(
-        this->id, GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0,
-        new_tex_array_id, GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0,
-        array_width, array_height, current_size
-    );
+    if (current_size != 0) {
+        glCopyImageSubData(
+            this->id, GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0,
+            new_tex_array_id, GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0,
+            array_width, array_height, current_size
+        );
+    }
 
     glDeleteTextures(1, &this->id);
     this->id = new_tex_array_id;

@@ -1,4 +1,4 @@
-#include "Core/MainMenu.h"
+#include "Core/MainMenuManager.h"
 #include "Core/SettingsManager.h"
 #include <UI/UI_Creator.h>
 #include <UI/Button.h>
@@ -10,17 +10,20 @@
 #include <IOSystem/SystemContext.h>
 #include <filesystem>
 #include <Audio/AudioSystem.h>
+#include <Utility/TimeManager.h>
 
 void MainMenuManager::init() {
 	SettingsManager::Instance().load_settings();
 
+	setup_main_canvas();
 	setup_main_page();
 	setup_settings_page();
 	setup_saves_page();
 	setup_mods_page();
 	setup_creator_page();
 
-	canvas_main_menu->is_enabled = true;
+	canvas_main->is_enabled = true;
+	canvas_main_menu->is_enabled = false;
 	canvas_settings->is_enabled = false;
 	canvas_saves->is_enabled = false;
 	canvas_mods->is_enabled = false;
@@ -31,19 +34,61 @@ void MainMenuManager::init() {
 }
 
 void MainMenuManager::update() {
-
+	if (is_loading) {
+		time_loading += TimeManager::deltaTime;
+		if (time_loading >= 0.2f) {
+			time_loading = 0.0f;
+			++phase;
+			if (phase == 4) phase = 0;
+			if (phase == 0)		 loading_text->set_text("Loading Data");
+			else if (phase == 1) loading_text->set_text("Loading Data.");
+			else if (phase == 2) loading_text->set_text("Loading Data..");
+			else if (phase == 3) loading_text->set_text("Loading Data...");
+		}
+	}
 }
 
+void MainMenuManager::start_loading() {
+	loading_text->set_text("Loading Data...");
+	is_loading = true;
+}
+void MainMenuManager::stop_loading() {
+	loading_text->set_text("");
+	is_loading = false;
+	time_loading = 0.0f;
+}
+void MainMenuManager::open_main_page() {
+	canvas_main_menu->is_enabled = true;
+}
+void MainMenuManager::close_main_page() {
+	canvas_main_menu->is_enabled = false;
+}
+
+void MainMenuManager::setup_main_canvas() {
+	canvas_main = CoreUI::UI_Creator::create_canvas();
+
+	uint32_t sprite_white_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:White").value();
+
+	auto background = CoreUI::UI_Creator::create_image(
+		sprite_white_id, glm::vec2(SystemContext::display.ratio * 2.0f, 2.0f), glm::vec2(0.0f), glm::vec4(0.3f, 0.3f, 0.3f, 1.0f)
+	);
+
+	auto loading_label = CoreUI::UI_Creator::create_SDF_text(
+		glm::vec2(1.0f, 0.1f), glm::vec2(0.0f, -0.8f), "", glm::vec4(1.0f), 0.15f
+	);
+	loading_text = loading_label->get_component<CoreUI::SDF_Text>();
+
+	canvas_main->add_object(background);
+	canvas_main->add_object(loading_label);
+
+	start_loading();
+}
 
 void MainMenuManager::setup_main_page() {
 	canvas_main_menu = CoreUI::UI_Creator::create_canvas();
 
 	uint32_t button_sprite_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:Button").value();
 	uint32_t sprite_white_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:White").value();
-
-	auto background = CoreUI::UI_Creator::create_image(
-		sprite_white_id, glm::vec2(SystemContext::display.ratio * 2.0f, 2.0f), glm::vec2(0.0f), glm::vec4(0.3f, 0.3f, 0.3f, 1.0f)
-	);
 
 	auto button_play = CoreUI::UI_Creator::create_button_image9sliced(
 		glm::vec2(0.7f, 0.1f), glm::vec2(0.0f, 0.4f), button_sprite_id,
@@ -77,7 +122,6 @@ void MainMenuManager::setup_main_page() {
 	button_mods->get_component<CoreUI::Button>()->on_button_click.set_callback_method<MainMenuManager, &MainMenuManager::open_mods_page>(&Instance());
 	button_exit->get_component<CoreUI::Button>()->on_button_click.set_callback_method<MainMenuManager, &MainMenuManager::exit_game>(&Instance());
 
-	canvas_main_menu->add_object(background);
 	canvas_main_menu->add_object(button_play);
 	canvas_main_menu->add_object(button_settings);
 	canvas_main_menu->add_object(button_mods);
@@ -91,10 +135,6 @@ void MainMenuManager::setup_settings_page() {
 
 	uint32_t button_sprite_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:Button").value();
 	uint32_t sprite_white_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:White").value();
-
-	auto background = CoreUI::UI_Creator::create_image(
-		sprite_white_id, glm::vec2(SystemContext::display.ratio * 2.0f, 2.0f), glm::vec2(0.0f), glm::vec4(0.3f, 0.3f, 0.3f, 1.0f)
-	);
 
 	auto settings_logo = CoreUI::UI_Creator::create_SDF_text(
 		glm::vec2(1.0f, 0.1f), glm::vec2(0.0f, 0.8f), "Settings", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), 0.2f
@@ -164,7 +204,6 @@ void MainMenuManager::setup_settings_page() {
 	button_vsync->get_component<CoreUI::Button>()->on_button_click.set_callback_method<SettingsManager, &SettingsManager::toggle_vsync>(&SettingsManager::Instance());
 	button_exit->get_component<CoreUI::Button>()->on_button_click.set_callback_method<MainMenuManager, &MainMenuManager::close_settings_page>(&Instance());
 
-	canvas_settings->add_object(background);
 	canvas_settings->add_object(settings_logo);
 	canvas_settings->add_object(button_resolution);
 	canvas_settings->add_object(button_fullscreen);
@@ -184,10 +223,6 @@ void MainMenuManager::setup_saves_page() {
 	uint32_t tooltip_sprite_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:Tooltip").value();
 	uint32_t button_sprite_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:Button").value();
 	uint32_t sprite_white_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:White").value();
-
-	auto background = CoreUI::UI_Creator::create_image(
-		sprite_white_id, glm::vec2(SystemContext::display.ratio * 2.0f, 2.0f), glm::vec2(0.0f), glm::vec4(0.3f, 0.3f, 0.3f, 1.0f)
-	);
 
 	auto button_back = CoreUI::UI_Creator::create_button_image9sliced(
 		glm::vec2(0.9f, 0.1f), glm::vec2(-0.5f, -0.8f), button_sprite_id,
@@ -220,7 +255,6 @@ void MainMenuManager::setup_saves_page() {
 	}
 	saves_panel.add_child(saves_scroll_view);
 
-	canvas_saves->add_object(background);
 	canvas_saves->add_object(button_back);
 	canvas_saves->add_object(button_create);
 	canvas_saves->add_object(saves_panel);
@@ -247,13 +281,6 @@ void MainMenuManager::setup_creator_page() {
 
 void MainMenuManager::exit_game() {
 	SystemContext::exit_application();
-}
-
-void MainMenuManager::open_main_page() {
-	canvas_main_menu->is_enabled = true;
-}
-void MainMenuManager::close_main_page() {
-	canvas_main_menu->is_enabled = false;
 }
 
 void MainMenuManager::open_settings_page() {

@@ -54,17 +54,55 @@ void ResourceLoader::load_minimal_core_resources() {
 	_LOAD_AUDIO(resource_path);
 }
 
+void ResourceLoader::start_resources_loading() {
+	resources_are_loaded = false;
+	can_load_next_batch = false;
+	should_load_textures = true;
+	resource_loader = std::make_unique<std::thread>(&ResourceLoader::Load_Resources, this);
+}
+
+void ResourceLoader::load_resources_from_queue() {
+	if (should_load_textures) {
+		const bool all_textures_are_loaded = CoreResource::TextureArrayManager::Instance().load_textures_from_queue();
+		if (all_textures_are_loaded) {
+			should_load_textures = false;
+			notify_loader();
+		}
+	}
+}
+
+void ResourceLoader::stop_resources_loading() {
+	resource_loader->join();
+	resource_loader.reset();
+}
+
+bool ResourceLoader::resources_loading_ready() {
+	return resources_are_loaded;
+}
+
+void ResourceLoader::lock_resources_mutex() {
+	resources_lock.lock();
+}
+
+void ResourceLoader::unlock_resources_mutex() {
+	resources_lock.unlock();
+}
+
 void ResourceLoader::Load_Resources() {
+	// items and entities data is cached
 	std::vector<DataParser> item_data_parsers;
 	std::vector<DataParser> entity_data_parsers;
 
-	find_mods();
 	CoreObject::register_core_object_factories();
 	CoreEntity::register_core_entity_info_factories();
 	CoreEntity::register_core_entity_factories();
 	CoreTags::register_core_tags();
 
-	// LOAD ORDER IS IMPORTANT
+	find_mods();
+
+	// LOAD ORDER IS IMPORTANT (each category is loaded from base files first and then from all mods)
+	// textures are loaded in queue and through main thread, sprites and audio are loaded using resources mutex
+	// all other resources are loaded straight in loader thread
 	load_textures();
 	load_sprites();
 	load_audio();
@@ -79,6 +117,16 @@ void ResourceLoader::Load_Resources() {
 
 	resolve_items_dependencies(item_data_parsers);
 	resolve_entities_dependencies(entity_data_parsers);
+
+	resources_are_loaded = true;
+}
+
+void ResourceLoader::notify_loader() {
+	{
+		std::lock_guard lock(tex_load_mutex);
+		can_load_next_batch = true;
+	}
+	tex_load_cv.notify_one();
 }
 
 void ResourceLoader::Hot_Reload() {
@@ -177,14 +225,14 @@ void ResourceLoader::load_libraries() {
 	}
 }
 
-void ResourceLoader::load_textures() const {
+void ResourceLoader::load_textures() {
 	auto _load_textures = [&](std::filesystem::path& textures_path, std::string& source_name) {
 		for (const auto& entry : std::filesystem::directory_iterator(textures_path)) {
 			if (!entry.is_regular_file()) continue;
 			std::filesystem::path file_path = entry.path();
 			if (file_path.extension() == ".png") {
 				std::string texture_UID = source_name + ":" + file_path.filename().string();
-				CoreResource::TextureArrayManager::Instance().load_texture(file_path, texture_UID);
+				CoreResource::TextureArrayManager::Instance().add_texture_to_queue(file_path, texture_UID);
 			}
 		}
 	};
@@ -198,9 +246,14 @@ void ResourceLoader::load_textures() const {
 		source_name = mod_info.mod_folder_path.filename().string();
 		_load_textures(textures_path, source_name);
 	}
+	CoreResource::TextureArrayManager::Instance().mark_queue_ready();
+
+	std::unique_lock lock(tex_load_mutex);
+	tex_load_cv.wait(lock, [&] { return can_load_next_batch; });
+	can_load_next_batch = false;
 }
 
-void ResourceLoader::load_sprites() const {
+void ResourceLoader::load_sprites() {
 	std::filesystem::path sprites_path = resources_root / "Resources/data/sprites_data";
 	_LOAD_SPRITES(sprites_path);
 
@@ -211,7 +264,7 @@ void ResourceLoader::load_sprites() const {
 	}
 }
 
-void ResourceLoader::load_audio() const {
+void ResourceLoader::load_audio() {
 	std::filesystem::path audio_path = resources_root / "Resources/audio";
 	_LOAD_AUDIO(audio_path);
 	for (const auto& mod_info : ModsManager::get_instance().get_mods()) {
@@ -547,7 +600,7 @@ void ResourceLoader::resolve_entities_dependencies(const std::vector<DataParser>
 	}
 }
 
-void ResourceLoader::_LOAD_SPRITES(std::filesystem::path& sprites_path) const {
+void ResourceLoader::_LOAD_SPRITES(std::filesystem::path& sprites_path) {
 	for (const auto& entry : std::filesystem::directory_iterator(sprites_path)) {
 		if (!entry.is_regular_file()) continue;
 
@@ -583,12 +636,18 @@ void ResourceLoader::_LOAD_SPRITES(std::filesystem::path& sprites_path) const {
 					uint32_t right = border["right"].get_as<uint32_t>();
 					uint32_t top = border["top"].get_as<uint32_t>();
 					uint32_t bottom = border["bottom"].get_as<uint32_t>();
-					CoreResource::SpriteManager::Instance().add_sprite9sliced(UID, u0, v0, w, h, left, right, top, bottom, tex_array_id, tex_id);
+					{
+						std::lock_guard lock(resources_mutex);
+						CoreResource::SpriteManager::Instance().add_sprite9sliced(UID, u0, v0, w, h, left, right, top, bottom, tex_array_id, tex_id);
+					}
 				}
 				//regular sprite
 				else {
 					float base_size = sprite["base_size"].get_as<float>();
-					CoreResource::SpriteManager::Instance().add_sprite(UID, u0, v0, w, h, base_size, tex_array_id, tex_id);
+					{
+						std::lock_guard lock(resources_mutex);
+						CoreResource::SpriteManager::Instance().add_sprite(UID, u0, v0, w, h, base_size, tex_array_id, tex_id);
+					}
 				}
 			}
 			catch (const std::exception& e) {
@@ -598,7 +657,7 @@ void ResourceLoader::_LOAD_SPRITES(std::filesystem::path& sprites_path) const {
 	}
 }
 
-void ResourceLoader::_LOAD_AUDIO(std::filesystem::path& audio_path) const {
+void ResourceLoader::_LOAD_AUDIO(std::filesystem::path& audio_path) {
 	std::filesystem::path audio_data_path = audio_path / "audio_data";
 	for (const auto& entry : std::filesystem::directory_iterator(audio_data_path)) {
 		if (!entry.is_regular_file()) continue;
@@ -616,10 +675,14 @@ void ResourceLoader::_LOAD_AUDIO(std::filesystem::path& audio_path) const {
 				std::string sound_group = audio["group"].get_as<std::string>();
 				bool load_as_PCM = audio["PCM"].get_as<bool>();
 				uint8_t max_instance = audio["MAX_INSTANCE"].get_as<uint8_t>();
-				if (load_as_PCM)
+				if (load_as_PCM) {
+					std::lock_guard lock(resources_mutex);
 					CoreAudio::AudioSystem::Instance().load_audio_as_pcm(file_path, UID, sound_group, max_instance);
-				else
+				}
+				else {
+					std::lock_guard lock(resources_mutex);
 					CoreAudio::AudioSystem::Instance().load_audio_as_stream(file_path, UID, sound_group, max_instance);
+				}
 			}
 			catch (const std::exception& e) {
 				ResourceLoading::throw_resource_error(UID, std::string("In file ") + file_path.string() + ": " + e.what());

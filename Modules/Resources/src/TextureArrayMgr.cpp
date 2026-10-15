@@ -2,6 +2,31 @@
 #include <stb_image.h>
 #include <iostream>
 
+CoreResource::TextureResourceData::TextureResourceData(TextureResourceData&& other) {
+	image_bytes = other.image_bytes; other.image_bytes = nullptr;
+	imgWidth = other.imgWidth;
+	imgHeight = other.imgHeight;
+	numOfColorChannels = other.numOfColorChannels;
+	file_path = std::move(other.file_path);
+	UID = std::move(other.UID);
+}
+
+CoreResource::TextureResourceData& CoreResource::TextureResourceData::operator=(TextureResourceData&& other) {
+	if (this != &other) {
+		image_bytes = other.image_bytes; other.image_bytes = nullptr;
+		imgWidth = other.imgWidth;
+		imgHeight = other.imgHeight;
+		numOfColorChannels = other.numOfColorChannels;
+		file_path = std::move(other.file_path);
+		UID = std::move(other.UID);
+	}
+	return *this;
+}
+
+CoreResource::TextureResourceData::~TextureResourceData() {
+	if(image_bytes) stbi_image_free(image_bytes);
+}
+
 void CoreResource::TextureArrayManager::init() {
 	const uint32_t array_size[8] = {
 		10/*32*/,
@@ -40,6 +65,33 @@ void CoreResource::TextureArrayManager::uninit() {
 	}
 }
 
+void CoreResource::TextureArrayManager::add_texture_to_queue(std::filesystem::path& file_path, std::string& UID) {
+	int imgWidth, imgHeight, numOfColorChannels;
+	stbi_set_flip_vertically_on_load(true);
+	unsigned char* image_bytes = stbi_load(file_path.string().c_str(), &imgWidth, &imgHeight, &numOfColorChannels, 0);
+	stbi_set_flip_vertically_on_load(false);
+
+	std::lock_guard lock(tex_queue_mutex);
+	textures_queue.emplace(image_bytes, imgHeight, imgWidth, numOfColorChannels, file_path, UID);
+}
+
+bool CoreResource::TextureArrayManager::load_textures_from_queue() {
+	std::unique_lock lock(tex_queue_mutex);
+	if (textures_queue.empty()) {
+		if (queue_ready) return true;
+		else return false;
+	}
+	TextureResourceData data = std::move(textures_queue.front());
+	textures_queue.pop();
+	lock.unlock();
+	load_texture(data);
+	return false;
+}
+
+void CoreResource::TextureArrayManager::mark_queue_ready() {
+	queue_ready = true;
+}
+
 void CoreResource::TextureArrayManager::load_texture(std::filesystem::path file_path, std::string UID) {
 	int imgWidth, imgHeight, numOfColorChannels;
 	stbi_set_flip_vertically_on_load(true);
@@ -61,6 +113,19 @@ void CoreResource::TextureArrayManager::load_texture(std::filesystem::path file_
 	stbi_image_free(image_bytes);
 
 	std::cout << "[TextureManager] Loaded texture <" << file_path.filename() << "> with array index = " << texture_array_index << std::endl;
+}
+
+void CoreResource::TextureArrayManager::load_texture(TextureResourceData& data) {
+	int texture_array_index = get_array_index(data.imgWidth, data.imgHeight);
+	if (texture_array_index < 0)
+		throw std::runtime_error("Texture <" + data.file_path.string() + "> has incorrect size!");
+
+	uint16_t tex_index = texture_arrays[texture_array_index]->get_current_size();
+	UID_to_ID[data.UID] = TextureID{ static_cast<uint16_t>(texture_array_index), tex_index };
+
+	texture_arrays[texture_array_index]->add_2D_texture(data.image_bytes, data.imgWidth, data.imgHeight, data.numOfColorChannels);
+
+	std::cout << "[TextureManager] Loaded texture <" << data.file_path.filename() << "> with array index = " << texture_array_index << std::endl;
 }
 
 std::optional<CoreResource::TextureID> CoreResource::TextureArrayManager::get_texture_id(std::string& UID) {

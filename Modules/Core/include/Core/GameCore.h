@@ -14,12 +14,15 @@ public:
 	void init();
 	void main_loop();
 	void uninit();
-	
+private:
 	void init_MainWindow();
 	void init_OpenGL();
 	void init_input();
 	void init_main_resources();
+	void loading_update();
+	void gameplay_update();
 private:
+	void(GameEngine::* update_proc)() = nullptr;
 	GLFWwindow* window;
 
 	Player player;
@@ -35,5 +38,5 @@ private:
 	std::unique_ptr<World> world;
 
 	//game state
-	Game_State game_update_state = inMainMenu, game_render_state = inMainMenu;
+	Game_State game_update_state = LoadingResources, game_render_state = inMainMenu;
 };
