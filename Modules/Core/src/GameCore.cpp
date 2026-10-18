@@ -1,6 +1,7 @@
 #include "Core/GameCore.h"
 #include "Core/ResourceLoader.h"
 #include "Core/MainMenuManager.h"
+#include "Core/SettingsManager.h"
 #include <UI/UI_System.h>
 #include <Audio/AudioSystem.h>
 #include <Resources/TextureArrayMgr.h>
@@ -132,7 +133,7 @@ void GameEngine::init_main_resources() {
 	CoreUI::UI_System::Instance().init();
 
 	ResourceLoader::Instance().load_minimal_core_resources();
-
+	SettingsManager::Instance().load_settings();
 	MainMenuManager::Instance().init();
 
 	glfwShowWindow(window);
@@ -170,8 +171,8 @@ void GameEngine::loading_update() {
 	// change update proc if resources are loaded
 	if (ResourceLoader::Instance().resources_loading_ready()) {
 		ResourceLoader::Instance().stop_resources_loading();
-		MainMenuManager::Instance().stop_loading();
-		MainMenuManager::Instance().open_main_page();
+		MainMenuManager::Instance().stop_loading_resources();
+		MainMenuManager::Instance().open_main_menu_page();
 		game_update_state = Game_State::inMainMenu;
 		update_proc = &GameEngine::gameplay_update;
 	}
@@ -181,6 +182,7 @@ void GameEngine::gameplay_update() {
 	switch (game_update_state) {
 	case Game_State::inMainMenu: {
 		MainMenuManager::Instance().update();
+		//std::this_thread::sleep_for(std::chrono::milliseconds(200));
 		break;
 	}
 	case Game_State::inWorld: {

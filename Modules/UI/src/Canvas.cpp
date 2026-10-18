@@ -25,12 +25,10 @@ void CoreUI::Canvas::update_child_object(UI_Object& object, UI_RenderContext& ct
 		UI_ComponentBase* base_comp = static_cast<UI_ComponentBase*>(comp->component);
 		const bool is_renderable = base_comp->render_type != UI_Render_Type::UI_NONE;
 		const bool is_interactable = base_comp->is_interactable;
-		bool is_inside_clip_rect_area = false;
 
-		if (is_renderable || is_interactable) {
-			const glm::vec2& pos = object.transform.global_pos + ctx.content_offsets[state.content_offset_id];
-			if (ctx.clip_rects[state.clip_rect_id].overlaps_with_box(pos, object.transform.size)) is_inside_clip_rect_area = true;
-		}
+		const glm::vec2& pos = object.transform.global_pos + ctx.content_offsets[state.content_offset_id];
+		const bool is_inside_clip_rect_area = ctx.clip_rects[state.clip_rect_id].overlaps_with_box(pos, object.transform.size);
+
 		if (is_inside_clip_rect_area) {
 			if (is_interactable) {
 				ctx.hit_queue.emplace_back(comp->component, state.clip_rect_id, state.content_offset_id);
@@ -42,7 +40,13 @@ void CoreUI::Canvas::update_child_object(UI_Object& object, UI_RenderContext& ct
 				state.clip_rect_id = add_clip_rect(object.transform, ctx.clip_rects);
 			}
 			else if (base_comp->type == UI_Component_Type::UI_SCROLL_VIEW) {
-				state.content_offset_id = add_content_offset(static_cast<ScrollView*>(base_comp)->_get_content_offset(), ctx.content_offsets);
+				auto scroll_view = static_cast<ScrollView*>(base_comp);
+				if(scroll_view->uses_clipping)
+					state.clip_rect_id = add_clip_rect(object.transform, ctx.clip_rects);
+				scroll_view->update_content();
+			}
+			else if (base_comp->type == UI_Component_Type::UI_SCROLL_VIEW_CONTENT) {
+				state.content_offset_id = add_content_offset(static_cast<ScrollViewContent*>(base_comp)->content_offset, ctx.content_offsets, state.content_offset_id);
 			}
 		}
 		else {
@@ -66,8 +70,9 @@ uint16_t CoreUI::Canvas::add_clip_rect(const UI_Transform& tr, std::vector<ClipR
 	return clip_rects.size() - 1;
 }
 
-uint16_t CoreUI::Canvas::add_content_offset(const glm::vec2& offset, std::vector<glm::vec2>& content_offsets) {
-	content_offsets.emplace_back(offset.x, offset.y);
+uint16_t CoreUI::Canvas::add_content_offset(const glm::vec2& offset, std::vector<glm::vec2>& content_offsets, uint16_t current_content_offset_id) {
+	const glm::vec2& parent_offset = content_offsets[current_content_offset_id];
+	content_offsets.emplace_back(parent_offset.x + offset.x, parent_offset.y + offset.y);
 	return content_offsets.size() - 1;
 }
 

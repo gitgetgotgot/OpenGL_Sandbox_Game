@@ -1,7 +1,7 @@
 [
   {
     "UID": "Core:White",
-    "texture": "Core:UI.png",
+    "texture": "Core:White.png",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -12,11 +12,35 @@
     }
   },
   {
-    "UID": "Core:Button",
-    "texture": "Core:UI.png",
+    "UID": "Core:Gradient",
+    "texture": "Core:Gradient.png",
     "padding": 0,
     "sprite": {
-      "U0": 32,
+      "U0": 0,
+      "V0": 0,
+      "w": 64,
+      "h": 64,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Core:Gradient2",
+    "texture": "Core:Gradient2.png",
+    "padding": 0,
+    "sprite": {
+      "U0": 0,
+      "V0": 0,
+      "w": 64,
+      "h": 64,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Core:Button32",
+    "texture": "Core:Button32.png",
+    "padding": 0,
+    "sprite": {
+      "U0": 0,
       "V0": 0,
       "w": 32,
       "h": 32,
@@ -29,11 +53,45 @@
     }
   },
   {
-    "UID": "Core:Tooltip",
-    "texture": "Core:UI.png",
+    "UID": "Core:Button64",
+    "texture": "Core:Button64.png",
     "padding": 0,
     "sprite": {
-      "U0": 64,
+      "U0": 0,
+      "V0": 0,
+      "w": 64,
+      "h": 64,
+      "border": {
+        "left": 8,
+        "right": 8,
+        "top": 8,
+        "bottom": 8
+      }
+    }
+  },
+  {
+    "UID": "Core:Tooltip32",
+    "texture": "Core:Tooltip32.png",
+    "padding": 0,
+    "sprite": {
+      "U0": 0,
+      "V0": 0,
+      "w": 32,
+      "h": 32,
+      "border": {
+        "left": 4,
+        "right": 4,
+        "top": 4,
+        "bottom": 4
+      }
+    }
+  },
+  {
+    "UID": "Core:Background1",
+    "texture": "Core:Background1.png",
+    "padding": 0,
+    "sprite": {
+      "U0": 0,
       "V0": 0,
       "w": 32,
       "h": 32,

@@ -22,6 +22,16 @@ void CoreUI::UI_Transform::set_size(glm::vec2 size) {
 	if (!is_dirty) mark_dirty();
 }
 
+void CoreUI::UI_Transform::set_pivot(float pivot_x, float pivot_y) {
+	pivot.x = pivot_x, pivot.y = pivot_y;
+	if (!is_dirty) mark_dirty();
+}
+
+void CoreUI::UI_Transform::set_pivot(glm::vec2 pivot) {
+	this->pivot = pivot;
+	if (!is_dirty) mark_dirty();
+}
+
 void CoreUI::UI_Transform::set_width(float width) {
 	size.x = width;
 	if (!is_dirty) mark_dirty();

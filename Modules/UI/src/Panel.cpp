@@ -15,8 +15,8 @@ void CoreUI::Panel::_update_data() {
 	UI_Object* obj = UI_ObjectManager::get_instance().get(object_id);
 
 	UI_Transform& tr = obj->transform;
-	float x = tr.global_pos.x - tr.size.x * 0.5f;
-	float y = tr.global_pos.y - tr.size.y * 0.5f;
+	float x = tr.global_pos.x - tr.size.x * tr.pivot.x;
+	float y = tr.global_pos.y - tr.size.y * tr.pivot.y;
 	float size_x = tr.size.x;
 	float size_y = tr.size.y;
 

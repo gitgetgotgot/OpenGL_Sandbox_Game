@@ -57,7 +57,7 @@ namespace CoreUI {
 
 		void process_BUTTON_event(UI_ComponentBase*& comp_base, bool& pointed_now);
 		void process_INPUT_FIELD_event(UI_ComponentBase* comp_base, bool& pointed_now);
-		void process_SCROLL_VIEW_event(UI_ComponentBase*& comp_base, bool& pointed_now, UI_Transform& tr);
+		void process_SCROLL_VIEW_event(UI_ComponentBase*& comp_base, bool& pointed_now);
 		void process_SCROLL_BAR_event(UI_ComponentBase*& comp_base, bool& pointed_now);
 
 		sparse_set<UI_BehaviourEntry> behaviours;

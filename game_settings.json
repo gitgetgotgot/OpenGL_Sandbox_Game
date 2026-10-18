@@ -1,0 +1,15 @@
+{
+  "screen": {
+    "resolution": {
+      "width": 2560,
+      "height": 1440
+    },
+    "vsync": true,
+    "fullscreen": false
+  },
+  "volume": {
+    "master": 90,
+    "music": 75,
+    "sfx": 60
+  }
+}

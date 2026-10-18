@@ -26,6 +26,7 @@ namespace CoreUI {
 		std::unique_ptr<EBO> ebo;
 
 		std::unique_ptr<ShaderProgram> sprites_shader;
+		std::unique_ptr<ShaderProgram> tiled_sprites_shader;
 		std::unique_ptr<VAO> sprites_vao;
 		std::unique_ptr<VBO> sprites_vbo;
 

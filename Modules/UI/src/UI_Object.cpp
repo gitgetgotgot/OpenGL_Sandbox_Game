@@ -58,3 +58,8 @@ bool CoreUI::UI_Obj_Ptr::add_child(UI_Obj_Ptr& child) const {
 	obj->add_child(child_obj);
 	return true;
 }
+
+CoreUI::UI_Obj_Ptr CoreUI::UI_Obj_Ptr::get_child_by_index(uint32_t index) const {
+	auto obj = UI_ObjectManager::get_instance().get(obj_id);
+	return UI_Obj_Ptr(obj->transform.children[index]);
+}

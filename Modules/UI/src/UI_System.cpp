@@ -16,6 +16,7 @@ void CoreUI::UI_System::init() {
 
 	// sprites shader & buffers
 	sprites_shader = std::make_unique<ShaderProgram>("Resources/shaders/ui_sprites.vert", "Resources/shaders/ui_sprites.frag");
+	tiled_sprites_shader = std::make_unique<ShaderProgram>("Resources/shaders/ui_sprites.vert", "Resources/shaders/ui_tiled_sprites.frag");
 
 	//common EBO
 	ebo = std::make_unique<EBO>();
@@ -133,22 +134,27 @@ void CoreUI::UI_System::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
 	ubo->update_data(&ubo_data, sizeof(UI_UBO));
 
 	for (auto& render_entry : render_context.render_queue) {
-		//change clip rectangle
+		// change clip rectangle
 		if (render_entry.change_clip_rect) {
 			ClipRectangle& rect = render_context.clip_rects[render_entry.clip_rect_id];
 			renderer->setScissorRect(rect.x, rect.y, rect.w, rect.h);
 		}
-		//change content offset in UBO
+		// change content offset in UBO
 		if (render_entry.change_content_offset) {
 			ubo_data.content_offset = render_context.content_offsets[render_entry.content_offset_id];
 			ubo->update_data(&ubo_data, sizeof(UI_UBO));
 		}
-		//render sprites
+		// render sprites
 		if (render_entry.render_type == UI_Render_Type::UI_SPRITE) {
 			renderer->renderIndexedData(sprites_shader, sprites_vao, sprites_vbo, ebo, render_entry.index_count, sprites_INDEX_OFFSET);
 			sprites_INDEX_OFFSET += render_entry.index_count;
 		}
-		//render sdf text
+		// render tiled sprites
+		else if (render_entry.render_type == UI_Render_Type::UI_TILED_SPRITE) {
+			renderer->renderIndexedData(tiled_sprites_shader, sprites_vao, sprites_vbo, ebo, render_entry.index_count, sprites_INDEX_OFFSET);
+			sprites_INDEX_OFFSET += render_entry.index_count;
+		}
+		// render sdf text
 		else if (render_entry.render_type == UI_Render_Type::UI_TEXT) {
 			renderer->renderIndexedData(sdf_text_shader, sdf_text_vao, sdf_text_vbo, ebo, render_entry.index_count, sdf_text_INDEX_OFFSET);
 			sdf_text_INDEX_OFFSET += render_entry.index_count;

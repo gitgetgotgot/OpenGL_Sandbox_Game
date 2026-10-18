@@ -83,6 +83,22 @@ public:
         else
             glfwSetWindowMonitor(window, nullptr, 100, 100, mode.width, mode.height, mode.refreshRate);
     }
+    void change_resolution(uint32_t width, uint32_t height) {
+        uint32_t index = 0;
+        uint32_t size = resolutions.size();
+        for (; index < size; ++index) {
+            Resolution& res = resolutions[index];
+            if (res.width == width && res.height == height) {
+                current_video_mode = index;
+                const GLFWvidmode& mode = modes[resolutions[current_video_mode].video_mode_index];
+                if (is_fullscreen)
+                    glfwSetWindowMonitor(window, primary_monitor, 0, 0, mode.width, mode.height, mode.refreshRate);
+                else
+                    glfwSetWindowMonitor(window, nullptr, 100, 100, mode.width, mode.height, mode.refreshRate);
+                break;
+            }
+        }
+    }
     Resolution& get_current_video_mode() { return resolutions[current_video_mode]; }
 public:
     float width = 1920, height = 1080;

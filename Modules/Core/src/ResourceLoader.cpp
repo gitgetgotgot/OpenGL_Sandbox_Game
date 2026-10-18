@@ -33,14 +33,25 @@ void ResourceLoader::load_minimal_core_resources() {
 	CoreResource::SpriteManager::Instance().setup();
 
 	// load base UI texture
-	std::filesystem::path resource_path = resources_root / "Resources/BaseData/textures/UI.png";
-	if (!std::filesystem::exists(resource_path)) {
-		throw std::runtime_error("Fatal Error: Couldn't load base UI texture");
+	std::filesystem::path tex_path[] = {
+		resources_root / "Resources/BaseData/textures/White.png",
+		resources_root / "Resources/BaseData/textures/Button32.png",
+		resources_root / "Resources/BaseData/textures/Button64.png",
+		resources_root / "Resources/BaseData/textures/Tooltip32.png",
+		resources_root / "Resources/BaseData/textures/Gradient.png",
+		resources_root / "Resources/BaseData/textures/Gradient2.png",
+		resources_root / "Resources/BaseData/textures/Background1.png",
+	};
+	for (auto& path : tex_path) {
+		if (!std::filesystem::exists(path)) {
+			throw std::runtime_error("Fatal Error: Couldn't load base UI textures");
+		}
+		std::string UID = "Core:" + path.filename().string();
+		CoreResource::TextureArrayManager::Instance().load_texture(path, UID);
 	}
-	CoreResource::TextureArrayManager::Instance().load_texture(resource_path, "Core:UI.png");
 
 	// load base sprites
-	resource_path = resources_root / "Resources/BaseData/sprites";
+	std::filesystem::path resource_path = resources_root / "Resources/BaseData/sprites";
 	if (!std::filesystem::exists(resource_path / "base_sprites.json")) {
 		throw std::runtime_error("Fatal Error: Couldn't load base sprites");
 	}
@@ -118,6 +129,7 @@ void ResourceLoader::Load_Resources() {
 	resolve_items_dependencies(item_data_parsers);
 	resolve_entities_dependencies(entity_data_parsers);
 
+	//std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 	resources_are_loaded = true;
 }
 

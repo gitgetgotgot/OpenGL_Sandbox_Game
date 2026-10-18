@@ -2,11 +2,13 @@
 #include "UI/CanvasManager.h"
 #include "UI/UI_ObjectManager.h"
 #include "UI/Image.h"
+#include "UI/TiledImage.h"
 #include "UI/SDF_Text.h"
 #include "UI/InputField.h"
 #include "UI/Panel.h"
 #include "UI/Button.h"
 #include "UI/ScrollView.h"
+#include "UI/ScrollViewContent.h"
 #include "UI/ScrollBar.h"
 #include <Resources/Sprite.h>
 #include <IOSystem/SystemContext.h>
@@ -53,6 +55,25 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_image9sliced(
 	auto img = obj->add_component<Image>();
 	img->Setup_As_Nine_Sliced();
 	img->set_sprite(sprite9sliced_id);
+	img->set_color(color);
+	return obj;
+}
+
+CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_tiled_image() {
+	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
+	obj->add_component<TiledImage>();
+	return obj;
+}
+
+CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_tiled_image(
+	uint32_t sprite_id, glm::vec2 size, glm::vec2 local_pos, glm::vec2 tiles_count, glm::vec4 color
+) {
+	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
+	obj->transform.set_local_pos(local_pos);
+	obj->transform.set_size(size);
+	auto img = obj->add_component<TiledImage>();
+	img->set_sprite(sprite_id);
+	img->set_tile(tiles_count.x, tiles_count.y);
 	img->set_color(color);
 	return obj;
 }
@@ -243,7 +264,15 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_scroll_view(glm::vec2 size, glm::v
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
 	obj->transform.set_local_pos(local_pos);
 	obj->transform.set_size(size);
-	obj->add_component<ScrollView>()->is_interactable = true;
+	auto scroll_view = obj->add_component<ScrollView>();
+	
+	UI_Obj_Ptr content_obj = UI_ObjectManager::get_instance().add();
+	content_obj->transform.set_size(size);
+	auto scroll_view_content = content_obj->add_component<ScrollViewContent>();
+	obj.add_child(content_obj);
+
+	scroll_view->is_interactable = true;
+	scroll_view->bind_content(scroll_view_content);
 	return obj;
 }
 

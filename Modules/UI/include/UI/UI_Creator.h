@@ -15,6 +15,9 @@ namespace CoreUI {
 		static UI_Obj_Ptr create_image9sliced();
 		static UI_Obj_Ptr create_image9sliced(uint32_t sprite9sliced_id, glm::vec2 size, glm::vec2 local_pos, glm::vec4 color);
 
+		static UI_Obj_Ptr create_tiled_image();
+		static UI_Obj_Ptr create_tiled_image(uint32_t sprite_id, glm::vec2 size, glm::vec2 local_pos, glm::vec2 tiles_count, glm::vec4 color);
+
 		static UI_Obj_Ptr create_SDF_text();
 		static UI_Obj_Ptr create_SDF_text(glm::vec2 size, glm::vec2 local_pos, std::string text, glm::vec4 text_color, float text_height);
 

@@ -1,5 +1,6 @@
 #include "Resources/TextureArrayMgr.h"
 #include <stb_image.h>
+#include <glad/gl.h>
 #include <iostream>
 
 CoreResource::TextureResourceData::TextureResourceData(TextureResourceData&& other) {
@@ -28,6 +29,9 @@ CoreResource::TextureResourceData::~TextureResourceData() {
 }
 
 void CoreResource::TextureArrayManager::init() {
+	// read texture bytes without alignment or padding (correctly load textures of different formats and sizes)
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
 	const uint32_t array_size[8] = {
 		10/*32*/,
 		10/*64*/,

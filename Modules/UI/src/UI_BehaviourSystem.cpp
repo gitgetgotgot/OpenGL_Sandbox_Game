@@ -37,7 +37,7 @@ void CoreUI::UI_BehaviourSystem::update(UI_RenderContext& ctx) {
 			process_INPUT_FIELD_event(comp_base, pointed_now);
 			break;
 		case UI_Component_Type::UI_SCROLL_VIEW:
-			process_SCROLL_VIEW_event(comp_base, pointed_now, obj->transform);
+			process_SCROLL_VIEW_event(comp_base, pointed_now);
 			break;
 		case UI_Component_Type::UI_SCROLL_BAR:
 			process_SCROLL_BAR_event(comp_base, pointed_now);
@@ -168,83 +168,36 @@ void CoreUI::UI_BehaviourSystem::process_INPUT_FIELD_event(UI_ComponentBase* com
 	}
 }
 
-void CoreUI::UI_BehaviourSystem::process_SCROLL_VIEW_event(UI_ComponentBase*& comp_base, bool& pointed_now, UI_Transform& tr) {
-	auto scroll_view = static_cast<ScrollView*>(comp_base);
-
-	//amount of children is changed -> replace all children
-	if (scroll_view->last_children_size != tr.children.size()) {
-		scroll_view->last_children_size = tr.children.size();
-		//alignment is always Top Left
-		const float initial_x_pos = tr.local_pos.x - tr.size.x * 0.5f + scroll_view->border_x_offset;
-		const float initial_y_pos = tr.local_pos.y + tr.size.y * 0.5f - scroll_view->border_y_offset;
-		
-		float current_x_offset = initial_x_pos;
-		float current_y_offset = initial_y_pos;
-
-		float max_element_x_size = 0.0f;
-		float max_element_y_size = 0.0f;
-
-		const bool is_horizontal = scroll_view->layout == ScrollView::GroupLayout::LAYOUT_HORIZONTAL;
-		const bool is_vertical   = scroll_view->layout == ScrollView::GroupLayout::LAYOUT_VERTICAL;
-
-		for (auto& child_id : tr.children) {
-			UI_Transform& child_tr = UI_ObjectManager::get_instance().get(child_id)->transform;
-			child_tr.set_local_pos(
-				current_x_offset + child_tr.size.x * 0.5f,
-				current_y_offset - child_tr.size.y * 0.5f
-			);
-			if (is_horizontal) current_x_offset += child_tr.size.x + scroll_view->content_children_offset;
-			if (is_vertical)   current_y_offset -= child_tr.size.y + scroll_view->content_children_offset;
-
-			max_element_x_size = child_tr.size.x > max_element_x_size ? child_tr.size.x : max_element_x_size;
-			max_element_y_size = child_tr.size.y > max_element_y_size ? child_tr.size.y : max_element_y_size;
-		}
-		current_x_offset += scroll_view->border_x_offset;
-		current_y_offset -= scroll_view->border_y_offset;
-
-		if (!is_horizontal) current_x_offset += max_element_x_size;
-		if (!is_vertical) current_y_offset -= max_element_y_size;
-
-		scroll_view->current_max_content_offset.x = tr.local_pos.x - tr.size.x * 0.5f - current_x_offset + tr.size.x;
-		scroll_view->current_max_content_offset.y = tr.local_pos.y + tr.size.y * 0.5f - current_y_offset - tr.size.y;
-
-		if (scroll_view->current_max_content_offset.x > 0.0f) scroll_view->current_max_content_offset.x = 0.0f;
-		if (scroll_view->current_max_content_offset.y < 0.0f) scroll_view->current_max_content_offset.y = 0.0f;
-
-		if (scroll_view->has_horizontal_scrollbar && scroll_view->scrollbar_X && scroll_view->current_max_content_offset.x != 0.0f) {
-			scroll_view->scrollbar_X->set_thumb_size_ratio(tr.size.x / -scroll_view->current_max_content_offset.x);
-		}
-		if (scroll_view->has_vertical_scrollbar && scroll_view->scrollbar_Y) {
-			scroll_view->scrollbar_Y->set_thumb_size_ratio(tr.size.y / (tr.local_pos.y + tr.size.y * 0.5f - current_y_offset));
-		}
-	}
-
+void CoreUI::UI_BehaviourSystem::process_SCROLL_VIEW_event(UI_ComponentBase*& comp_base, bool& pointed_now) {
 	if (pointed_now && SystemContext::mouse.wheel_offset != 0) {
+
+		auto scroll_view = static_cast<ScrollView*>(comp_base);
+		auto& scroll_view_content = *scroll_view->content;
+
 		if (SystemContext::mouse.wheel_offset > 0.0f) {
 			if (SystemContext::keyBoard.key_is_held(Key::KeyLeftShift)) {
-				scroll_view->content_offset.x += SystemContext::mouse.wheel_offset * scroll_view->mouse__wheel_scroll_speed;
-				if (scroll_view->content_offset.x > 0.0f) scroll_view->content_offset.x = 0.0f;
+				scroll_view_content.content_offset.x += SystemContext::mouse.wheel_offset * scroll_view->mouse__wheel_scroll_speed;
+				if (scroll_view_content.content_offset.x > 0.0f) scroll_view_content.content_offset.x = 0.0f;
 			}
 			else {
-				scroll_view->content_offset.y -= SystemContext::mouse.wheel_offset * scroll_view->mouse__wheel_scroll_speed;
-				if (scroll_view->content_offset.y < 0.0f) scroll_view->content_offset.y = 0.0f;
+				scroll_view_content.content_offset.y -= SystemContext::mouse.wheel_offset * scroll_view->mouse__wheel_scroll_speed;
+				if (scroll_view_content.content_offset.y < 0.0f) scroll_view_content.content_offset.y = 0.0f;
 			}
 		}
 		else {
 			if (SystemContext::keyBoard.key_is_held(Key::KeyLeftShift)) {
-				scroll_view->content_offset.x += SystemContext::mouse.wheel_offset * scroll_view->mouse__wheel_scroll_speed;
-				if (scroll_view->content_offset.x < scroll_view->current_max_content_offset.x)
-					scroll_view->content_offset.x = scroll_view->current_max_content_offset.x;
+				scroll_view_content.content_offset.x += SystemContext::mouse.wheel_offset * scroll_view->mouse__wheel_scroll_speed;
+				if (scroll_view_content.content_offset.x < scroll_view_content.current_max_content_offset.x)
+					scroll_view_content.content_offset.x = scroll_view_content.current_max_content_offset.x;
 			}
 			else {
-				scroll_view->content_offset.y -= SystemContext::mouse.wheel_offset * scroll_view->mouse__wheel_scroll_speed;
-				if (scroll_view->content_offset.y > scroll_view->current_max_content_offset.y)
-					scroll_view->content_offset.y = scroll_view->current_max_content_offset.y;
+				scroll_view_content.content_offset.y -= SystemContext::mouse.wheel_offset * scroll_view->mouse__wheel_scroll_speed;
+				if (scroll_view_content.content_offset.y > scroll_view_content.current_max_content_offset.y)
+					scroll_view_content.content_offset.y = scroll_view_content.current_max_content_offset.y;
 			}
 		}
-
 		if (scroll_view->has_vertical_scrollbar && scroll_view->scrollbar_Y) {
-			scroll_view->scrollbar_Y->set_value(scroll_view->content_offset.y / scroll_view->current_max_content_offset.y);
+			scroll_view->scrollbar_Y->set_value(scroll_view_content.content_offset.y / scroll_view_content.current_max_content_offset.y);
 		}
 	}
 }

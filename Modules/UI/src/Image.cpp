@@ -63,8 +63,8 @@ void CoreUI::Image::update_as_regular(Image& img) {
 
 		float size_x = tr.size.x;
 		float size_y = tr.size.y;
-		float x = tr.global_pos.x - size_x * 0.5f;
-		float y = tr.global_pos.y - size_y * 0.5f;
+		float x = tr.global_pos.x - size_x * tr.pivot.x;
+		float y = tr.global_pos.y - size_y * tr.pivot.y;
 
 		glm::vec2& size_ratio = s.ratio;
 		x += (1.0f - size_ratio.x) * size_x * 0.5f;
@@ -102,8 +102,8 @@ void CoreUI::Image::update_as_nine_sliced(Image& img) {
 
 		UI_Transform& tr = obj->transform;
 		float
-			X_0 = tr.global_pos.x - tr.size.x * 0.5f, X_1 = X_0 + tr.size.x,
-			Y_0 = tr.global_pos.y - tr.size.y * 0.5f, Y_1 = Y_0 + tr.size.y;
+			X_0 = tr.global_pos.x - tr.size.x * tr.pivot.x, X_1 = X_0 + tr.size.x,
+			Y_0 = tr.global_pos.y - tr.size.y * tr.pivot.y, Y_1 = Y_0 + tr.size.y;
 		float
 			x0 = X_0, x1 = X_0 + margin_left,
 			y0 = Y_0, y1 = Y_0 + margin_bottom;

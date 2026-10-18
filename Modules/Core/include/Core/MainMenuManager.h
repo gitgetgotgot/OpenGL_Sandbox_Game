@@ -1,7 +1,10 @@
 #pragma once
-#include <UI/Canvas.h>
-#include <UI/SDF_Text.h>
-#include <Audio/AudioSource.h>
+#include "Core/Menu/MainPage.h"
+#include "Core/Menu/MainMenuPage.h"
+#include "Core/Menu/SavesPage.h"
+#include "Core/Menu/SettingsPage.h"
+#include "Core/Menu/ModsPage.h"
+#include "Core/Menu/CreatorPage.h"
 
 class MainMenuManager {
 public:
@@ -12,20 +15,11 @@ public:
 	void init();
 	void update();
 
-	void start_loading();
-	void stop_loading();
-	void open_main_page();
-	void close_main_page();
-private:
-	MainMenuManager() = default;
-	~MainMenuManager() = default;
+	void start_loading_resources();
+	void stop_loading_resources();
 
-	void setup_main_canvas();
-	void setup_main_page();
-	void setup_settings_page();
-	void setup_saves_page();
-	void setup_mods_page();
-	void setup_creator_page();
+	void open_main_menu_page();
+	void close_main_menu_page();
 
 	void exit_game();
 	void open_settings_page();
@@ -36,18 +30,16 @@ private:
 	void close_mods_page();
 	void open_creator_page();
 	void close_creator_page();
+private:
+	MainMenuManager() = default;
+	~MainMenuManager() = default;
 
-	CoreUI::UI_Component_Ptr<CoreUI::SDF_Text> loading_text;
-	bool is_loading = false;
-	float time_loading = 0.0f;
-	uint32_t phase = 0;
-
-	CoreUI::UI_Canvas_Ptr canvas_main;
-	CoreUI::UI_Canvas_Ptr canvas_main_menu;
-	CoreUI::UI_Canvas_Ptr canvas_settings;
-	CoreUI::UI_Canvas_Ptr canvas_saves;
-	CoreUI::UI_Canvas_Ptr canvas_mods;
-	CoreUI::UI_Canvas_Ptr canvas_creator;
+	MainPage main_page;
+	MainMenuPage main_menu_page;
+	SavesPage saves_page;
+	SettingsPage settings_page;
+	ModsPage mods_page;
+	CreatorPage creator_page;
 
 	CoreAudio::AudioSource button_click_sound;
 	CoreAudio::AudioSource music_test;

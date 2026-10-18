@@ -33,7 +33,7 @@ namespace CoreUI {
 
 		bool _is_dragged = false;
 		ScrollDirection direction = ScrollDirection::SCROLLBAR_HORIZONTAL;
-		ScrollMode scroll_mode = ScrollMode::SLIDER_MODE;
+		ScrollMode scroll_mode = ScrollMode::PAGEABLE_MODE;
 
 		UI_Component_Ptr<Image> track_img;
 		UI_Component_Ptr<Image> thumb_img;

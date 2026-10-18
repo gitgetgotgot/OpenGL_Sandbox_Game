@@ -51,6 +51,7 @@ namespace CoreUI {
 		UI_Obj_Ptr& operator=(const UI_Obj_Ptr&) noexcept;
 		UI_Obj_Ptr& operator=(UI_Obj_Ptr&&) noexcept;
 		bool add_child(UI_Obj_Ptr& child) const;
+		UI_Obj_Ptr get_child_by_index(uint32_t index) const;
 		uint32_t get_id() const { return obj_id; }
 		void reset() { obj_id = 0; }
 	private:
