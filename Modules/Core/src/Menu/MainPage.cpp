@@ -30,10 +30,10 @@ void MainPage::enable(bool state) {
 void MainPage::setup_page() {
 	canvas = CoreUI::UI_Creator::create_canvas();
 
-	uint32_t sprite_white_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:White").value();
+	uint32_t stone_wall_sprite_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:UIStoneWall").value();
 
-	auto background = CoreUI::UI_Creator::create_image(
-		sprite_white_id, glm::vec2(SystemContext::display.ratio * 2.0f, 2.0f), glm::vec2(0.0f), glm::vec4(0.3f, 0.3f, 0.3f, 1.0f)
+	auto background = CoreUI::UI_Creator::create_tiled_image(
+		stone_wall_sprite_id, glm::vec2(4.0, 2.0f), glm::vec2(0.0f), glm::vec2(4.0f, 2.0f), glm::vec4(0.7f, 0.7f, 0.7f, 1.0f)
 	);
 
 	auto loading_label = CoreUI::UI_Creator::create_SDF_text(

@@ -36,6 +36,42 @@
     }
   },
   {
+    "UID": "Core:UIStoneWall",
+    "texture": "Core:StoneWall.png",
+    "padding": 0,
+    "sprite": {
+      "U0": 0,
+      "V0": 0,
+      "w": 64,
+      "h": 64,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Core:PlayButton",
+    "texture": "Core:PlayButton.png",
+    "padding": 0,
+    "sprite": {
+      "U0": 0,
+      "V0": 0,
+      "w": 64,
+      "h": 64,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Core:DeleteButton",
+    "texture": "Core:DeleteButton.png",
+    "padding": 0,
+    "sprite": {
+      "U0": 0,
+      "V0": 0,
+      "w": 64,
+      "h": 64,
+      "base_size": 1.0
+    }
+  },
+  {
     "UID": "Core:Button32",
     "texture": "Core:Button32.png",
     "padding": 0,

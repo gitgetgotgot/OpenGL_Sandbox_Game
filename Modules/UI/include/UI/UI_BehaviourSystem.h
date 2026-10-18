@@ -65,7 +65,6 @@ namespace CoreUI {
 		uint32_t prev_focused_id = 0;
 		bool focus_changed_in_frame = false;
 
-		float prev_mouse_ortho_x = 0.0f;
-		float prev_mouse_ortho_y = 0.0f;
+		glm::vec2 scroll_thumb_cursor_delta;
 	};
 }

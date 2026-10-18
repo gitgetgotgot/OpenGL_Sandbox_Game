@@ -18,6 +18,9 @@ public:
 	void start_loading_resources();
 	void stop_loading_resources();
 
+	void load_saves();
+	void load_mods();
+
 	void open_main_menu_page();
 	void close_main_menu_page();
 

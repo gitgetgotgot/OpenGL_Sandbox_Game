@@ -78,6 +78,7 @@ void CoreUI::UI_System::uninit() {
 	ubo.reset();
 	ebo.reset();
 	sprites_shader.reset();
+	tiled_sprites_shader.reset();
 	sdf_text_shader.reset();
 	sprites_vao.reset();
 	sdf_text_vao.reset();

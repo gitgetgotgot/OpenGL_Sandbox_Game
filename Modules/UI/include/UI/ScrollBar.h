@@ -28,12 +28,12 @@ namespace CoreUI {
 	private:
 		void _update_thumb_pos();
 		void _on_track_held();
-		void _on_thumb_drag(float thumb_x, float thumb_y, float prev_mouse_ortho_x, float prev_mouse_ortho_y);
-		void _on_thumb_step(float thumb_x, float thumb_y);
+		void _on_thumb_drag(glm::vec2& scroll_thumb_cursor_delta);
+		void _on_thumb_step(float thumb_global_x, float thumb_global_y);
 
 		bool _is_dragged = false;
 		ScrollDirection direction = ScrollDirection::SCROLLBAR_HORIZONTAL;
-		ScrollMode scroll_mode = ScrollMode::PAGEABLE_MODE;
+		ScrollMode scroll_mode = ScrollMode::SLIDER_MODE;
 
 		UI_Component_Ptr<Image> track_img;
 		UI_Component_Ptr<Image> thumb_img;

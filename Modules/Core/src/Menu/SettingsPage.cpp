@@ -30,34 +30,37 @@ void SettingsPage::setup_page() {
 	settings_logo->get_component<CoreUI::SDF_Text>()->set_alignment(
 		CoreUI::SDF_Text::TextHorizAlign::Center_Align, CoreUI::SDF_Text::TextVertAlign::Middle_Align);
 
-	auto button_resolution = CoreUI::UI_Creator::create_button_image9sliced(
-		glm::vec2(1.5f, 0.1f), glm::vec2(0.0f, 0.545f), button_sprite_id,
-		"Resolution: 1920x1080", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
+	auto button_resolution = CoreUI::UI_Creator::create_button_image(
+		glm::vec2(1.5f, 0.1f), glm::vec2(0.0f, 0.545f), true, button_sprite_id,
+		true, "", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
-	auto button_fullscreen = CoreUI::UI_Creator::create_button_image9sliced(
-		glm::vec2(0.7f, 0.1f), glm::vec2(-0.4f, 0.42f), button_sprite_id,
-		"Fullscreen: OFF", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
+	auto button_fullscreen = CoreUI::UI_Creator::create_button_image(
+		glm::vec2(0.7f, 0.1f), glm::vec2(-0.4f, 0.42f), true, button_sprite_id,
+		true, "", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
-	auto button_vsync = CoreUI::UI_Creator::create_button_image9sliced(
-		glm::vec2(0.7f, 0.1f), glm::vec2(0.4f, 0.42f), button_sprite_id,
-		"Vsync: ON", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
+	auto button_vsync = CoreUI::UI_Creator::create_button_image(
+		glm::vec2(0.7f, 0.1f), glm::vec2(0.4f, 0.42f), true, button_sprite_id,
+		true, "", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
-	auto button_exit = CoreUI::UI_Creator::create_button_image9sliced(
-		glm::vec2(0.7f, 0.1f), glm::vec2(0.0f, -0.8f), button_sprite_id,
-		"Save&Exit", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
+	auto button_exit = CoreUI::UI_Creator::create_button_image(
+		glm::vec2(0.7f, 0.1f), glm::vec2(0.0f, -0.8f), true, button_sprite_id,
+		true, "Save&Exit", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
 
 	auto scroll_master_volume = CoreUI::UI_Creator::create_scroll_bar(
 		glm::vec2(1.0f, 0.075f), glm::vec2(1.0f, 0.025f), glm::vec2(0.075f, 0.075f), glm::vec2(0.3f, 0.295f),
-		false, true, gradient_id, button_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), false
+		false, true, gradient_id, button_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f),
+		false, true, true, 100
 	);
 	auto scroll_music_volume = CoreUI::UI_Creator::create_scroll_bar(
 		glm::vec2(1.0f, 0.075f), glm::vec2(1.0f, 0.025f), glm::vec2(0.075f, 0.075f), glm::vec2(0.3f, 0.17f),
-		false, true, gradient_id, button_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), false
+		false, true, gradient_id, button_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f),
+		false, true, true, 100
 	);
 	auto scroll_sfx_volume = CoreUI::UI_Creator::create_scroll_bar(
 		glm::vec2(1.0f, 0.075f), glm::vec2(1.0f, 0.025f), glm::vec2(0.075f, 0.075f), glm::vec2(0.3f, 0.045f),
-		false, true, gradient_id, button_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), false
+		false, true, gradient_id, button_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f),
+		false, true, true, 100
 	);
 
 	auto master_volume_text = CoreUI::UI_Creator::create_SDF_text(

@@ -28,8 +28,6 @@ namespace CoreUI {
 		bool uses_clipping = true;
 	private:
 		void update_content();
-		void _set_normalized_offset_x(float value);
-		void _set_normalized_offset_y(float value);
 
 		bool _is_pointed = false;
 		bool _is_pressed = false;

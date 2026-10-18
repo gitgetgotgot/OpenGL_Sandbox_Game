@@ -30,6 +30,8 @@ void MainMenuManager::init() {
 
 	button_click_sound.setup_source("Core:Button");
 	music_test.setup_source("Core:MusicTest");
+
+	saves_page.load_saves();
 }
 
 void MainMenuManager::update() {
@@ -39,12 +41,23 @@ void MainMenuManager::update() {
 void MainMenuManager::start_loading_resources() {
 	main_page.start_loading_resources();
 }
+
 void MainMenuManager::stop_loading_resources() {
 	main_page.stop_loading_resources();
 }
+
+void MainMenuManager::load_saves() {
+	saves_page.load_saves();
+}
+
+void MainMenuManager::load_mods() {
+
+}
+
 void MainMenuManager::open_main_menu_page() {
 	main_menu_page.enable(true);
 }
+
 void MainMenuManager::close_main_menu_page() {
 	main_menu_page.enable(false);
 }

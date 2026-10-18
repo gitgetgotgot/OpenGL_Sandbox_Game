@@ -196,7 +196,7 @@ void CoreUI::UI_BehaviourSystem::process_SCROLL_VIEW_event(UI_ComponentBase*& co
 					scroll_view_content.content_offset.y = scroll_view_content.current_max_content_offset.y;
 			}
 		}
-		if (scroll_view->has_vertical_scrollbar && scroll_view->scrollbar_Y) {
+		if (scroll_view->has_vertical_scrollbar && scroll_view->scrollbar_Y && scroll_view_content.current_max_content_offset.y) {
 			scroll_view->scrollbar_Y->set_value(scroll_view_content.content_offset.y / scroll_view_content.current_max_content_offset.y);
 		}
 	}
@@ -207,7 +207,7 @@ void CoreUI::UI_BehaviourSystem::process_SCROLL_BAR_event(UI_ComponentBase*& com
 
 	if (scroll_bar->scroll_mode == ScrollBar::ScrollMode::SLIDER_MODE) {
 		if (pointed_now && SystemContext::mouse.lb_is_pressed()) {
-			scroll_bar->_on_track_held();
+			//scroll_bar->_on_track_held();
 			scroll_bar->_is_dragged = true;
 		}
 		if (scroll_bar->_is_dragged) {
@@ -228,17 +228,15 @@ void CoreUI::UI_BehaviourSystem::process_SCROLL_BAR_event(UI_ComponentBase*& com
 			thumb_tr.global_pos, thumb_tr.size, SystemContext::mouse.ortho_x_pos, SystemContext::mouse.ortho_y_pos
 		);
 		if (scroll_bar->_is_dragged) {
-			scroll_bar->_on_thumb_drag(thumb_tr.local_pos.x, thumb_tr.local_pos.y, prev_mouse_ortho_x, prev_mouse_ortho_y);
-			prev_mouse_ortho_x = SystemContext::mouse.ortho_x_pos;
-			prev_mouse_ortho_y = SystemContext::mouse.ortho_y_pos;
+			scroll_bar->_on_thumb_drag(scroll_thumb_cursor_delta);
 		}
 		if (scroll_bar->_is_dragged && SystemContext::mouse.lb_is_released()) {
 			scroll_bar->_is_dragged = false;
 		}
 		else if (cursor_over_thumb && SystemContext::mouse.lb_is_pressed()) {
 			scroll_bar->_is_dragged = true;
-			prev_mouse_ortho_x = SystemContext::mouse.ortho_x_pos;
-			prev_mouse_ortho_y = SystemContext::mouse.ortho_y_pos;
+			scroll_thumb_cursor_delta.x = thumb_tr.global_pos.x - SystemContext::mouse.ortho_x_pos;
+			scroll_thumb_cursor_delta.y = thumb_tr.global_pos.y - SystemContext::mouse.ortho_y_pos;
 		}
 		else if (pointed_now && SystemContext::mouse.lb_is_pressed()) {
 			scroll_bar->_on_thumb_step(thumb_tr.global_pos.x, thumb_tr.global_pos.y);

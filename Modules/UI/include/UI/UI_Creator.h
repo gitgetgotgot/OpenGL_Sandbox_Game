@@ -26,29 +26,25 @@ namespace CoreUI {
 
 		static UI_Obj_Ptr create_button();
 		static UI_Obj_Ptr create_button_image(
-			glm::vec2 size, glm::vec2 local_pos, uint32_t sprite_id, std::string txt, glm::vec4 text_color, float text_height
-		);
-		static UI_Obj_Ptr create_button_image9sliced(
-			glm::vec2 size, glm::vec2 local_pos, uint32_t sprite_id, std::string txt, glm::vec4 text_color, float text_height
+			glm::vec2 size, glm::vec2 local_pos, bool image_is_9_sliced, uint32_t sprite_id, bool has_text = false,
+			std::string txt = "Button", glm::vec4 text_color = glm::vec4(1.0f), float text_height = 0.05f
 		);
 
 		static UI_Obj_Ptr create_input_field();
 		static UI_Obj_Ptr create_input_field_image(
-			glm::vec2 size, glm::vec2 local_pos, uint32_t back_sprite_id, glm::vec4 text_color, float text_height
-		);
-		static UI_Obj_Ptr create_input_field_image9sliced(
-			glm::vec2 size, glm::vec2 local_pos, uint32_t back_sprite9sliced_id, glm::vec4 text_color, float text_height
+			glm::vec2 size, glm::vec2 local_pos, bool image_is_9_sliced, uint32_t back_sprite_id, glm::vec4 text_color, float text_height
 		);
 
 		static UI_Obj_Ptr create_scroll_view();
 		static UI_Obj_Ptr create_scroll_view(glm::vec2 size, glm::vec2 local_pos);
 
 		static UI_Obj_Ptr create_scroll_bar();
+		// slider_mode = false -> pageable_mode, vertical = false -> horizontal
 		static UI_Obj_Ptr create_scroll_bar(
 			glm::vec2 scroll_area_size, glm::vec2 track_size, glm::vec2 thumb_size, glm::vec2 local_pos,
 			bool track_9_sliced, bool thumb_9_sliced, uint32_t track_sprite_id, uint32_t thumb_sprite_id,
 			glm::vec4 track_color, glm::vec4 thumb_color,
-			bool vertical
+			bool vertical, bool slider_mode, bool is_discrete = false, uint16_t discrete_steps = 0
 		);
 	private:
 		UI_Creator() = default;

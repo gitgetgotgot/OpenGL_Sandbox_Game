@@ -122,61 +122,39 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_button() {
 }
 
 CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_button_image(
-	glm::vec2 size, glm::vec2 local_pos, uint32_t sprite_id, std::string txt, glm::vec4 text_color, float text_height
+	glm::vec2 size, glm::vec2 local_pos, bool image_is_9_sliced, uint32_t sprite_id, bool has_text,
+	std::string txt, glm::vec4 text_color, float text_height
 ) {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
 	obj->transform.set_local_pos(local_pos);
 	obj->transform.set_size(size);
 	auto button = obj->add_component<Button>();
 	button->is_interactable = true;
+	button->blocks_input = true;
 
 	UI_Obj_Ptr img_obj = UI_ObjectManager::get_instance().add();
 	img_obj->transform.set_size(size);
 	auto img = img_obj->add_component<Image>();
-	img->Setup_As_Regular();
+	if (image_is_9_sliced)
+		img->Setup_As_Nine_Sliced();
+	else
+		img->Setup_As_Regular();
 	img->set_sprite(sprite_id);
 
-	UI_Obj_Ptr text_obj = UI_ObjectManager::get_instance().add();
-	text_obj->transform.set_size(size);
-	auto text = text_obj->add_component<SDF_Text>();
-	text->set_text_height(text_height);
-	text->set_color(text_color);
-	text->set_alignment(SDF_Text::TextHorizAlign::Center_Align, SDF_Text::TextVertAlign::Middle_Align);
-	text->set_text(txt);
-
 	obj.add_child(img_obj);
-	obj.add_child(text_obj);
-	button->bind_components(img, text);
 
-	return obj;
-}
-
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_button_image9sliced(
-	glm::vec2 size, glm::vec2 local_pos, uint32_t sprite_id, std::string txt, glm::vec4 text_color, float text_height
-) {
-	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
-	obj->transform.set_local_pos(local_pos);
-	obj->transform.set_size(size);
-	auto button = obj->add_component<Button>();
-	button->is_interactable = true;
-
-	UI_Obj_Ptr img_obj = UI_ObjectManager::get_instance().add();
-	img_obj->transform.set_size(size);
-	auto img = img_obj->add_component<Image>();
-	img->Setup_As_Nine_Sliced();
-	img->set_sprite(sprite_id);
-
-	UI_Obj_Ptr text_obj = UI_ObjectManager::get_instance().add();
-	text_obj->transform.set_size(size);
-	auto text = text_obj->add_component<SDF_Text>();
-	text->set_text_height(text_height);
-	text->set_color(text_color);
-	text->set_alignment(SDF_Text::TextHorizAlign::Center_Align, SDF_Text::TextVertAlign::Middle_Align);
-	text->set_text(txt);
-
-	obj.add_child(img_obj);
-	obj.add_child(text_obj);
-	button->bind_components(img, text);
+	UI_Component_Ptr<SDF_Text> text;
+	if (has_text) {
+		UI_Obj_Ptr text_obj = UI_ObjectManager::get_instance().add();
+		text_obj->transform.set_size(size);
+		text = text_obj->add_component<SDF_Text>();
+		text->set_text_height(text_height);
+		text->set_color(text_color);
+		text->set_alignment(SDF_Text::TextHorizAlign::Center_Align, SDF_Text::TextVertAlign::Middle_Align);
+		text->set_text(txt);
+		obj.add_child(text_obj);
+	}
+	button->bind_components(img, text); //if has no text then empty text is binded
 
 	return obj;
 }
@@ -188,52 +166,23 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_input_field() {
 }
 
 CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_input_field_image(
-	glm::vec2 size, glm::vec2 local_pos, uint32_t back_sprite_id, glm::vec4 text_color, float text_height
+	glm::vec2 size, glm::vec2 local_pos, bool image_is_9_sliced, uint32_t back_sprite_id, glm::vec4 text_color, float text_height
 ) {
 	UI_Obj_Ptr field_obj = UI_ObjectManager::get_instance().add();
 	field_obj->transform.set_local_pos(local_pos);
 	field_obj->transform.set_size(size);
 	auto field = field_obj->add_component<InputField>();
 	field->is_interactable = true;
+	field->blocks_input = true;
 
 	UI_Obj_Ptr img_obj = UI_ObjectManager::get_instance().add();
 	img_obj->transform.set_size(size);
 	auto img = img_obj->add_component<Image>();
-	img->Setup_As_Regular();
+	if (image_is_9_sliced)
+		img->Setup_As_Nine_Sliced();
+	else
+		img->Setup_As_Regular();
 	img->set_sprite(back_sprite_id);
-
-	UI_Obj_Ptr text_obj = UI_ObjectManager::get_instance().add();
-	text_obj->transform.set_size(size.x * 0.985f, size.y); //make text bounding box a little bit less on X
-	auto field_text = text_obj->add_component<SDF_Text>();
-	field_text->set_text_height(text_height);
-	field_text->set_color(text_color);
-
-	UI_Obj_Ptr cursor_obj = UI_ObjectManager::get_instance().add();
-	cursor_obj->transform.set_size(0.005f, text_height);
-	auto cursor_img = cursor_obj->add_component<Image>();
-	cursor_img->Setup_As_Regular();
-	cursor_img->set_sprite(CoreResource::SpriteManager::Instance().get_sprite_id("Core:White").value());
-
-	field_obj.add_child(img_obj);
-	field_obj.add_child(text_obj);
-	field_obj.add_child(cursor_obj);
-	field->bind_components(field_text, cursor_img);
-	return field_obj;
-}
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_input_field_image9sliced(
-	glm::vec2 size, glm::vec2 local_pos, uint32_t back_sprite9sliced_id, glm::vec4 text_color, float text_height
-) {
-	UI_Obj_Ptr field_obj = UI_ObjectManager::get_instance().add();
-	field_obj->transform.set_local_pos(local_pos);
-	field_obj->transform.set_size(size);
-	auto field = field_obj->add_component<InputField>();
-	field->is_interactable = true;
-
-	UI_Obj_Ptr img_obj = UI_ObjectManager::get_instance().add();
-	img_obj->transform.set_size(size);
-	auto img = img_obj->add_component<Image>();
-	img->Setup_As_Nine_Sliced();
-	img->set_sprite(back_sprite9sliced_id);
 
 	UI_Obj_Ptr text_obj = UI_ObjectManager::get_instance().add();
 	text_obj->transform.set_size(size.x * 0.985f, size.y); //make text bounding box a little bit less on X
@@ -286,7 +235,7 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_scroll_bar(
 	glm::vec2 scroll_area_size, glm::vec2 track_size, glm::vec2 thumb_size, glm::vec2 local_pos,
 	bool track_9_sliced, bool thumb_9_sliced, uint32_t track_sprite_id, uint32_t thumb_sprite_id,
 	glm::vec4 track_color, glm::vec4 thumb_color,
-	bool vertical
+	bool vertical, bool slider_mode, bool is_discrete, uint16_t discrete_steps
 ) {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
 	obj->transform.set_size(scroll_area_size);
@@ -318,8 +267,11 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_scroll_bar(
 
 	scroll_bar->is_interactable = true;
 	scroll_bar->set_direction(vertical ? ScrollBar::SCROLLBAR_VERTICAL : ScrollBar::SCROLLBAR_HORIZONTAL);
+	scroll_bar->set_scroll_mode(slider_mode ? ScrollBar::SLIDER_MODE : ScrollBar::PAGEABLE_MODE);
 	scroll_bar->bind_components(track_image, thumb_image);
 	scroll_bar->set_value(0.0f);
+	scroll_bar->is_discrete = is_discrete;
+	scroll_bar->set_steps_amount(discrete_steps);
 
 	return obj;
 }
