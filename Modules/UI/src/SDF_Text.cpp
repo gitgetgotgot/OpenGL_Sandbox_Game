@@ -1,6 +1,6 @@
 #include "UI/SDF_Text.h"
 #include "UI/UI_ObjectManager.h"
-#include "UI/FontManager.h"
+#include <Resources/FontManager.h>
 
 void CoreUI::SDF_Text::_update_buffer_data(UI_RenderContext& c, UI_RenderState& s) {
 	if (text.empty()) return;
@@ -16,9 +16,9 @@ void CoreUI::SDF_Text::_update_data() {
 
 	if (dirty_mask & TextMask::TEXT_TRANSFORM) {
 		UI_Transform& tr = obj->transform;
-		Font& font = FontManager::get_instance().get_main_font();
+		CoreResource::Font& font = CoreResource::FontManager::Instance().get_font(text_font_id);
 		float start_x = tr.global_pos.x - tr.size.x * 0.5f;
-		float start_y = tr.global_pos.y + (-font.descender - 0.35f) * this->text_height;
+		float start_y = tr.global_pos.y + font.descender * this->text_height;
 		float x0, x1, y0, y1;
 		float x_offset = 0;
 		size_t text_size = text.size();
@@ -50,20 +50,20 @@ void CoreUI::SDF_Text::_update_data() {
 
 		UI_Text_Vertex2f* v_buf = text_vertices.data();
 		for (uint32_t i = 0; i < text_size; i++) {
-			GlyphData& glyph = font.glyphsData[(uint32_t)text[i] - 32U];
+			CoreResource::Font::GlyphData& glyph = font.glyphsData[(uint32_t)text[i] - 32U];
 
-			x0 = start_x + x_offset + glyph.bearingX_normalized * this->text_height;
-			x1 = x0 + glyph.width_normalized * this->text_height;
-			y0 = start_y + (glyph.bearingY_normalized - glyph.height_normalized) * this->text_height;
-			//y0 = start_y;
-			y1 = y0 + glyph.height_normalized * this->text_height;
+			x0 = start_x + x_offset + glyph.bearingX_normalized * text_height;
+			x1 = x0 + glyph.width_normalized * text_height;
+
+			y0 = start_y + (glyph.bearingY_normalized - glyph.height_normalized) * text_height;
+			y1 = y0 + glyph.height_normalized * text_height;
 
 			v_buf->pos = { x0, y0 }; v_buf->UV = { glyph.U0, glyph.V0 }; v_buf++->color = color;
 			v_buf->pos = { x0, y1 }; v_buf->UV = { glyph.U0, glyph.V1 }; v_buf++->color = color;
 			v_buf->pos = { x1, y1 }; v_buf->UV = { glyph.U1, glyph.V1 }; v_buf++->color = color;
 			v_buf->pos = { x1, y0 }; v_buf->UV = { glyph.U1, glyph.V0 }; v_buf++->color = color;
 
-			x_offset += this->text_height * glyph.advance_normalized;
+			x_offset += text_height * glyph.advance_normalized;
 		}
 	}
 	else if (dirty_mask & TextMask::TEXT_COLOR) {
@@ -131,7 +131,7 @@ void CoreUI::SDF_Text::remove_char_from_text(uint32_t pos) {
 
 float CoreUI::SDF_Text::get_char_offset(uint32_t char_index) {
 	if (text.empty()) return text_height * 0.1f;
-	Font& font = FontManager::get_instance().get_main_font();
+	CoreResource::Font& font = CoreResource::FontManager::Instance().get_font(text_font_id);
 	float offset = font.glyphsData[(uint32_t)text[0] - 32U].bearingX_normalized * text_height + text_height * 0.1f;
 	for (uint32_t i = 0; i < char_index; i++) {
 		offset += font.glyphsData[(uint32_t)text[i] - 32U].advance_normalized * text_height;

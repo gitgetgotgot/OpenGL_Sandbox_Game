@@ -20,9 +20,10 @@ void SettingsPage::setup_page() {
 
 	button_click_sound.setup_source("Core:Button");
 
-	uint32_t gradient_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:Gradient").value();
-	uint32_t button_sprite_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:Button64").value();
 	uint32_t sprite_white_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:White").value();
+	uint32_t sprite_gradient_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:Gradient").value();
+	uint32_t slider_sprite_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:UI_Button64p").value();
+	uint32_t button64_sprite_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:UI_Button64p1").value();
 
 	auto settings_logo = CoreUI::UI_Creator::create_SDF_text(
 		glm::vec2(1.0f, 0.1f), glm::vec2(0.0f, 0.8f), "Settings", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), 0.2f
@@ -31,35 +32,35 @@ void SettingsPage::setup_page() {
 		CoreUI::SDF_Text::TextHorizAlign::Center_Align, CoreUI::SDF_Text::TextVertAlign::Middle_Align);
 
 	auto button_resolution = CoreUI::UI_Creator::create_button_image(
-		glm::vec2(1.5f, 0.1f), glm::vec2(0.0f, 0.545f), true, button_sprite_id,
+		glm::vec2(1.5f, 0.1f), glm::vec2(0.0f, 0.545f), true, button64_sprite_id,
 		true, "", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
 	auto button_fullscreen = CoreUI::UI_Creator::create_button_image(
-		glm::vec2(0.7f, 0.1f), glm::vec2(-0.4f, 0.42f), true, button_sprite_id,
+		glm::vec2(0.7f, 0.1f), glm::vec2(-0.4f, 0.42f), true, button64_sprite_id,
 		true, "", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
 	auto button_vsync = CoreUI::UI_Creator::create_button_image(
-		glm::vec2(0.7f, 0.1f), glm::vec2(0.4f, 0.42f), true, button_sprite_id,
+		glm::vec2(0.7f, 0.1f), glm::vec2(0.4f, 0.42f), true, button64_sprite_id,
 		true, "", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
 	auto button_exit = CoreUI::UI_Creator::create_button_image(
-		glm::vec2(0.7f, 0.1f), glm::vec2(0.0f, -0.8f), true, button_sprite_id,
+		glm::vec2(0.7f, 0.1f), glm::vec2(0.0f, -0.8f), true, button64_sprite_id,
 		true, "Save&Exit", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
 
 	auto scroll_master_volume = CoreUI::UI_Creator::create_scroll_bar(
 		glm::vec2(1.0f, 0.075f), glm::vec2(1.0f, 0.025f), glm::vec2(0.075f, 0.075f), glm::vec2(0.3f, 0.295f),
-		false, true, gradient_id, button_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f),
+		false, true, sprite_gradient_id, slider_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f),
 		false, true, true, 100
 	);
 	auto scroll_music_volume = CoreUI::UI_Creator::create_scroll_bar(
 		glm::vec2(1.0f, 0.075f), glm::vec2(1.0f, 0.025f), glm::vec2(0.075f, 0.075f), glm::vec2(0.3f, 0.17f),
-		false, true, gradient_id, button_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f),
+		false, true, sprite_gradient_id, slider_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f),
 		false, true, true, 100
 	);
 	auto scroll_sfx_volume = CoreUI::UI_Creator::create_scroll_bar(
 		glm::vec2(1.0f, 0.075f), glm::vec2(1.0f, 0.025f), glm::vec2(0.075f, 0.075f), glm::vec2(0.3f, 0.045f),
-		false, true, gradient_id, button_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f),
+		false, true, sprite_gradient_id, slider_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f),
 		false, true, true, 100
 	);
 
@@ -107,8 +108,8 @@ void SettingsPage::setup_page() {
 	canvas->add_object(sfx_volume_text);
 	canvas->add_object(button_exit);
 
-	DisplayController::Resolution& res = SystemContext::display.get_current_video_mode();
-	text_builder.add_text("Resolution: ").add_int(res.width).add_text("x").add_int(res.height);
+	DisplayController::DisplayVideoMode& mode = SystemContext::display.get_current_video_mode();
+	text_builder.add_text("Resolution: ").add_int(mode.width).add_text("x").add_int(mode.height);
 	resolution_text->set_text(text_builder.data());
 	text_builder.reset();
 
@@ -130,8 +131,8 @@ void SettingsPage::setup_page() {
 void SettingsPage::change_resolution() {
 	button_click_sound.play();
 	SettingsManager::Instance().change_resolution();
-	DisplayController::Resolution& res = SystemContext::display.get_current_video_mode();
-	text_builder.add_text("Resolution: ").add_int(res.width).add_text("x").add_int(res.height);
+	DisplayController::DisplayVideoMode& mode = SystemContext::display.get_current_video_mode();
+	text_builder.add_text("Resolution: ").add_int(mode.width).add_text("x").add_int(mode.height);
 	resolution_text->set_text(text_builder.data());
 	text_builder.reset();
 }

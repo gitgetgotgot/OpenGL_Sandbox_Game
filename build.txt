@@ -1,0 +1,12 @@
+	Install missing libraries for build:
+conan install . --build=missing -s build_type=Debug
+conan install . --build=missing -s build_type=Release
+	
+	Check CMake list presets:
+cmake --list-presets
+	
+	Configure CMake using conan preset:
+cmake --preset Conan_Preset_Name
+
+	Build CMake project:
+cmake --build --preset Conan_Preset_Name

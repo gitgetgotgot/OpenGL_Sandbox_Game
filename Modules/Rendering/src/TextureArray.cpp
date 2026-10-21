@@ -23,12 +23,13 @@ uint32_t TextureArray::get_current_size() const {
     return current_size;
 }
 
-void TextureArray::setup_texture_array(uint32_t width, uint32_t height, uint32_t depth, bool linear_filter, ResizeStrategy resize_str) {
+void TextureArray::setup_texture_array(uint32_t width, uint32_t height, uint32_t depth, bool linear_filter, uint8_t channels, ResizeStrategy resize_str) {
     this->array_width = width;
     this->array_height = height;
     this->array_depth = depth;
     this->linear_filter = linear_filter;
     this->resize_strategy = resize_str;
+    this->channels = channels;
     create_tex_array(id);
 }
 
@@ -45,12 +46,18 @@ bool TextureArray::add_2D_texture(const char* fileName) {
         return false;
     }
 
+    GLenum format;
+    if (numOfColorChannels == 1) format = GL_RED;
+    else if (numOfColorChannels == 2) format = GL_RG;
+    else if (numOfColorChannels == 3) format = GL_RGB;
+    else format = GL_RGBA;
+
     glBindTexture(GL_TEXTURE_2D_ARRAY, this->id);
 	glTexSubImage3D(
         GL_TEXTURE_2D_ARRAY, 0,
         0, 0, current_size,
         imgWidth, imgHeight, 1,
-        numOfColorChannels < 4 ? GL_RGB : GL_RGBA,
+        format,
         GL_UNSIGNED_BYTE,
         image_bytes
     );
@@ -68,12 +75,18 @@ void TextureArray::add_2D_texture(const unsigned char* img_buf, int& width, int&
 
     if (current_size == array_depth) resize_array();
 
+    GLenum format;
+    if (numOfChannels == 1) format = GL_RED;
+    else if (numOfChannels == 2) format = GL_RG;
+    else if (numOfChannels == 3) format = GL_RGB;
+    else format = GL_RGBA;
+
     glBindTexture(GL_TEXTURE_2D_ARRAY, this->id);
     glTexSubImage3D(
         GL_TEXTURE_2D_ARRAY, 0,
         0, 0, current_size,
         width, height, 1,
-        numOfChannels < 4 ? GL_RGB : GL_RGBA,
+        format,
         GL_UNSIGNED_BYTE,
         img_buf
     );
@@ -141,12 +154,31 @@ void TextureArray::create_tex_array(uint32_t tex_ID) const {
     // set max mipmapping level to 0 (no mipmaps will be generated)
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, 0);
 
+    GLint internal_format;
+    GLenum format;
+    if (channels == 1) {
+        internal_format = GL_R8;
+        format = GL_RED;
+    }
+    else if (channels == 2) {
+        internal_format = GL_RG8;
+        format = GL_RG;
+    }
+    else if (channels == 3) {
+        internal_format = GL_RGB8;
+        format = GL_RGB;
+    }
+    else {
+        internal_format = GL_RGBA8;
+        format = GL_RGBA;
+    }
+
     glTexImage3D(
         GL_TEXTURE_2D_ARRAY, 0,
-        GL_RGBA8,
+        internal_format,
         array_width, array_height, array_depth,
         0,
-        GL_RGBA,
+        format,
         GL_UNSIGNED_BYTE,
         nullptr
     );

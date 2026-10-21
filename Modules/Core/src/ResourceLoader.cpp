@@ -1,5 +1,6 @@
 #include <Core/ResourceLoader.h>
 #include <Audio/AudioSystem.h>
+#include <Resources/FontManager.h>
 #include <Resources/TextureArrayMgr.h>
 #include <Resources/Lights.h>
 #include <Resources/Effects.h>
@@ -32,10 +33,13 @@ void ResourceLoader::load_minimal_core_resources() {
 
 	CoreResource::SpriteManager::Instance().setup();
 
-	// load base UI texture
+	// load base font
+	CoreResource::FontManager::Instance().load_font("Resources/fonts/verdana_SDF", "Core");
+
+	// load base UI textures
 	std::string textures[] = {
-		"White.png", "Button32.png", "Button64.png", "Tooltip32.png", "Gradient.png", "Gradient2.png", "Background1.png",
-		"StoneWall.png", "PlayButton.png", "DeleteButton.png"
+		"White.png", "Gradient.png", "Gradient2.png", "UI_Button32p.png", "UI_Button64p.png", "UI_Button64p1.png", "UI_Frame0.png", "UI_Frame1.png",
+		"UI_StoneWall.png", "UI_ButtonPlay.png", "UI_ButtonDelete.png", "UI_ButtonInfo.png"
 	};
 	for (auto& tex : textures) {
 		std::filesystem::path tex_path = resources_root / "Resources/BaseData/textures" / tex;
@@ -125,7 +129,6 @@ void ResourceLoader::Load_Resources() {
 	resolve_items_dependencies(item_data_parsers);
 	resolve_entities_dependencies(entity_data_parsers);
 
-	//std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 	resources_are_loaded = true;
 }
 

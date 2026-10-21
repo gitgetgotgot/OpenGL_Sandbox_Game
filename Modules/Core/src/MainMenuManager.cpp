@@ -51,7 +51,7 @@ void MainMenuManager::load_saves() {
 }
 
 void MainMenuManager::load_mods() {
-
+	mods_page.load_mods_UI();
 }
 
 void MainMenuManager::open_main_menu_page() {

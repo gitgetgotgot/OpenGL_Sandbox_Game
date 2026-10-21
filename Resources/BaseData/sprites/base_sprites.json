@@ -36,8 +36,8 @@
     }
   },
   {
-    "UID": "Core:UIStoneWall",
-    "texture": "Core:StoneWall.png",
+    "UID": "Core:UI_StoneWall",
+    "texture": "Core:UI_StoneWall.png",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -48,8 +48,8 @@
     }
   },
   {
-    "UID": "Core:PlayButton",
-    "texture": "Core:PlayButton.png",
+    "UID": "Core:UI_ButtonPlay",
+    "texture": "Core:UI_ButtonPlay.png",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -60,8 +60,8 @@
     }
   },
   {
-    "UID": "Core:DeleteButton",
-    "texture": "Core:DeleteButton.png",
+    "UID": "Core:UI_ButtonDelete",
+    "texture": "Core:UI_ButtonDelete.png",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -72,8 +72,32 @@
     }
   },
   {
-    "UID": "Core:Button32",
-    "texture": "Core:Button32.png",
+    "UID": "Core:UI_ButtonInfo",
+    "texture": "Core:UI_ButtonInfo.png",
+    "padding": 0,
+    "sprite": {
+      "U0": 0,
+      "V0": 0,
+      "w": 64,
+      "h": 64,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Core:UI_IconFrame",
+    "texture": "Core:UI_Frame0.png",
+    "padding": 0,
+    "sprite": {
+      "U0": 0,
+      "V0": 0,
+      "w": 32,
+      "h": 32,
+      "base_size": 1.0
+    }
+  },
+  {
+    "UID": "Core:UI_Button32p",
+    "texture": "Core:UI_Button32p.png",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -89,8 +113,8 @@
     }
   },
   {
-    "UID": "Core:Button64",
-    "texture": "Core:Button64.png",
+    "UID": "Core:UI_Button64p",
+    "texture": "Core:UI_Button64p.png",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -106,8 +130,25 @@
     }
   },
   {
-    "UID": "Core:Tooltip32",
-    "texture": "Core:Tooltip32.png",
+    "UID": "Core:UI_Button64p1",
+    "texture": "Core:UI_Button64p1.png",
+    "padding": 0,
+    "sprite": {
+      "U0": 0,
+      "V0": 0,
+      "w": 64,
+      "h": 64,
+      "border": {
+        "left": 8,
+        "right": 8,
+        "top": 8,
+        "bottom": 8
+      }
+    }
+  },
+  {
+    "UID": "Core:UI_Frame0",
+    "texture": "Core:UI_Frame0.png",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -123,8 +164,8 @@
     }
   },
   {
-    "UID": "Core:Background1",
-    "texture": "Core:Background1.png",
+    "UID": "Core:UI_Frame1",
+    "texture": "Core:UI_Frame1.png",
     "padding": 0,
     "sprite": {
       "U0": 0,

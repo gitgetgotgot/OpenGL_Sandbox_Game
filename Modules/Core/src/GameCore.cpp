@@ -27,6 +27,7 @@ bool GameEngine::update() {
 void GameEngine::render() {
 	renderer->clear(0.0, 0.0, 0.0);
 
+	CoreResource::TextureArrayManager::Instance().bind_texture_arrays();
 	//world->render(renderer);
 	CoreUI::UI_System::Instance().render(renderer);
 
@@ -173,6 +174,7 @@ void GameEngine::loading_update() {
 		ResourceLoader::Instance().stop_resources_loading();
 		MainMenuManager::Instance().stop_loading_resources();
 		MainMenuManager::Instance().open_main_menu_page();
+		MainMenuManager::Instance().load_mods();
 		game_update_state = Game_State::inMainMenu;
 		update_proc = &GameEngine::gameplay_update;
 	}

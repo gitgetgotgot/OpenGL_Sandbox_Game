@@ -12,7 +12,7 @@ public:
 	void bind(uint32_t slot = 0) const;
 	void unbind() const;
 	uint32_t get_current_size() const;
-	void setup_texture_array(uint32_t width, uint32_t height, uint32_t depth, bool linear_filter, ResizeStrategy resize_str);
+	void setup_texture_array(uint32_t width, uint32_t height, uint32_t depth, bool linear_filter, uint8_t channels, ResizeStrategy resize_str);
 
 	bool add_2D_texture(const char* fileName);
 	// add texture with preloaded buffer
@@ -25,4 +25,5 @@ private:
 	uint32_t array_width, array_height, array_depth;
 	ResizeStrategy resize_strategy = ResizeStrategy::Resize_by_100_percent;
 	bool linear_filter = false;
+	uint8_t channels = 4;
 };

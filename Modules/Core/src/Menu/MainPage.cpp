@@ -30,7 +30,7 @@ void MainPage::enable(bool state) {
 void MainPage::setup_page() {
 	canvas = CoreUI::UI_Creator::create_canvas();
 
-	uint32_t stone_wall_sprite_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:UIStoneWall").value();
+	uint32_t stone_wall_sprite_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:UI_StoneWall").value();
 
 	auto background = CoreUI::UI_Creator::create_tiled_image(
 		stone_wall_sprite_id, glm::vec2(4.0, 2.0f), glm::vec2(0.0f), glm::vec2(4.0f, 2.0f), glm::vec4(0.7f, 0.7f, 0.7f, 1.0f)

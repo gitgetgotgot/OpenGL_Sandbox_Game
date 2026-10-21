@@ -1,13 +1,10 @@
 #include "UI/UI_System.h"
 #include "UI/UI_ObjectManager.h"
-#include "UI/FontManager.h"
 #include "UI/CanvasManager.h"
 #include "UI/UI_BehaviourSystem.h"
 #include <IOSystem/SystemContext.h>
 
 void CoreUI::UI_System::init() {
-	FontManager::get_instance().load_main_sdf_font("verdana_SDF");
-
 	const uint32_t MAX_SPRITES_VERTEX_SIZE = MAX_SPRITES_PER_DRAW * 4;
 	const uint32_t MAX_SPRITES_INDEX_SIZE = MAX_SPRITES_PER_DRAW * 6;
 

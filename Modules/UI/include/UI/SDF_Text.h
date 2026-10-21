@@ -35,6 +35,7 @@ namespace CoreUI {
 		float text_height = 0.1f;
 		TextVertAlign align_vertical = TextVertAlign::Middle_Align;
 		TextHorizAlign align_horizontal = TextHorizAlign::Left_Align;
+		uint16_t text_font_id = 0; //default font is 0
 	private:
 		std::vector<UI_Text_Vertex2f> text_vertices;
 		void add_char_to_text(const char c, uint32_t pos);

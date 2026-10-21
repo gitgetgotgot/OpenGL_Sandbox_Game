@@ -55,18 +55,30 @@ void CoreResource::TextureArrayManager::init() {
 	uint32_t tex_res = 32;
 	for (uint32_t i = 0; i < 8; ++i) {
 		texture_arrays[i] = std::make_unique<TextureArray>();
-		texture_arrays[i]->setup_texture_array(tex_res, tex_res, array_size[i], false, array_resize_str[i]);
+		texture_arrays[i]->setup_texture_array(tex_res, tex_res, array_size[i], false, 4, array_resize_str[i]);
 		tex_res *= 2;
 	}
+	fonts_texture_array = std::make_unique<TextureArray>();
+	fonts_texture_array->setup_texture_array(1024, 1024, 1, true, 1, TextureArray::ResizeStrategy::Resize_by_1);
+
 	for (uint32_t i = 0; i < 8; ++i) {
 		texture_arrays[i]->bind(i);
 	}
+	fonts_texture_array->bind(10);
 }
 
 void CoreResource::TextureArrayManager::uninit() {
 	for (uint32_t i = 0; i < 8; ++i) {
 		texture_arrays[i].reset();
 	}
+	fonts_texture_array.reset();
+}
+
+void CoreResource::TextureArrayManager::bind_texture_arrays() {
+	for (uint32_t i = 0; i < 8; ++i) {
+		texture_arrays[i]->bind(i);
+	}
+	fonts_texture_array->bind(10);
 }
 
 void CoreResource::TextureArrayManager::add_texture_to_queue(std::filesystem::path& file_path, std::string& UID) {
@@ -116,7 +128,7 @@ void CoreResource::TextureArrayManager::load_texture(std::filesystem::path file_
 	stbi_set_flip_vertically_on_load(false);
 	stbi_image_free(image_bytes);
 
-	std::cout << "[TextureManager] Loaded texture <" << file_path.filename() << "> with array index = " << texture_array_index << std::endl;
+	std::cout << "[TextureManager] Loaded texture <" << file_path.filename().string() << "> with array index = " << texture_array_index << std::endl;
 }
 
 void CoreResource::TextureArrayManager::load_texture(TextureResourceData& data) {
@@ -129,11 +141,23 @@ void CoreResource::TextureArrayManager::load_texture(TextureResourceData& data) 
 
 	texture_arrays[texture_array_index]->add_2D_texture(data.image_bytes, data.imgWidth, data.imgHeight, data.numOfColorChannels);
 
-	std::cout << "[TextureManager] Loaded texture <" << data.file_path.filename() << "> with array index = " << texture_array_index << std::endl;
+	std::cout << "[TextureManager] Loaded texture <" << data.file_path.filename().string() << "> with array index = " << texture_array_index << std::endl;
+}
+
+void CoreResource::TextureArrayManager::load_font_texture(unsigned char* data, int width, int height, int channels, std::string UID) {
+	font_UID_to_ID[UID] = fonts_texture_array->get_current_size();
+	fonts_texture_array->add_2D_texture(data, width, height, channels);
 }
 
 std::optional<CoreResource::TextureID> CoreResource::TextureArrayManager::get_texture_id(std::string& UID) {
 	if (auto it = UID_to_ID.find(UID); it != UID_to_ID.end()) {
+		return it->second;
+	}
+	else return std::nullopt;
+}
+
+std::optional<uint16_t> CoreResource::TextureArrayManager::get_font_texture_id(std::string& UID) {
+	if (auto it = font_UID_to_ID.find(UID); it != font_UID_to_ID.end()) {
 		return it->second;
 	}
 	else return std::nullopt;

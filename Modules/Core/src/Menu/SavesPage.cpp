@@ -45,14 +45,9 @@ void SavesPage::setup_page() {
 	button_click_sound.setup_source("Core:Button");
 	SaveElement::button_click_sound = button_click_sound;
 
-	uint32_t tooltip_sprite_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:Tooltip32").value();
 	uint32_t gradient2_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:Gradient2").value();
-	uint32_t button32_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:Button32").value();
-	uint32_t button64_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:Button64").value();
-	uint32_t background_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:Background1").value();
-	uint32_t sprite_white_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:White").value();
-	uint32_t sprite_play_button_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:PlayButton").value();
-	uint32_t sprite_delete_button_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:DeleteButton").value();
+	uint32_t button64_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:UI_Button64p1").value();
+	uint32_t frame0_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:UI_Frame0").value();
 
 	auto button_back = CoreUI::UI_Creator::create_button_image(
 		glm::vec2(1.0f, 0.1f), glm::vec2(-0.56f, -0.85f), true, button64_id,
@@ -68,7 +63,7 @@ void SavesPage::setup_page() {
 
 	//saves background
 	auto label_background_obj = CoreUI::UI_Creator::create_image9sliced(
-		background_id, glm::vec2(1.0f, 0.15f), glm::vec2(0.0f, 0.8f), glm::vec4(1.0f)
+		frame0_id, glm::vec2(1.0f, 0.16f), glm::vec2(0.0f, 0.8f), glm::vec4(1.0f)
 	);
 
 	auto saves_label = CoreUI::UI_Creator::create_SDF_text(
@@ -78,14 +73,10 @@ void SavesPage::setup_page() {
 	label_background_obj.add_child(saves_label);
 
 	auto saves_background_obj = CoreUI::UI_Creator::create_image9sliced(
-		background_id, glm::vec2(2.12f, 1.52f), glm::vec2(0.0f), glm::vec4(1.0f)
+		frame0_id, glm::vec2(2.12f, 1.52f), glm::vec2(0.0f), glm::vec4(1.0f)
 	);
 	saves_background_obj->get_component<CoreUI::Image>()->set_border_size(0.06f);
 
-	// panel for clipping
-	auto saves_panel = CoreUI::UI_Creator::create_panel(
-		glm::vec2(2.0f, 1.4f), glm::vec2(0.0f), sprite_white_id, glm::vec4(1.0f, 1.0f, 1.0f, 0.0f)
-	);
 	// scroll_view
 	auto saves_scroll_view = CoreUI::UI_Creator::create_scroll_view(
 		glm::vec2(2.0f, 1.4f), glm::vec2(0.0f)
@@ -97,7 +88,7 @@ void SavesPage::setup_page() {
 	// vertical scroll_bar for scroll_view
 	auto scroll_bar_Y = CoreUI::UI_Creator::create_scroll_bar(
 		glm::vec2(0.08f, 1.4f), glm::vec2(0.08f, 1.4f), glm::vec2(0.08f, 0.08f), glm::vec2(0.96f, 0.0f),
-		false, true, gradient2_id, button64_id, glm::vec4(0.471f, 0.376f, 0.314f, 1.0f), glm::vec4(0.639f, 0.541f, 0.475f, 1.0f), true, false
+		false, true, gradient2_id, button64_id, glm::vec4(0.471f, 0.376f, 0.314f, 1.0f), glm::vec4(1.0f), true, false
 	);
 	auto scrollbar = scroll_bar_Y->get_component<CoreUI::ScrollBar>();
 	scroll_view->has_vertical_scrollbar = true;
@@ -105,13 +96,11 @@ void SavesPage::setup_page() {
 
 	saves_scroll_view.add_child(scroll_bar_Y);
 
-	saves_panel.add_child(saves_scroll_view);
-
 	canvas->add_object(label_background_obj);
 	canvas->add_object(saves_background_obj);
 	canvas->add_object(button_back);
 	canvas->add_object(button_create);
-	canvas->add_object(saves_panel);
+	canvas->add_object(saves_scroll_view);
 }
 
 void SavesPage::load_saves() {
@@ -136,9 +125,9 @@ void SavesPage::load_saves() {
 
 CoreUI::UI_Obj_Ptr SavesPage::add_UI_save_element(SaveElement& save) {
 	// prepare sprites IDs
-	uint32_t button32_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:Button32").value();
-	uint32_t sprite_play_button_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:PlayButton").value();
-	uint32_t sprite_delete_button_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:DeleteButton").value();
+	uint32_t button32_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:UI_Button32p").value();
+	uint32_t sprite_play_button_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:UI_ButtonPlay").value();
+	uint32_t sprite_delete_button_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:UI_ButtonDelete").value();
 
 	// create UI save element
 	auto save_obj = CoreUI::UI_Creator::create_image9sliced(button32_id, glm::vec2(1.9f, 0.35f), glm::vec2(0.0f), glm::vec4(0.441, 0.379, 0.332, 1.0f));

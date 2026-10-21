@@ -20,7 +20,9 @@ namespace CoreResource {
 			int imgWidth, int imgHeight, int numOfColorChannels,
 			std::filesystem::path& file_path, std::string& UID
 		) : image_bytes{ image_bytes }, imgWidth{ imgWidth },
-			imgHeight{ imgHeight }, file_path{ file_path }, UID{ UID } {}
+			imgHeight{ imgHeight }, numOfColorChannels{numOfColorChannels},
+			file_path{ file_path }, UID{ UID } {
+		}
 		TextureResourceData(const TextureResourceData&) = delete;
 		TextureResourceData& operator=(const TextureResourceData&) = delete;
 		TextureResourceData(TextureResourceData&&);
@@ -40,21 +42,28 @@ namespace CoreResource {
 		}
 		void init();
 		void uninit();
+		void bind_texture_arrays();
 		void add_texture_to_queue(std::filesystem::path& file_path, std::string& UID);
 		bool load_textures_from_queue();
 		void mark_queue_ready();
 		void load_texture(std::filesystem::path file_path, std::string UID);
 		void load_texture(TextureResourceData& data);
+		void load_font_texture(unsigned char* data, int width, int height, int channels, std::string UID);
 		std::optional<TextureID> get_texture_id(std::string& UID);
+		std::optional<uint16_t> get_font_texture_id(std::string& UID);
 		uint32_t get_texture_array_res(uint16_t tex_array_id);
 	private:
 		int get_array_index(uint32_t tex_width, uint32_t tex_height);
 		TextureArrayManager() = default;
 		~TextureArrayManager() = default;
 
-		// 32x32, 64x64, 128x128, 256x256, 512x512, 1024x1024, 2048x2048, 4096x4096
+		// resolutions 32x32, 64x64, 128x128, 256x256, 512x512, 1024x1024, 2048x2048, 4096x4096
 		std::unique_ptr<TextureArray> texture_arrays[8];
+		// array for fonts with resolution 1024x1024
+		std::unique_ptr<TextureArray> fonts_texture_array;
+
 		std::unordered_map<std::string, TextureID> UID_to_ID;
+		std::unordered_map<std::string, uint16_t> font_UID_to_ID;
 
 		std::queue<TextureResourceData> textures_queue;
 		std::mutex tex_queue_mutex;

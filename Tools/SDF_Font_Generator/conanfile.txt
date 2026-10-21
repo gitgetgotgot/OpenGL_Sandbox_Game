@@ -1,0 +1,10 @@
+[requires]
+stb/cci.20240531
+freetype/2.14.3
+
+[generators]
+CMakeDeps
+CMakeToolchain
+
+[layout]
+cmake_layout
