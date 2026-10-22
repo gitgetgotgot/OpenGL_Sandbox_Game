@@ -37,7 +37,7 @@ void MainPage::setup_page() {
 	);
 
 	auto loading_label = CoreUI::UI_Creator::create_SDF_text(
-		glm::vec2(1.0f, 0.1f), glm::vec2(0.0f, -0.8f), "", glm::vec4(1.0f), 0.15f
+		glm::vec2(1.5f, 0.1f), glm::vec2(0.0f, -0.8f), "", glm::vec4(1.0f), 0.15f
 	);
 	loading_text = loading_label->get_component<CoreUI::SDF_Text>();
 

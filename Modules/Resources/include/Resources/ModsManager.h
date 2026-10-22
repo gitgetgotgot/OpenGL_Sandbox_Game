@@ -15,6 +15,7 @@ struct ModInfo {
 	std::filesystem::path mod_folder_path;
 	DynamicArray<DependentMod> dependent_mods;
 	bool has_dll;
+	bool enabled;
 };
 
 class ModsManager {
@@ -26,6 +27,7 @@ public:
 	void ClearData();
 	ModInfo& add(const DataNode& data);
 	std::vector<ModInfo>& get_mods();
+	ModInfo& get_mod(uint32_t id);
 private:
 	std::deque<std::string> UID_storage;
 	std::vector<ModInfo> mods;

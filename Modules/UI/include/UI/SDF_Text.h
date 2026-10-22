@@ -4,6 +4,11 @@
 
 namespace CoreUI {
 	class SDF_Text : public UI_Component<SDF_Text> {
+	private:
+		struct TextLineInfo {
+			std::string_view line;
+			float total_length;
+		};
 		friend class InputField;
 	public:
 		enum TextMask : uint8_t {
@@ -36,6 +41,7 @@ namespace CoreUI {
 		TextVertAlign align_vertical = TextVertAlign::Middle_Align;
 		TextHorizAlign align_horizontal = TextHorizAlign::Left_Align;
 		uint16_t text_font_id = 0; //default font is 0
+		bool adaptive_widget_height = false; //changes widget height if text total height is bigger (for proper widget height in containers)
 	private:
 		std::vector<UI_Text_Vertex2f> text_vertices;
 		void add_char_to_text(const char c, uint32_t pos);

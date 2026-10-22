@@ -252,9 +252,16 @@ void ResourceLoader::load_textures() {
 	std::string source_name = "Core";
 	_load_textures(textures_path, source_name);
 	for (const auto& mod_info : ModsManager::get_instance().get_mods()) {
+		source_name = mod_info.mod_folder_path.filename().string();
+		// find mod icon texture and add sprite for this icon
+		textures_path = mod_info.mod_folder_path / "mod_icon.png";
+		if (std::filesystem::exists(textures_path)) {
+			std::string texture_UID = source_name + ":" + "mod_icon.png";
+			CoreResource::TextureArrayManager::Instance().add_texture_to_queue(textures_path, texture_UID);
+		}
+		// find mod textures
 		textures_path = mod_info.mod_folder_path / "Resources/textures";
 		if (!std::filesystem::exists(textures_path)) continue;
-		source_name = mod_info.mod_folder_path.filename().string();
 		_load_textures(textures_path, source_name);
 	}
 	CoreResource::TextureArrayManager::Instance().mark_queue_ready();

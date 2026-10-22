@@ -18,6 +18,10 @@ std::string& CoreUI::InputField::get_input_text() const {
 	return field_text->text;
 }
 
+bool CoreUI::InputField::in_focus() const {
+	return is_in_focus;
+}
+
 void CoreUI::InputField::_update_cursor() {
 	if (is_in_focus) {
 		current_cursor_cd += TimeManager::deltaTime;

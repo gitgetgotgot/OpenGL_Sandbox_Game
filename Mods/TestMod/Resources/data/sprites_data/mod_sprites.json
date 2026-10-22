@@ -1,0 +1,14 @@
+[
+  {
+    "UID": "TestMod:mod_icon",
+    "texture": "TestMod:mod_icon.png",
+    "padding": 0,
+    "sprite": {
+      "U0": 0,
+      "V0": 0,
+      "w": 32,
+      "h": 32,
+      "base_size": 1.0
+    }
+  }
+]

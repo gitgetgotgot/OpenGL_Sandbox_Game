@@ -7,6 +7,8 @@ namespace CoreUI {
 	public:
 		UI_Component_Ptr() {}
 		UI_Component_Ptr(uint32_t obj_id) : obj_id{ obj_id } {}
+		UI_Component_Ptr(const UI_Component_Ptr&);
+		UI_Component_Ptr(UI_Component_Ptr&&);
 		T* operator->() const;
 		T& operator*() const;
 		operator bool() const;
@@ -17,6 +19,16 @@ namespace CoreUI {
 	private:
 		uint32_t obj_id = 0;
 	};
+	template<typename T>
+	UI_Component_Ptr<T>::UI_Component_Ptr(const UI_Component_Ptr& other) {
+		this->obj_id = other.obj_id;
+	}
+	template<typename T>
+	UI_Component_Ptr<T>::UI_Component_Ptr(UI_Component_Ptr&& other) {
+		this->obj_id = other.obj_id;
+		other.obj_id = 0;
+	}
+
 	template<typename T>
 	inline T* UI_Component_Ptr<T>::operator->() const {
 		return static_cast<T*>(UI_ComponentManager::get_instance().get(obj_id)->component);

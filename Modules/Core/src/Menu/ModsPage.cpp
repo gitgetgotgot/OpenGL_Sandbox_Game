@@ -6,6 +6,25 @@
 #include <Resources/Sprite.h>
 #include <Resources/ModsManager.h>
 
+void ModElement::_toggle_mod() {
+	button_click_sound.play();
+	ModInfo& mod_info = ModsManager::get_instance().get_mod(mod_id);
+	mod_info.enabled = !mod_info.enabled;
+	if (mod_info.enabled) {
+		toggle_button_text->set_text("Enabled");
+		toggle_button_text->set_color(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	}
+	else {
+		toggle_button_text->set_text("Disabled");
+		toggle_button_text->set_color(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	}
+}
+
+void ModElement::_show_mod_info() {
+	button_click_sound.play();
+
+}
+
 void ModsPage::update() {
 
 }
@@ -17,7 +36,7 @@ void ModsPage::enable(bool state) {
 void ModsPage::setup_page() {
 	canvas = CoreUI::UI_Creator::create_canvas();
 
-	button_click_sound.setup_source("Core:Button");
+	ModElement::button_click_sound.setup_source("Core:Button");
 
 	uint32_t gradient2_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:Gradient2").value();
 	uint32_t button64_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:UI_Button64p1").value();
@@ -77,14 +96,20 @@ void ModsPage::load_mods_UI() {
 	uint32_t button32_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:UI_Button32p").value();
 	uint32_t button64_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:UI_Button64p1").value();
 	uint32_t icon_frame_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:UI_IconFrame").value();
-	uint32_t icon_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:Gradient").value();
+	glm::vec4 color_enabled(0.0f, 1.0f, 0.0f, 1.0f);
+	glm::vec4 color_disabled(1.0f, 0.0f, 0.0f, 1.0f);
 
+	uint32_t mod_ID = 0;
 	for (auto& mod : ModsManager::get_instance().get_mods()) {
+		std::string mod_icon_sprite_UID(mod.UID);
+		mod_icon_sprite_UID += ":mod_icon";
+		uint32_t icon_id = CoreResource::SpriteManager::Instance().get_sprite_id(mod_icon_sprite_UID).value();
+
 		// create UI mod element
 		auto mod_element = CoreUI::UI_Creator::create_image9sliced(button32_id, glm::vec2(1.9f, 0.27f), glm::vec2(0.0f), glm::vec4(0.441, 0.379, 0.332, 1.0f));
 		auto button_toggle = CoreUI::UI_Creator::create_button_image(
 			glm::vec2(0.4f, 0.1f), glm::vec2(-0.45f, -0.06f), true, button64_id,
-			true, "Disabled", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0.07f
+			true, mod.enabled ? "Enabled" : "Disabled", mod.enabled ? color_enabled : color_disabled, 0.07f
 		);
 		auto button_info = CoreUI::UI_Creator::create_button_image(glm::vec2(0.1f, 0.1f), glm::vec2(-0.18f, -0.06f), false, sprite_info_button_id);
 
@@ -102,5 +127,14 @@ void ModsPage::load_mods_UI() {
 
 		// add element to scroll_view content
 		mods_content.add_child(mod_element);
+
+		// add mod element
+		ModElement& new_mod_element = mod_elements.emplace_back();
+		new_mod_element.mod_id = mod_ID++;
+		auto toggle_button_comp = button_toggle->get_component<CoreUI::Button>();
+		auto info_button_comp = button_info->get_component<CoreUI::Button>();
+		new_mod_element.toggle_button_text = toggle_button_comp->button_text;
+		toggle_button_comp->on_button_click.set_callback_method<ModElement, &ModElement::_toggle_mod>(&new_mod_element);
+		info_button_comp->on_button_click.set_callback_method<ModElement, &ModElement::_show_mod_info>(&new_mod_element);
 	}
 }

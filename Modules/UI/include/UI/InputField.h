@@ -17,6 +17,7 @@ namespace CoreUI {
 			UI_Component_Ptr<Image>& cursor
 		);
 		std::string& get_input_text() const;
+		bool in_focus() const;
 
 		void _update_cursor();
 		void _on_focus_get();
