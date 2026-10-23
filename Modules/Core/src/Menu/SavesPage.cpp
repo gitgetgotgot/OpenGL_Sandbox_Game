@@ -67,7 +67,7 @@ void SavesPage::setup_page() {
 	);
 
 	auto saves_label = CoreUI::UI_Creator::create_SDF_text(
-		glm::vec2(1.0f, 0.1f), glm::vec2(0.0f), "Saved Worlds", glm::vec4(1.0f), 0.1f
+		glm::vec2(1.0f, 0.1f), glm::vec2(0.0f), "Saved Worlds", glm::vec4(1.0f), 0.075f
 	);
 	saves_label->get_component<CoreUI::SDF_Text>()->set_alignment(CoreUI::SDF_Text::TextHorizAlign::Center_Align, CoreUI::SDF_Text::TextVertAlign::Middle_Align);
 	label_background_obj.add_child(saves_label);
@@ -83,6 +83,7 @@ void SavesPage::setup_page() {
 	);
 	auto scroll_view = saves_scroll_view->get_component<CoreUI::ScrollView>();
 	scroll_view->set_group_layout(CoreUI::ScrollView::GroupLayout::LAYOUT_VERTICAL);
+	saves_view = scroll_view;
 	// get content for scroll_view
 	saves_content = saves_scroll_view.get_child_by_index(0);
 	// vertical scroll_bar for scroll_view
@@ -121,6 +122,7 @@ void SavesPage::load_saves() {
 			add_UI_save_element(saves[data.save_name]);
 		}
 	}
+	saves_view->force_update_content();
 }
 
 CoreUI::UI_Obj_Ptr SavesPage::add_UI_save_element(SaveElement& save) {

@@ -21,6 +21,8 @@ namespace CoreUI {
 		UI_Object* get(uint32_t ui_object_id);
 		void mark_dirty_transform(uint32_t ui_object_id);
 		void mark_dirty_component(uint32_t ui_object_id);
+		void unmark_dirty_transform(uint32_t ui_object_id);
+		void unmark_dirty_component(uint32_t ui_object_id);
 		void update_dirty_objects();
 	private:
 		UI_ObjectManager() {}

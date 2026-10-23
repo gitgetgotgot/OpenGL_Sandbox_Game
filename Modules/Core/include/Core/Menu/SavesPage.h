@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <unordered_map>
 #include <UI/Canvas.h>
+#include <UI/ScrollView.h>
 #include <Audio/AudioSource.h>
 
 struct SaveData {
@@ -27,6 +28,10 @@ private:
 
 class SavesPage {
 public:
+	static SavesPage& Instance() {
+		static SavesPage page;
+		return page;
+	}
 	void update();
 	void enable(bool state);
 	void setup_page();
@@ -34,7 +39,10 @@ public:
 	CoreUI::UI_Obj_Ptr add_UI_save_element(SaveElement& save);
 	bool create_new_save(SaveData& save_data);
 private:
+	SavesPage() = default;
+	~SavesPage() = default;
 	CoreUI::UI_Canvas_Ptr canvas;
+	CoreUI::UI_Component_Ptr<CoreUI::ScrollView> saves_view;
 	CoreUI::UI_Obj_Ptr saves_content;
 	CoreAudio::AudioSource button_click_sound;
 	std::unordered_map<std::string, SaveElement> saves;

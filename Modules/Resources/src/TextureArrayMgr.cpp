@@ -1,7 +1,6 @@
 #include "Resources/TextureArrayMgr.h"
 #include <stb_image.h>
 #include <glad/gl.h>
-#include <iostream>
 
 CoreResource::TextureResourceData::TextureResourceData(TextureResourceData&& other) {
 	image_bytes = other.image_bytes; other.image_bytes = nullptr;
@@ -127,8 +126,6 @@ void CoreResource::TextureArrayManager::load_texture(std::filesystem::path file_
 
 	stbi_set_flip_vertically_on_load(false);
 	stbi_image_free(image_bytes);
-
-	std::cout << "[TextureManager] Loaded texture <" << file_path.filename().string() << "> with array index = " << texture_array_index << std::endl;
 }
 
 void CoreResource::TextureArrayManager::load_texture(TextureResourceData& data) {
@@ -140,8 +137,6 @@ void CoreResource::TextureArrayManager::load_texture(TextureResourceData& data) 
 	UID_to_ID[data.UID] = TextureID{ static_cast<uint16_t>(texture_array_index), tex_index };
 
 	texture_arrays[texture_array_index]->add_2D_texture(data.image_bytes, data.imgWidth, data.imgHeight, data.numOfColorChannels);
-
-	std::cout << "[TextureManager] Loaded texture <" << data.file_path.filename().string() << "> with array index = " << texture_array_index << std::endl;
 }
 
 void CoreResource::TextureArrayManager::load_font_texture(unsigned char* data, int width, int height, int channels, std::string UID) {

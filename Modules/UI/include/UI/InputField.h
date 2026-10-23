@@ -13,6 +13,7 @@ namespace CoreUI {
 		~InputField() = default;
 
 		void bind_components(
+			UI_Component_Ptr<Image>& field,
 			UI_Component_Ptr<SDF_Text>& text,
 			UI_Component_Ptr<Image>& cursor
 		);
@@ -27,6 +28,7 @@ namespace CoreUI {
 		void _on_cursor_position_changed(bool backwards);
 
 		float cursor_blink_cd = 0.5f;
+		UI_Component_Ptr<Image> field;
 		UI_Component_Ptr<SDF_Text> field_text;
 		UI_Component_Ptr<Image> field_cursor;
 	private:

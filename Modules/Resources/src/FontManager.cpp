@@ -1,7 +1,6 @@
 #include "Resources/FontManager.h"
 #include "Resources/TextureArrayMgr.h"
 #include <fstream>
-#include <iostream>
 
 void CoreResource::FontManager::load_font(std::filesystem::path font_folder_path, std::string source) {
 	std::filesystem::path file_path;
@@ -47,7 +46,6 @@ void CoreResource::FontManager::load_font(std::filesystem::path font_folder_path
 
 	std::string font_UID = source + ":" + font_name;
 	TextureArrayManager::Instance().load_font_texture(sdf.data(), glyph_atlas_size, glyph_atlas_size, 1, font_UID);
-	std::cout << "[FontManager] Loaded font <" << font_UID << ">\n";
 }
 
 std::optional<uint32_t> CoreResource::FontManager::get_font_id(std::string font_UID) {

@@ -1,5 +1,6 @@
 #include "IOSystem/SystemContext.h"
 #include <iostream>
+#include <format>
 
 void DisplayController::update_resolution(int width, int height) {
     this->height = height;
@@ -92,4 +93,9 @@ void DisplayController::change_resolution(uint32_t width, uint32_t height) {
 
 DisplayController::DisplayVideoMode& DisplayController::get_current_video_mode() {
     return video_modes[current_video_mode];
+}
+
+std::string& SystemContext::get_current_system_time() {
+    time_str = std::format("{:%Y-%m-%d %H:%M:%S}", sys_clock.now());
+    return time_str;
 }

@@ -3,15 +3,19 @@
 #include <Utility/TimeManager.h>
 
 void CoreUI::InputField::bind_components(
+	UI_Component_Ptr<Image>& field,
 	UI_Component_Ptr<SDF_Text>& text,
 	UI_Component_Ptr<Image>& cursor
 ) {
+	this->field = field;
 	field_text = text;
 	field_cursor = cursor;
 	field_cursor->is_visible = false;
 	float cursor_offset = field_text->get_char_offset(cursor_position);
 	cursor_initial_x_pos = -UI_ObjectManager::get_instance().get(field_text.get_id())->transform.size.x * 0.5f;
-	UI_ObjectManager::get_instance().get(field_cursor.get_id())->transform.set_local_pos(cursor_initial_x_pos + cursor_offset, 0.0f);
+	auto& cursor_tr = UI_ObjectManager::get_instance().get(field_cursor.get_id())->transform;
+	cursor_initial_x_pos += cursor_tr.size.x * 0.5f;
+	cursor_tr.set_local_pos(cursor_initial_x_pos + cursor_offset, 0.0f);
 }
 
 std::string& CoreUI::InputField::get_input_text() const {

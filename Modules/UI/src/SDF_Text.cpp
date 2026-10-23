@@ -28,6 +28,11 @@ void CoreUI::SDF_Text::_update_data() {
 		float last_part_length = 0.0f;
 		for (uint32_t i = 0; i < text_size; ++i) {
 			const char& c = text[i];
+			if (c == '\0') { //just for safety
+				text_size = i;
+				text.erase(i);
+				break;
+			}
 			if (c == ' ' || c == '\t') { // SPACE or TAB found -> last_part_length is known
 				if (c == '\t')
 					last_part_length += 4.0f * font.glyphsData[0].advance_normalized * text_height; //use 4 times space advance
@@ -38,7 +43,7 @@ void CoreUI::SDF_Text::_update_data() {
 				last_part_length = 0.0f;
 				last_part_end_index = i; // remember end index of part where TAB or SPACE is located currently
 			}
-			else if (c == '\0' || c == '\n') { //end of line or string -> place new line
+			else if (c == '\n') { //end of line or string -> place new line
 				current_line_length += last_part_length;
 				text_lines.emplace_back(TextLineInfo{ std::string_view(text.begin() + line_start_index, text.begin() + i), current_line_length });
 				current_line_length = 0.0f;
@@ -63,7 +68,7 @@ void CoreUI::SDF_Text::_update_data() {
 		// count total text height and resize widget logic height if needed
 		const float text_line_height = (font.ascender - font.descender) * text_height;
 		const float text_TOTAL_HEIGHT = text_lines.size() * text_line_height;
-		if (adaptive_widget_height && tr.size.y < text_TOTAL_HEIGHT) {
+		if (adaptive_widget_height) {
 			tr.set_height(text_TOTAL_HEIGHT + 0.02f); //set widget height as its text height + some offset (optional)
 		}
 
@@ -135,7 +140,7 @@ void CoreUI::SDF_Text::_update_data() {
 	dirty_mask = TextMask::TEXT_CLEAN;
 }
 
-void CoreUI::SDF_Text::set_text(std::string text) {
+void CoreUI::SDF_Text::set_text(std::string& text) {
 	this->text = text;
 	mark_dirty();
 	dirty_mask |= TextMask::TEXT_TRANSFORM;
@@ -173,6 +178,14 @@ void CoreUI::SDF_Text::set_alignment(TextHorizAlign horiz, TextVertAlign vert) {
 	align_horizontal = horiz; align_vertical = vert;
 	mark_dirty();
 	dirty_mask |= TextMask::TEXT_TRANSFORM;
+}
+
+void CoreUI::SDF_Text::force_update() {
+	if (is_dirty) {
+		_update_data();
+		UI_ObjectManager::get_instance().unmark_dirty_component(object_id);
+		UI_ObjectManager::get_instance().get(object_id)->transform.force_update();
+	}
 }
 
 void CoreUI::SDF_Text::add_char_to_text(const char c, uint32_t pos) {

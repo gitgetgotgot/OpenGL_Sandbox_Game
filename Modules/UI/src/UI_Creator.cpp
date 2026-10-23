@@ -166,7 +166,7 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_input_field() {
 }
 
 CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_input_field_image(
-	glm::vec2 size, glm::vec2 local_pos, bool image_is_9_sliced, uint32_t back_sprite_id, glm::vec4 text_color, float text_height
+	glm::vec2 size, glm::vec2 local_pos, bool image_is_9_sliced, uint32_t back_sprite_id, glm::vec4 text_color, float text_height, float border_size, float sliced_img_border_size
 ) {
 	UI_Obj_Ptr field_obj = UI_ObjectManager::get_instance().add();
 	field_obj->transform.set_local_pos(local_pos);
@@ -178,20 +178,24 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_input_field_image(
 	UI_Obj_Ptr img_obj = UI_ObjectManager::get_instance().add();
 	img_obj->transform.set_size(size);
 	auto img = img_obj->add_component<Image>();
-	if (image_is_9_sliced)
+	if (image_is_9_sliced) {
 		img->Setup_As_Nine_Sliced();
+		img->set_border_size(sliced_img_border_size);
+	}
 	else
 		img->Setup_As_Regular();
 	img->set_sprite(back_sprite_id);
 
+	glm::vec2 text_inner_area_size(size.x - border_size * 2.0f, size.y - border_size * 2.0f);
+
 	UI_Obj_Ptr text_obj = UI_ObjectManager::get_instance().add();
-	text_obj->transform.set_size(size.x * 0.985f, size.y); //make text bounding box a little bit less on X
+	text_obj->transform.set_size(text_inner_area_size);
 	auto field_text = text_obj->add_component<SDF_Text>();
 	field_text->set_text_height(text_height);
 	field_text->set_color(text_color);
 
 	UI_Obj_Ptr cursor_obj = UI_ObjectManager::get_instance().add();
-	cursor_obj->transform.set_size(0.005f, text_height);
+	cursor_obj->transform.set_size(text_height * 0.05f, text_height);
 	auto cursor_img = cursor_obj->add_component<Image>();
 	cursor_img->Setup_As_Regular();
 	cursor_img->set_sprite(CoreResource::SpriteManager::Instance().get_sprite_id("Core:White").value());
@@ -199,7 +203,7 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_input_field_image(
 	field_obj.add_child(img_obj);
 	field_obj.add_child(text_obj);
 	field_obj.add_child(cursor_obj);
-	field->bind_components(field_text, cursor_img);
+	field->bind_components(img, field_text, cursor_img);
 	return field_obj;
 }
 

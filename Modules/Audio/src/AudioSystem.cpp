@@ -113,8 +113,7 @@ void CoreAudio::AudioSystem::load_audio_as_pcm(
     sounds.emplace_back(SoundEntry{ SoundType::SOUND_PCM,static_cast<uint16_t>(audio_pcm_database.size()) });
     auto& new_audio_res = audio_pcm_database.emplace_back(std::move(audio_res));
 
-    std::cout << "[AudioSystem] Loaded PCM sound: <" << uid_view << "> (" <<
-        (new_audio_res->pcm_data.size() * sizeof(float)) / 1024.0f << " KB)\n";
+    total_audio_pcm_bytes_size += new_audio_res->pcm_data.size() * sizeof(float);
 }
 
 void CoreAudio::AudioSystem::load_audio_as_stream(
@@ -144,8 +143,6 @@ void CoreAudio::AudioSystem::load_audio_as_stream(
     UID_to_ID.emplace(uid_view, sounds.size());
     sounds.emplace_back(SoundEntry{ SoundType::SOUND_STREAM,static_cast<uint16_t>(audio_stream_database.size()) });
     audio_stream_database.emplace_back(std::move(audio_res));
-
-    std::cout << "[AudioSystem] Loaded stream sound : <" << uid_view << ">\n";
 }
 
 void CoreAudio::AudioSystem::add_sound_group(const std::string UID) {

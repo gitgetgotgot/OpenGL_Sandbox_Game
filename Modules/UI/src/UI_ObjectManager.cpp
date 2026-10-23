@@ -38,6 +38,14 @@ void CoreUI::UI_ObjectManager::mark_dirty_component(uint32_t ui_object_id) {
 	dirty_objects[ui_object_id].dirty_component = true;
 }
 
+void CoreUI::UI_ObjectManager::unmark_dirty_transform(uint32_t ui_object_id) {
+	dirty_objects[ui_object_id].dirty_transform = false;
+}
+
+void CoreUI::UI_ObjectManager::unmark_dirty_component(uint32_t ui_object_id) {
+	dirty_objects[ui_object_id].dirty_component = false;
+}
+
 void CoreUI::UI_ObjectManager::update_dirty_objects() {
 	if (dirty_objects.empty()) return;
 	

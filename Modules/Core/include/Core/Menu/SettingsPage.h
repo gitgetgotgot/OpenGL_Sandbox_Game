@@ -7,17 +7,23 @@
 
 class SettingsPage {
 public:
+	static SettingsPage& Instance() {
+		static SettingsPage page;
+		return page;
+	}
 	void update();
 	void enable(bool state);
 	void setup_page();
 private:
+	SettingsPage() = default;
+	~SettingsPage() = default;
 	void change_resolution();
 	void toggle_fullscreen();
 	void toggle_vsync();
 	void set_master_volume(float volume);
 	void set_music_volume(float volume);
 	void set_sfx_volume(float volume);
-
+private:
 	CoreUI::UI_Canvas_Ptr canvas;
 
 	CoreUI::UI_Component_Ptr<CoreUI::SDF_Text> resolution_text;

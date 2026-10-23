@@ -186,7 +186,7 @@ void DataParser::write_from_binary(std::ifstream& in, DataNode& data) {
 }
 
 void DataParser::read_text_file(std::filesystem::path& path, std::string& str) {
-	std::ifstream file(path);
+	std::ifstream file(path, std::ios::binary);
 	if (!file.is_open())
 		throw std::runtime_error("[Data Parser] Cannot open file: " + path.string());
 	file.seekg(0, std::ios::end);
@@ -194,4 +194,6 @@ void DataParser::read_text_file(std::filesystem::path& path, std::string& str) {
 	file.seekg(0, std::ios::beg);
 	str.resize(count);
 	file.read(str.data(), count);
+
+	str.erase(std::remove(str.begin(), str.end(), '\r'), str.end());
 }

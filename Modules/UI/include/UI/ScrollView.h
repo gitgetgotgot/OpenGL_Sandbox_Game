@@ -22,13 +22,13 @@ namespace CoreUI {
 		void bind_content(UI_Component_Ptr<ScrollViewContent>& c);
 		void bind_vertical_scrollbar(UI_Component_Ptr<ScrollBar>& sb);
 		void bind_horizontal_scrollbar(UI_Component_Ptr<ScrollBar>& sb);
+		void update_content();
+		void force_update_content();
 
 		bool has_vertical_scrollbar = false;
 		bool has_horizontal_scrollbar = false;
 		bool uses_clipping = true;
 	private:
-		void update_content();
-
 		bool _is_pointed = false;
 		bool _is_pressed = false;
 		bool layout_is_dirty = false;

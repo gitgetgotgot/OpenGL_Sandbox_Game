@@ -147,6 +147,23 @@
     }
   },
   {
+    "UID": "Core:UI_Button64p2",
+    "texture": "Core:UI_Button64p2.png",
+    "padding": 0,
+    "sprite": {
+      "U0": 0,
+      "V0": 0,
+      "w": 64,
+      "h": 64,
+      "border": {
+        "left": 8,
+        "right": 8,
+        "top": 8,
+        "bottom": 8
+      }
+    }
+  },
+  {
     "UID": "Core:UI_Frame0",
     "texture": "Core:UI_Frame0.png",
     "padding": 0,

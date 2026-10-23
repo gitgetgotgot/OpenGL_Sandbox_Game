@@ -1,7 +1,7 @@
-#include <UI/UI_Creator.h>
 #include "Core/Menu/ModsPage.h"
-#include <UI/ScrollView.h>
 #include "Core/MainMenuManager.h"
+#include <UI/UI_Creator.h>
+#include <UI/ScrollView.h>
 #include <UI/Button.h>
 #include <Resources/Sprite.h>
 #include <Resources/ModsManager.h>
@@ -22,7 +22,8 @@ void ModElement::_toggle_mod() {
 
 void ModElement::_show_mod_info() {
 	button_click_sound.play();
-
+	ModInfo& mod_info = ModsManager::get_instance().get_mod(mod_id);
+	ModsPage::Instance().show_mod_info(mod_info.description);
 }
 
 void ModsPage::update() {
@@ -37,57 +38,127 @@ void ModsPage::setup_page() {
 	canvas = CoreUI::UI_Creator::create_canvas();
 
 	ModElement::button_click_sound.setup_source("Core:Button");
+	button_click_sound.setup_source("Core:Button");
 
 	uint32_t gradient2_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:Gradient2").value();
 	uint32_t button64_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:UI_Button64p1").value();
 	uint32_t frame0_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:UI_Frame0").value();
 
-	auto button_back = CoreUI::UI_Creator::create_button_image(
-		glm::vec2(1.0f, 0.1f), glm::vec2(0.0f, -0.85f), true, button64_id,
-		true, "Back", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
-	);
+	// 1. Mods List page
+	{
+		auto button_back = CoreUI::UI_Creator::create_button_image(
+			glm::vec2(1.0f, 0.1f), glm::vec2(0.0f, -0.85f), true, button64_id,
+			true, "Back", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
+		);
+		button_back->get_component<CoreUI::Button>()->on_button_click.set_callback_method<MainMenuManager, &MainMenuManager::close_mods_page>(&MainMenuManager::Instance());
 
-	button_back->get_component<CoreUI::Button>()->on_button_click.set_callback_method<MainMenuManager, &MainMenuManager::close_mods_page>(&MainMenuManager::Instance());
+		//mods background
+		auto label_background_obj = CoreUI::UI_Creator::create_image9sliced(
+			frame0_id, glm::vec2(1.0f, 0.16f), glm::vec2(0.0f, 0.8f), glm::vec4(1.0f)
+		);
+		auto mods_label = CoreUI::UI_Creator::create_SDF_text(
+			glm::vec2(1.0f, 0.1f), glm::vec2(0.0f), "Mods list", glm::vec4(1.0f), 0.075f
+		);
+		mods_label->get_component<CoreUI::SDF_Text>()->set_alignment(CoreUI::SDF_Text::TextHorizAlign::Center_Align, CoreUI::SDF_Text::TextVertAlign::Middle_Align);
+		label_background_obj.add_child(mods_label);
 
-	//mods background
-	auto label_background_obj = CoreUI::UI_Creator::create_image9sliced(
-		frame0_id, glm::vec2(1.0f, 0.16f), glm::vec2(0.0f, 0.8f), glm::vec4(1.0f)
-	);
+		auto mods_background_obj = CoreUI::UI_Creator::create_image9sliced(
+			frame0_id, glm::vec2(2.12f, 1.52f), glm::vec2(0.0f), glm::vec4(1.0f)
+		);
+		mods_background_obj->get_component<CoreUI::Image>()->set_border_size(0.06f);
 
-	auto mods_label = CoreUI::UI_Creator::create_SDF_text(
-		glm::vec2(1.0f, 0.1f), glm::vec2(0.0f), "Mods list", glm::vec4(1.0f), 0.1f
-	);
-	mods_label->get_component<CoreUI::SDF_Text>()->set_alignment(CoreUI::SDF_Text::TextHorizAlign::Center_Align, CoreUI::SDF_Text::TextVertAlign::Middle_Align);
-	label_background_obj.add_child(mods_label);
+		// scroll_view
+		auto mods_scroll_view = CoreUI::UI_Creator::create_scroll_view(
+			glm::vec2(2.0f, 1.4f), glm::vec2(0.0f)
+		);
+		auto scroll_view = mods_scroll_view->get_component<CoreUI::ScrollView>();
+		scroll_view->set_group_layout(CoreUI::ScrollView::GroupLayout::LAYOUT_VERTICAL);
+		mods_view = scroll_view;
+		// get content for scroll_view
+		mods_content = mods_scroll_view.get_child_by_index(0);
 
-	auto mods_background_obj = CoreUI::UI_Creator::create_image9sliced(
-		frame0_id, glm::vec2(2.12f, 1.52f), glm::vec2(0.0f), glm::vec4(1.0f)
-	);
-	mods_background_obj->get_component<CoreUI::Image>()->set_border_size(0.06f);
+		// vertical scroll_bar for scroll_view
+		auto scroll_bar_Y = CoreUI::UI_Creator::create_scroll_bar(
+			glm::vec2(0.08f, 1.4f), glm::vec2(0.08f, 1.4f), glm::vec2(0.08f, 0.08f), glm::vec2(0.96f, 0.0f),
+			false, true, gradient2_id, button64_id, glm::vec4(0.471f, 0.376f, 0.314f, 1.0f), glm::vec4(1.0f), true, false
+		);
+		auto scrollbar = scroll_bar_Y->get_component<CoreUI::ScrollBar>();
+		scroll_view->has_vertical_scrollbar = true;
+		scroll_view->bind_vertical_scrollbar(scrollbar);
 
-	// scroll_view
-	auto mods_scroll_view = CoreUI::UI_Creator::create_scroll_view(
-		glm::vec2(2.0f, 1.4f), glm::vec2(0.0f)
-	);
-	auto scroll_view = mods_scroll_view->get_component<CoreUI::ScrollView>();
-	scroll_view->set_group_layout(CoreUI::ScrollView::GroupLayout::LAYOUT_VERTICAL);
-	// get content for scroll_view
-	mods_content = mods_scroll_view.get_child_by_index(0);
-	// vertical scroll_bar for scroll_view
-	auto scroll_bar_Y = CoreUI::UI_Creator::create_scroll_bar(
-		glm::vec2(0.08f, 1.4f), glm::vec2(0.08f, 1.4f), glm::vec2(0.08f, 0.08f), glm::vec2(0.96f, 0.0f),
-		false, true, gradient2_id, button64_id, glm::vec4(0.471f, 0.376f, 0.314f, 1.0f), glm::vec4(1.0f), true, false
-	);
-	auto scrollbar = scroll_bar_Y->get_component<CoreUI::ScrollBar>();
-	scroll_view->has_vertical_scrollbar = true;
-	scroll_view->bind_vertical_scrollbar(scrollbar);
+		mods_scroll_view.add_child(scroll_bar_Y);
 
-	mods_scroll_view.add_child(scroll_bar_Y);
+		mods_list_obj = CoreUI::UI_Creator::create_ui_empty_object();
+		mods_list_obj.add_child(label_background_obj);
+		mods_list_obj.add_child(mods_background_obj);
+		mods_list_obj.add_child(button_back);
+		mods_list_obj.add_child(mods_scroll_view);
+	}
+	// 2. Mod Description page
+	{
+		auto button_back = CoreUI::UI_Creator::create_button_image(
+			glm::vec2(1.0f, 0.1f), glm::vec2(0.0f, -0.85f), true, button64_id,
+			true, "Back", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
+		);
+		button_back->get_component<CoreUI::Button>()->on_button_click.set_callback_method<ModsPage, &ModsPage::hide_mod_info>(&ModsPage::Instance());
 
-	canvas->add_object(label_background_obj);
-	canvas->add_object(mods_background_obj);
-	canvas->add_object(button_back);
-	canvas->add_object(mods_scroll_view);
+		//mod description background
+		auto label_background_obj = CoreUI::UI_Creator::create_image9sliced(
+			frame0_id, glm::vec2(1.0f, 0.16f), glm::vec2(0.0f, 0.8f), glm::vec4(1.0f)
+		);
+
+		auto mod_desc_label = CoreUI::UI_Creator::create_SDF_text(
+			glm::vec2(1.0f, 0.1f), glm::vec2(0.0f), "Mod Description", glm::vec4(1.0f), 0.075f
+		);
+		mod_desc_label->get_component<CoreUI::SDF_Text>()->set_alignment(CoreUI::SDF_Text::TextHorizAlign::Center_Align, CoreUI::SDF_Text::TextVertAlign::Middle_Align);
+		label_background_obj.add_child(mod_desc_label);
+
+		auto desc_background_obj = CoreUI::UI_Creator::create_image9sliced(
+			frame0_id, glm::vec2(2.12f, 1.52f), glm::vec2(0.0f), glm::vec4(1.0f)
+		);
+		desc_background_obj->get_component<CoreUI::Image>()->set_border_size(0.06f);
+
+		// scroll_view
+		auto desc_scroll_view = CoreUI::UI_Creator::create_scroll_view(
+			glm::vec2(2.0f, 1.4f), glm::vec2(0.0f)
+		);
+		auto scroll_view = desc_scroll_view->get_component<CoreUI::ScrollView>();
+		scroll_view->set_group_layout(CoreUI::ScrollView::GroupLayout::LAYOUT_VERTICAL);
+		mod_description_view = scroll_view;
+		// get content for scroll_view
+		auto desc_content = desc_scroll_view.get_child_by_index(0);
+
+		// vertical scroll_bar for scroll_view
+		auto scroll_bar_Y = CoreUI::UI_Creator::create_scroll_bar(
+			glm::vec2(0.08f, 1.4f), glm::vec2(0.08f, 1.4f), glm::vec2(0.08f, 0.08f), glm::vec2(0.96f, 0.0f),
+			false, true, gradient2_id, button64_id, glm::vec4(0.471f, 0.376f, 0.314f, 1.0f), glm::vec4(1.0f), true, false
+		);
+		auto scrollbar = scroll_bar_Y->get_component<CoreUI::ScrollBar>();
+		scroll_view->has_vertical_scrollbar = true;
+		scroll_view->bind_vertical_scrollbar(scrollbar);
+
+		desc_scroll_view.add_child(scroll_bar_Y);
+
+		mod_description_obj = CoreUI::UI_Creator::create_ui_empty_object();
+		mod_description_obj.add_child(label_background_obj);
+		mod_description_obj.add_child(desc_background_obj);
+		mod_description_obj.add_child(button_back);
+		mod_description_obj.add_child(desc_scroll_view);
+
+		// add description text in content
+		auto mod_description_obj = CoreUI::UI_Creator::create_SDF_text(
+			glm::vec2(1.9f, 0.1f), glm::vec2(0.0f), "", glm::vec4(1.0f), 0.05f
+		);
+		mod_description = mod_description_obj->get_component<CoreUI::SDF_Text>();
+		mod_description->set_alignment(CoreUI::SDF_Text::TextHorizAlign::Left_Align, CoreUI::SDF_Text::TextVertAlign::Top_Align);
+		mod_description->adaptive_widget_height = true;
+		desc_content.add_child(mod_description_obj);
+	}
+
+	canvas->add_object(mods_list_obj);
+	canvas->add_object(mod_description_obj);
+	mod_description_obj->is_enabled = false;
+	mods_list_obj->is_enabled = true;
 }
 
 void ModsPage::load_mods_UI() {
@@ -137,4 +208,19 @@ void ModsPage::load_mods_UI() {
 		toggle_button_comp->on_button_click.set_callback_method<ModElement, &ModElement::_toggle_mod>(&new_mod_element);
 		info_button_comp->on_button_click.set_callback_method<ModElement, &ModElement::_show_mod_info>(&new_mod_element);
 	}
+	mods_view->force_update_content();
+}
+
+void ModsPage::show_mod_info(std::string& mod_info_txt) {
+	mod_description->set_text(mod_info_txt);
+	mod_description->force_update();
+	mod_description_view->force_update_content();
+	mod_description_obj->is_enabled = true;
+	mods_list_obj->is_enabled = false;
+}
+
+void ModsPage::hide_mod_info() {
+	button_click_sound.play();
+	mod_description_obj->is_enabled = false;
+	mods_list_obj->is_enabled = true;
 }

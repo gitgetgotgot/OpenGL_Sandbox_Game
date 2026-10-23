@@ -93,3 +93,8 @@ void CoreUI::ScrollView::update_content() {
 		}
 	}
 }
+
+void CoreUI::ScrollView::force_update_content() {
+	content->last_children_size = 0;
+	update_content();
+}

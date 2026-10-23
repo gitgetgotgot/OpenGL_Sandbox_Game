@@ -83,5 +83,6 @@ namespace CoreAudio {
         std::deque<std::string> sound_UID;
         std::deque<std::string> sound_group_UID;
         std::unordered_map<std::string_view, uint32_t> UID_to_ID;
+        size_t total_audio_pcm_bytes_size = 0;
     };
 }

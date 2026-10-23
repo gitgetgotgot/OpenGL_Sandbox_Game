@@ -58,6 +58,13 @@ void CoreUI::UI_Transform::translate(glm::vec2 vec) {
 	mark_dirty();
 }
 
+void CoreUI::UI_Transform::force_update() {
+	if (is_dirty) {
+		update_transform();
+		UI_ObjectManager::get_instance().unmark_dirty_transform(object_id);
+	}
+}
+
 void CoreUI::UI_Transform::update_transform() {
 	if (parent_id != 0) global_pos = UI_ObjectManager::get_instance().get(parent_id)->transform.global_pos + local_pos;
 	else global_pos = local_pos;

@@ -27,13 +27,14 @@ namespace CoreUI {
 		void _update_buffer_data(UI_RenderContext& c, UI_RenderState& s);
 		void _update_data();
 
-		void set_text(std::string text);
+		void set_text(std::string& text);
 		void set_text(std::string_view text);
 		void set_text(const char* text);
 		void set_text_height(float height);
 		void set_color(float r, float g, float b, float a);
 		void set_color(glm::vec4 color);
 		void set_alignment(TextHorizAlign horiz, TextVertAlign vert);
+		void force_update();
 
 		std::string text{};
 		glm::vec4 color{ 1.0f };

@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <cstdint>
 #include <vector>
+#include <chrono>
 #include <glm/gtc/matrix_transform.hpp>
 
 class DisplayController {
@@ -184,6 +185,11 @@ public:
     inline static Mouse mouse;
     static void exit_application() { should_exit_application = true; }
     static bool should_exit() { return should_exit_application; }
+    static std::string& get_current_system_time();
 private:
+    SystemContext() = default;
+    ~SystemContext() = default;
     inline static bool should_exit_application = false;
+    inline static std::chrono::system_clock sys_clock;
+    inline static std::string time_str;
 };

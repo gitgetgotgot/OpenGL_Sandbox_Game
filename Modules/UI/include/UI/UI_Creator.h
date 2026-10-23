@@ -31,8 +31,10 @@ namespace CoreUI {
 		);
 
 		static UI_Obj_Ptr create_input_field();
+		// border size is for proper inner area size for text
 		static UI_Obj_Ptr create_input_field_image(
-			glm::vec2 size, glm::vec2 local_pos, bool image_is_9_sliced, uint32_t back_sprite_id, glm::vec4 text_color, float text_height
+			glm::vec2 size, glm::vec2 local_pos, bool image_is_9_sliced, uint32_t back_sprite_id,
+			glm::vec4 text_color, float text_height, float border_size, float sliced_img_border_size = 0.03f
 		);
 
 		static UI_Obj_Ptr create_scroll_view();

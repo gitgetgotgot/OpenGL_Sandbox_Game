@@ -1,65 +1,78 @@
 #include "Core/MainMenuManager.h"
-#include "Core/SettingsManager.h"
-#include <UI/UI_Creator.h>
-#include <UI/Button.h>
-#include <UI/SDF_Text.h>
-#include <UI/ScrollView.h>
-#include <UI/ScrollBar.h>
-#include <UI/UI_ObjectManager.h>
-#include <Resources/Sprite.h>
+#include "Core/Menu/MainPage.h"
+#include "Core/Menu/MainMenuPage.h"
+#include "Core/Menu/SavesPage.h"
+#include "Core/Menu/SettingsPage.h"
+#include "Core/Menu/ModsPage.h"
+#include "Core/Menu/CreatorPage.h"
+
 #include <IOSystem/SystemContext.h>
-#include <filesystem>
-#include <Audio/AudioSystem.h>
-#include <Utility/TimeManager.h>
 #include <thread>
 
 void MainMenuManager::init() {
-	main_page.setup_page();
-	main_menu_page.setup_page();
-	settings_page.setup_page();
-	saves_page.setup_page();
-	mods_page.setup_page();
-	creator_page.setup_page();
+	MainPage::Instance().setup_page();
+	MainMenuPage::Instance().setup_page();
+	SettingsPage::Instance().setup_page();
+	SavesPage::Instance().setup_page();
+	ModsPage::Instance().setup_page();
+	CreatorPage::Instance().setup_page();
 
-	main_page.enable(true);
-	main_menu_page.enable(false);
-	settings_page.enable(false);
-	saves_page.enable(false);
-	mods_page.enable(false);
-	creator_page.enable(false);
+	MainPage::Instance().enable(true);
+	MainMenuPage::Instance().enable(false);
+	SettingsPage::Instance().enable(false);
+	SavesPage::Instance().enable(false);
+	ModsPage::Instance().enable(false);
+	CreatorPage::Instance().enable(false);
 
 	button_click_sound.setup_source("Core:Button");
 	music_test.setup_source("Core:MusicTest");
 
-	saves_page.load_saves();
+	SavesPage::Instance().load_saves();
 }
 
 void MainMenuManager::update() {
-	main_page.update();
+	MainPage::Instance().update();
+	switch (current_page) {
+	case MenuCurrentPage::in_MainMenu:
+		MainMenuPage::Instance().update();
+		break;
+	case MenuCurrentPage::in_Saves:
+		SavesPage::Instance().update();
+		break;
+	case MenuCurrentPage::in_Creator:
+		CreatorPage::Instance().update();
+		break;
+	case MenuCurrentPage::in_Settings:
+		SettingsPage::Instance().update();
+		break;
+	case MenuCurrentPage::in_Mods:
+		ModsPage::Instance().update();
+		break;
+	}
 }
 
 void MainMenuManager::start_loading_resources() {
-	main_page.start_loading_resources();
+	MainPage::Instance().start_loading_resources();
 }
 
 void MainMenuManager::stop_loading_resources() {
-	main_page.stop_loading_resources();
+	MainPage::Instance().stop_loading_resources();
 }
 
 void MainMenuManager::load_saves() {
-	saves_page.load_saves();
+	SavesPage::Instance().load_saves();
 }
 
 void MainMenuManager::load_mods() {
-	mods_page.load_mods_UI();
+	ModsPage::Instance().load_mods_UI();
 }
 
 void MainMenuManager::open_main_menu_page() {
-	main_menu_page.enable(true);
+	MainMenuPage::Instance().enable(true);
 }
 
 void MainMenuManager::close_main_menu_page() {
-	main_menu_page.enable(false);
+	MainMenuPage::Instance().enable(false);
 }
 
 void MainMenuManager::exit_game() {
@@ -69,45 +82,45 @@ void MainMenuManager::exit_game() {
 }
 
 void MainMenuManager::open_settings_page() {
-	main_menu_page.enable(false);
-	settings_page.enable(true);
+	MainMenuPage::Instance().enable(false);
+	SettingsPage::Instance().enable(true);
 	button_click_sound.play();
 }
 void MainMenuManager::close_settings_page() {
-	main_menu_page.enable(true);
-	settings_page.enable(false);
+	MainMenuPage::Instance().enable(true);
+	SettingsPage::Instance().enable(false);
 	button_click_sound.play();
 }
 
 void MainMenuManager::open_saves_page() {
-	main_menu_page.enable(false);
-	saves_page.enable(true);
+	MainMenuPage::Instance().enable(false);
+	SavesPage::Instance().enable(true);
 	button_click_sound.play();
 }
 void MainMenuManager::close_saves_page() {
-	main_menu_page.enable(true);
-	saves_page.enable(false);
+	MainMenuPage::Instance().enable(true);
+	SavesPage::Instance().enable(false);
 	button_click_sound.play();
 }
 
 void MainMenuManager::open_mods_page() {
-	main_menu_page.enable(false);
-	mods_page.enable(true);
+	MainMenuPage::Instance().enable(false);
+	ModsPage::Instance().enable(true);
 	button_click_sound.play();
 }
 void MainMenuManager::close_mods_page() {
-	main_menu_page.enable(true);
-	mods_page.enable(false);
+	MainMenuPage::Instance().enable(true);
+	ModsPage::Instance().enable(false);
 	button_click_sound.play();
 }
 
 void MainMenuManager::open_creator_page() {
-	saves_page.enable(false);
-	creator_page.enable(true);
+	SavesPage::Instance().enable(false);
+	CreatorPage::Instance().enable(true);
 	button_click_sound.play();
 }
 void MainMenuManager::close_creator_page() {
-	saves_page.enable(true);
-	creator_page.enable(false);
+	SavesPage::Instance().enable(true);
+	CreatorPage::Instance().enable(false);
 	button_click_sound.play();
 }

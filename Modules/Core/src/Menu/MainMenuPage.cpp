@@ -22,7 +22,7 @@ void MainMenuPage::setup_page() {
 
 	auto button_play = CoreUI::UI_Creator::create_button_image(
 		glm::vec2(0.7f, 0.1f), glm::vec2(0.0f, 0.4f), true, button64_sprite_id,
-		true, "Play", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.08f
+		true, "SinglePlay", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.08f
 	);
 	auto button_settings = CoreUI::UI_Creator::create_button_image(
 		glm::vec2(0.7f, 0.1f), glm::vec2(0.0f, 0.275f), true, button64_sprite_id,

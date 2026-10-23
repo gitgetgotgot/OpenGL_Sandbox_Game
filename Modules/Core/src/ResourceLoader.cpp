@@ -16,6 +16,8 @@
 #include <Entities/EntityInfoManager.h>
 #include <Entities/EntityInfoFactory.h>
 #include <Entities/EntityFactory.h>
+#include <IOSystem/SystemContext.h>
+#include <iostream>
 
 ResourceLoader::~ResourceLoader() {
 	DynamicLibLoader lib_loader;
@@ -33,13 +35,15 @@ void ResourceLoader::load_minimal_core_resources() {
 
 	CoreResource::SpriteManager::Instance().setup();
 
+	std::cout << "[" << SystemContext::get_current_system_time() << "] ResourceLoader: Base Resources loading started\n";
 	// load base font
 	CoreResource::FontManager::Instance().load_font("Resources/fonts/verdana_SDF", "Core");
+	std::cout << "[" << SystemContext::get_current_system_time() << "] ResourceLoader: Base font loaded\n";
 
 	// load base UI textures
 	std::string textures[] = {
-		"White.png", "Gradient.png", "Gradient2.png", "UI_Button32p.png", "UI_Button64p.png", "UI_Button64p1.png", "UI_Frame0.png", "UI_Frame1.png",
-		"UI_StoneWall.png", "UI_ButtonPlay.png", "UI_ButtonDelete.png", "UI_ButtonInfo.png"
+		"White.png", "Gradient.png", "Gradient2.png", "UI_Button32p.png", "UI_Button64p.png", "UI_Button64p1.png", "UI_Button64p2.png",
+		"UI_Frame0.png", "UI_Frame1.png", "UI_StoneWall.png", "UI_ButtonPlay.png", "UI_ButtonDelete.png", "UI_ButtonInfo.png"
 	};
 	for (auto& tex : textures) {
 		std::filesystem::path tex_path = resources_root / "Resources/BaseData/textures" / tex;
@@ -49,6 +53,7 @@ void ResourceLoader::load_minimal_core_resources() {
 		std::string UID = "Core:" + tex_path.filename().string();
 		CoreResource::TextureArrayManager::Instance().load_texture(tex_path, UID);
 	}
+	std::cout << "[" << SystemContext::get_current_system_time() << "] ResourceLoader: Base textures loaded\n";
 
 	// load base sprites
 	std::filesystem::path resource_path = resources_root / "Resources/BaseData/sprites";
@@ -56,6 +61,7 @@ void ResourceLoader::load_minimal_core_resources() {
 		throw std::runtime_error("Fatal Error: Couldn't load base sprites");
 	}
 	_LOAD_SPRITES(resource_path);
+	std::cout << "[" << SystemContext::get_current_system_time() << "] ResourceLoader: Base sprites loaded\n";
 
 	// load base audio
 	resource_path = resources_root / "Resources/BaseData/audio";
@@ -63,6 +69,8 @@ void ResourceLoader::load_minimal_core_resources() {
 		throw std::runtime_error("Fatal Error: Couldn't load base audio");
 	}
 	_LOAD_AUDIO(resource_path);
+	std::cout << "[" << SystemContext::get_current_system_time() << "] ResourceLoader: Base audio loaded\n";
+	std::cout << "[" << SystemContext::get_current_system_time() << "] ResourceLoader: Base Resources loading finished\n\n";
 }
 
 void ResourceLoader::start_resources_loading() {
@@ -70,6 +78,7 @@ void ResourceLoader::start_resources_loading() {
 	can_load_next_batch = false;
 	should_load_textures = true;
 	resource_loader = std::make_unique<std::thread>(&ResourceLoader::Load_Resources, this);
+	std::cout << "[" << SystemContext::get_current_system_time() << "] ResourceLoader: Game resources loading started\n";
 }
 
 void ResourceLoader::load_resources_from_queue() {
@@ -85,6 +94,7 @@ void ResourceLoader::load_resources_from_queue() {
 void ResourceLoader::stop_resources_loading() {
 	resource_loader->join();
 	resource_loader.reset();
+	std::cout << "[" << SystemContext::get_current_system_time() << "] ResourceLoader: Game resources loading finished\n\n";
 }
 
 bool ResourceLoader::resources_loading_ready() {
