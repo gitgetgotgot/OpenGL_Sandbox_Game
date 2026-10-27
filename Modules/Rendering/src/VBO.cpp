@@ -1,12 +1,13 @@
-#include <Rendering/VBO.h>
+#include "Rendering/VBO.h"
+#include <glad/gl.h>
 
 VBO::VBO() {
-	glGenBuffers(1, &this->id);
+	glGenBuffers(1, &id);
 }
 
-VBO::VBO(GLfloat* data, GLsizeiptr size) {
-	glGenBuffers(1, &this->id);
-	glBindBuffer(GL_ARRAY_BUFFER, this->id);
+VBO::VBO(void* data, size_t size) {
+	glGenBuffers(1, &id);
+	glBindBuffer(GL_ARRAY_BUFFER, id);
 	glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 }
 
@@ -14,18 +15,18 @@ VBO::~VBO() {
 	delete_VBO();
 }
 
-void VBO::set_data(void* data, GLsizeiptr size, GLenum usage) const {
-	glBindBuffer(GL_ARRAY_BUFFER, this->id);
-	glBufferData(GL_ARRAY_BUFFER, size, data, usage);
+void VBO::set_data(void* data, size_t size, VBO_USAGE usage) const {
+	glBindBuffer(GL_ARRAY_BUFFER, id);
+	glBufferData(GL_ARRAY_BUFFER, size, data, usage == VBO_USAGE::USAGE_DYNAMIC ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 }
 
-void VBO::update_data(void* data, GLsizeiptr size, GLintptr offset) const {
-	glBindBuffer(GL_ARRAY_BUFFER, this->id);
+void VBO::update_data(void* data, size_t size, size_t offset) const {
+	glBindBuffer(GL_ARRAY_BUFFER, id);
 	glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
 }
 
 void VBO::bind_VBO() const {
-	glBindBuffer(GL_ARRAY_BUFFER, this->id);
+	glBindBuffer(GL_ARRAY_BUFFER, id);
 }
 
 void VBO::unbind_VBO() const {
@@ -33,5 +34,5 @@ void VBO::unbind_VBO() const {
 }
 
 void VBO::delete_VBO() const {
-	glDeleteBuffers(1, &this->id);
+	if (id) glDeleteBuffers(1, &id);
 }

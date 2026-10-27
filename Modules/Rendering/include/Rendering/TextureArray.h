@@ -20,7 +20,7 @@ public:
 private:
 	void resize_array();
 	void create_tex_array(uint32_t tex_ID) const;
-	uint32_t id;
+	uint32_t id = 0;
 	uint32_t current_size = 0;
 	uint32_t array_width, array_height, array_depth;
 	ResizeStrategy resize_strategy = ResizeStrategy::Resize_by_100_percent;

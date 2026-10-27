@@ -24,3 +24,11 @@ std::optional<uint16_t> CoreObject::ObjectManager::get_object_id(std::string_vie
 	if (it == UID_to_ID.end()) return std::nullopt;
 	else return it->second;
 }
+
+void CoreObject::ObjectManager::build_ID_to_UID_table(std::vector<std::string_view>& table) {
+	size_t size = objects.size();
+	table.resize(size);
+	for (size_t i = 0; i < size; ++i) {
+		table[i] = objects[i]->uid;
+	}
+}

@@ -20,6 +20,7 @@ namespace CoreObject {
 		void ClearData();
 		ObjectInfo* get_object_info(uint16_t ID);
 		std::optional<uint16_t> get_object_id(std::string_view UID);
+		void build_ID_to_UID_table(std::vector<std::string_view>& table);
 	private:
 		std::deque<std::string> UID_storage;
 		std::unordered_map<std::string_view, uint16_t> UID_to_ID;

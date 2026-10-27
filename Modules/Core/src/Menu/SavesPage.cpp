@@ -1,12 +1,12 @@
 #include "Core/Menu/SavesPage.h"
 #include "Core/MainMenuManager.h"
+#include "Core/WorldManager.h"
 #include <UI/ScrollView.h>
 #include <UI/Button.h>
 #include <Resources/Sprite.h>
 #include <UI/UI_Creator.h>
 #include <UI/UI_ObjectManager.h>
 #include <fstream>
-#include <iostream>
 
 SaveElement::SaveElement(SaveData& data) {
 	save_name = data.save_name;
@@ -19,7 +19,6 @@ void SaveElement::connect_with_UI_element(CoreUI::UI_Obj_Ptr& ui_element) {
 
 void SaveElement::_delete_world_save() {
 	button_click_sound.play();
-	std::cout << "Trying to delete save <" << save_name << ">" << std::endl;
 }
 
 void SaveElement::_save_world() {
@@ -28,11 +27,12 @@ void SaveElement::_save_world() {
 
 void SaveElement::_load_world_save() {
 	button_click_sound.play();
-	std::cout << "Trying to load save <" << save_name << ">" << std::endl;
+	MainMenuManager::Instance().start_world_loading();
+	WorldManager::Instance().load_world(file_path);
 }
 
 void SavesPage::update() {
-
+	
 }
 
 void SavesPage::enable(bool state) {
@@ -105,15 +105,15 @@ void SavesPage::setup_page() {
 }
 
 void SavesPage::load_saves() {
-	std::filesystem::path saves_path = RESOURCE_ROOT;
-	saves_path /= "Saves";
+	std::filesystem::path root = RESOURCE_ROOT;
+	std::filesystem::path saves_path = root / "Saves";
 	if (!std::filesystem::exists(saves_path)) {
 		std::filesystem::create_directory(saves_path);
 		return;
 	}
 	for (auto& entry : std::filesystem::directory_iterator(saves_path)) {
 		std::filesystem::path entry_path = entry.path();
-		if (std::filesystem::is_regular_file(entry_path)) {
+		if (std::filesystem::is_directory(entry_path)) {
 			// load save and read data
 			SaveData data;
 			data.file_path = entry_path;
@@ -122,6 +122,21 @@ void SavesPage::load_saves() {
 			add_UI_save_element(saves[data.save_name]);
 		}
 	}
+	saves_view->force_update_content();
+}
+
+void SavesPage::load_save(const std::string& save_name) {
+	std::filesystem::path root = RESOURCE_ROOT;
+	std::filesystem::path save_path = root / "Saves" / save_name;
+	if (!std::filesystem::exists(save_path)) {
+		return;
+	}
+	SaveData data;
+	data.file_path = save_path;
+	data.save_name = save_name;
+	saves.emplace(data.save_name, SaveElement(data));
+	add_UI_save_element(saves[data.save_name]);
+
 	saves_view->force_update_content();
 }
 
@@ -154,12 +169,9 @@ CoreUI::UI_Obj_Ptr SavesPage::add_UI_save_element(SaveElement& save) {
 	return save_obj;
 }
 
-bool SavesPage::create_new_save(SaveData& save_data) {
-	if (auto it = saves.find(save_data.save_name); it != saves.end()) {
-		return false; // save with such name already exists
+bool SavesPage::world_save_exists(std::string& save_name) {
+	if (auto it = saves.find(save_name); it != saves.end()) {
+		return true;
 	}
-
-	SaveElement new_save_element;
-
-	//saves.emplace(save_data.save_name, )
+	else return false;
 }

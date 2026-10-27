@@ -1,10 +1,8 @@
 #pragma once
-#include <glad/gl.h>
-#include <stb_image.h>
 #include <cstdint>
 
 class Texture {
-	GLuint id;
+	uint32_t id = 0;
 public:
 	~Texture();
 	void add_2D_texture(const char* fileName, bool isPixelised);

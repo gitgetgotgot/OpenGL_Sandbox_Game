@@ -36,8 +36,10 @@ public:
 	void enable(bool state);
 	void setup_page();
 	void load_saves();
+	// this method used in world creator
+	void load_save(const std::string& save_name);
 	CoreUI::UI_Obj_Ptr add_UI_save_element(SaveElement& save);
-	bool create_new_save(SaveData& save_data);
+	bool world_save_exists(std::string& save_name);
 private:
 	SavesPage() = default;
 	~SavesPage() = default;

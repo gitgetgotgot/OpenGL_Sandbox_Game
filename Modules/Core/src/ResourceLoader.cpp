@@ -30,7 +30,7 @@ void ResourceLoader::load_minimal_core_resources() {
 	if (DEBUG)
 		data_extension = ".json";
 	else
-		data_extension = ".DATA";
+		data_extension = ".data";
 	resources_root = RESOURCE_ROOT;
 
 	CoreResource::SpriteManager::Instance().setup();
@@ -138,7 +138,7 @@ void ResourceLoader::Load_Resources() {
 
 	resolve_items_dependencies(item_data_parsers);
 	resolve_entities_dependencies(entity_data_parsers);
-
+	//std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 	resources_are_loaded = true;
 }
 

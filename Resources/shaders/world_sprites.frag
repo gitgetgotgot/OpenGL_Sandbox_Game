@@ -10,19 +10,25 @@ layout(std430, binding = 1) buffer SpriteLightsSSBO {
     ShaderLightingInfo lightMap[];
 };
 
-out vec4 fragColor;
+layout(std140, binding = 0) uniform UBO {
+	mat4 u_ViewMatrix;
+	mat4 u_ProjectionMatrix;
+	ivec2 u_WorldSize;
+	float u_DayRatio;
+};
 
-in vec2 texCoord;
-flat in uint texID;
-in vec2 globalCoord;
-in float dayRatio;
-flat in ivec2 worldSize;
+layout (binding = 0) uniform sampler2DArray u_textures[8];
 
-layout (binding = 0) uniform sampler2DArray u_tex;
+out vec4 v_FragColor;
+
+in vec2 v_GlobalPos;
+in vec2 v_TexUV;
+flat in uint v_TexArrayID;
+flat in float v_TexID;
 
 vec3 getLightColor(vec2 worldPosition) {
     ivec2 blockCoord = ivec2(worldPosition.xy);
-    int index = worldSize.x * blockCoord.y + blockCoord.x;
+    int index = u_WorldSize.x * blockCoord.y + blockCoord.x;
     return clamp(vec3(lightMap[index].r, lightMap[index].g, lightMap[index].b) * lightMap[index].global_light_impact, 0.0, 1.0);
 }
 
@@ -48,15 +54,15 @@ ShaderLightingInfo getBilinearCustomLightInfo(vec2 worldPosition) {
         frac.y = 0.5 - frac.y;
     }
 
-    int index00 = blockCoord.y * worldSize.x + blockCoord.x;
-    int index10 = blockCoord.y * worldSize.x + (nearestBlockCoord.x);
-    int index01 = (nearestBlockCoord.y) * worldSize.x + blockCoord.x;
-    int index11 = (nearestBlockCoord.y) * worldSize.x + (nearestBlockCoord.x);
+    int index00 = blockCoord.y * u_WorldSize.x + blockCoord.x;
+    int index10 = blockCoord.y * u_WorldSize.x + (nearestBlockCoord.x);
+    int index01 = (nearestBlockCoord.y) * u_WorldSize.x + blockCoord.x;
+    int index11 = (nearestBlockCoord.y) * u_WorldSize.x + (nearestBlockCoord.x);
 
     ShaderLightingInfo light00 = lightMap[index00];
-    ShaderLightingInfo light10 = (nearestBlockCoord.x >= 0 && nearestBlockCoord.x < worldSize.x) ? lightMap[index10] : light00;
-    ShaderLightingInfo light01 = (nearestBlockCoord.y >= 0 && nearestBlockCoord.y < worldSize.y) ? lightMap[index01] : light00;
-    ShaderLightingInfo light11 = (nearestBlockCoord.x >= 0 && nearestBlockCoord.x < worldSize.x && nearestBlockCoord.y >= 0 && nearestBlockCoord.y < worldSize.y) ? lightMap[index11] : light01;
+    ShaderLightingInfo light10 = (nearestBlockCoord.x >= 0 && nearestBlockCoord.x < u_WorldSize.x) ? lightMap[index10] : light00;
+    ShaderLightingInfo light01 = (nearestBlockCoord.y >= 0 && nearestBlockCoord.y < u_WorldSize.y) ? lightMap[index01] : light00;
+    ShaderLightingInfo light11 = (nearestBlockCoord.x >= 0 && nearestBlockCoord.x < u_WorldSize.x && nearestBlockCoord.y >= 0 && nearestBlockCoord.y < u_WorldSize.y) ? lightMap[index11] : light01;
 
     vec4 l00 = vec4(light00.r, light00.g, light00.b, light00.global_light_impact);
     vec4 l10 = vec4(light10.r, light10.g, light10.b, light10.global_light_impact);
@@ -75,25 +81,25 @@ ShaderLightingInfo getBilinearCustomLightInfo(vec2 worldPosition) {
 }
 
 void main() {
-    vec4 texColor = texture(u_tex, vec3(texCoord, texID));
+    vec4 texColor = texture(u_textures[v_TexArrayID], vec3(v_TexUV, v_TexID));
     vec3 color = texColor.rgb;
     float alpha = texColor.a;
 
-    float global_light_level = dayRatio;
-    float source_light_level = dayRatio;
+    float global_light_level = u_DayRatio;
+    float source_light_level = u_DayRatio;
     if (global_light_level < 0.02) global_light_level = 0.02;
-    if (int(globalCoord.y) < worldSize.y * 0.68) {
+    if (int(v_GlobalPos.y) < u_WorldSize.y * 0.68) {
         global_light_level = 0.0;
         source_light_level = 0.0;
     }
 
     //default texture color based on ambient lighting
-    ShaderLightingInfo bilinearColor = getBilinearCustomLightInfo(globalCoord);
+    ShaderLightingInfo bilinearColor = getBilinearCustomLightInfo(v_GlobalPos);
     vec3 result = global_light_level * color * alpha * bilinearColor.global_light_impact;
 
     //add light color from source lights
     result += vec3(bilinearColor.r, bilinearColor.g, bilinearColor.b) * bilinearColor.source_light_impact * (1.0 - bilinearColor.global_light_impact * source_light_level) * color * alpha;
 
     //fragColor = clamp(vec4(result, alpha), 0.0, 1.0);
-    fragColor = vec4(color, alpha);
+    v_FragColor = vec4(color, alpha);
 }

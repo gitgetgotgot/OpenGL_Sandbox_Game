@@ -1,32 +1,32 @@
 #version 460 core
-out vec4 fragColor;
 
-in vec2 texCoords;
-in vec4 color;
+out vec4 v_FragColor;
 
-layout (binding = 10) uniform sampler2DArray tex;
+in vec2 v_TexUV;
+in vec4 v_TextColor;
+
+layout (binding = 10) uniform sampler2DArray u_textures;
 
 void main() {
-	// Читаем значение SDF из текстуры (хранится в красном канале)
-    float dist = texture(tex, vec3(texCoords, 0.0)).r;
+    float dist = texture(u_textures, vec3(v_TexUV, 0.0)).r;
     
-    // Автоматический антиалиасинг на основе пиксельных производных
+    // automatic antialiasing
     float afWidth = fwidth(dist);
     
-    // Порог границы текста (в нашем генераторе это 0.5, так как sd нормализован от 0 до 1)
+    // text border (in atlases sd is normalized from 0 to 1)
     float threshold = 0.5;
     
-    // Сглаживание краев основного текста
+    // smooth edges of main text
     float alpha = smoothstep(threshold - afWidth, threshold + afWidth, dist);
     
-    // Сглаживание краев обводки (смещаем порог внутрь на outlineWidth)
+    // smooth edges of outline
     float outlineWidth = 0.25;
     float outlineAlpha = smoothstep(threshold - outlineWidth - afWidth, threshold - outlineWidth + afWidth, dist);
     
-    // Итоговый цвет: смешиваем цвет обводки и текста в зависимости от расстояния
+    // final color: mix colors of outline and text based on distance
     vec4 outlineColor = vec4(0.0, 0.0, 0.0, 1.0);
-    vec4 finalColor = mix(outlineColor, color, alpha);
+    vec4 finalColor = mix(outlineColor, v_TextColor, alpha);
     
-    // Прозрачность задается внешней границей обводки
-    fragColor = vec4(finalColor.rgb, finalColor.a * outlineAlpha);
+    // transparency is used as outer border of outline
+    v_FragColor = vec4(finalColor.rgb, finalColor.a * outlineAlpha);
 }

@@ -5,23 +5,20 @@
 #include <Objects/ObjectTypes/MultiBlockInfo.h>
 #include <Objects/ObjectTypes/WeaponInfo.h>
 #include <Objects/ObjectManager.h>
+#include <iostream>
 
-void World::init(Player* player) {
-	main_player_ptr = player;
-	//create world slots
-	world_slots = new WorldSlot[width * height];
-	MAX_CHUNK_X = width / CHUNK_SIZE;
-	MAX_CHUNK_Y = height / CHUNK_SIZE;
-
-	CoreEntity::EntitySystem::Instance().init();
-	CoreEntity::EntitySystem::Instance().set_world_data(world_slots, width, height, &object_components);
+void World::init_render_buffers() {
+	//CoreEntity::EntitySystem::Instance().init();
+	//CoreEntity::EntitySystem::Instance().set_world_data(world_slots, width, height, &object_components);
 
 	//CONSTRAINTS
 	const uint32_t MAX_SQUARES = CHUNK_SIZE * CHUNK_SIZE * 2;
 	const uint32_t MAX_VERTEX_AMOUNT = MAX_SQUARES * 4;
 	const uint32_t MAX_INDEX_AMOUNT = MAX_SQUARES * 6;
 
-	shader = std::make_unique<ShaderProgram>("Resources/shaders/sprites.vert", "Resources/shaders/sprites.frag");
+	std::filesystem::path vertex_shader_path = "Resources/shaders/world_sprites.vert";
+	std::filesystem::path fragment_shader_path = "Resources/shaders/world_sprites.frag";
+	shader = std::make_unique<ShaderProgram>(vertex_shader_path, fragment_shader_path);
 
 	ebo = std::make_unique<EBO>();
 	GLuint* sprite_index_buffer = new GLuint[MAX_INDEX_AMOUNT];
@@ -31,7 +28,7 @@ void World::init(Player* player) {
 		sprite_index_buffer[i * 6 + 1] = sprite_index_buffer[i * 6 + 2] - 1;
 		sprite_index_buffer[i * 6 + 5] = sprite_index_buffer[i * 6 + 2] + 1;
 	}
-	ebo->set_data(sprite_index_buffer, MAX_INDEX_AMOUNT * sizeof(GLuint), GL_STATIC_DRAW);
+	ebo->set_data(sprite_index_buffer, MAX_INDEX_AMOUNT * sizeof(GLuint), EBO::EBO_USAGE::USAGE_STATIC);
 	delete[] sprite_index_buffer;
 
 	for (auto& buf : render_buffers) {
@@ -40,11 +37,12 @@ void World::init(Player* player) {
 		buf->vao = std::make_unique<VAO>();
 		buf->vao->bind_VAO();
 		buf->vbo = std::make_unique<VBO>();
-		buf->vbo->set_data(nullptr, MAX_VERTEX_AMOUNT * sizeof(Vertex2f), GL_DYNAMIC_DRAW);
+		buf->vbo->set_data(nullptr, MAX_VERTEX_AMOUNT * sizeof(Vertex2f), VBO::VBO_USAGE::USAGE_DYNAMIC);
 		ebo->bind_EBO();
-		buf->vao->link_Attribute(0, 2, GL_FLOAT, sizeof(Vertex2f), (void*)0);
-		buf->vao->link_Attribute(1, 2, GL_FLOAT, sizeof(Vertex2f), (void*)(2 * sizeof(float)));
-		buf->vao->link_Attribute(2, 1, GL_UNSIGNED_INT, sizeof(Vertex2f), (void*)(4 * sizeof(float)));
+		buf->vao->link_Attribute(0, 2, VAO::TYPE_FLOAT, sizeof(Vertex2f), offsetof(Vertex2f, Vertex2f::pos));
+		buf->vao->link_Attribute(1, 2, VAO::TYPE_FLOAT, sizeof(Vertex2f), offsetof(Vertex2f, Vertex2f::UV));
+		buf->vao->link_Attribute(2, 1, VAO::TYPE_UNSIGNED_INT, sizeof(Vertex2f), offsetof(Vertex2f, Vertex2f::tex_array_id));
+		buf->vao->link_Attribute(3, 1, VAO::TYPE_UNSIGNED_INT, sizeof(Vertex2f), offsetof(Vertex2f, Vertex2f::tex_id));
 		buf->vao->unbind_VAO();
 		buf->vbo->unbind_VBO();
 		ebo->unbind_EBO();
@@ -52,7 +50,7 @@ void World::init(Player* player) {
 
 	sprites_ubo = std::make_unique<UBO>();
 	sprites_ubo->bind_UBO(0);
-	sprites_ubo->set_data(nullptr, sizeof(Universal_UBO_Data), GL_DYNAMIC_DRAW);
+	sprites_ubo->set_data(nullptr, sizeof(Universal_UBO_Data), UBO::UBO_USAGE::USAGE_DYNAMIC);
 
 	//camera base options
 	main_camera.zoom = MIN_ZOOM;
@@ -63,11 +61,7 @@ void World::init(Player* player) {
 	sprites_ubo_data.viewMatrix = main_camera.viewMatrix;
 	sprites_ubo_data.projectionMatrix = main_camera.projectionMatrix;
 
-	sprites_ubo->update_data(&sprites_ubo_data, sizeof(Universal_UBO_Data));
-
-	generate_world_data();
-
-	spriteLightMapSSBO = std::make_unique<SSBO>();
+	//spriteLightMapSSBO = std::make_unique<SSBO>();
 	/*
 	spriteLightMapSSBO->set_persistent_storage_data(nullptr, width * height * sizeof(ShaderLightingInfo));
 	lightMap_data = static_cast<ShaderLightingInfo*>(glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(ShaderLightingInfo) * width * height, GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT));
@@ -79,13 +73,21 @@ void World::init(Player* player) {
 	}
 	*/
 
+}
+
+void World::init_tiles_buffer() {
+	//create world slots
+	world_slots = new WorldSlot[width * height];
+	MAX_CHUNK_X = width / CHUNK_SIZE;
+	MAX_CHUNK_Y = height / CHUNK_SIZE;
+}
+
+void World::init_chunk_buffers() {
 	for (int x = 0; x < 4; x++) {
 		for (int y = 0; y < 4; y++) {
 			load_chunk_buffer(x, y, x * 4 + y);
 		}
 	}
-
-	//main_camera.pos = glm::vec2(2000.0f, 900.0f);
 }
 
 void World::uninit() {
@@ -93,11 +95,13 @@ void World::uninit() {
 	sprites_ubo.reset();
 	ebo.reset();
 
+	/*
 	spriteLightMapSSBO->bind_SSBO();
 	if (lightMap_data)
 		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 	lightMap_data = nullptr;
 	spriteLightMapSSBO.reset();
+	*/
 
 	for (uint32_t i = 0; i < RENDERABLE_CHUNKS_SIZE; ++i) {
 		render_buffers[i]->vao.reset();
@@ -140,8 +144,8 @@ void World::update() {
 
 	if (main_camera.pos.x < 0.0f) main_camera.pos.x = 0.0f;
 	if (main_camera.pos.y < 0.0f) main_camera.pos.y = 0.0f;
-	if (main_camera.pos.x > float(width - 1)) main_camera.pos.x = float(width - 1);
-	if (main_camera.pos.y > float(height - 1)) main_camera.pos.y = float(height - 1);
+	if (main_camera.pos.x > float(width)) main_camera.pos.x = float(width);
+	if (main_camera.pos.y > float(height)) main_camera.pos.y = float(height);
 
 	main_camera.update_camera();
 	GameContext::PLAYER_LAST_POS = main_camera.pos;
@@ -160,11 +164,12 @@ void World::update() {
 	if (SystemContext::keyBoard.key_is_pressed(Key::KeyP)) {
 		//CoreEntity::EntitySystem::get_instance()->spawn_entity(0, main_camera.pos);
 	}
-	CoreEntity::EntitySystem::Instance().update();
+	//CoreEntity::EntitySystem::Instance().update();
 
-	if (SystemContext::keyBoard.key_is_pressed(Key::KeyE))
-		main_player_ptr->inventory.toggle_inventory();
-	main_player_ptr->inventory.update();
+	if (SystemContext::keyBoard.key_is_pressed(Key::KeyE)) {
+		//main_player_ptr->inventory.toggle_inventory();
+	}
+	//main_player_ptr->inventory.update();
 
 	if (!SystemContext::mouse.overlapped_by_UI_layer) {
 		if (SystemContext::mouse.lb_is_pressed())
@@ -195,7 +200,7 @@ void World::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
 		}
 	}
 
-	CoreEntity::EntitySystem::Instance().render(renderer);
+	//CoreEntity::EntitySystem::Instance().render(renderer);
 }
 
 void World::update_chunks(uint32_t& camera_chunk_x, uint32_t& camera_chunk_y) {
@@ -572,102 +577,6 @@ bool World::destroy_tile(uint32_t world_x, uint32_t world_y) {
 	return true;
 }
 
-void World::generate_world_data() {
-	int biome_width = width / 10;
-	//generate flat surface with tiny waves
-	for (int i = 0; i < width; i++) {
-		int j = 0;
-		//int point = 891 + sin(0.1 * i) * 20;
-		int point = 899 + sin(i * 0.05) * 1;
-		for (; j < point; j++) {  //stone layer
-			world_slots[j * width + i].tile_id = 2;
-		}
-		while (j < point + 8) { //dirt layer
-			world_slots[j * width + i].tile_id = 3;
-			j++;
-		}
-		world_slots[j * width + i].tile_id = 4; //dirt with grass
-	}
-	//generate some kind of desert on either left or right side of the map
-	bool desertIsOnLeft = rand() % 2;
-	int left_biome_border, right_biome_border;
-	if (desertIsOnLeft) {
-		left_biome_border = width * 0.3 - 1;
-		right_biome_border = left_biome_border + biome_width;
-	}
-	else {
-		left_biome_border = width * 0.6 - 1;
-		right_biome_border = left_biome_border + biome_width;
-	}
-	float value = 0.f;
-	for (int i = left_biome_border; i < right_biome_border; i++) {
-		int point = 904 + sin(3.14159 * value / 180.) * 15;
-		for (int j = 600; j < point; j++) {
-			world_slots[j * width + i].tile_id = 5;
-		}
-		value += 180 / 420.f;
-	}
-	//generate oceans on both sides
-	left_biome_border = 0;
-	right_biome_border = left_biome_border + width * 0.05;
-	value = 180.f;
-	for (int i = left_biome_border; i < right_biome_border - 20; i++) { //place sand in a curve line and fill with water blocks on left side
-		int point = 829 + (cos(3.14159 * value / 180.) + 1) * 80;
-		int j = point - 40;
-		for (; j < point; j++) {  //place sand
-			world_slots[j * width + i].tile_id = 5;
-		}
-		while (j <= 905) {  //place water
-			world_slots[j * width + i].tile_id = 13;
-			j++;
-		}
-		while (j <= 907) {  //remove redundant blocks
-			if (world_slots[j * width + i].tile_id > 0) {
-				if (world_slots[j * width + i].tile_id != 5) {
-					world_slots[j * width + i].tile_id = 0;
-				}
-			}
-			j++;
-		}
-		value += 90 / 190.f;
-	}
-	for (int i = right_biome_border - 20; i < right_biome_border; i++) { //make straigh place for 20 blocks after the ocean
-		int point = 908;
-		for (int j = point - 40; j < point; j++) {
-			world_slots[j * width + i].tile_id = 5;
-		}
-	}
-	right_biome_border = width - 1;
-	left_biome_border = right_biome_border - width * 0.05;
-	value = 90.f;
-	for (int i = left_biome_border; i <= right_biome_border; i++) { //place sand in a curve line and fill with water blocks on right side
-		int point = 829 + (cos(3.14159 * value / 180.) + 1) * 80;
-		int j = point - 40;
-		for (; j < point; j++) {  //place sand
-			world_slots[j * width + i].tile_id = 5;
-		}
-		while (j <= 905) {  //place water
-			world_slots[j * width + i].tile_id = 13;
-			j++;
-		}
-		while (j <= 907) {  //remove redundant blocks
-			if (world_slots[j * width + i].tile_id > 0) {
-				if (world_slots[j * width + i].tile_id != 5) {
-					world_slots[j * width + i].tile_id = 0;
-				}
-			}
-			j++;
-		}
-		value += 90 / 190.f;
-	}
-	for (int i = left_biome_border - 20; i < left_biome_border; i++) { //make straigh place for 20 blocks after the ocean
-		int point = 908;
-		for (int j = point - 40; j < point; j++) {
-			world_slots[j * width + i].tile_id = 5;
-		}
-	}
-}
-
 void World::save_world_data_in_file(const char* filePath) {
 	std::ofstream write(filePath, std::ios::binary);
 	uint16_t write_value = 0;
@@ -710,53 +619,6 @@ void World::save_world_data_in_file(const char* filePath) {
 		}
 	}
 	write.close();
-}
-
-void World::load_world_data_from_file(const char* filePath) {
-	/*std::ifstream read(filePath, std::ios::binary);
-	ObjectType type;
-	unsigned short value, id, column, line;
-	uint8_t door_state;
-	read.read(reinterpret_cast<char*>(&world_width), sizeof(unsigned short));
-	read.read(reinterpret_cast<char*>(&world_height), sizeof(unsigned short));
-
-	sprites_Array = new WorldSlot * [world_width] {nullptr};
-	for (int i = 0; i < world_width; i++) {
-		sprites_Array[i] = new WorldSlot[world_height];
-	}
-
-	for (int i = 0; i < world_width; i++) {
-		for (int j = 0; j < world_height; j++) {
-			read.read(reinterpret_cast<char*>(&sprites_Array[i][j].wall_id), sizeof(unsigned short));
-			read.read(reinterpret_cast<char*>(&id), sizeof(unsigned short));
-			read.read(reinterpret_cast<char*>(&type), sizeof(ObjectType));
-			if (type == isMultiBlockTile) {
-				read.read(reinterpret_cast<char*>(&column), sizeof(unsigned short));
-				read.read(reinterpret_cast<char*>(&line), sizeof(unsigned short));
-				sprites_Array[i][j].object = GameObject(type, id, new MultiBlockTileComponent(column, line));
-			}
-			else if (type == isMultiBlock) {
-				MultiBlockType complexType = objectInfo[sprites_Array[i][j].object.object_id]->get_comp_obj_type();
-				if (complexType == isDoor) {
-					read.read(reinterpret_cast<char*>(&door_state), sizeof(uint8_t));
-					sprites_Array[i][j].object = GameObject(type, id, new DoorComponent(door_state));
-				}
-				else if (complexType == isChest) {
-					sprites_Array[i][j].object = GameObject(type, id, new ChestComponent);
-					InventoryPair* chest_ptr = sprites_Array[i][j].object.component->get_chest_slots();
-					for (int c = 0; c < 40; c++) {
-						read.read(reinterpret_cast<char*>(&chest_ptr[c].amount), sizeof(unsigned short));
-						read.read(reinterpret_cast<char*>(&chest_ptr[c].object.id), sizeof(unsigned short));
-						read.read(reinterpret_cast<char*>(&chest_ptr[c].object.type), sizeof(ObjectType));
-					}
-				}
-			}
-			else {
-				sprites_Array[i][j].object = GameObject(type, id);
-			}
-		}
-	}
-	read.close();*/
 }
 
 World::~World() {

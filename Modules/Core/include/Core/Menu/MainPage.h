@@ -4,6 +4,28 @@
 #include <Utility/TextBufferBuilder.h>
 
 class MainPage {
+private:
+	enum MenuTooltip : uint8_t {
+		TOOLTIP_NONE, TOOLTIP_LOAD_RESOURCES, TOOLTIP_LOAD_WORLD, TOOLTIP_GENERATE_WORLD
+	};
+	struct TooltipLoadRes {
+		CoreUI::UI_Component_Ptr<CoreUI::SDF_Text> loading_text;
+		float time_loading = 0.0f;
+		uint32_t phase = 0;
+		void update();
+	};
+	struct TooltipLoadWorld {
+		CoreUI::UI_Component_Ptr<CoreUI::SDF_Text> loading_text;
+		float time_loading = 0.0f;
+		uint32_t phase = 0;
+		void update();
+	};
+	struct TooltipGenWorld {
+		CoreUI::UI_Component_Ptr<CoreUI::SDF_Text> loading_text;
+		float time_loading = 0.0f;
+		uint32_t phase = 0;
+		void update();
+	};
 public:
 	static MainPage& Instance() {
 		static MainPage page;
@@ -12,16 +34,27 @@ public:
 	void update();
 	void enable(bool state);
 	void setup_page();
-	void start_loading_resources();
-	void stop_loading_resources();
+	void show_tooltip_res_load();
+	void hide_tooltip_res_load();
+	void show_tooltip_world_load();
+	void hide_tooltip_world_load();
+	void show_tooltip_world_gen();
+	void hide_tooltip_world_gen();
 private:
 	MainPage() = default;
 	~MainPage() = default;
 	CoreUI::UI_Canvas_Ptr canvas;
-	CoreUI::UI_Component_Ptr<CoreUI::SDF_Text> loading_text;
+
+	CoreUI::UI_Obj_Ptr tooltip_load_res_obj;
+	CoreUI::UI_Obj_Ptr tooltip_load_world_obj;
+	CoreUI::UI_Obj_Ptr tooltip_gen_world_obj;
+
+	TooltipLoadRes tooltip_load_res;
+	TooltipLoadWorld tooltip_load_world;
+	TooltipGenWorld tooltip_gen_world;
+
 	CoreUI::UI_Component_Ptr<CoreUI::SDF_Text> FPS_text;
-	bool is_loading = false;
-	float time_loading = 0.0f;
-	uint32_t phase = 0;
+	
+	MenuTooltip current_tooltip = MenuTooltip::TOOLTIP_NONE;
 	TextBufferBuilder text_builder;
 };

@@ -1,4 +1,6 @@
-#include <Rendering/OpenGL_Renderer.h>
+#include "Rendering/OpenGL_Renderer.h"
+//#include <glad/gl.h>
+#include <glm/ext/vector_float2.hpp>
 
 OpenGL_Renderer::OpenGL_Renderer(GLFWwindow* window) {
 	this->window = window;

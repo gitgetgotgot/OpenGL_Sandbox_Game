@@ -6,6 +6,10 @@
 #include "Core/Menu/ModsPage.h"
 #include "Core/Menu/CreatorPage.h"
 
+#include "Core/WorldManager.h"
+
+#include "Core/GameCore.h"
+
 #include <IOSystem/SystemContext.h>
 #include <thread>
 
@@ -32,31 +36,68 @@ void MainMenuManager::init() {
 
 void MainMenuManager::update() {
 	MainPage::Instance().update();
-	switch (current_page) {
-	case MenuCurrentPage::in_MainMenu:
+	switch (current_state) {
+	case MenuCurrentState::in_MainMenu:
 		MainMenuPage::Instance().update();
 		break;
-	case MenuCurrentPage::in_Saves:
+	case MenuCurrentState::in_Saves:
 		SavesPage::Instance().update();
 		break;
-	case MenuCurrentPage::in_Creator:
+	case MenuCurrentState::in_Creator:
 		CreatorPage::Instance().update();
 		break;
-	case MenuCurrentPage::in_Settings:
+	case MenuCurrentState::in_Settings:
 		SettingsPage::Instance().update();
 		break;
-	case MenuCurrentPage::in_Mods:
+	case MenuCurrentState::in_Mods:
 		ModsPage::Instance().update();
+		break;
+	case MenuCurrentState::Generating_World:
+		if (WorldManager::Instance().world_is_created()) {
+			stop_world_generation();
+		}
+		break;
+	case MenuCurrentState::Loading_World:
+		if (WorldManager::Instance().world_is_loaded()) {
+			WorldManager::Instance().update_active_world_buffers();
+			stop_world_loading();
+			GameEngine::switch_update_state(GameEngine::Game_State::inWorld);
+		}
 		break;
 	}
 }
 
-void MainMenuManager::start_loading_resources() {
-	MainPage::Instance().start_loading_resources();
+void MainMenuManager::reload_resources() {
+
 }
 
+void MainMenuManager::start_loading_resources() {
+	MainPage::Instance().show_tooltip_res_load();
+}
 void MainMenuManager::stop_loading_resources() {
-	MainPage::Instance().stop_loading_resources();
+	MainPage::Instance().hide_tooltip_res_load();
+}
+
+void MainMenuManager::start_world_generation() {
+	CreatorPage::Instance().enable(false);
+	current_state = MenuCurrentState::Generating_World;
+	MainPage::Instance().show_tooltip_world_gen();
+}
+void MainMenuManager::stop_world_generation() {
+	SavesPage::Instance().enable(true);
+	current_state = MenuCurrentState::in_Saves;
+	MainPage::Instance().hide_tooltip_world_gen();
+}
+
+void MainMenuManager::start_world_loading() {
+	SavesPage::Instance().enable(false);
+	current_state = MenuCurrentState::Loading_World;
+	MainPage::Instance().show_tooltip_world_load();
+}
+void MainMenuManager::stop_world_loading() {
+	MainPage::Instance().enable(false);
+	current_state = MenuCurrentState::in_MainMenu;
+	MainPage::Instance().hide_tooltip_world_load();
 }
 
 void MainMenuManager::load_saves() {

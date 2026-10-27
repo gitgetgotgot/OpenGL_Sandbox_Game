@@ -1,12 +1,13 @@
 #pragma once
-#include "World.h"
+//#include "World.h"
 #include <IOSystem/InputHandler.h>
+#include <Rendering/OpenGL_Renderer.h>
 
 class GameEngine {
+public:
 	enum Game_State : uint8_t {
 		inMainMenu, inWorld, LoadingResources
 	};
-public:
 	~GameEngine();
 	bool update();
 	void render();
@@ -14,6 +15,7 @@ public:
 	void init();
 	void main_loop();
 	void uninit();
+	static void switch_update_state(Game_State state);
 private:
 	void init_MainWindow();
 	void init_OpenGL();
@@ -25,18 +27,14 @@ private:
 	void(GameEngine::* update_proc)() = nullptr;
 	GLFWwindow* window;
 
-	Player player;
-
-	//Main camera
-	Camera camera;
-
+	//Player player;
 	//Graphics main objects
 	std::unique_ptr<OpenGL_Renderer> renderer;
-	std::unique_ptr<UBO> universal_ubo;
 
 	//World data
-	std::unique_ptr<World> world;
+	//std::unique_ptr<World> world;
 
 	//game state
-	Game_State game_update_state = LoadingResources, game_render_state = inMainMenu;
+	inline static Game_State game_update_state = LoadingResources;
+	inline static Game_State game_render_state = inMainMenu;
 };

@@ -2,11 +2,12 @@
 #include "Core/ResourceLoader.h"
 #include "Core/MainMenuManager.h"
 #include "Core/SettingsManager.h"
+#include "Core/WorldManager.h"
 #include <UI/UI_System.h>
 #include <Audio/AudioSystem.h>
 #include <Resources/TextureArrayMgr.h>
 #include <Utility/TimeManager.h>
-#include <thread>
+#include <iostream>
 
 GameEngine::~GameEngine() {
 	uninit();
@@ -28,7 +29,11 @@ void GameEngine::render() {
 	renderer->clear(0.0, 0.0, 0.0);
 
 	CoreResource::TextureArrayManager::Instance().bind_texture_arrays();
-	//world->render(renderer);
+
+	if (game_render_state == Game_State::inWorld) {
+		WorldManager::Instance().render(renderer);
+	}
+
 	CoreUI::UI_System::Instance().render(renderer);
 
 	renderer->present();
@@ -77,10 +82,14 @@ void GameEngine::uninit() {
 	CoreUI::UI_System::Instance().uninit();
 	CoreEntity::EntitySystem::Instance().uninit();
 
-	if (world) world->uninit();
+	WorldManager::Instance().clear();
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
+}
+
+void GameEngine::switch_update_state(Game_State state) {
+	game_update_state = state;
 }
 
 void GameEngine::init_MainWindow() {
@@ -141,6 +150,7 @@ void GameEngine::init_main_resources() {
 
 	update_proc = &GameEngine::loading_update;
 	ResourceLoader::Instance().start_resources_loading();
+	MainMenuManager::Instance().start_loading_resources();
 
 	/*
 	player.inventory.init();
@@ -184,11 +194,12 @@ void GameEngine::gameplay_update() {
 	switch (game_update_state) {
 	case Game_State::inMainMenu: {
 		MainMenuManager::Instance().update();
-		//std::this_thread::sleep_for(std::chrono::milliseconds(200));
+		game_render_state = Game_State::inMainMenu;
 		break;
 	}
 	case Game_State::inWorld: {
-		world->update();
+		WorldManager::Instance().update();
+		game_render_state = Game_State::inWorld;
 		break;
 	}
 	}

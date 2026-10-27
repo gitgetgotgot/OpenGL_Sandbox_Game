@@ -13,11 +13,13 @@ void CoreEntity::EntitySystem::init() {
 	entity_render_buf.reserve(MAX_ENTITIES_RENDER);
 	entity_render_buf.resize(MAX_ENTITIES_RENDER);
 
-	entity_shader = std::make_unique<ShaderProgram>("Resources/shaders/sprites_entity.vert", "Resources/shaders/sprites.frag");
+	std::filesystem::path vertex_shader_path = "Resources/shaders/entity_sprites.vert";
+	std::filesystem::path fragment_shader_path = "Resources/shaders/world_sprites.frag";
+	entity_shader = std::make_unique<ShaderProgram>(vertex_shader_path, fragment_shader_path);
 
 	entity_ssbo = std::make_unique<SSBO>();
 	entity_ssbo->bind_SSBO(0);
-	entity_ssbo->set_data(nullptr, sizeof(EntityRenderData) * MAX_ENTITIES_RENDER, GL_DYNAMIC_DRAW);
+	entity_ssbo->set_data(nullptr, sizeof(EntityRenderData) * MAX_ENTITIES_RENDER, SSBO::SSBO_USAGE::USAGE_DYNAMIC);
 	
 	GLfloat pos[] = {
 		0.f, 0.f,
@@ -33,7 +35,7 @@ void CoreEntity::EntitySystem::init() {
 	instance_vao->bind_VAO();
 	instance_vbo = std::make_unique<VBO>(pos, sizeof(pos));
 	instance_ebo = std::make_unique<EBO>(indices, sizeof(indices));
-	instance_vao->link_Attribute(0, 2, GL_FLOAT, 2 * sizeof(float), (void*)0);
+	instance_vao->link_Attribute(0, 2, VAO::TYPE_FLOAT, 2 * sizeof(float), 0);
 	instance_vao->unbind_VAO();
 	instance_vbo->unbind_VBO();
 	instance_ebo->unbind_EBO();

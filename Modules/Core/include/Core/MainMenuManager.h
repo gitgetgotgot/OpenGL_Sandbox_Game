@@ -3,8 +3,9 @@
 
 class MainMenuManager {
 private:
-	enum MenuCurrentPage : uint8_t {
-		in_MainMenu, in_Saves, in_Creator, in_Settings, in_Mods
+	enum MenuCurrentState : uint8_t {
+		in_MainMenu, in_Saves, in_Creator, in_Settings, in_Mods,
+		Loading_World, Generating_World
 	};
 public:
 	static MainMenuManager& Instance() {
@@ -17,6 +18,12 @@ public:
 	void reload_resources();
 	void start_loading_resources();
 	void stop_loading_resources();
+
+	void start_world_generation();
+	void stop_world_generation();
+
+	void start_world_loading();
+	void stop_world_loading();
 
 	void load_saves();
 	void load_mods();
@@ -43,5 +50,5 @@ private:
 
 	CoreAudio::AudioSource button_click_sound;
 	CoreAudio::AudioSource music_test;
-	MenuCurrentPage current_page = MenuCurrentPage::in_MainMenu;
+	MenuCurrentState current_state = MenuCurrentState::in_MainMenu;
 };

@@ -1,5 +1,7 @@
 #include "Core/MainMenuManager.h"
 #include "Core/Menu/CreatorPage.h"
+#include "Core/Menu/SavesPage.h"
+#include "Core/WorldManager.h"
 #include <IOSystem/SystemContext.h>
 #include <UI/UI_Creator.h>
 #include <Resources/Sprite.h>
@@ -97,7 +99,23 @@ void CreatorPage::start_world_creation() {
 		std::cout << "[WorldCreator]: Can't create world with empty WorldName!\n";
 		return;
 	}
-	std::cout << "[WorldCreator]: Trying to create world <" << input_text << ">, SIZE ID = <" << (uint32_t)world_size_id << ">\n";
+	if (SavesPage::Instance().world_save_exists(input_text)) {
+		std::cout << "[WorldCreator]: World with such WorldName already exists!\n";
+		return;
+	}
+
+	World::WorldOptions world_options{};
+	if (world_size_id == 0)
+		world_options.size = World::WorldOptions::WorldSize::SMALL;
+	else if (world_size_id == 1)
+		world_options.size = World::WorldOptions::WorldSize::MEDIUM;
+	else if (world_size_id == 2)
+		world_options.size = World::WorldOptions::WorldSize::LARGE;
+	else if (world_size_id == 3)
+		world_options.size = World::WorldOptions::WorldSize::LARGE_PLUS_PLUS;
+
+	MainMenuManager::Instance().start_world_generation();
+	WorldManager::Instance().create_world(input_text, world_options);
 }
 
 void CreatorPage::_choose_world_size_1() {

@@ -1,13 +1,15 @@
 #pragma once
-
-#include <memory>
-#include <Rendering/ShaderClass.h>
-#include <Rendering/VAO.h>
-#include <Rendering/VBO.h>
-#include <Rendering/EBO.h>
-#include <Rendering/Texture.h>
-#include <Rendering/TextureArray.h>
+#include "Rendering/ShaderClass.h"
+#include "Rendering/VAO.h"
+#include "Rendering/VBO.h"
+#include "Rendering/EBO.h"
+#include "Rendering/Texture.h"
+#include "Rendering/TextureArray.h"
+#include "Rendering/UBO.h"
+#include "Rendering/SSBO.h"
+#include <glad/gl.h>
 #include <GLFW/glfw3.h>
+#include <memory>
 
 class OpenGL_Renderer {
 public:

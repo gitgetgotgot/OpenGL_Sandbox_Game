@@ -20,5 +20,6 @@ struct Vertex2f {
 	}
 	glm::vec2 pos{ 0.0f };
 	glm::vec2 UV{ 0.0f };
-	uint32_t tex_array_id = 0, tex_id = 0;
+	uint32_t tex_array_id = 0;
+	uint32_t tex_id = 0;
 };

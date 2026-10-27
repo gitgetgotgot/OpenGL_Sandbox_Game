@@ -1,7 +1,9 @@
-#include <Rendering/Texture.h>
+#include "Rendering/Texture.h"
+#include <glad/gl.h>
+#include <stb_image.h>
 
 Texture::~Texture() {
-	glDeleteTextures(1, &this->id);
+	if (id) glDeleteTextures(1, &id);
 }
 
 void Texture::add_2D_texture(const char* fileName, bool isPixelised) {
@@ -9,8 +11,8 @@ void Texture::add_2D_texture(const char* fileName, bool isPixelised) {
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* image_bytes = stbi_load(fileName, &imgWidth, &imgHeight, &numOfColorChannels, 0);
 
-	glGenTextures(1, &this->id);
-	glBindTexture(GL_TEXTURE_2D, this->id);
+	glGenTextures(1, &id);
+	glBindTexture(GL_TEXTURE_2D, id);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, isPixelised ? GL_NEAREST : GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, isPixelised ? GL_NEAREST : GL_LINEAR);
@@ -27,8 +29,8 @@ void Texture::add_2D_texture(const char* fileName, bool isPixelised) {
 }
 
 void Texture::add_R8_texture_from_buffer(const unsigned char* img_buf, int width, int height, bool isPixelised) {
-	glGenTextures(1, &this->id);
-	glBindTexture(GL_TEXTURE_2D, this->id);
+	glGenTextures(1, &id);
+	glBindTexture(GL_TEXTURE_2D, id);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, isPixelised ? GL_NEAREST : GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, isPixelised ? GL_NEAREST : GL_LINEAR);
 
@@ -46,8 +48,8 @@ void Texture::add_text_bitmap(const char* filename, bool isPixelised, unsigned c
 	stbi_set_flip_vertically_on_load(false);
 	*image_bytes = stbi_load(filename, &imgWidth, &imgHeight, &numOfChannels, 0);
 
-	glGenTextures(1, &this->id);
-	glBindTexture(GL_TEXTURE_2D, this->id);
+	glGenTextures(1, &id);
+	glBindTexture(GL_TEXTURE_2D, id);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, isPixelised ? GL_NEAREST : GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, isPixelised ? GL_NEAREST : GL_LINEAR);

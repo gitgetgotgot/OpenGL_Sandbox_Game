@@ -1,13 +1,13 @@
-#include <Rendering/TextureArray.h>
+#include "Rendering/TextureArray.h"
 #include <glad/gl.h>
 #include <stb_image.h>
 
 TextureArray::TextureArray() {
-	glGenTextures(1, &this->id);
+	glGenTextures(1, &id);
 }
 
 TextureArray::~TextureArray() {
-	glDeleteTextures(1, &this->id);
+    if (id) glDeleteTextures(1, &id);
 }
 
 void TextureArray::bind(uint32_t slot) const {
@@ -81,7 +81,7 @@ void TextureArray::add_2D_texture(const unsigned char* img_buf, int& width, int&
     else if (numOfChannels == 3) format = GL_RGB;
     else format = GL_RGBA;
 
-    glBindTexture(GL_TEXTURE_2D_ARRAY, this->id);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, id);
     glTexSubImage3D(
         GL_TEXTURE_2D_ARRAY, 0,
         0, 0, current_size,
@@ -138,8 +138,8 @@ void TextureArray::resize_array() {
         );
     }
 
-    glDeleteTextures(1, &this->id);
-    this->id = new_tex_array_id;
+    glDeleteTextures(1, &id);
+    id = new_tex_array_id;
 }
 
 void TextureArray::create_tex_array(uint32_t tex_ID) const {

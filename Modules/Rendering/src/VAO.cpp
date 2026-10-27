@@ -1,31 +1,26 @@
-#include <Rendering/VAO.h>
+#include "Rendering/VAO.h"
+#include <glad/gl.h>
 
 VAO::VAO() {
-	glGenVertexArrays(1, &this->id);
+	glGenVertexArrays(1, &id);
 }
 
 VAO::~VAO() {
 	delete_VAO();
 }
 
-void VAO::link_Attribute(GLuint layout, GLuint numOfComps, GLenum type, GLsizeiptr stride, void* offset) const {
-	if(type == GL_FLOAT)
-		glVertexAttribPointer(layout, numOfComps, type, GL_FALSE, stride, offset);
-	else
-		glVertexAttribIPointer(layout, numOfComps, type, stride, offset);
+void VAO::link_Attribute(uint32_t layout, uint32_t comps, VAO_ATTRIBUTE_TYPE type, size_t stride, size_t offset) const {
+	if (type == VAO_ATTRIBUTE_TYPE::TYPE_FLOAT) {
+		glVertexAttribPointer(layout, comps, GL_FLOAT, GL_FALSE, stride, (const void*)offset);
+	}
+	else {
+		glVertexAttribIPointer(layout, comps, GL_UNSIGNED_INT, stride, (const void*)offset);
+	}
 	glEnableVertexAttribArray(layout);
-}
-
-void VAO::link_Attribute_with_Divisor(VBO& vbo, GLuint layout, GLuint numOfComps, GLenum type, GLsizeiptr stride, void* offset, GLuint divisor) const {
-	vbo.bind_VBO();
-	glVertexAttribPointer(layout, numOfComps, type, GL_FALSE, stride, offset);
-	glEnableVertexAttribArray(layout);
-	glVertexAttribDivisor(layout, divisor);
-	vbo.unbind_VBO();
 }
 
 void VAO::bind_VAO() const {
-	glBindVertexArray(this->id);
+	glBindVertexArray(id);
 }
 
 void VAO::unbind_VAO() const {
@@ -33,5 +28,5 @@ void VAO::unbind_VAO() const {
 }
 
 void VAO::delete_VAO() const {
-	glDeleteVertexArrays(1, &this->id);
+	if (id) glDeleteVertexArrays(1, &id);
 }

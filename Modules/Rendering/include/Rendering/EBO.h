@@ -1,15 +1,15 @@
 #pragma once
-
-#include <glad/gl.h>
+#include <cstdint>
 
 class EBO {
 public:
-	GLuint id;
+	enum EBO_USAGE : uint8_t { USAGE_STATIC, USAGE_DYNAMIC };
+	uint32_t id = 0;
 	EBO();
-	EBO(void* indices, GLsizeiptr size);
+	EBO(void* indices, size_t size);
 	~EBO();
-	void set_data(void* indices, GLsizeiptr size, GLenum usage) const;
-	void update_data(void* indices, GLsizeiptr size, GLintptr offset = 0) const;
+	void set_data(void* indices, size_t size, EBO_USAGE usage) const;
+	void update_data(void* indices, size_t size, size_t offset = 0) const;
 	void bind_EBO() const;
 	void unbind_EBO() const;
 	void delete_EBO() const;
