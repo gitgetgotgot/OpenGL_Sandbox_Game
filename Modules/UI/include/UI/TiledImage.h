@@ -1,7 +1,7 @@
 #pragma once
 #include "UI/UI_Comp_Ptr.h"
 
-namespace CoreUI {
+namespace Engine::UI {
 	class TiledImage : public UI_Component<TiledImage> {
 	public:
 		enum TiledImageMask : uint8_t {

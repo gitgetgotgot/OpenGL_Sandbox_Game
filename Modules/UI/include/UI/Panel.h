@@ -1,7 +1,7 @@
 #pragma once
 #include "UI/UI_Comp_Ptr.h"
 
-namespace CoreUI {
+namespace Engine::UI {
 	class Panel : public UI_Component<Panel> {
 	public:
 		Panel() = default;

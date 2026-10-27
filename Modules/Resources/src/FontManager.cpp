@@ -2,7 +2,7 @@
 #include "Resources/TextureArrayMgr.h"
 #include <fstream>
 
-void CoreResource::FontManager::load_font(std::filesystem::path font_folder_path, std::string source) {
+void Engine::Resource::FontManager::load_font(std::filesystem::path font_folder_path, std::string source) {
 	std::filesystem::path file_path;
 	std::string file_name;
 	std::string font_name = font_folder_path.filename().string();
@@ -45,10 +45,10 @@ void CoreResource::FontManager::load_font(std::filesystem::path font_folder_path
 	meta_file.close();
 
 	std::string font_UID = source + ":" + font_name;
-	TextureArrayManager::Instance().load_font_texture(sdf.data(), glyph_atlas_size, glyph_atlas_size, 1, font_UID);
+	Engine::Resource::TextureArrayManager::Instance().load_font_texture(sdf.data(), glyph_atlas_size, glyph_atlas_size, 1, font_UID);
 }
 
-std::optional<uint32_t> CoreResource::FontManager::get_font_id(std::string font_UID) {
+std::optional<uint32_t> Engine::Resource::FontManager::get_font_id(std::string font_UID) {
 	if (auto it = UID_to_ID.find(font_UID); it != UID_to_ID.end()) {
 		return it->second;
 	}
@@ -57,6 +57,6 @@ std::optional<uint32_t> CoreResource::FontManager::get_font_id(std::string font_
 	}
 }
 
-CoreResource::Font& CoreResource::FontManager::get_font(uint32_t font_id) {
+Engine::Resource::Font& Engine::Resource::FontManager::get_font(uint32_t font_id) {
 	return fonts[font_id];
 }

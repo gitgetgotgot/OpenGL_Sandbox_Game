@@ -1,7 +1,7 @@
 #pragma once
 #include "Objects/ObjectFactory.h"
 
-namespace CoreObject {
+namespace Engine::Object {
 	class ArmorInfo : public ObjectInfo {
 	public:
 		ArmorInfo(ObjectType type) : ObjectInfo(type) {}

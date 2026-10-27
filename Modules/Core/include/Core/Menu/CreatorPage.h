@@ -23,10 +23,10 @@ private:
 	void _choose_world_size_3();
 	void _choose_world_size_4();
 
-	CoreAudio::AudioSource button_click_sound;
-	CoreUI::UI_Canvas_Ptr canvas;
-	CoreUI::UI_Component_Ptr<CoreUI::InputField> world_input_field;
-	CoreUI::UI_Component_Ptr<CoreUI::Button> world_size_buttons[4];
+	Engine::Audio::AudioSource button_click_sound;
+	Engine::UI::UI_Canvas_Ptr canvas;
+	Engine::UI::UI_Component_Ptr<Engine::UI::InputField> world_input_field;
+	Engine::UI::UI_Component_Ptr<Engine::UI::Button> world_size_buttons[4];
 	uint32_t regular_button_sprite_id = 0;
 	uint32_t chosen_button_sprite_id = 0;
 	uint8_t world_size_id = 0; // small size by default

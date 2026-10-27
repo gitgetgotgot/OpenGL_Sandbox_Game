@@ -1,55 +1,55 @@
 #include "Resources/CoreTags.h"
 #include "Resources/TagRegistry.h"
 
-void CoreTags::register_core_tags() {
+void Engine::Resource::Tag::register_core_tags() {
 	//Block
-	TagID::IS_SOLID_BLOCK =		TagRegistry::get_instance().add_tag("Core:SolidBlock");
-	TagID::IS_WOOD =			TagRegistry::get_instance().add_tag("Core:Wood");
-	TagID::IS_TREE_TOP =		TagRegistry::get_instance().add_tag("Core:TreeTop");
-	TagID::IS_PLATFORM =		TagRegistry::get_instance().add_tag("Core:Platform");
-	TagID::IS_TORCH =			TagRegistry::get_instance().add_tag("Core:Torch");
-	TagID::IS_LIQUID =			TagRegistry::get_instance().add_tag("Core:Liquid"); //should probably make new Object for liquids later
-	TagID::IS_GRASS =			TagRegistry::get_instance().add_tag("Core:Grass");
-	TagID::IS_PLANT =			TagRegistry::get_instance().add_tag("Core:Plant");
-	TagID::IS_GLASS =			TagRegistry::get_instance().add_tag("Core:Glass");
-	TagID::IS_BOTTLE =			TagRegistry::get_instance().add_tag("Core:Bottle");
+	IS_SOLID_BLOCK =	TagRegistry::Instance().add_tag("Core:SolidBlock");
+	IS_WOOD =			TagRegistry::Instance().add_tag("Core:Wood");
+	IS_TREE_TOP =		TagRegistry::Instance().add_tag("Core:TreeTop");
+	IS_PLATFORM =		TagRegistry::Instance().add_tag("Core:Platform");
+	IS_TORCH =			TagRegistry::Instance().add_tag("Core:Torch");
+	IS_LIQUID =			TagRegistry::Instance().add_tag("Core:Liquid"); //should probably make new Object for liquids later
+	IS_GRASS =			TagRegistry::Instance().add_tag("Core:Grass");
+	IS_PLANT =			TagRegistry::Instance().add_tag("Core:Plant");
+	IS_GLASS =			TagRegistry::Instance().add_tag("Core:Glass");
+	IS_BOTTLE =			TagRegistry::Instance().add_tag("Core:Bottle");
 
 	//Multiblock
-	TagID::IS_WORKBENCH =		TagRegistry::get_instance().add_tag("Core:Workbench");
-	TagID::IS_FURNACE =			TagRegistry::get_instance().add_tag("Core:Furnace");
-	TagID::IS_CHEST =			TagRegistry::get_instance().add_tag("Core:Chest");
-	TagID::IS_DOOR =			TagRegistry::get_instance().add_tag("Core:Door");
-	TagID::IS_TABLE =			TagRegistry::get_instance().add_tag("Core:Table");
-	TagID::IS_CHAIR =			TagRegistry::get_instance().add_tag("Core:Chair");
-	TagID::IS_ANVIL =			TagRegistry::get_instance().add_tag("Core:Anvil");
-	TagID::IS_LAMP =			TagRegistry::get_instance().add_tag("Core:Lamp");
-	TagID::IS_CHANDELIER =		TagRegistry::get_instance().add_tag("Core:Chandelier");
-	TagID::IS_LIFE_CRYSTAL =	TagRegistry::get_instance().add_tag("Core:LyfeCrystal");
+	IS_WORKBENCH =		TagRegistry::Instance().add_tag("Core:Workbench");
+	IS_FURNACE =		TagRegistry::Instance().add_tag("Core:Furnace");
+	IS_CHEST =			TagRegistry::Instance().add_tag("Core:Chest");
+	IS_DOOR =			TagRegistry::Instance().add_tag("Core:Door");
+	IS_TABLE =			TagRegistry::Instance().add_tag("Core:Table");
+	IS_CHAIR =			TagRegistry::Instance().add_tag("Core:Chair");
+	IS_ANVIL =			TagRegistry::Instance().add_tag("Core:Anvil");
+	IS_LAMP =			TagRegistry::Instance().add_tag("Core:Lamp");
+	IS_CHANDELIER =		TagRegistry::Instance().add_tag("Core:Chandelier");
+	IS_LIFE_CRYSTAL =	TagRegistry::Instance().add_tag("Core:LyfeCrystal");
 
 	//Item
-	TagID::IS_COIN =			TagRegistry::get_instance().add_tag("Core:Coin");
+	IS_COIN =			TagRegistry::Instance().add_tag("Core:Coin");
 
 	//Ammo
-	TagID::IS_ARROW =			TagRegistry::get_instance().add_tag("Core:Arrow");
-	TagID::IS_BULLET =			TagRegistry::get_instance().add_tag("Core:Bullet");
+	IS_ARROW =			TagRegistry::Instance().add_tag("Core:Arrow");
+	IS_BULLET =			TagRegistry::Instance().add_tag("Core:Bullet");
 
 	//Weapon
-	TagID::IS_PICKAXE =			TagRegistry::get_instance().add_tag("Core:Pickaxe");
-	TagID::IS_SWORD =			TagRegistry::get_instance().add_tag("Core:Sword");
-	TagID::IS_PIERCING =		TagRegistry::get_instance().add_tag("Core:Piercing");
-	TagID::IS_AXE =				TagRegistry::get_instance().add_tag("Core:Axe");
-	TagID::IS_HAMMER =			TagRegistry::get_instance().add_tag("Core:Hammer");
-	TagID::IS_GUN =				TagRegistry::get_instance().add_tag("Core:Gun");
-	TagID::IS_SHOTGUN =			TagRegistry::get_instance().add_tag("Core:Shotgun");
-	TagID::IS_BOW =				TagRegistry::get_instance().add_tag("Core:Bow");
-	TagID::IS_THROWABLE =		TagRegistry::get_instance().add_tag("Core:Throwable");
-	TagID::IS_SPEAR =			TagRegistry::get_instance().add_tag("Core:Spear");
-	TagID::IS_MAGICAL =			TagRegistry::get_instance().add_tag("Core:Magical");
+	IS_PICKAXE =		TagRegistry::Instance().add_tag("Core:Pickaxe");
+	IS_SWORD =			TagRegistry::Instance().add_tag("Core:Sword");
+	IS_PIERCING =		TagRegistry::Instance().add_tag("Core:Piercing");
+	IS_AXE =			TagRegistry::Instance().add_tag("Core:Axe");
+	IS_HAMMER =			TagRegistry::Instance().add_tag("Core:Hammer");
+	IS_GUN =			TagRegistry::Instance().add_tag("Core:Gun");
+	IS_SHOTGUN =		TagRegistry::Instance().add_tag("Core:Shotgun");
+	IS_BOW =			TagRegistry::Instance().add_tag("Core:Bow");
+	IS_THROWABLE =		TagRegistry::Instance().add_tag("Core:Throwable");
+	IS_SPEAR =			TagRegistry::Instance().add_tag("Core:Spear");
+	IS_MAGICAL =		TagRegistry::Instance().add_tag("Core:Magical");
 
 	//Consumable
-	TagID::IS_POTION =			TagRegistry::get_instance().add_tag("Core:Potion");
-	TagID::IS_FOOD =			TagRegistry::get_instance().add_tag("Core:Food");
+	IS_POTION =			TagRegistry::Instance().add_tag("Core:Potion");
+	IS_FOOD =			TagRegistry::Instance().add_tag("Core:Food");
 
 	//Enemies
-	TagID::IS_SLIME =			TagRegistry::get_instance().add_tag("Core:Slime");
+	IS_SLIME =			TagRegistry::Instance().add_tag("Core:Slime");
 }

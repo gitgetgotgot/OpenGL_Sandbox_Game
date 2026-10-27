@@ -1,7 +1,7 @@
 #include "Objects/ObjectTypes/WeaponInfo.h"
 #include <Resources/ResourceErrors.h>
 
-void CoreObject::WeaponInfo::fill_data(const DataNode& data) {
+void Engine::Object::WeaponInfo::fill_data(const DataNode& data) {
 	ObjectInfo::fill_data(data);
 	try {
 		uint32_t damage = data["dmg"].get_as<uint32_t>();
@@ -27,7 +27,7 @@ void CoreObject::WeaponInfo::fill_data(const DataNode& data) {
 		this->use_mana_cost = use_mana_cost;
 	}
 	catch (const std::exception& e) {
-		ResourceLoading::throw_resource_error(uid, e.what());
+		Engine::Resource::throw_resource_error(uid, e.what());
 	}
 	/*auto& sounds_v = data["sounds"].array;
 	uint8_t size = sounds_v.size();

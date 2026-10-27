@@ -3,7 +3,7 @@
 #include <UI/UI_Object.h>
 #include <Utility/SparseSet.h>
 
-namespace CoreUI {
+namespace Engine::UI {
 	class UI_BehaviourEntry {
 	public:
 		UI_BehaviourEntry() = default;

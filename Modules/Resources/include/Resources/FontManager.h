@@ -6,7 +6,7 @@
 #include <optional>
 #include <cstdint>
 
-namespace CoreResource {
+namespace Engine::Resource {
 	struct Font {
 	public:
 		class GlyphData {

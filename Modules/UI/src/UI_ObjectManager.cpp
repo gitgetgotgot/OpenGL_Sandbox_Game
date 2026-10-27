@@ -1,13 +1,13 @@
 #include "UI/UI_ObjectManager.h"
-#include "UI/UI_ComponentManager.h"
+#include "UI/UI_CompManager.h"
 
-void CoreUI::UI_ObjectManager::ClearData() {
+void Engine::UI::UI_ObjectManager::ClearData() {
 	objects = {};
 	free_ids = {};
 	current_max_id = 1;
 }
 
-CoreUI::UI_Obj_Ptr CoreUI::UI_ObjectManager::add() {
+Engine::UI::UI_Obj_Ptr Engine::UI::UI_ObjectManager::add() {
 	uint32_t id;
 	if (!free_ids.empty()) {
 		id = free_ids.back();
@@ -19,34 +19,34 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_ObjectManager::add() {
 	return UI_Obj_Ptr(id);
 }
 
-bool CoreUI::UI_ObjectManager::remove(uint32_t ui_object_id) {
+bool Engine::UI::UI_ObjectManager::remove(uint32_t ui_object_id) {
 	bool deleted = objects.remove(ui_object_id);
 	if (deleted)
 		free_ids.emplace_back(ui_object_id);
 	return deleted;
 }
 
-CoreUI::UI_Object* CoreUI::UI_ObjectManager::get(uint32_t ui_object_id) {
+Engine::UI::UI_Object* Engine::UI::UI_ObjectManager::get(uint32_t ui_object_id) {
 	return objects.get(ui_object_id);
 }
 
-void CoreUI::UI_ObjectManager::mark_dirty_transform(uint32_t ui_object_id) {
+void Engine::UI::UI_ObjectManager::mark_dirty_transform(uint32_t ui_object_id) {
 	dirty_objects[ui_object_id].dirty_transform = true;
 }
 
-void CoreUI::UI_ObjectManager::mark_dirty_component(uint32_t ui_object_id) {
+void Engine::UI::UI_ObjectManager::mark_dirty_component(uint32_t ui_object_id) {
 	dirty_objects[ui_object_id].dirty_component = true;
 }
 
-void CoreUI::UI_ObjectManager::unmark_dirty_transform(uint32_t ui_object_id) {
+void Engine::UI::UI_ObjectManager::unmark_dirty_transform(uint32_t ui_object_id) {
 	dirty_objects[ui_object_id].dirty_transform = false;
 }
 
-void CoreUI::UI_ObjectManager::unmark_dirty_component(uint32_t ui_object_id) {
+void Engine::UI::UI_ObjectManager::unmark_dirty_component(uint32_t ui_object_id) {
 	dirty_objects[ui_object_id].dirty_component = false;
 }
 
-void CoreUI::UI_ObjectManager::update_dirty_objects() {
+void Engine::UI::UI_ObjectManager::update_dirty_objects() {
 	if (dirty_objects.empty()) return;
 	
 	for (auto& it : dirty_objects) {

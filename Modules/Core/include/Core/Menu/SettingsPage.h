@@ -24,16 +24,16 @@ private:
 	void set_music_volume(float volume);
 	void set_sfx_volume(float volume);
 private:
-	CoreUI::UI_Canvas_Ptr canvas;
+	Engine::UI::UI_Canvas_Ptr canvas;
 
-	CoreUI::UI_Component_Ptr<CoreUI::SDF_Text> resolution_text;
-	CoreUI::UI_Component_Ptr<CoreUI::SDF_Text> fullscreen_text;
-	CoreUI::UI_Component_Ptr<CoreUI::SDF_Text> vsync_text;
+	Engine::UI::UI_Component_Ptr<Engine::UI::SDF_Text> resolution_text;
+	Engine::UI::UI_Component_Ptr<Engine::UI::SDF_Text> fullscreen_text;
+	Engine::UI::UI_Component_Ptr<Engine::UI::SDF_Text> vsync_text;
 
-	CoreUI::UI_Component_Ptr<CoreUI::ScrollBar> volume_slider_master;
-	CoreUI::UI_Component_Ptr<CoreUI::ScrollBar> volume_slider_sfx;
-	CoreUI::UI_Component_Ptr<CoreUI::ScrollBar> volume_slider_music;
+	Engine::UI::UI_Component_Ptr<Engine::UI::ScrollBar> volume_slider_master;
+	Engine::UI::UI_Component_Ptr<Engine::UI::ScrollBar> volume_slider_sfx;
+	Engine::UI::UI_Component_Ptr<Engine::UI::ScrollBar> volume_slider_music;
 
 	TextBufferBuilder text_builder;
-	CoreAudio::AudioSource button_click_sound;
+	Engine::Audio::AudioSource button_click_sound;
 };

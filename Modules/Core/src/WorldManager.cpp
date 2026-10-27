@@ -35,7 +35,7 @@ void WorldManager::update() {
 	if (active_world) active_world->update();
 }
 
-void WorldManager::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
+void WorldManager::render(std::unique_ptr<Engine::Graphics::OpenGL_Renderer>& renderer) {
 	if (active_world) active_world->render(renderer);
 }
 
@@ -77,7 +77,7 @@ void WorldManager::_world_generator(const std::string& name, const World::WorldO
 	}
 
 	WorldSlot* world_slots = new WorldSlot[width * height];
-	std::unordered_map<uint32_t, std::unique_ptr<CoreObject::ObjectComponent>> components;
+	std::unordered_map<uint32_t, std::unique_ptr<Engine::Object::ObjectComponent>> components;
 
 	_build_world(width, height, world_slots, components);
 
@@ -121,7 +121,7 @@ void WorldManager::_world_loader(const std::filesystem::path& save_file_path) {
 			std::string UID;
 			UID.resize(UID_size);
 			in.read(UID.data(), UID_size);
-			auto correct_ID = CoreObject::ObjectManager::get_instance().get_object_id(UID);
+			auto correct_ID = Engine::Object::ObjectManager::Instance().get_object_id(UID);
 			if (correct_ID.has_value()) {
 				table[i] = correct_ID.value();
 			}
@@ -155,7 +155,7 @@ void WorldManager::_world_saver(const std::filesystem::path& save_file_path) {
 void WorldManager::_build_world(
 	uint16_t world_width, uint16_t world_height,
 	WorldSlot* world_slots,
-	std::unordered_map<uint32_t, std::unique_ptr<CoreObject::ObjectComponent>>& components
+	std::unordered_map<uint32_t, std::unique_ptr<Engine::Object::ObjectComponent>>& components
 ) {
 	// build simple flat world for now
 	/*
@@ -254,9 +254,9 @@ void WorldManager::_build_world(
 	}
 	*/
 
-	uint16_t stone_tile_id = CoreObject::ObjectManager::get_instance().get_object_id("Item:Core:Stone").value();
-	uint16_t dirt_tile_id = CoreObject::ObjectManager::get_instance().get_object_id("Item:Core:Dirt").value();
-	uint16_t grass_dirt_tile_id = CoreObject::ObjectManager::get_instance().get_object_id("Item:Core:Grass Dirt").value();
+	uint16_t stone_tile_id = Engine::Object::ObjectManager::Instance().get_object_id("Item:Core:Stone").value();
+	uint16_t dirt_tile_id = Engine::Object::ObjectManager::Instance().get_object_id("Item:Core:Dirt").value();
+	uint16_t grass_dirt_tile_id = Engine::Object::ObjectManager::Instance().get_object_id("Item:Core:Grass Dirt").value();
 
 	uint16_t ground_height = uint16_t(float(world_height) * 0.75f); //world ground is 75% of world height
 	uint16_t dirt_layer_height = 5;
@@ -288,7 +288,7 @@ void WorldManager::_save_world_data(
 	const std::string& name,
 	const uint16_t world_width, const uint16_t world_height,
 	const WorldSlot* world_slots,
-	const std::unordered_map<uint32_t, std::unique_ptr<CoreObject::ObjectComponent>>& components
+	const std::unordered_map<uint32_t, std::unique_ptr<Engine::Object::ObjectComponent>>& components
 ) {
 	std::filesystem::path root = RESOURCE_ROOT;
 	std::filesystem::path saves_path = root / "Saves";
@@ -314,7 +314,7 @@ void WorldManager::_save_world_data(
 
 		// 1. write ID_to_UID table
 		std::vector<std::string_view> ID_to_UID_table;
-		CoreObject::ObjectManager::get_instance().build_ID_to_UID_table(ID_to_UID_table);
+		Engine::Object::ObjectManager::Instance().build_ID_to_UID_table(ID_to_UID_table);
 
 		uint32_t table_size = ID_to_UID_table.size();
 		out.write(reinterpret_cast<const char*>(&table_size), sizeof(uint32_t));

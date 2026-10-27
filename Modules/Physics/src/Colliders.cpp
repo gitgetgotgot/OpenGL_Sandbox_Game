@@ -2,13 +2,13 @@
 #include <algorithm>
 #include <glm/ext/matrix_transform.hpp>
 
-void Collider_2D_OBB::update_transform() {
+void Engine::Physics::Collider_2D_OBB::update_transform() {
 	transformMatrix = glm::mat4(1.f);
 	transformMatrix = glm::translate(transformMatrix, glm::vec3(center.x, center.y, 0.f));
 	transformMatrix = glm::rotate(transformMatrix, glm::radians(angle), glm::vec3(0.f, 0.f, 1.f));
 }
 
-bool Collisions::checkCollisionAABB(Collider_2D_AABB& c1, Collider_2D_AABB& c2) {
+bool Engine::Physics::Collisions::checkCollisionAABB(Collider_2D_AABB& c1, Collider_2D_AABB& c2) {
 	float h1Left = c1.center.x - c1.size.x * 0.5f;
 	float h1Right = h1Left + c1.size.x;
 	float h2Left = c2.center.x - c2.size.x * 0.5f;
@@ -28,7 +28,7 @@ bool Collisions::checkCollisionAABB(Collider_2D_AABB& c1, Collider_2D_AABB& c2) 
 	return false;
 }
 
-CollisionType Collisions::getTypeCollisionAABBwithBlock(Collider_2D_AABB& c1, int column, int line) {
+Engine::Physics::CollisionType Engine::Physics::Collisions::getTypeCollisionAABBwithBlock(Collider_2D_AABB& c1, int column, int line) {
 	float h1Left = c1.center.x - c1.size.x * 0.5f;
 	float h1Right = h1Left + c1.size.x;
 	float h2Left = column;
@@ -66,7 +66,7 @@ CollisionType Collisions::getTypeCollisionAABBwithBlock(Collider_2D_AABB& c1, in
 	return NONE;
 }
 
-CollisionType Collisions::getTypeCollisionAABB(Collider_2D_AABB& c1, Collider_2D_AABB& c2) {
+Engine::Physics::CollisionType Engine::Physics::Collisions::getTypeCollisionAABB(Collider_2D_AABB& c1, Collider_2D_AABB& c2) {
 	float h1Left = c1.center.x - c1.size.x * 0.5f;
 	float h1Right = h1Left + c1.size.x;
 	float h2Left = c2.center.x - c2.size.x * 0.5f;
@@ -104,7 +104,7 @@ CollisionType Collisions::getTypeCollisionAABB(Collider_2D_AABB& c1, Collider_2D
 	return NONE;
 }
 
-void Collisions::projectOnAxis(glm::vec2* pos, glm::vec2& axis, float& min, float& max) {
+void Engine::Physics::Collisions::projectOnAxis(glm::vec2* pos, glm::vec2& axis, float& min, float& max) {
 	min = max = glm::dot(pos[0], axis);
 	for (int i = 1; i < 4; i++) {
 		float projection = glm::dot(pos[i], axis);
@@ -113,14 +113,14 @@ void Collisions::projectOnAxis(glm::vec2* pos, glm::vec2& axis, float& min, floa
 	}
 }
 
-bool Collisions::checkOverlapOnAxis(glm::vec2* verticesA, glm::vec2* verticesB, glm::vec2& axis) {
+bool Engine::Physics::Collisions::checkOverlapOnAxis(glm::vec2* verticesA, glm::vec2* verticesB, glm::vec2& axis) {
 	float minA, maxA, minB, maxB;
 	projectOnAxis(verticesA, axis, minA, maxA);
 	projectOnAxis(verticesB, axis, minB, maxB);
 	return !(maxA < minB || maxB < minA);
 }
 
-bool Collisions::checkCollision_AABB_with_OBB(Collider_2D_AABB& c1, Collider_2D_OBB& c2) {
+bool Engine::Physics::Collisions::checkCollision_AABB_with_OBB(Collider_2D_AABB& c1, Collider_2D_OBB& c2) {
 	glm::vec2 vertices1[4], vertices2[4];
 
 	float leftX = c1.center.x - c1.size.x * 0.5f;
@@ -157,7 +157,7 @@ bool Collisions::checkCollision_AABB_with_OBB(Collider_2D_AABB& c1, Collider_2D_
 	return true;
 }
 
-bool Collisions::checkCollisionOBB(Collider_2D_OBB& c1, Collider_2D_OBB& c2) {
+bool Engine::Physics::Collisions::checkCollisionOBB(Collider_2D_OBB& c1, Collider_2D_OBB& c2) {
 	glm::vec2 vertices1[4], vertices2[4];
 
 	float leftX = -c1.size.x * 0.5f;

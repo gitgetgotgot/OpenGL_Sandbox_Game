@@ -1,7 +1,7 @@
 #pragma once
 #include "Entities/EntityInfo.h"
 
-namespace CoreEntity {
+namespace Engine::Entity {
 	class EntityInfoFactoryI {
 	public:
 		virtual ~EntityInfoFactoryI() {}
@@ -28,7 +28,7 @@ namespace CoreEntity {
 
 	class EntityInfoFactoryRegistry {
 	public:
-		static EntityInfoFactoryRegistry& get_instance() {
+		static EntityInfoFactoryRegistry& Instance() {
 			static EntityInfoFactoryRegistry registry;
 			return registry;
 		}

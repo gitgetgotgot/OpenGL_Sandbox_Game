@@ -2,10 +2,10 @@
 #include "Objects/ObjectInfo.h"
 #include <deque>
 
-namespace CoreObject {
+namespace Engine::Object {
 	class ObjectManager {
 	public:
-		static ObjectManager& get_instance() {
+		static ObjectManager& Instance() {
 			static ObjectManager mgr;
 			return mgr;
 		}
@@ -17,6 +17,7 @@ namespace CoreObject {
 			objects.emplace_back(std::make_unique<ClassInfoT>(MAIN_TYPE)).get()->_set_UID(uid_view);
 		}
 		ObjectInfo* register_object_info(std::unique_ptr<ObjectInfo> new_object_info, const std::string& UID);
+		void setup();
 		void ClearData();
 		ObjectInfo* get_object_info(uint16_t ID);
 		std::optional<uint16_t> get_object_id(std::string_view UID);

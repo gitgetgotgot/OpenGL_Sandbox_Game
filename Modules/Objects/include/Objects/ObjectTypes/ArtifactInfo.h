@@ -1,7 +1,7 @@
 #pragma once
 #include "Objects/ObjectFactory.h"
 
-namespace CoreObject {
+namespace Engine::Object {
 	class ArtifactInfo : public ObjectInfo {
 	public:
 		ArtifactInfo(ObjectType type) : ObjectInfo(type) {}

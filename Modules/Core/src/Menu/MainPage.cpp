@@ -64,48 +64,48 @@ void MainPage::enable(bool state) {
 }
 
 void MainPage::setup_page() {
-	canvas = CoreUI::UI_Creator::create_canvas();
+	canvas = Engine::UI::UI_Creator::create_canvas();
 
-	uint32_t stone_wall_sprite_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:UI_StoneWall").value();
-	uint32_t frame0_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:UI_Frame0").value();
+	uint32_t stone_wall_sprite_id = Engine::Resource::SpriteManager::Instance().get_sprite_id("Core:UI_StoneWall").value();
+	uint32_t frame0_id = Engine::Resource::SpriteManager::Instance().get_sprite9sliced_id("Core:UI_Frame0").value();
 
-	auto background = CoreUI::UI_Creator::create_tiled_image(
+	auto background = Engine::UI::UI_Creator::create_tiled_image(
 		stone_wall_sprite_id, glm::vec2(4.0, 2.0f), glm::vec2(0.0f), glm::vec2(4.0f, 2.0f), glm::vec4(0.7f, 0.7f, 0.7f, 1.0f)
 	);
-	auto fps_label = CoreUI::UI_Creator::create_SDF_text(
+	auto fps_label = Engine::UI::UI_Creator::create_SDF_text(
 		glm::vec2(0.05f, 0.05f), glm::vec2(-SystemContext::display.ratio + 0.05f, 0.95f), "fps", glm::vec4(1.0f), 0.05f
 	);
-	FPS_text = fps_label->get_component<CoreUI::SDF_Text>();
+	FPS_text = fps_label->get_component<Engine::UI::SDF_Text>();
 
 	// tooltip for loading resources
-	tooltip_load_res_obj = CoreUI::UI_Creator::create_image9sliced(
+	tooltip_load_res_obj = Engine::UI::UI_Creator::create_image9sliced(
 		frame0_id, glm::vec2(1.5f, 0.5f), glm::vec2(0.0f), glm::vec4(1.0f)
 	);
-	auto loading_label = CoreUI::UI_Creator::create_SDF_text(
+	auto loading_label = Engine::UI::UI_Creator::create_SDF_text(
 		glm::vec2(1.4f, 0.1f), glm::vec2(0.0f, 0.0f), "", glm::vec4(1.0f), 0.08f
 	);
 	tooltip_load_res_obj.add_child(loading_label);
-	tooltip_load_res.loading_text = loading_label->get_component<CoreUI::SDF_Text>();
+	tooltip_load_res.loading_text = loading_label->get_component<Engine::UI::SDF_Text>();
 
 	// tooltip for generating world
-	tooltip_gen_world_obj = CoreUI::UI_Creator::create_image9sliced(
+	tooltip_gen_world_obj = Engine::UI::UI_Creator::create_image9sliced(
 		frame0_id, glm::vec2(1.5f, 0.5f), glm::vec2(0.0f), glm::vec4(1.0f)
 	);
-	auto loading_label2 = CoreUI::UI_Creator::create_SDF_text(
+	auto loading_label2 = Engine::UI::UI_Creator::create_SDF_text(
 		glm::vec2(1.4f, 0.1f), glm::vec2(0.0f, 0.0f), "", glm::vec4(1.0f), 0.08f
 	);
 	tooltip_gen_world_obj.add_child(loading_label2);
-	tooltip_gen_world.loading_text = loading_label2->get_component<CoreUI::SDF_Text>();
+	tooltip_gen_world.loading_text = loading_label2->get_component<Engine::UI::SDF_Text>();
 
 	// tooltip for loading world
-	tooltip_load_world_obj = CoreUI::UI_Creator::create_image9sliced(
+	tooltip_load_world_obj = Engine::UI::UI_Creator::create_image9sliced(
 		frame0_id, glm::vec2(1.5f, 0.5f), glm::vec2(0.0f), glm::vec4(1.0f)
 	);
-	auto loading_label3 = CoreUI::UI_Creator::create_SDF_text(
+	auto loading_label3 = Engine::UI::UI_Creator::create_SDF_text(
 		glm::vec2(1.4f, 0.1f), glm::vec2(0.0f, 0.0f), "", glm::vec4(1.0f), 0.08f
 	);
 	tooltip_load_world_obj.add_child(loading_label3);
-	tooltip_load_world.loading_text = loading_label3->get_component<CoreUI::SDF_Text>();
+	tooltip_load_world.loading_text = loading_label3->get_component<Engine::UI::SDF_Text>();
 
 	canvas->add_object(background);
 	canvas->add_object(fps_label);

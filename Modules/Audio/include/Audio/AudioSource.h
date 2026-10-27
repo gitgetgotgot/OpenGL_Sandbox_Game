@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <string>
 
-namespace CoreAudio {
+namespace Engine::Audio {
 	class AudioSource {
 	public:
 		AudioSource() = default;

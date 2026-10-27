@@ -1,13 +1,13 @@
 #include "Objects/ObjectTypes/AmmoInfo.h"
 #include <Resources/ResourceErrors.h>
 
-void CoreObject::AmmoInfo::fill_data(const DataNode& data) {
+void Engine::Object::AmmoInfo::fill_data(const DataNode& data) {
 	ObjectInfo::fill_data(data);
 	try {
 		uint32_t damage = data["dmg"].get_as<uint32_t>();
 		this->damage = damage;
 	}
 	catch (const std::exception& e) {
-		ResourceLoading::throw_resource_error(uid, e.what());
+		Engine::Resource::throw_resource_error(uid, e.what());
 	}
 }

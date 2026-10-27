@@ -13,5 +13,5 @@ public:
 private:
 	MainMenuPage() = default;
 	~MainMenuPage() = default;
-	CoreUI::UI_Canvas_Ptr canvas;
+	Engine::UI::UI_Canvas_Ptr canvas;
 };

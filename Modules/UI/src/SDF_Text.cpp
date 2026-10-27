@@ -2,21 +2,21 @@
 #include "UI/UI_ObjectManager.h"
 #include <Resources/FontManager.h>
 
-void CoreUI::SDF_Text::_update_buffer_data(UI_RenderContext& c, UI_RenderState& s) {
+void Engine::UI::SDF_Text::_update_buffer_data(UI_RenderContext& c, UI_RenderState& s) {
 	if (text.empty()) return;
 	size_t text_size = text.size();
 	update_render_queue(c, s, 6 * text_size);
 	c.sdf_text_buffer.insert(c.sdf_text_buffer.end(), text_vertices.begin(), text_vertices.begin() + text_size * 4);
 }
 
-void CoreUI::SDF_Text::_update_data() {
+void Engine::UI::SDF_Text::_update_data() {
 	is_dirty = false;
 	if (text.empty()) return;
 	UI_Object* obj = UI_ObjectManager::get_instance().get(object_id);
 
 	if (dirty_mask & TextMask::TEXT_TRANSFORM) {
 		UI_Transform& tr = obj->transform;
-		CoreResource::Font& font = CoreResource::FontManager::Instance().get_font(text_font_id);
+		Engine::Resource::Font& font = Engine::Resource::FontManager::Instance().get_font(text_font_id);
 		size_t text_size = text.size();
 
 		// get text lines
@@ -111,7 +111,7 @@ void CoreUI::SDF_Text::_update_data() {
 					x_offset += font.glyphsData[0].advance_normalized * text_height * 4.0f;
 					continue;
 				}
-				CoreResource::Font::GlyphData& glyph = font.glyphsData[(uint32_t)c - 32U];
+				Engine::Resource::Font::GlyphData& glyph = font.glyphsData[(uint32_t)c - 32U];
 
 				x0 = start_x + x_offset + glyph.bearingX_normalized * text_height;
 				x1 = x0 + glyph.width_normalized * text_height;
@@ -140,47 +140,47 @@ void CoreUI::SDF_Text::_update_data() {
 	dirty_mask = TextMask::TEXT_CLEAN;
 }
 
-void CoreUI::SDF_Text::set_text(std::string& text) {
+void Engine::UI::SDF_Text::set_text(std::string& text) {
 	this->text = text;
 	mark_dirty();
 	dirty_mask |= TextMask::TEXT_TRANSFORM;
 }
 
-void CoreUI::SDF_Text::set_text(std::string_view text) {
+void Engine::UI::SDF_Text::set_text(std::string_view text) {
 	this->text = text;
 	mark_dirty();
 	dirty_mask |= TextMask::TEXT_TRANSFORM;
 }
 
-void CoreUI::SDF_Text::set_text(const char* text) {
+void Engine::UI::SDF_Text::set_text(const char* text) {
 	this->text = text;
 	mark_dirty();
 	dirty_mask |= TextMask::TEXT_TRANSFORM;
 }
 
-void CoreUI::SDF_Text::set_text_height(float height) {
+void Engine::UI::SDF_Text::set_text_height(float height) {
 	text_height = height;
 	mark_dirty();
 	dirty_mask |= TextMask::TEXT_TRANSFORM;
 }
 
-void CoreUI::SDF_Text::set_color(float r, float g, float b, float a) {
+void Engine::UI::SDF_Text::set_color(float r, float g, float b, float a) {
 	color.x = r; color.y = g; color.z = b; color.w = a;
 	mark_dirty();
 	dirty_mask |= TextMask::TEXT_COLOR;
 }
 
-void CoreUI::SDF_Text::set_color(glm::vec4 color) {
+void Engine::UI::SDF_Text::set_color(glm::vec4 color) {
 	set_color(color.x, color.y, color.z, color.w);
 }
 
-void CoreUI::SDF_Text::set_alignment(TextHorizAlign horiz, TextVertAlign vert) {
+void Engine::UI::SDF_Text::set_alignment(TextHorizAlign horiz, TextVertAlign vert) {
 	align_horizontal = horiz; align_vertical = vert;
 	mark_dirty();
 	dirty_mask |= TextMask::TEXT_TRANSFORM;
 }
 
-void CoreUI::SDF_Text::force_update() {
+void Engine::UI::SDF_Text::force_update() {
 	if (is_dirty) {
 		_update_data();
 		UI_ObjectManager::get_instance().unmark_dirty_component(object_id);
@@ -188,21 +188,21 @@ void CoreUI::SDF_Text::force_update() {
 	}
 }
 
-void CoreUI::SDF_Text::add_char_to_text(const char c, uint32_t pos) {
+void Engine::UI::SDF_Text::add_char_to_text(const char c, uint32_t pos) {
 	text.insert(text.begin() + pos, c);
 	mark_dirty();
 	dirty_mask |= TextMask::TEXT_TRANSFORM;
 }
 
-void CoreUI::SDF_Text::remove_char_from_text(uint32_t pos) {
+void Engine::UI::SDF_Text::remove_char_from_text(uint32_t pos) {
 	text.erase(text.begin() + pos);
 	mark_dirty();
 	dirty_mask |= TextMask::TEXT_TRANSFORM;
 }
 
-float CoreUI::SDF_Text::get_char_offset(uint32_t char_index) {
+float Engine::UI::SDF_Text::get_char_offset(uint32_t char_index) {
 	if (text.empty()) return text_height * 0.1f;
-	CoreResource::Font& font = CoreResource::FontManager::Instance().get_font(text_font_id);
+	Engine::Resource::Font& font = Engine::Resource::FontManager::Instance().get_font(text_font_id);
 	float offset = font.glyphsData[(uint32_t)text[0] - 32U].bearingX_normalized * text_height + text_height * 0.1f;
 	for (uint32_t i = 0; i < char_index; i++) {
 		offset += font.glyphsData[(uint32_t)text[i] - 32U].advance_normalized * text_height;

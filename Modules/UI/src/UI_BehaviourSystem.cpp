@@ -1,5 +1,5 @@
 #include "UI/UI_BehaviourSystem.h"
-#include "UI/UI_ComponentManager.h"
+#include "UI/UI_CompManager.h"
 #include "UI/UI_ObjectManager.h"
 #include "UI/InputField.h"
 #include "UI/Button.h"
@@ -10,7 +10,7 @@
 #include <Utility/TimeManager.h>
 #include <algorithm>
 
-void CoreUI::UI_BehaviourSystem::update(UI_RenderContext& ctx) {
+void Engine::UI::UI_BehaviourSystem::update(UI_RenderContext& ctx) {
 	bool raycast_is_captured = false;
 	focus_changed_in_frame = false;
 	prev_focused_id = focused_component_id;
@@ -93,19 +93,19 @@ void CoreUI::UI_BehaviourSystem::update(UI_RenderContext& ctx) {
 		focused_component_id = 0;
 }
 
-CoreUI::UI_BehaviourEntry* CoreUI::UI_BehaviourSystem::add(uint32_t ui_object_id, void* ptr, UI_Behaviour_VTable* vt) {
+Engine::UI::UI_BehaviourEntry* Engine::UI::UI_BehaviourSystem::add(uint32_t ui_object_id, void* ptr, UI_Behaviour_VTable* vt) {
 	return behaviours.add(UI_BehaviourEntry(ptr, vt), ui_object_id);
 }
 
-CoreUI::UI_BehaviourEntry* CoreUI::UI_BehaviourSystem::get(uint32_t ui_object_id) {
+Engine::UI::UI_BehaviourEntry* Engine::UI::UI_BehaviourSystem::get(uint32_t ui_object_id) {
 	return behaviours.get(ui_object_id);
 }
 
-bool CoreUI::UI_BehaviourSystem::remove(uint32_t ui_object_id) {
+bool Engine::UI::UI_BehaviourSystem::remove(uint32_t ui_object_id) {
 	return behaviours.remove(ui_object_id);
 }
 
-void CoreUI::UI_BehaviourSystem::process_BUTTON_event(UI_ComponentBase*& comp_base, bool& pointed_now) {
+void Engine::UI::UI_BehaviourSystem::process_BUTTON_event(UI_ComponentBase*& comp_base, bool& pointed_now) {
 	auto btn = static_cast<Button*>(comp_base);
 	// on hover
 	if (pointed_now && !btn->_is_pointed) {
@@ -132,7 +132,7 @@ void CoreUI::UI_BehaviourSystem::process_BUTTON_event(UI_ComponentBase*& comp_ba
 	}
 }
 
-void CoreUI::UI_BehaviourSystem::process_INPUT_FIELD_event(UI_ComponentBase* comp_base, bool& pointed_now) {
+void Engine::UI::UI_BehaviourSystem::process_INPUT_FIELD_event(UI_ComponentBase* comp_base, bool& pointed_now) {
 	auto field = static_cast<InputField*>(comp_base);
 	// lose focus
 	if (SystemContext::mouse.lb_is_pressed() && !pointed_now && prev_focused_id == comp_base->object_id) {
@@ -168,7 +168,7 @@ void CoreUI::UI_BehaviourSystem::process_INPUT_FIELD_event(UI_ComponentBase* com
 	}
 }
 
-void CoreUI::UI_BehaviourSystem::process_SCROLL_VIEW_event(UI_ComponentBase*& comp_base, bool& pointed_now) {
+void Engine::UI::UI_BehaviourSystem::process_SCROLL_VIEW_event(UI_ComponentBase*& comp_base, bool& pointed_now) {
 	if (pointed_now && SystemContext::mouse.wheel_offset != 0) {
 
 		auto scroll_view = static_cast<ScrollView*>(comp_base);
@@ -202,7 +202,7 @@ void CoreUI::UI_BehaviourSystem::process_SCROLL_VIEW_event(UI_ComponentBase*& co
 	}
 }
 
-void CoreUI::UI_BehaviourSystem::process_SCROLL_BAR_event(UI_ComponentBase*& comp_base, bool& pointed_now) {
+void Engine::UI::UI_BehaviourSystem::process_SCROLL_BAR_event(UI_ComponentBase*& comp_base, bool& pointed_now) {
 	auto scroll_bar = static_cast<ScrollBar*>(comp_base);
 
 	if (scroll_bar->scroll_mode == ScrollBar::ScrollMode::SLIDER_MODE) {

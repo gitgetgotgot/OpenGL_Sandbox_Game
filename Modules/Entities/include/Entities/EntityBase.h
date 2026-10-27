@@ -2,7 +2,7 @@
 #include <Resources/Animation.h>
 #include <Utility/EntityData.h>
 
-namespace CoreEntity {
+namespace Engine::Entity {
 	class EntityBase {
 	public:
 		EntityBase(uint32_t entity_id) : entity_id{ entity_id } {}
@@ -14,6 +14,6 @@ namespace CoreEntity {
 		uint32_t entity_id = 0;
 		bool flip_x = false;
 		Transform transform;
-		CoreResource::Sprite* current_sprite = nullptr;
+		Engine::Resource::Sprite* current_sprite = nullptr;
 	};
 }

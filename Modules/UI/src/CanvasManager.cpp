@@ -1,19 +1,19 @@
 #include "UI/CanvasManager.h"
 
-void CoreUI::CanvasManager::ClearData() {
+void Engine::UI::CanvasManager::ClearData() {
 	canvases = {};
 }
 
-CoreUI::UI_Canvas_Ptr CoreUI::CanvasManager::add() {
+Engine::UI::UI_Canvas_Ptr Engine::UI::CanvasManager::add() {
 	uint32_t id = canvases.size();
 	canvases.emplace_back();
 	return UI_Canvas_Ptr(id);
 }
 
-CoreUI::Canvas* CoreUI::CanvasManager::get(uint32_t id) {
+Engine::UI::Canvas* Engine::UI::CanvasManager::get(uint32_t id) {
 	return &canvases[id];
 }
 
-std::vector<CoreUI::Canvas>& CoreUI::CanvasManager::get_canvases() {
+std::vector<Engine::UI::Canvas>& Engine::UI::CanvasManager::get_canvases() {
 	return canvases;
 }

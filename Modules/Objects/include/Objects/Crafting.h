@@ -44,7 +44,7 @@ public:
 		return sys;
 	}
 	void ClearData();
-	void update_available_crafts(InventorySlot* inventory_slots_ptr, uint32_t slots_size, uint32_t player_flags);
+	void update_available_crafts(Engine::Resource::InventorySlot* inventory_slots_ptr, uint32_t slots_size, uint32_t player_flags);
 	void add(uint16_t item_id, uint16_t amount, CraftCondition condition, std::vector<CraftingPair> items_needed);
 	CraftableItem& get_available_craft(uint32_t index);
 

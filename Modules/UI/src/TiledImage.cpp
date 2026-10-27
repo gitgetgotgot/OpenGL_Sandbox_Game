@@ -2,13 +2,13 @@
 #include "UI/UI_ObjectManager.h"
 #include <Resources/Sprite.h>
 
-void CoreUI::TiledImage::_update_buffer_data(UI_RenderContext& c, UI_RenderState& s) {
+void Engine::UI::TiledImage::_update_buffer_data(UI_RenderContext& c, UI_RenderState& s) {
 	if (sprite_ID == 0) return;
 	update_render_queue(c, s, 6);
 	c.sprites_buffer.insert(c.sprites_buffer.end(), image_vertices, image_vertices + 4);
 }
 
-void CoreUI::TiledImage::_update_data() {
+void Engine::UI::TiledImage::_update_data() {
 	is_dirty = false;
 	if (sprite_ID == 0) return;
 
@@ -25,7 +25,7 @@ void CoreUI::TiledImage::_update_data() {
 		image_vertices[3].pos = { x + size_x, y };
 	}
 	if (dirty_mask & TiledImageMask::TILED_IMAGE_SPRITE) {
-		CoreResource::Sprite& s = CoreResource::SpriteManager::Instance().get_sprite(sprite_ID);
+		Engine::Resource::Sprite& s = Engine::Resource::SpriteManager::Instance().get_sprite(sprite_ID);
 		UI_Vertex2f& v1 = image_vertices[0];	v1.tex_array_id = s.tex_array_id; v1.tex_id = s.tex_id;
 		UI_Vertex2f& v2 = image_vertices[1];	v2.tex_array_id = s.tex_array_id; v2.tex_id = s.tex_id;
 		UI_Vertex2f& v3 = image_vertices[2];	v3.tex_array_id = s.tex_array_id; v3.tex_id = s.tex_id;
@@ -46,23 +46,23 @@ void CoreUI::TiledImage::_update_data() {
 	dirty_mask = TiledImageMask::TILED_IMAGE_CLEAN;
 }
 
-void CoreUI::TiledImage::set_sprite(uint32_t sprite_ID) {
+void Engine::UI::TiledImage::set_sprite(uint32_t sprite_ID) {
 	this->sprite_ID = sprite_ID;
 	mark_dirty();
 	dirty_mask |= TiledImageMask::TILED_IMAGE_SPRITE;
 }
 
-void CoreUI::TiledImage::set_color(glm::vec4& color) {
+void Engine::UI::TiledImage::set_color(glm::vec4& color) {
 	this->image_color = color;
 	mark_dirty();
 	dirty_mask |= TiledImageMask::TILED_IMAGE_COLOR;
 }
 
-void CoreUI::TiledImage::set_flip(bool X, bool Y) {
+void Engine::UI::TiledImage::set_flip(bool X, bool Y) {
 
 }
 
-void CoreUI::TiledImage::set_tile(float width, float height) {
+void Engine::UI::TiledImage::set_tile(float width, float height) {
 	tile.x = width, tile.y = height;
 	mark_dirty();
 	dirty_mask |= TiledImageMask::TILED_IMAGE_TILE;

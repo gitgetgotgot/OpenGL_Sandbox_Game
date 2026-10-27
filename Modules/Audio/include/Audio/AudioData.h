@@ -2,7 +2,7 @@
 #include <filesystem>
 #include <miniaudio.h>
 
-namespace CoreAudio {
+namespace Engine::Audio {
     constexpr uint32_t AUDIO_MAX_SOUNDS = 64;
     constexpr uint32_t AUDIO_STREAM_MAX_SOUNDS = 8;
 

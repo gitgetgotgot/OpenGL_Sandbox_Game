@@ -2,7 +2,7 @@
 #include "UI/UI_Comp_Ptr.h"
 #include <Utility/DynamicArray.h>
 
-namespace CoreUI {
+namespace Engine::UI {
 	class Image : public UI_Component<Image> {
 	public:
 		enum ImageMask : uint8_t {

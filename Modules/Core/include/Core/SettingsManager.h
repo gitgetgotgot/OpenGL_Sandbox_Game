@@ -25,9 +25,9 @@ public:
 	bool is_vsync_on() const { return vsync_on; }
 	uint32_t get_res_index() const { return current_resolution_index; }
 private:
-	CoreAudio::AudioGroupMixer mixer_ui;
-	CoreAudio::AudioGroupMixer mixer_music;
-	CoreAudio::AudioGroupMixer mixer_sfx;
+	Engine::Audio::AudioGroupMixer mixer_ui;
+	Engine::Audio::AudioGroupMixer mixer_music;
+	Engine::Audio::AudioGroupMixer mixer_sfx;
 
 	bool fullscreen = false;
 	bool vsync_on = true;

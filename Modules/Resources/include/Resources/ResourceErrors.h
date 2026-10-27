@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-namespace ResourceLoading {
+namespace Engine::Resource {
 	inline void throw_reference_error(std::string_view item_uid, std::string_view resource_uid) {
 		std::string msg;
 		msg.reserve(item_uid.size() + resource_uid.size() + 64);

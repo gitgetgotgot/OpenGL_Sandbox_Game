@@ -15,15 +15,15 @@ class SaveElement {
 public:
 	SaveElement() = default;
 	SaveElement(SaveData& data);
-	void connect_with_UI_element(CoreUI::UI_Obj_Ptr& ui_element);
+	void connect_with_UI_element(Engine::UI::UI_Obj_Ptr& ui_element);
 	void _delete_world_save();
 	void _save_world();
 	void _load_world_save();
 	std::filesystem::path file_path;
 	std::string save_name;
-	inline static CoreAudio::AudioSource button_click_sound;
+	inline static Engine::Audio::AudioSource button_click_sound;
 private:
-	CoreUI::UI_Obj_Ptr ui_element;
+	Engine::UI::UI_Obj_Ptr ui_element;
 };
 
 class SavesPage {
@@ -38,14 +38,14 @@ public:
 	void load_saves();
 	// this method used in world creator
 	void load_save(const std::string& save_name);
-	CoreUI::UI_Obj_Ptr add_UI_save_element(SaveElement& save);
+	Engine::UI::UI_Obj_Ptr add_UI_save_element(SaveElement& save);
 	bool world_save_exists(std::string& save_name);
 private:
 	SavesPage() = default;
 	~SavesPage() = default;
-	CoreUI::UI_Canvas_Ptr canvas;
-	CoreUI::UI_Component_Ptr<CoreUI::ScrollView> saves_view;
-	CoreUI::UI_Obj_Ptr saves_content;
-	CoreAudio::AudioSource button_click_sound;
+	Engine::UI::UI_Canvas_Ptr canvas;
+	Engine::UI::UI_Component_Ptr<Engine::UI::ScrollView> saves_view;
+	Engine::UI::UI_Obj_Ptr saves_content;
+	Engine::Audio::AudioSource button_click_sound;
 	std::unordered_map<std::string, SaveElement> saves;
 };

@@ -2,7 +2,7 @@
 #include <Entities/EntityClasses/Mob.h>
 #include <Entities/EntityFactory.h>
 
-namespace CoreEntity {
+namespace Engine::Entity {
 	class Slime : public Mob {
 		uint32_t anim_idle = 0, anim_jump = 0;
 	public:

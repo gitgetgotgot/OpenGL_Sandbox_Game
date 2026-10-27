@@ -1,7 +1,7 @@
 #pragma once
 #include <Resources/ResourceData.h>
 
-namespace CoreObject {
+namespace Engine::Object {
 	class ObjectComponent {
 	public:
 		virtual ~ObjectComponent() {}
@@ -15,7 +15,7 @@ namespace CoreObject {
 
 	class ChestComponent : public ObjectComponent {
 	public:
-		InventorySlot chest_slots[40];
+		Engine::Resource::InventorySlot chest_slots[40];
 	};
 
 	class DoorComponent : public ObjectComponent {

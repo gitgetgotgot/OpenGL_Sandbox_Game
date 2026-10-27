@@ -1,7 +1,7 @@
 #pragma once
 #include "Objects/ObjectFactory.h"
 
-namespace CoreObject {
+namespace Engine::Object {
 	class WallInfo : public ObjectInfo {
 	public:
 		WallInfo(ObjectType type) : ObjectInfo(type) {}

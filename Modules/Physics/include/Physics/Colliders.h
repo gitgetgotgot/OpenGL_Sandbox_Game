@@ -1,43 +1,45 @@
 #pragma once
 #include <glm/ext/matrix_float4x4.hpp>
 
-struct Collider_2D_AABB {
-	glm::vec2 center;
-	glm::vec2 size;
-};
+namespace Engine::Physics {
+	struct Collider_2D_AABB {
+		glm::vec2 center;
+		glm::vec2 size;
+	};
 
-struct Collider_2D_OBB {
-	glm::vec2 center;
-	glm::vec2 size;
-	float angle;
-	glm::mat4 transformMatrix;
+	struct Collider_2D_OBB {
+		glm::vec2 center;
+		glm::vec2 size;
+		float angle;
+		glm::mat4 transformMatrix;
 
-	void update_transform();
-};
+		void update_transform();
+	};
 
-enum CollisionType : uint8_t {
-	NONE	= 0,
-	LEFT	= 1 << 0,
-	RIGHT	= 1 << 1,
-	TOP		= 1 << 2,
-	BOTTOM	= 1 << 3,
-	CORNER	= 1 << 4
-};
+	enum CollisionType : uint8_t {
+		NONE = 0,
+		LEFT = 1 << 0,
+		RIGHT = 1 << 1,
+		TOP = 1 << 2,
+		BOTTOM = 1 << 3,
+		CORNER = 1 << 4
+	};
 
-namespace Collisions {
+	namespace Collisions {
 
-	bool checkCollisionAABB(Collider_2D_AABB& c1, Collider_2D_AABB& c2);
+		bool checkCollisionAABB(Collider_2D_AABB& c1, Collider_2D_AABB& c2);
 
-	CollisionType getTypeCollisionAABBwithBlock(Collider_2D_AABB& c1, int column, int line);
+		CollisionType getTypeCollisionAABBwithBlock(Collider_2D_AABB& c1, int column, int line);
 
-	//the first hitbox is main and return type is for it
-	CollisionType getTypeCollisionAABB(Collider_2D_AABB& c1, Collider_2D_AABB& c2);
+		//the first hitbox is main and return type is for it
+		CollisionType getTypeCollisionAABB(Collider_2D_AABB& c1, Collider_2D_AABB& c2);
 
-	void projectOnAxis(glm::vec2* pos, glm::vec2& axis, float& min, float& max);
+		void projectOnAxis(glm::vec2* pos, glm::vec2& axis, float& min, float& max);
 
-	bool checkOverlapOnAxis(glm::vec2* verticesA, glm::vec2* verticesB, glm::vec2& axis);
+		bool checkOverlapOnAxis(glm::vec2* verticesA, glm::vec2* verticesB, glm::vec2& axis);
 
-	bool checkCollision_AABB_with_OBB(Collider_2D_AABB& c1, Collider_2D_OBB& c2);
+		bool checkCollision_AABB_with_OBB(Collider_2D_AABB& c1, Collider_2D_OBB& c2);
 
-	bool checkCollisionOBB(Collider_2D_OBB& c1, Collider_2D_OBB& c2);
-};
+		bool checkCollisionOBB(Collider_2D_OBB& c1, Collider_2D_OBB& c2);
+	};
+}

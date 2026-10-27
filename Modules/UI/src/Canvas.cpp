@@ -1,17 +1,17 @@
 #include "UI/Canvas.h"
-#include "UI/UI_ComponentManager.h"
+#include "UI/UI_CompManager.h"
 #include "UI/UI_ObjectManager.h"
 #include "UI/CanvasManager.h"
 #include "UI/UI_System.h"
 #include "UI/ScrollView.h"
 #include <IOSystem/SystemContext.h>
 
-void CoreUI::Canvas::add_object(UI_Obj_Ptr& object) {
+void Engine::UI::Canvas::add_object(UI_Obj_Ptr& object) {
 	if (!object) return;
 	objects.emplace_back(object.get_id());
 }
 
-void CoreUI::Canvas::update_canvas_objects_data(UI_RenderContext& ctx, UI_RenderState state) {
+void Engine::UI::Canvas::update_canvas_objects_data(UI_RenderContext& ctx, UI_RenderState state) {
 	//every canvas always starts with default clip rectangle (id = 0), that can be changed in children
 	for (auto& obj_id : objects) {
 		UI_Object* obj = UI_ObjectManager::get_instance().get(obj_id);
@@ -19,7 +19,7 @@ void CoreUI::Canvas::update_canvas_objects_data(UI_RenderContext& ctx, UI_Render
 	}
 }
 
-void CoreUI::Canvas::update_child_object(UI_Object& object, UI_RenderContext& ctx, UI_RenderState state) {
+void Engine::UI::Canvas::update_child_object(UI_Object& object, UI_RenderContext& ctx, UI_RenderState state) {
 	UI_ComponentEntry* comp = UI_ComponentManager::get_instance().get(object.object_id);
 	if (comp) {
 		UI_ComponentBase* base_comp = static_cast<UI_ComponentBase*>(comp->component);
@@ -59,7 +59,7 @@ void CoreUI::Canvas::update_child_object(UI_Object& object, UI_RenderContext& ct
 	}
 }
 
-uint16_t CoreUI::Canvas::add_clip_rect(const UI_Transform& tr, std::vector<ClipRectangle>& clip_rects) {
+uint16_t Engine::UI::Canvas::add_clip_rect(const UI_Transform& tr, std::vector<ClipRectangle>& clip_rects) {
 	uint32_t x = ((tr.global_pos.x - tr.size.x * 0.5f) * SystemContext::display.double_x_ratio + 0.5f) * SystemContext::display.width;
 	uint32_t y = ((tr.global_pos.y - tr.size.y * 0.5f) * 0.5f + 0.5f) * SystemContext::display.height;
 	uint32_t w = tr.size.x * SystemContext::display.double_x_ratio * SystemContext::display.width;
@@ -70,33 +70,33 @@ uint16_t CoreUI::Canvas::add_clip_rect(const UI_Transform& tr, std::vector<ClipR
 	return clip_rects.size() - 1;
 }
 
-uint16_t CoreUI::Canvas::add_content_offset(const glm::vec2& offset, std::vector<glm::vec2>& content_offsets, uint16_t current_content_offset_id) {
+uint16_t Engine::UI::Canvas::add_content_offset(const glm::vec2& offset, std::vector<glm::vec2>& content_offsets, uint16_t current_content_offset_id) {
 	const glm::vec2& parent_offset = content_offsets[current_content_offset_id];
 	content_offsets.emplace_back(parent_offset.x + offset.x, parent_offset.y + offset.y);
 	return content_offsets.size() - 1;
 }
 
 
-CoreUI::Canvas* CoreUI::UI_Canvas_Ptr::operator->() const {
+Engine::UI::Canvas* Engine::UI::UI_Canvas_Ptr::operator->() const {
 	return CanvasManager::get_instance().get(id);
 }
 
-CoreUI::Canvas& CoreUI::UI_Canvas_Ptr::operator*() const {
+Engine::UI::Canvas& Engine::UI::UI_Canvas_Ptr::operator*() const {
 	return *CanvasManager::get_instance().get(id);
 }
 
-CoreUI::UI_Canvas_Ptr::operator bool() const {
+Engine::UI::UI_Canvas_Ptr::operator bool() const {
 	return id != 0 && CanvasManager::get_instance().get(id);
 }
 
-CoreUI::UI_Canvas_Ptr& CoreUI::UI_Canvas_Ptr::operator=(const UI_Canvas_Ptr& other) noexcept {
+Engine::UI::UI_Canvas_Ptr& Engine::UI::UI_Canvas_Ptr::operator=(const UI_Canvas_Ptr& other) noexcept {
 	if (this != &other) {
 		this->id = other.id;
 	}
 	return *this;
 }
 
-CoreUI::UI_Canvas_Ptr& CoreUI::UI_Canvas_Ptr::operator=(UI_Canvas_Ptr&& other) noexcept {
+Engine::UI::UI_Canvas_Ptr& Engine::UI::UI_Canvas_Ptr::operator=(UI_Canvas_Ptr&& other) noexcept {
 	if (this != &other) {
 		this->id = other.id;
 		other.id = 0;

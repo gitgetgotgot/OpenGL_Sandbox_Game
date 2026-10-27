@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include "Audio/AudioData.h"
 
-namespace CoreAudio {
+namespace Engine::Audio {
     class AudioSystem {
     public:
         static AudioSystem& Instance() {

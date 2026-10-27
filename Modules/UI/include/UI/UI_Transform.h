@@ -2,7 +2,7 @@
 #include <vector>
 #include <glm/ext/vector_float2.hpp>
 
-namespace CoreUI {
+namespace Engine::UI {
 	class UI_Transform {
 		friend class UI_ObjectManager;
 	public:

@@ -1,7 +1,7 @@
 #include "Objects/ObjectTypes/MultiBlockInfo.h"
 #include <Resources/ResourceErrors.h>
 
-void CoreObject::MultiBlockInfo::fill_data(const DataNode& data) {
+void Engine::Object::MultiBlockInfo::fill_data(const DataNode& data) {
 	ObjectInfo::fill_data(data);
 	try {
 		float tiles_width = data["width"].get_as<float>();
@@ -21,6 +21,6 @@ void CoreObject::MultiBlockInfo::fill_data(const DataNode& data) {
 		this->platform_collision = platform_collision;
 	}
 	catch (const std::exception& e) {
-		ResourceLoading::throw_resource_error(uid, e.what());
+		Engine::Resource::throw_resource_error(uid, e.what());
 	}
 }

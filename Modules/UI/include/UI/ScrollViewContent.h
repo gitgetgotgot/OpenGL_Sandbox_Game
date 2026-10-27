@@ -1,7 +1,7 @@
 #pragma once
 #include "UI/UI_Comp_Ptr.h"
 
-namespace CoreUI {
+namespace Engine::UI {
 	class ScrollViewContent : public UI_Component<ScrollViewContent> {
 		friend class UI_BehaviourSystem;
 		friend class ScrollView;

@@ -3,7 +3,7 @@
 #include <UI/Image.h>
 #include <UI/UI_Object.h>
 
-class CustomImageBehaviour : public CoreUI::UI_Behaviour<CustomImageBehaviour> {
+class CustomImageBehaviour : public Engine::UI::UI_Behaviour<CustomImageBehaviour> {
 public:
 	CustomImageBehaviour() = default;
 	~CustomImageBehaviour() = default;
@@ -22,7 +22,7 @@ public:
 	//void OnPointerHeld() {}
 	//void OnPointerUp() {}
 
-	CoreUI::UI_Component_Ptr<CoreUI::Image> image;
-	CoreUI::UI_Obj_Ptr image_object;
+	Engine::UI::UI_Component_Ptr<Engine::UI::Image> image;
+	Engine::UI::UI_Obj_Ptr image_object;
 	bool left = true;
 };

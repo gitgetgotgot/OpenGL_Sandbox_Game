@@ -16,74 +16,74 @@ void SettingsPage::enable(bool state) {
 }
 
 void SettingsPage::setup_page() {
-	canvas = CoreUI::UI_Creator::create_canvas();
+	canvas = Engine::UI::UI_Creator::create_canvas();
 
 	button_click_sound.setup_source("Core:Button");
 
-	uint32_t sprite_white_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:White").value();
-	uint32_t sprite_gradient_id = CoreResource::SpriteManager::Instance().get_sprite_id("Core:Gradient").value();
-	uint32_t slider_sprite_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:UI_Button64p").value();
-	uint32_t button64_sprite_id = CoreResource::SpriteManager::Instance().get_sprite9sliced_id("Core:UI_Button64p1").value();
+	uint32_t sprite_white_id = Engine::Resource::SpriteManager::Instance().get_sprite_id("Core:White").value();
+	uint32_t sprite_gradient_id = Engine::Resource::SpriteManager::Instance().get_sprite_id("Core:Gradient").value();
+	uint32_t slider_sprite_id = Engine::Resource::SpriteManager::Instance().get_sprite9sliced_id("Core:UI_Button64p").value();
+	uint32_t button64_sprite_id = Engine::Resource::SpriteManager::Instance().get_sprite9sliced_id("Core:UI_Button64p1").value();
 
-	auto settings_logo = CoreUI::UI_Creator::create_SDF_text(
+	auto settings_logo = Engine::UI::UI_Creator::create_SDF_text(
 		glm::vec2(1.0f, 0.1f), glm::vec2(0.0f, 0.8f), "Settings", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), 0.2f
 	);
-	settings_logo->get_component<CoreUI::SDF_Text>()->set_alignment(
-		CoreUI::SDF_Text::TextHorizAlign::Center_Align, CoreUI::SDF_Text::TextVertAlign::Middle_Align);
+	settings_logo->get_component<Engine::UI::SDF_Text>()->set_alignment(
+		Engine::UI::SDF_Text::TextHorizAlign::Center_Align, Engine::UI::SDF_Text::TextVertAlign::Middle_Align);
 
-	auto button_resolution = CoreUI::UI_Creator::create_button_image(
+	auto button_resolution = Engine::UI::UI_Creator::create_button_image(
 		glm::vec2(1.5f, 0.1f), glm::vec2(0.0f, 0.545f), true, button64_sprite_id,
 		true, "", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
-	auto button_fullscreen = CoreUI::UI_Creator::create_button_image(
+	auto button_fullscreen = Engine::UI::UI_Creator::create_button_image(
 		glm::vec2(0.7f, 0.1f), glm::vec2(-0.4f, 0.42f), true, button64_sprite_id,
 		true, "", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
-	auto button_vsync = CoreUI::UI_Creator::create_button_image(
+	auto button_vsync = Engine::UI::UI_Creator::create_button_image(
 		glm::vec2(0.7f, 0.1f), glm::vec2(0.4f, 0.42f), true, button64_sprite_id,
 		true, "", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
-	auto button_exit = CoreUI::UI_Creator::create_button_image(
+	auto button_exit = Engine::UI::UI_Creator::create_button_image(
 		glm::vec2(0.7f, 0.1f), glm::vec2(0.0f, -0.8f), true, button64_sprite_id,
 		true, "Save&Exit", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
 
-	auto scroll_master_volume = CoreUI::UI_Creator::create_scroll_bar(
+	auto scroll_master_volume = Engine::UI::UI_Creator::create_scroll_bar(
 		glm::vec2(1.0f, 0.075f), glm::vec2(1.0f, 0.025f), glm::vec2(0.075f, 0.075f), glm::vec2(0.3f, 0.295f),
 		false, true, sprite_gradient_id, slider_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f),
 		false, true, true, 100
 	);
-	auto scroll_music_volume = CoreUI::UI_Creator::create_scroll_bar(
+	auto scroll_music_volume = Engine::UI::UI_Creator::create_scroll_bar(
 		glm::vec2(1.0f, 0.075f), glm::vec2(1.0f, 0.025f), glm::vec2(0.075f, 0.075f), glm::vec2(0.3f, 0.17f),
 		false, true, sprite_gradient_id, slider_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f),
 		false, true, true, 100
 	);
-	auto scroll_sfx_volume = CoreUI::UI_Creator::create_scroll_bar(
+	auto scroll_sfx_volume = Engine::UI::UI_Creator::create_scroll_bar(
 		glm::vec2(1.0f, 0.075f), glm::vec2(1.0f, 0.025f), glm::vec2(0.075f, 0.075f), glm::vec2(0.3f, 0.045f),
 		false, true, sprite_gradient_id, slider_sprite_id, glm::vec4(0.0f, 0.5f, 0.9f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f),
 		false, true, true, 100
 	);
 
-	auto master_volume_text = CoreUI::UI_Creator::create_SDF_text(
+	auto master_volume_text = Engine::UI::UI_Creator::create_SDF_text(
 		glm::vec2(1.0f, 0.1f), glm::vec2(-0.3f, 0.295f), "Master Volume:", glm::vec4(1.0f), 0.07f
 	);
-	auto music_volume_text = CoreUI::UI_Creator::create_SDF_text(
+	auto music_volume_text = Engine::UI::UI_Creator::create_SDF_text(
 		glm::vec2(1.0f, 0.1f), glm::vec2(-0.3f, 0.17f), "Music Volume:", glm::vec4(1.0f), 0.07f
 	);
-	auto sfx_volume_text = CoreUI::UI_Creator::create_SDF_text(
+	auto sfx_volume_text = Engine::UI::UI_Creator::create_SDF_text(
 		glm::vec2(1.0f, 0.1f), glm::vec2(-0.3f, 0.045f), "SFX Volume:", glm::vec4(1.0f), 0.07f
 	);
 
-	resolution_text = CoreUI::UI_ObjectManager::get_instance().get(
-		button_resolution->transform.children[1])->get_component<CoreUI::SDF_Text>();
-	fullscreen_text = CoreUI::UI_ObjectManager::get_instance().get(
-		button_fullscreen->transform.children[1])->get_component<CoreUI::SDF_Text>();
-	vsync_text = CoreUI::UI_ObjectManager::get_instance().get(
-		button_vsync->transform.children[1])->get_component<CoreUI::SDF_Text>();
+	resolution_text = Engine::UI::UI_ObjectManager::get_instance().get(
+		button_resolution->transform.children[1])->get_component<Engine::UI::SDF_Text>();
+	fullscreen_text = Engine::UI::UI_ObjectManager::get_instance().get(
+		button_fullscreen->transform.children[1])->get_component<Engine::UI::SDF_Text>();
+	vsync_text = Engine::UI::UI_ObjectManager::get_instance().get(
+		button_vsync->transform.children[1])->get_component<Engine::UI::SDF_Text>();
 
-	auto master_volume_slider = scroll_master_volume->get_component<CoreUI::ScrollBar>();
-	auto music_volume_slider = scroll_music_volume->get_component<CoreUI::ScrollBar>();
-	auto sfx_volume_slider = scroll_sfx_volume->get_component<CoreUI::ScrollBar>();
+	auto master_volume_slider = scroll_master_volume->get_component<Engine::UI::ScrollBar>();
+	auto music_volume_slider = scroll_music_volume->get_component<Engine::UI::ScrollBar>();
+	auto sfx_volume_slider = scroll_sfx_volume->get_component<Engine::UI::ScrollBar>();
 	volume_slider_master = master_volume_slider;
 	volume_slider_music = music_volume_slider;
 	volume_slider_sfx = sfx_volume_slider;
@@ -91,10 +91,10 @@ void SettingsPage::setup_page() {
 	music_volume_slider->on_value_changed.set_callback_method<SettingsPage, &SettingsPage::set_music_volume>(this);
 	sfx_volume_slider->on_value_changed.set_callback_method<SettingsPage, &SettingsPage::set_sfx_volume>(this);
 
-	button_resolution->get_component<CoreUI::Button>()->on_button_click.set_callback_method<SettingsPage, &SettingsPage::change_resolution>(this);
-	button_fullscreen->get_component<CoreUI::Button>()->on_button_click.set_callback_method<SettingsPage, &SettingsPage::toggle_fullscreen>(this);
-	button_vsync->get_component<CoreUI::Button>()->on_button_click.set_callback_method<SettingsPage, &SettingsPage::toggle_vsync>(this);
-	button_exit->get_component<CoreUI::Button>()->on_button_click.set_callback_method<MainMenuManager, &MainMenuManager::close_settings_page>(&MainMenuManager::Instance());
+	button_resolution->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<SettingsPage, &SettingsPage::change_resolution>(this);
+	button_fullscreen->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<SettingsPage, &SettingsPage::toggle_fullscreen>(this);
+	button_vsync->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<SettingsPage, &SettingsPage::toggle_vsync>(this);
+	button_exit->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<MainMenuManager, &MainMenuManager::close_settings_page>(&MainMenuManager::Instance());
 
 	canvas->add_object(settings_logo);
 	canvas->add_object(button_resolution);

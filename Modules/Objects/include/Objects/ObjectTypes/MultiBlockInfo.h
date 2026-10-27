@@ -1,7 +1,7 @@
 #pragma once
 #include "Objects/ObjectFactory.h"
 
-namespace CoreObject {
+namespace Engine::Object {
 	class MultiBlockInfo : public ObjectInfo {
 	public:
 		MultiBlockInfo(ObjectType type) : ObjectInfo(type) {}

@@ -1,7 +1,7 @@
 #pragma once
 #include "UI/UI_Object.h"
 
-namespace CoreUI {
+namespace Engine::UI {
 	class Canvas {
 	public:
 		void add_object(UI_Obj_Ptr& new_object);

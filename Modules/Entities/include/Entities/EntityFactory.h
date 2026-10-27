@@ -2,7 +2,7 @@
 #include "Entities/EntityBase.h"
 #include <memory>
 
-namespace CoreEntity {
+namespace Engine::Entity {
 	class EntityFactoryI {
 	public:
 		virtual ~EntityFactoryI() {}
@@ -23,7 +23,7 @@ namespace CoreEntity {
 
 	class EntityFactoryRegistry {
 	public:
-		static EntityFactoryRegistry& get_instance() {
+		static EntityFactoryRegistry& Instance() {
 			static EntityFactoryRegistry registry;
 			return registry;
 		}

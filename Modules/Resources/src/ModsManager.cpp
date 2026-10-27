@@ -1,11 +1,11 @@
 #include "Resources/ModsManager.h"
 
-void ModsManager::ClearData() {
+void Engine::Mods::ModsManager::ClearData() {
 	//mods = {};
 	UID_storage = {};
 }
 
-ModInfo& ModsManager::add(const DataNode& data) {
+Engine::Mods::ModInfo& Engine::Mods::ModsManager::add(const DataNode& data) {
 	ModInfo& mod = mods.emplace_back();
 	std::string UID = data["mod_UID"].get_as<std::string>();
 	std::string version = data["version"].get_as<std::string>();
@@ -19,10 +19,10 @@ ModInfo& ModsManager::add(const DataNode& data) {
 	return mod;
 }
 
-std::vector<ModInfo>& ModsManager::get_mods() {
+std::vector<Engine::Mods::ModInfo>& Engine::Mods::ModsManager::get_mods() {
 	return mods;
 }
 
-ModInfo& ModsManager::get_mod(uint32_t id) {
+Engine::Mods::ModInfo& Engine::Mods::ModsManager::get_mod(uint32_t id) {
 	return mods[id];
 }

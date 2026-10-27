@@ -2,7 +2,7 @@
 #include <glm/ext/matrix_float4x4.hpp>
 #include <vector>
 
-namespace CoreUI {
+namespace Engine::UI {
 	struct UI_Vertex2f {
 		UI_Vertex2f() = default;
 		UI_Vertex2f(float pX, float pY, float UVx, float UVy, uint32_t tex_array_id, uint32_t tex_id) {

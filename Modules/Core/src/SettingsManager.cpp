@@ -54,7 +54,7 @@ void SettingsManager::toggle_vsync() {
 }
 
 void SettingsManager::set_master_volume(float volume) {
-	CoreAudio::AudioSystem::Instance().set_master_volume(volume);
+	Engine::Audio::AudioSystem::Instance().set_master_volume(volume);
 }
 
 void SettingsManager::set_music_volume(float volume) {
@@ -66,7 +66,7 @@ void SettingsManager::set_sfx_volume(float volume) {
 }
 
 float SettingsManager::get_master_volume() {
-	return CoreAudio::AudioSystem::Instance().get_master_volume();
+	return Engine::Audio::AudioSystem::Instance().get_master_volume();
 }
 
 float SettingsManager::get_music_volume() {

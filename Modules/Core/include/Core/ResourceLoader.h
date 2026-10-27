@@ -17,7 +17,7 @@ constexpr bool DEBUG = false;
 
 class ResourceLoader {
 	enum LoadResType : uint8_t {
-		R_SPRITE, R_TEXTURE, R_AUDIO, R_ANIMATION
+		R_TEXTURE, R_SPRITE, R_AUDIO, R_LIGHT, R_PARTICLE, R_EFFECT, R_OBJECT, R_CRAFT, R_ANIM_CLIP, R_ANIMATOR, R_ENTITY
 	};
 public:
 	static ResourceLoader& Instance() {
@@ -37,26 +37,29 @@ private:
 	void notify_loader();
 	void find_mods() const;
 	void load_libraries();
+
 	void load_textures();
-	void load_sprites();
-	void load_audio();
-	void load_lights() const;
-	void load_particles();
-	void load_effects() const;
-	void load_items_data( std::vector<DataParser>& item_data_parsers);
-	void load_crafts() const;
-	void load_animation_clips_data() const;
-	void load_animation_animators_data() const;
-	void load_entities_data(std::vector<DataParser>& entity_data_parsers) const;
+	void load_resources(LoadResType res_type, std::string resources_path, bool load_from_mods);
+	void _load_sprites(std::filesystem::path& file_path);
+	void _load_audio(std::filesystem::path& file_path);
+	void _load_lights(std::filesystem::path& lights_path) const;
+	void _load_particles(std::filesystem::path& particles_path) const;
+	void _load_effects(std::filesystem::path& effects_path) const;
+	void _load_objects(std::filesystem::path& objects_path);
+	void _load_crafts(std::filesystem::path& crafts_path) const;
+	void _load_clips(std::filesystem::path& clips_path) const;
+	void _load_animators(std::filesystem::path& animators_path) const;
+	void _load_entities(std::filesystem::path& entities_path);
 
-	void resolve_items_dependencies(const std::vector<DataParser>& item_data_parsers) const;
-	void resolve_entities_dependencies(const std::vector<DataParser>& entity_data_parsers) const;
-
-	void _LOAD_SPRITES(std::filesystem::path& sprites_path);
-	void _LOAD_AUDIO(std::filesystem::path& sprites_path);
+	void resolve_items_dependencies();
+	void resolve_entities_dependencies();
 private:
 	ResourceLoader() {}
 	~ResourceLoader();
+
+	// items and entities data is cached when loading
+	std::vector<DataParser> item_data_parsers;
+	std::vector<DataParser> entity_data_parsers;
 
 	std::vector<LibraryHandle> library_handles;
 	std::filesystem::path data_extension;

@@ -1,13 +1,13 @@
 #pragma once
 
-#include <Resources/Effects.h>
+#include <Resources/Effect.h>
 #include <Physics/Colliders.h>
 #include <Objects/Inventory.h>
 
 struct PlayerStats {
-	std::vector<CoreResource::Effect> effects;
+	std::vector<Engine::Resource::Effect> effects;
 	void updateEffects(float deltaTime);
-	void manage_effect(CoreResource::Effect& effect, bool apply);
+	void manage_effect(Engine::Resource::Effect& effect, bool apply);
 	void inflictDamage(float dmg) { HP -= dmg; }
 
 	float HP = 100;
@@ -28,7 +28,7 @@ struct Player {
 	PlayerStats stats;
 	Inventory inventory;
 	//hitbox and physics
-	Collider_2D_AABB hitbox;
+	Engine::Physics::Collider_2D_AABB hitbox;
 	glm::vec2 sprite_left_down_corner;
 	glm::vec2 sprite_size;
 	bool looks_at_left = true;

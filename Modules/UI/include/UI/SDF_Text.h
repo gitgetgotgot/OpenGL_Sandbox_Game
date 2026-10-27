@@ -2,7 +2,7 @@
 #include "UI/UI_Component.h"
 #include <string>
 
-namespace CoreUI {
+namespace Engine::UI {
 	class SDF_Text : public UI_Component<SDF_Text> {
 	private:
 		struct TextLineInfo {

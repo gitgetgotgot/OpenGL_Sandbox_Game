@@ -1,61 +1,61 @@
 #include "Resources/Animation.h"
 #include <Utility/TimeManager.h>
 
-void CoreAnimation::AnimationClip::add_sprite(uint32_t sprite_id) {
+void Engine::Resource::AnimationClip::add_sprite(uint32_t sprite_id) {
 	sprites.emplace_back(sprite_id);
 }
 
-void CoreAnimation::AnimationClip::set_frame_time(float time) {
+void Engine::Resource::AnimationClip::set_frame_time(float time) {
 	frame_time = time;
 	total_time = float(sprites.size()) * frame_time;
 }
 
-void CoreAnimation::AnimationClipManager::ClearData() {
+void Engine::Resource::AnimationClipManager::ClearData() {
 	clips = {};
 	clip_UID_to_ID = {};
 }
 
-CoreAnimation::AnimationClip* CoreAnimation::AnimationClipManager::get_clip(uint32_t id) {
+Engine::Resource::AnimationClip* Engine::Resource::AnimationClipManager::get_clip(uint32_t id) {
 	return &clips[id];
 }
 
-std::optional<uint32_t> CoreAnimation::AnimationClipManager::get_clip_id(std::string& clip_uid) {
+std::optional<uint32_t> Engine::Resource::AnimationClipManager::get_clip_id(std::string& clip_uid) {
 	auto it = clip_UID_to_ID.find(clip_uid);
 	if (it == clip_UID_to_ID.end()) return std::nullopt;
 	else return it->second;
 }
 
-CoreAnimation::AnimationClip& CoreAnimation::AnimationClipManager::add_clip(std::string uid) {
+Engine::Resource::AnimationClip& Engine::Resource::AnimationClipManager::add_clip(std::string uid) {
 	clip_UID_to_ID.emplace(uid, clips.size());
 	return clips.emplace_back();
 }
 
-void CoreAnimation::AnimatorManager::ClearData() {
+void Engine::Resource::AnimatorManager::ClearData() {
 	animators = {};
 	animator_UID_to_ID = {};
 }
 
-CoreAnimation::Animator* CoreAnimation::AnimatorManager::get_animator(uint32_t id) {
+Engine::Resource::Animator* Engine::Resource::AnimatorManager::get_animator(uint32_t id) {
 	return &animators[id];
 }
 
-std::optional<uint32_t> CoreAnimation::AnimatorManager::get_animator_id(std::string& clip_uid) {
+std::optional<uint32_t> Engine::Resource::AnimatorManager::get_animator_id(std::string& clip_uid) {
 	auto it = animator_UID_to_ID.find(clip_uid);
 	if (it == animator_UID_to_ID.end()) return std::nullopt;
 	else return it->second;
 }
 
-CoreAnimation::Animator& CoreAnimation::AnimatorManager::add_animator(std::string uid) {
+Engine::Resource::Animator& Engine::Resource::AnimatorManager::add_animator(std::string uid) {
 	animator_UID_to_ID.emplace(uid, animators.size());
 	return animators.emplace_back();
 }
 
-void CoreAnimation::AnimatorController::set_animator(uint32_t id) {
-	animator_ptr = AnimatorManager::get_instance().get_animator(id);
+void Engine::Resource::AnimatorController::set_animator(uint32_t id) {
+	animator_ptr = AnimatorManager::Instance().get_animator(id);
 	animator_id = id;
 }
 
-void CoreAnimation::AnimatorController::update() {
+void Engine::Resource::AnimatorController::update() {
 	if (!is_playing) return;
 
 	current_frame_time += TimeManager::deltaTime * speed;
@@ -71,24 +71,24 @@ void CoreAnimation::AnimatorController::update() {
 				return;
 			}
 		}
-		current_sprite = &CoreResource::SpriteManager::Instance().get_sprite(current_clip->sprites[current_sprite_index]);
+		current_sprite = &Engine::Resource::SpriteManager::Instance().get_sprite(current_clip->sprites[current_sprite_index]);
 	}
 }
 
-void CoreAnimation::AnimatorController::play(uint32_t clip_id) {
-	current_clip = AnimationClipManager::get_instance().get_clip(clip_id);
+void Engine::Resource::AnimatorController::play(uint32_t clip_id) {
+	current_clip = AnimationClipManager::Instance().get_clip(clip_id);
 
 	is_playing = true;
 	max_sprite_index = current_clip->sprites.size();
 	current_sprite_index = 0;
 	current_frame_time = 0.0f;
-	current_sprite = &CoreResource::SpriteManager::Instance().get_sprite(current_clip->sprites[current_sprite_index]);
+	current_sprite = &Engine::Resource::SpriteManager::Instance().get_sprite(current_clip->sprites[current_sprite_index]);
 }
 
-uint32_t CoreAnimation::AnimatorController::get_clip_id(uint32_t animator_clip_index) {
+uint32_t Engine::Resource::AnimatorController::get_clip_id(uint32_t animator_clip_index) {
 	return animator_ptr->clips[animator_clip_index];
 }
 
-void CoreAnimation::AnimatorController::stop() {
+void Engine::Resource::AnimatorController::stop() {
 	is_playing = false;
 }

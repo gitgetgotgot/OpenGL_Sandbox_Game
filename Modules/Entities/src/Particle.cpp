@@ -17,7 +17,7 @@ bool Particle::update(float deltaTime) {
 }
 
 void ParticleSystem::init() {
-	particlesMgr = ParticlesManager::get_instance();
+	particlesMgr = ParticlesManager::Instance();
 }
 
 void ParticleSystem::emit_particle(uint32_t particle_id, glm::vec2 emitter_center, glm::vec2 emitter_size) {
@@ -49,6 +49,6 @@ void ParticleSystem::update() {
 	}
 }
 
-void ParticleSystem::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
+void ParticleSystem::render(std::unique_ptr<Engine::Graphics::OpenGL_Renderer>& renderer) {
 
 }

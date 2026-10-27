@@ -4,7 +4,9 @@
 #include "UI/UI_BehaviourSystem.h"
 #include <IOSystem/SystemContext.h>
 
-void CoreUI::UI_System::init() {
+void Engine::UI::UI_System::init() {
+	namespace EG = Engine::Graphics;
+
 	const uint32_t MAX_SPRITES_VERTEX_SIZE = MAX_SPRITES_PER_DRAW * 4;
 	const uint32_t MAX_SPRITES_INDEX_SIZE = MAX_SPRITES_PER_DRAW * 6;
 
@@ -17,13 +19,13 @@ void CoreUI::UI_System::init() {
 
 	vertex_shader_path = "Resources/shaders/ui_sprites.vert";
 	fragment_shader_path = "Resources/shaders/ui_sprites.frag";
-	sprites_shader = std::make_unique<ShaderProgram>(vertex_shader_path, fragment_shader_path);
+	sprites_shader = std::make_unique<EG::ShaderProgram>(vertex_shader_path, fragment_shader_path);
 
 	fragment_shader_path = "Resources/shaders/ui_tiled_sprites.frag";
-	tiled_sprites_shader = std::make_unique<ShaderProgram>(vertex_shader_path, fragment_shader_path);
+	tiled_sprites_shader = std::make_unique<EG::ShaderProgram>(vertex_shader_path, fragment_shader_path);
 
 	//common EBO
-	ebo = std::make_unique<EBO>();
+	ebo = std::make_unique<EG::EBO>();
 	GLuint* sprite_index_buffer = new GLuint[MAX_SPRITES_INDEX_SIZE];
 	for (int i = 0; i < MAX_SPRITES_PER_DRAW; i++) {
 		sprite_index_buffer[i * 6] = sprite_index_buffer[i * 6 + 3] = i * 4;
@@ -31,20 +33,20 @@ void CoreUI::UI_System::init() {
 		sprite_index_buffer[i * 6 + 1] = sprite_index_buffer[i * 6 + 2] - 1;
 		sprite_index_buffer[i * 6 + 5] = sprite_index_buffer[i * 6 + 2] + 1;
 	}
-	ebo->set_data(sprite_index_buffer, MAX_SPRITES_INDEX_SIZE * sizeof(GLuint), EBO::EBO_USAGE::USAGE_STATIC);
+	ebo->set_data(sprite_index_buffer, MAX_SPRITES_INDEX_SIZE * sizeof(GLuint), EG::EBO::EBO_USAGE::USAGE_STATIC);
 	delete[] sprite_index_buffer;
 
-	sprites_vao = std::make_unique<VAO>();
+	sprites_vao = std::make_unique<EG::VAO>();
 	sprites_vao->bind_VAO();
-	sprites_vbo = std::make_unique<VBO>();
-	sprites_vbo->set_data(nullptr, MAX_SPRITES_VERTEX_SIZE * sizeof(UI_Vertex2f), VBO::VBO_USAGE::USAGE_DYNAMIC);
+	sprites_vbo = std::make_unique<EG::VBO>();
+	sprites_vbo->set_data(nullptr, MAX_SPRITES_VERTEX_SIZE * sizeof(UI_Vertex2f), EG::VBO::VBO_USAGE::USAGE_DYNAMIC);
 	ebo->bind_EBO();
 
-	sprites_vao->link_Attribute(0, 2, VAO::TYPE_FLOAT, sizeof(UI_Vertex2f), offsetof(UI_Vertex2f, pos));
-	sprites_vao->link_Attribute(1, 2, VAO::TYPE_FLOAT, sizeof(UI_Vertex2f), offsetof(UI_Vertex2f, UV));
-	sprites_vao->link_Attribute(2, 4, VAO::TYPE_FLOAT, sizeof(UI_Vertex2f), offsetof(UI_Vertex2f, color));
-	sprites_vao->link_Attribute(3, 1, VAO::TYPE_UNSIGNED_INT, sizeof(UI_Vertex2f), offsetof(UI_Vertex2f, tex_array_id));
-	sprites_vao->link_Attribute(4, 1, VAO::TYPE_UNSIGNED_INT, sizeof(UI_Vertex2f), offsetof(UI_Vertex2f, tex_id));
+	sprites_vao->link_Attribute(0, 2, EG::VAO::TYPE_FLOAT, sizeof(UI_Vertex2f), offsetof(UI_Vertex2f, pos));
+	sprites_vao->link_Attribute(1, 2, EG::VAO::TYPE_FLOAT, sizeof(UI_Vertex2f), offsetof(UI_Vertex2f, UV));
+	sprites_vao->link_Attribute(2, 4, EG::VAO::TYPE_FLOAT, sizeof(UI_Vertex2f), offsetof(UI_Vertex2f, color));
+	sprites_vao->link_Attribute(3, 1, EG::VAO::TYPE_UNSIGNED_INT, sizeof(UI_Vertex2f), offsetof(UI_Vertex2f, tex_array_id));
+	sprites_vao->link_Attribute(4, 1, EG::VAO::TYPE_UNSIGNED_INT, sizeof(UI_Vertex2f), offsetof(UI_Vertex2f, tex_id));
 
 	sprites_vao->unbind_VAO();
 	sprites_vbo->unbind_VBO();
@@ -53,34 +55,34 @@ void CoreUI::UI_System::init() {
 	// SDF text shader & buffers
 	vertex_shader_path = "Resources/shaders/sdf_text.vert";
 	fragment_shader_path = "Resources/shaders/sdf_text.frag";
-	sdf_text_shader = std::make_unique<ShaderProgram>(vertex_shader_path, fragment_shader_path);
+	sdf_text_shader = std::make_unique<EG::ShaderProgram>(vertex_shader_path, fragment_shader_path);
 
-	sdf_text_vao = std::make_unique<VAO>();
+	sdf_text_vao = std::make_unique<EG::VAO>();
 	sdf_text_vao->bind_VAO();
-	sdf_text_vbo = std::make_unique<VBO>();
-	sdf_text_vbo->set_data(nullptr, MAX_SDF_TEXT_VERTEX_SIZE * sizeof(UI_Text_Vertex2f), VBO::VBO_USAGE::USAGE_DYNAMIC);
+	sdf_text_vbo = std::make_unique<EG::VBO>();
+	sdf_text_vbo->set_data(nullptr, MAX_SDF_TEXT_VERTEX_SIZE * sizeof(UI_Text_Vertex2f), EG::VBO::VBO_USAGE::USAGE_DYNAMIC);
 	ebo->bind_EBO();
 
-	sdf_text_vao->link_Attribute(0, 2, VAO::TYPE_FLOAT, sizeof(UI_Text_Vertex2f), offsetof(UI_Text_Vertex2f, UI_Text_Vertex2f::pos));
-	sdf_text_vao->link_Attribute(1, 2, VAO::TYPE_FLOAT, sizeof(UI_Text_Vertex2f), offsetof(UI_Text_Vertex2f, UI_Text_Vertex2f::UV));
-	sdf_text_vao->link_Attribute(2, 4, VAO::TYPE_FLOAT, sizeof(UI_Text_Vertex2f), offsetof(UI_Text_Vertex2f, UI_Text_Vertex2f::color));
+	sdf_text_vao->link_Attribute(0, 2, EG::VAO::TYPE_FLOAT, sizeof(UI_Text_Vertex2f), offsetof(UI_Text_Vertex2f, UI_Text_Vertex2f::pos));
+	sdf_text_vao->link_Attribute(1, 2, EG::VAO::TYPE_FLOAT, sizeof(UI_Text_Vertex2f), offsetof(UI_Text_Vertex2f, UI_Text_Vertex2f::UV));
+	sdf_text_vao->link_Attribute(2, 4, EG::VAO::TYPE_FLOAT, sizeof(UI_Text_Vertex2f), offsetof(UI_Text_Vertex2f, UI_Text_Vertex2f::color));
 
 	sdf_text_vao->unbind_VAO();
 	sdf_text_vbo->unbind_VBO();
 	ebo->unbind_EBO();
 
-	ubo = std::make_unique<UBO>();
+	ubo = std::make_unique<EG::UBO>();
 	ubo->bind_UBO(1);
 	ubo_data.viewMatrix = glm::mat4(1.0f);
 	ubo_data.projectionMatrix = glm::ortho(-SystemContext::display.ratio, SystemContext::display.ratio, -1.0f, 1.0f);
-	ubo->set_data(&ubo_data, sizeof(UI_UBO), UBO::UBO_USAGE::USAGE_DYNAMIC);
+	ubo->set_data(&ubo_data, sizeof(UI_UBO), EG::UBO::UBO_USAGE::USAGE_DYNAMIC);
 
 	//reserve memory for buffers (this size should be enough for most scenarios)
 	render_context.sprites_buffer.reserve(MAX_SPRITES_VERTEX_SIZE);
 	render_context.sdf_text_buffer.reserve(MAX_SDF_TEXT_VERTEX_SIZE);
 }
 
-void CoreUI::UI_System::uninit() {
+void Engine::UI::UI_System::uninit() {
 	ubo.reset();
 	ebo.reset();
 	sprites_shader.reset();
@@ -92,7 +94,7 @@ void CoreUI::UI_System::uninit() {
 	sdf_text_vbo.reset();
 }
 
-void CoreUI::UI_System::update() {
+void Engine::UI::UI_System::update() {
 	render_context.sprites_buffer.clear();
 	render_context.sdf_text_buffer.clear();
 	render_context.render_queue.resize(1); //each new frame at least one empty should remain
@@ -130,7 +132,7 @@ void CoreUI::UI_System::update() {
 	sdf_text_vbo->update_data(render_context.sdf_text_buffer.data(), render_context.sdf_text_buffer.size() * sizeof(UI_Text_Vertex2f));
 }
 
-void CoreUI::UI_System::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
+void Engine::UI::UI_System::render(std::unique_ptr<Engine::Graphics::OpenGL_Renderer>& renderer) {
 	sprites_INDEX_OFFSET = 0;
 	sdf_text_INDEX_OFFSET = 0;
 

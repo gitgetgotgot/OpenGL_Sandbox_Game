@@ -15,7 +15,7 @@ public:
     void switch_active_world(const std::string& name);
     void update_active_world_buffers();
     void update();
-    void render(std::unique_ptr<OpenGL_Renderer>& renderer);
+    void render(std::unique_ptr<Engine::Graphics::OpenGL_Renderer>& renderer);
     void clear();
 
     bool world_is_created();
@@ -29,13 +29,13 @@ private:
     void _build_world(
         uint16_t world_width, uint16_t world_height,
         WorldSlot* world_slots,
-        std::unordered_map<uint32_t, std::unique_ptr<CoreObject::ObjectComponent>>& components
+        std::unordered_map<uint32_t, std::unique_ptr<Engine::Object::ObjectComponent>>& components
     );
     void _save_world_data(
         const std::string& name,
         const uint16_t world_width, const uint16_t world_height,
         const WorldSlot* world_slots,
-        const std::unordered_map<uint32_t, std::unique_ptr<CoreObject::ObjectComponent>>& components
+        const std::unordered_map<uint32_t, std::unique_ptr<Engine::Object::ObjectComponent>>& components
     );
 
     WorldManager() = default;

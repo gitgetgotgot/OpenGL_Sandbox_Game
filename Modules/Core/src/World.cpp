@@ -8,7 +8,6 @@
 #include <iostream>
 
 void World::init_render_buffers() {
-	//CoreEntity::EntitySystem::Instance().init();
 	//CoreEntity::EntitySystem::Instance().set_world_data(world_slots, width, height, &object_components);
 
 	//CONSTRAINTS
@@ -18,9 +17,9 @@ void World::init_render_buffers() {
 
 	std::filesystem::path vertex_shader_path = "Resources/shaders/world_sprites.vert";
 	std::filesystem::path fragment_shader_path = "Resources/shaders/world_sprites.frag";
-	shader = std::make_unique<ShaderProgram>(vertex_shader_path, fragment_shader_path);
+	shader = std::make_unique<Engine::Graphics::ShaderProgram>(vertex_shader_path, fragment_shader_path);
 
-	ebo = std::make_unique<EBO>();
+	ebo = std::make_unique<Engine::Graphics::EBO>();
 	GLuint* sprite_index_buffer = new GLuint[MAX_INDEX_AMOUNT];
 	for (int i = 0; i < MAX_SQUARES; i++) {
 		sprite_index_buffer[i * 6] = sprite_index_buffer[i * 6 + 3] = i * 4;
@@ -28,29 +27,29 @@ void World::init_render_buffers() {
 		sprite_index_buffer[i * 6 + 1] = sprite_index_buffer[i * 6 + 2] - 1;
 		sprite_index_buffer[i * 6 + 5] = sprite_index_buffer[i * 6 + 2] + 1;
 	}
-	ebo->set_data(sprite_index_buffer, MAX_INDEX_AMOUNT * sizeof(GLuint), EBO::EBO_USAGE::USAGE_STATIC);
+	ebo->set_data(sprite_index_buffer, MAX_INDEX_AMOUNT * sizeof(GLuint), Engine::Graphics::EBO::EBO_USAGE::USAGE_STATIC);
 	delete[] sprite_index_buffer;
 
 	for (auto& buf : render_buffers) {
 		buf = new ChunkRenderBuffer;
 		buf->vertices.reserve(MAX_VERTEX_AMOUNT);
-		buf->vao = std::make_unique<VAO>();
+		buf->vao = std::make_unique<Engine::Graphics::VAO>();
 		buf->vao->bind_VAO();
-		buf->vbo = std::make_unique<VBO>();
-		buf->vbo->set_data(nullptr, MAX_VERTEX_AMOUNT * sizeof(Vertex2f), VBO::VBO_USAGE::USAGE_DYNAMIC);
+		buf->vbo = std::make_unique<Engine::Graphics::VBO>();
+		buf->vbo->set_data(nullptr, MAX_VERTEX_AMOUNT * sizeof(Vertex2f), Engine::Graphics::VBO::VBO_USAGE::USAGE_DYNAMIC);
 		ebo->bind_EBO();
-		buf->vao->link_Attribute(0, 2, VAO::TYPE_FLOAT, sizeof(Vertex2f), offsetof(Vertex2f, Vertex2f::pos));
-		buf->vao->link_Attribute(1, 2, VAO::TYPE_FLOAT, sizeof(Vertex2f), offsetof(Vertex2f, Vertex2f::UV));
-		buf->vao->link_Attribute(2, 1, VAO::TYPE_UNSIGNED_INT, sizeof(Vertex2f), offsetof(Vertex2f, Vertex2f::tex_array_id));
-		buf->vao->link_Attribute(3, 1, VAO::TYPE_UNSIGNED_INT, sizeof(Vertex2f), offsetof(Vertex2f, Vertex2f::tex_id));
+		buf->vao->link_Attribute(0, 2, Engine::Graphics::VAO::TYPE_FLOAT, sizeof(Vertex2f), offsetof(Vertex2f, Vertex2f::pos));
+		buf->vao->link_Attribute(1, 2, Engine::Graphics::VAO::TYPE_FLOAT, sizeof(Vertex2f), offsetof(Vertex2f, Vertex2f::UV));
+		buf->vao->link_Attribute(2, 1, Engine::Graphics::VAO::TYPE_UNSIGNED_INT, sizeof(Vertex2f), offsetof(Vertex2f, Vertex2f::tex_array_id));
+		buf->vao->link_Attribute(3, 1, Engine::Graphics::VAO::TYPE_UNSIGNED_INT, sizeof(Vertex2f), offsetof(Vertex2f, Vertex2f::tex_id));
 		buf->vao->unbind_VAO();
 		buf->vbo->unbind_VBO();
 		ebo->unbind_EBO();
 	}
 
-	sprites_ubo = std::make_unique<UBO>();
+	sprites_ubo = std::make_unique<Engine::Graphics::UBO>();
 	sprites_ubo->bind_UBO(0);
-	sprites_ubo->set_data(nullptr, sizeof(Universal_UBO_Data), UBO::UBO_USAGE::USAGE_DYNAMIC);
+	sprites_ubo->set_data(nullptr, sizeof(Universal_UBO_Data), Engine::Graphics::UBO::UBO_USAGE::USAGE_DYNAMIC);
 
 	//camera base options
 	main_camera.zoom = MIN_ZOOM;
@@ -181,7 +180,7 @@ void World::update() {
 	}
 }
 
-void World::render(std::unique_ptr<OpenGL_Renderer>& renderer) {
+void World::render(std::unique_ptr<Engine::Graphics::OpenGL_Renderer>& renderer) {
 	shader->use_shader();
 	int central_chunk_buf_x = last_chunk_x - current_buffer_x_min;
 	int central_chunk_buf_y = last_chunk_y - current_buffer_y_min;
@@ -286,18 +285,18 @@ void World::load_chunk_buffer(uint32_t chunk_world_x, uint32_t chunk_world_y, ui
 				continue;
 			}
 			//add tile sprite data
-			CoreObject::ObjectInfo* object_info = CoreObject::ObjectManager::get_instance().get_object_info(slot->tile_id);
-			CoreResource::Sprite& sprite = CoreResource::SpriteManager::Instance().get_sprite(object_info->sprites[0]);
+			Engine::Object::ObjectInfo* object_info = Engine::Object::ObjectManager::Instance().get_object_info(slot->tile_id);
+			Engine::Resource::Sprite& sprite = Engine::Resource::SpriteManager::Instance().get_sprite(object_info->sprites[0]);
 
-			if (object_info->objectType == CoreObject::ObjectType::isBlock) {
+			if (object_info->objectType == Engine::Object::ObjectType::isBlock) {
 				vertices.add(Vertex2f(x, y,					sprite.U0, sprite.V0,						sprite.tex_array_id, sprite.tex_id),	base_index);
 				vertices.add(Vertex2f(x, y + 1.0f,			sprite.U0, sprite.V0 + sprite.H,			sprite.tex_array_id, sprite.tex_id),	base_index + 1);
 				vertices.add(Vertex2f(x + 1.0f, y + 1.0f,	sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.tex_array_id, sprite.tex_id),	base_index + 2);
 				vertices.add(Vertex2f(x + 1.0f, y,			sprite.U0 + sprite.W, sprite.V0,			sprite.tex_array_id, sprite.tex_id),	base_index + 3);
 			}
-			else if (object_info->objectType == CoreObject::ObjectType::isMultiBlock) {
-				float x_size = static_cast<CoreObject::MultiBlockInfo*>(object_info)->tiles_width;
-				float y_size = static_cast<CoreObject::MultiBlockInfo*>(object_info)->tiles_height;
+			else if (object_info->objectType == Engine::Object::ObjectType::isMultiBlock) {
+				float x_size = static_cast<Engine::Object::MultiBlockInfo*>(object_info)->tiles_width;
+				float y_size = static_cast<Engine::Object::MultiBlockInfo*>(object_info)->tiles_height;
 				vertices.add(Vertex2f(x, y,						sprite.U0, sprite.V0,						sprite.tex_array_id, sprite.tex_id),	base_index);
 				vertices.add(Vertex2f(x, y + y_size,			sprite.U0, sprite.V0 + sprite.H,			sprite.tex_array_id, sprite.tex_id),	base_index + 1);
 				vertices.add(Vertex2f(x + x_size, y + y_size,	sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.tex_array_id, sprite.tex_id),	base_index + 2);
@@ -390,25 +389,25 @@ void World::process_LB_click() {
 	uint16_t active_item_id = main_player_ptr->inventory.get_active_item_id();
 	if (active_item_id == 0) return; //do nothing if player is holding nothing
 
-	CoreObject::ObjectInfo* active_item_info = CoreObject::ObjectManager::get_instance().get_object_info(active_item_id);
+	Engine::Object::ObjectInfo* active_item_info = Engine::Object::ObjectManager::Instance().get_object_info(active_item_id);
 	switch (active_item_info->objectType) {
-	case CoreObject::ObjectType::isBlock: {
+	case Engine::Object::ObjectType::isBlock: {
 		bool success = place_tile(SystemContext::mouse.world_x_pos, SystemContext::mouse.world_y_pos, active_item_id);
 		if (success) main_player_ptr->inventory.spend_active_item();
 		break;
 	}
-	case CoreObject::ObjectType::isMultiBlock: {
+	case Engine::Object::ObjectType::isMultiBlock: {
 		bool success = place_tile(SystemContext::mouse.world_x_pos, SystemContext::mouse.world_y_pos, active_item_id);
 		if (success) main_player_ptr->inventory.spend_active_item();
 		break;
 	}
-	case CoreObject::ObjectType::isWeapon: {
-		if (active_item_info->_has_tag(TagID::IS_PICKAXE)) {
+	case Engine::Object::ObjectType::isWeapon: {
+		if (active_item_info->_has_tag(Engine::Resource::Tag::IS_PICKAXE)) {
 			destroy_tile(SystemContext::mouse.world_x_pos, SystemContext::mouse.world_y_pos);
 		}
 		break;
 	}
-	case CoreObject::ObjectType::isConsumable: {
+	case Engine::Object::ObjectType::isConsumable: {
 
 		break;
 	}
@@ -424,20 +423,20 @@ void World::process_RB_click() {
 	if (slot->tile_id == 1) { //complex object part -> get main part
 		auto it = object_components.find(slot_index);
 		if (it == object_components.end()) return; //this shouldn't happen, but ok
-		CoreObject::ObjectComponent* comp = it->second.get();
-		uint32_t main_part_x = static_cast<CoreObject::MultiBlockTileComponent*>(comp)->column;
-		uint32_t main_part_y = static_cast<CoreObject::MultiBlockTileComponent*>(comp)->line;
+		Engine::Object::ObjectComponent* comp = it->second.get();
+		uint32_t main_part_x = static_cast<Engine::Object::MultiBlockTileComponent*>(comp)->column;
+		uint32_t main_part_y = static_cast<Engine::Object::MultiBlockTileComponent*>(comp)->line;
 		slot_index = main_part_y * width + main_part_x; //get main slot index
 		slot = &world_slots[slot_index]; //slot ptr now points on the main object part
 	}
 
-	CoreObject::ObjectInfo* slot_info = CoreObject::ObjectManager::get_instance().get_object_info(slot->tile_id);
-	if (slot_info->objectType == CoreObject::ObjectType::isMultiBlock) { //complex object -> can be interactable
-		if (slot_info->_has_tag(TagID::IS_CHEST)) {
+	Engine::Object::ObjectInfo* slot_info = Engine::Object::ObjectManager::Instance().get_object_info(slot->tile_id);
+	if (slot_info->objectType == Engine::Object::ObjectType::isMultiBlock) { //complex object -> can be interactable
+		if (slot_info->_has_tag(Engine::Resource::Tag::IS_CHEST)) {
 			std::cout << "Interacted with chest" << std::endl;
-			main_player_ptr->inventory.open_chest(static_cast<CoreObject::ChestComponent*>(object_components[slot_index].get())->chest_slots);
+			main_player_ptr->inventory.open_chest(static_cast<Engine::Object::ChestComponent*>(object_components[slot_index].get())->chest_slots);
 		}
-		else if (slot_info->_has_tag(TagID::IS_DOOR)) {
+		else if (slot_info->_has_tag(Engine::Resource::Tag::IS_DOOR)) {
 			std::cout << "Interacted with door" << std::endl;
 		}
 	}
@@ -450,10 +449,10 @@ void World::process_scrollwheel() {
 bool World::place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id) {
 	WorldSlot& slot = world_slots[world_y * width + world_x];
 	if (slot.tile_id != 0) return false; //slot already has tile
-	CoreObject::ObjectInfo* object_info = CoreObject::ObjectManager::get_instance().get_object_info(tile_id);
-	if (object_info->objectType == CoreObject::ObjectType::isMultiBlock) {
-		int obj_width = static_cast<CoreObject::MultiBlockInfo*>(object_info)->tiles_width;
-		int obj_height = static_cast<CoreObject::MultiBlockInfo*>(object_info)->tiles_height;
+	Engine::Object::ObjectInfo* object_info = Engine::Object::ObjectManager::Instance().get_object_info(tile_id);
+	if (object_info->objectType == Engine::Object::ObjectType::isMultiBlock) {
+		int obj_width = static_cast<Engine::Object::MultiBlockInfo*>(object_info)->tiles_width;
+		int obj_height = static_cast<Engine::Object::MultiBlockInfo*>(object_info)->tiles_height;
 		int max_x = world_x + obj_width;
 		int max_y = world_y + obj_height;
 		for (int x = world_x; x < max_x; x++) {
@@ -469,14 +468,14 @@ bool World::place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id) {
 				int comp_obj_part_index = y * width + x;
 				if (comp_obj_part_index == main_part_index) continue;
 				world_slots[y * width + x].tile_id = 1; //place complex object parts with coords of main part
-				object_components.emplace(comp_obj_part_index, std::make_unique<CoreObject::MultiBlockTileComponent>(world_x, world_y));
+				object_components.emplace(comp_obj_part_index, std::make_unique<Engine::Object::MultiBlockTileComponent>(world_x, world_y));
 			}
 		}
-		if (object_info->_has_tag(TagID::IS_CHEST)) {
-			object_components.emplace(main_part_index, std::make_unique<CoreObject::ChestComponent>());
+		if (object_info->_has_tag(Engine::Resource::Tag::IS_CHEST)) {
+			object_components.emplace(main_part_index, std::make_unique<Engine::Object::ChestComponent>());
 		}
-		else if (object_info->_has_tag(TagID::IS_DOOR)) {
-			object_components.emplace(main_part_index, std::make_unique<CoreObject::DoorComponent>(0));
+		else if (object_info->_has_tag(Engine::Resource::Tag::IS_DOOR)) {
+			object_components.emplace(main_part_index, std::make_unique<Engine::Object::DoorComponent>(0));
 		}
 	}
 	slot.tile_id = tile_id;
@@ -496,17 +495,17 @@ bool World::place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id) {
 		uint32_t tile_chunk_y = world_y - chunk_y * CHUNK_SIZE;
 		uint32_t tile_index = (tile_chunk_x * CHUNK_SIZE + tile_chunk_y) * 4;
 
-		CoreResource::Sprite& sprite = CoreResource::SpriteManager::Instance().get_sprite(object_info->sprites[0]);
+		Engine::Resource::Sprite& sprite = Engine::Resource::SpriteManager::Instance().get_sprite(object_info->sprites[0]);
 
-		if (object_info->objectType == CoreObject::ObjectType::isBlock) {
+		if (object_info->objectType == Engine::Object::ObjectType::isBlock) {
 			vertices.add(Vertex2f(world_x, world_y,					sprite.U0, sprite.V0,						sprite.tex_array_id, sprite.tex_id), tile_index);
 			vertices.add(Vertex2f(world_x, world_y + 1.0f,			sprite.U0, sprite.V0 + sprite.H,			sprite.tex_array_id, sprite.tex_id), tile_index + 1);
 			vertices.add(Vertex2f(world_x + 1.0f, world_y + 1.0f,	sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.tex_array_id, sprite.tex_id), tile_index + 2);
 			vertices.add(Vertex2f(world_x + 1.0f, world_y,			sprite.U0 + sprite.W, sprite.V0,			sprite.tex_array_id, sprite.tex_id), tile_index + 3);
 		}
-		else if (object_info->objectType == CoreObject::ObjectType::isMultiBlock) {
-			float x_size = static_cast<CoreObject::MultiBlockInfo*>(object_info)->tiles_width;
-			float y_size = static_cast<CoreObject::MultiBlockInfo*>(object_info)->tiles_height;
+		else if (object_info->objectType == Engine::Object::ObjectType::isMultiBlock) {
+			float x_size = static_cast<Engine::Object::MultiBlockInfo*>(object_info)->tiles_width;
+			float y_size = static_cast<Engine::Object::MultiBlockInfo*>(object_info)->tiles_height;
 			vertices.add(Vertex2f(world_x, world_y,						sprite.U0, sprite.V0,						sprite.tex_array_id, sprite.tex_id),	tile_index);
 			vertices.add(Vertex2f(world_x, world_y + y_size,			sprite.U0, sprite.V0 + sprite.H,			sprite.tex_array_id, sprite.tex_id),	tile_index + 1);
 			vertices.add(Vertex2f(world_x + x_size, world_y + y_size,	sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.tex_array_id, sprite.tex_id),	tile_index + 2);
@@ -528,17 +527,17 @@ bool World::destroy_tile(uint32_t world_x, uint32_t world_y) {
 		std::cout << "Trying to destroy complex object part..." << std::endl;
 		auto it = object_components.find(slot_index);
 		if (it == object_components.end()) return false; //this shouldn't happen, but ok
-		CoreObject::ObjectComponent* comp = it->second.get();
-		world_x = static_cast<CoreObject::MultiBlockTileComponent*>(comp)->column;
-		world_y = static_cast<CoreObject::MultiBlockTileComponent*>(comp)->line;
+		Engine::Object::ObjectComponent* comp = it->second.get();
+		world_x = static_cast<Engine::Object::MultiBlockTileComponent*>(comp)->column;
+		world_y = static_cast<Engine::Object::MultiBlockTileComponent*>(comp)->line;
 		slot_index = world_y * width + world_x; //get main slot index
 		slot = &world_slots[slot_index]; //slot ptr now points on the main object part
 	}
 
-	CoreObject::ObjectInfo* slot_info = CoreObject::ObjectManager::get_instance().get_object_info(slot->tile_id);
-	if (slot_info->objectType == CoreObject::ObjectType::isMultiBlock) {
-		int obj_width = static_cast<CoreObject::MultiBlockInfo*>(slot_info)->tiles_width;
-		int obj_height = static_cast<CoreObject::MultiBlockInfo*>(slot_info)->tiles_height;
+	Engine::Object::ObjectInfo* slot_info = Engine::Object::ObjectManager::Instance().get_object_info(slot->tile_id);
+	if (slot_info->objectType == Engine::Object::ObjectType::isMultiBlock) {
+		int obj_width = static_cast<Engine::Object::MultiBlockInfo*>(slot_info)->tiles_width;
+		int obj_height = static_cast<Engine::Object::MultiBlockInfo*>(slot_info)->tiles_height;
 		int max_x = world_x + obj_width;
 		int max_y = world_y + obj_height;
 		uint32_t index;
@@ -587,7 +586,7 @@ void World::save_world_data_in_file(const char* filePath) {
 		for (int j = 0; j < height; j++) {
 			uint32_t index = j * width + i;
 			WorldSlot& slot = world_slots[index];
-			CoreObject::ObjectInfo* obj_info = CoreObject::ObjectManager::get_instance().get_object_info(slot.tile_id);
+			Engine::Object::ObjectInfo* obj_info = Engine::Object::ObjectManager::Instance().get_object_info(slot.tile_id);
 			//write tile id
 			write.write(reinterpret_cast<const char*>(&slot.tile_id), sizeof(uint16_t));
 			//write wall id
@@ -595,20 +594,20 @@ void World::save_world_data_in_file(const char* filePath) {
 			//write flags
 			write.write(reinterpret_cast<const char*>(&slot.flags), sizeof(uint8_t));
 
-			if (obj_info->objectType == CoreObject::ObjectType::isMultiBlockTile) {
-				CoreObject::ObjectComponent* obj_comp = object_components[index].get();
+			if (obj_info->objectType == Engine::Object::ObjectType::isMultiBlockTile) {
+				Engine::Object::ObjectComponent* obj_comp = object_components[index].get();
 				//write_value = obj_comp->get_column();
 				write.write(reinterpret_cast<const char*>(&write_value), sizeof(uint16_t));
 				//write_value = obj_comp->get_line();
 				write.write(reinterpret_cast<const char*>(&write_value), sizeof(uint16_t));
 			}
-			else if (obj_info->objectType == CoreObject::isMultiBlock) {
-				CoreObject::ObjectComponent* obj_comp = object_components[index].get();
-				if (obj_info->_has_tag(TagID::IS_DOOR)) {
+			else if (obj_info->objectType == Engine::Object::isMultiBlock) {
+				Engine::Object::ObjectComponent* obj_comp = object_components[index].get();
+				if (obj_info->_has_tag(Engine::Resource::Tag::IS_DOOR)) {
 					//uint8_t door_state = obj_comp->get_door_state();
 					//write.write(reinterpret_cast<const char*>(&door_state), sizeof(uint8_t));
 				}
-				else if (obj_info->_has_tag(TagID::IS_CHEST)) {
+				else if (obj_info->_has_tag(Engine::Resource::Tag::IS_CHEST)) {
 					//InventorySlot* chest_slots_ptr = obj_comp->get_chest_slots();
 					for (int c = 0; c < 40; c++) {
 						//write.write(reinterpret_cast<const char*>(&chest_slots_ptr[c].item_id), sizeof(uint16_t));

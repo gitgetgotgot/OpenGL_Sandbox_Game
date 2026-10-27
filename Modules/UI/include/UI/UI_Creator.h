@@ -1,8 +1,9 @@
 #pragma once
 #include "UI/UI_Object.h"
 #include "UI/Canvas.h"
+#include <string>
 
-namespace CoreUI {
+namespace Engine::UI {
 	class UI_Creator {
 	public:
 		static UI_Canvas_Ptr create_canvas();

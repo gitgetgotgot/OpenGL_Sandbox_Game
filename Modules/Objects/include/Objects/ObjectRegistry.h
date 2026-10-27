@@ -1,5 +1,5 @@
 #pragma once
 
-namespace CoreObject {
+namespace Engine::Object {
 	void register_core_object_factories();
 }

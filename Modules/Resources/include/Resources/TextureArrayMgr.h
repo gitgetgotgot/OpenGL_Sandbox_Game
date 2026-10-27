@@ -7,34 +7,28 @@
 #include <unordered_map>
 #include <queue>
 
-namespace CoreResource {
-	struct TextureID {
-		uint16_t array_id = 0;
-		uint16_t index = 0;
-	};
-
-	struct TextureResourceData {
-		TextureResourceData() = default;
-		TextureResourceData(
-			unsigned char* image_bytes,
-			int imgWidth, int imgHeight, int numOfColorChannels,
-			std::filesystem::path& file_path, std::string& UID
-		) : image_bytes{ image_bytes }, imgWidth{ imgWidth },
-			imgHeight{ imgHeight }, numOfColorChannels{numOfColorChannels},
-			file_path{ file_path }, UID{ UID } {
-		}
-		TextureResourceData(const TextureResourceData&) = delete;
-		TextureResourceData& operator=(const TextureResourceData&) = delete;
-		TextureResourceData(TextureResourceData&&);
-		TextureResourceData& operator=(TextureResourceData&&);
-		~TextureResourceData();
-		unsigned char* image_bytes;
-		int imgWidth, imgHeight, numOfColorChannels;
-		std::filesystem::path file_path;
-		std::string UID;
-	};
-
+namespace Engine::Resource {
 	class TextureArrayManager {
+		struct TextureID {
+			uint16_t array_id = 0;
+			uint16_t index = 0;
+		};
+		struct TextureResourceData {
+			TextureResourceData() = default;
+			TextureResourceData(unsigned char* image_bytes, int imgWidth, int imgHeight, int numOfColorChannels,
+				std::filesystem::path& file_path, std::string& UID
+			) : image_bytes{ image_bytes }, imgWidth{ imgWidth }, imgHeight{ imgHeight },
+				numOfColorChannels{ numOfColorChannels }, file_path{ file_path }, UID{ UID } {}
+			TextureResourceData(const TextureResourceData&) = delete;
+			TextureResourceData& operator=(const TextureResourceData&) = delete;
+			TextureResourceData(TextureResourceData&&);
+			TextureResourceData& operator=(TextureResourceData&&);
+			~TextureResourceData();
+			unsigned char* image_bytes;
+			int imgWidth, imgHeight, numOfColorChannels;
+			std::filesystem::path file_path;
+			std::string UID;
+		};
 	public:
 		static TextureArrayManager& Instance() {
 			static TextureArrayManager mgr;
@@ -58,9 +52,9 @@ namespace CoreResource {
 		~TextureArrayManager() = default;
 
 		// resolutions 32x32, 64x64, 128x128, 256x256, 512x512, 1024x1024, 2048x2048, 4096x4096
-		std::unique_ptr<TextureArray> texture_arrays[8];
+		std::unique_ptr<Engine::Graphics::TextureArray> texture_arrays[8];
 		// array for fonts with resolution 1024x1024
-		std::unique_ptr<TextureArray> fonts_texture_array;
+		std::unique_ptr<Engine::Graphics::TextureArray> fonts_texture_array;
 
 		std::unordered_map<std::string, TextureID> UID_to_ID;
 		std::unordered_map<std::string, uint16_t> font_UID_to_ID;

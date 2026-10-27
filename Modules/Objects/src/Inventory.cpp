@@ -79,7 +79,7 @@ void Inventory::update() {
 
 bool Inventory::place_item(uint16_t item_id, uint16_t& amount) {
 	for (int i = 0; i < INVENTORY_MAIN_SIZE; i++) {
-		InventorySlot& slot = items[i];
+		Engine::Resource::InventorySlot& slot = items[i];
 		if (slot.item_id == 0) {
 			slot.item_id = item_id;
 			slot.amount = amount;
@@ -104,7 +104,7 @@ void Inventory::craft_item() {
 	for (auto& needed_item : item.items_needed) {
 		uint16_t amount_needed = needed_item.amount;
 		for (int i = 0; i < INVENTORY_MAIN_SIZE; i++) {
-			InventorySlot& slot = items[i];
+			Engine::Resource::InventorySlot& slot = items[i];
 			if (slot.item_id == needed_item.item_id) {
 				if (amount_needed <= slot.amount) {
 					slot.amount -= amount_needed;
@@ -125,14 +125,14 @@ void Inventory::craft_item() {
 }
 
 void Inventory::spend_active_item() {
-	InventorySlot& slot = items[current_active_hotbar_slot];
+	Engine::Resource::InventorySlot& slot = items[current_active_hotbar_slot];
 	slot.amount--;
 	if (slot.amount == 0) slot.item_id = 0;
 	should_update_base_items = true;
 }
 
-void Inventory::process_slot_LB_click(uint32_t slot_id, InventorySlot* slots_ptr) {
-	InventorySlot& slot = slots_ptr[slot_id];
+void Inventory::process_slot_LB_click(uint32_t slot_id, Engine::Resource::InventorySlot* slots_ptr) {
+	Engine::Resource::InventorySlot& slot = slots_ptr[slot_id];
 	//take item from slot if cursor is empty
 	if (cursor_item.item_id == 0) {
 		//stop if slot has no item
@@ -177,8 +177,8 @@ void Inventory::process_slot_LB_click(uint32_t slot_id, InventorySlot* slots_ptr
 	}
 }
 
-void Inventory::process_slot_RB_click(uint32_t slot_id, InventorySlot* slots_ptr) {
-	InventorySlot& slot = slots_ptr[slot_id];
+void Inventory::process_slot_RB_click(uint32_t slot_id, Engine::Resource::InventorySlot* slots_ptr) {
+	Engine::Resource::InventorySlot& slot = slots_ptr[slot_id];
 
 	//take one item from slot
 	if (cursor_item.item_id == 0) {
@@ -365,7 +365,7 @@ uint16_t Inventory::get_active_item_id() const {
 	return items[current_active_hotbar_slot].item_id;
 }
 
-void Inventory::open_chest(InventorySlot* chest_slots_ptr) {
+void Inventory::open_chest(Engine::Resource::InventorySlot* chest_slots_ptr) {
 	active_chest_items_ptr = chest_slots_ptr;
 	has_open_chest = true;
 	is_open = true;

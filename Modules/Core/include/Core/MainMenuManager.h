@@ -48,7 +48,7 @@ private:
 	MainMenuManager() = default;
 	~MainMenuManager() = default;
 
-	CoreAudio::AudioSource button_click_sound;
-	CoreAudio::AudioSource music_test;
+	Engine::Audio::AudioSource button_click_sound;
+	Engine::Audio::AudioSource music_test;
 	MenuCurrentState current_state = MenuCurrentState::in_MainMenu;
 };

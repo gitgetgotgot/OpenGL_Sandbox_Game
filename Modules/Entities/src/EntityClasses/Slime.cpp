@@ -2,20 +2,20 @@
 #include <Utility/TimeManager.h>
 #include <Utility/GameContext.h>
 
-void CoreEntity::Slime::on_create() {
+void Engine::Entity::Slime::on_create() {
 	anim_idle = anim_controller.get_clip_id(0);
 	anim_jump = anim_controller.get_clip_id(1);
 	anim_controller.play(anim_idle);
 }
 
-void CoreEntity::Slime::on_destroy() {
+void Engine::Entity::Slime::on_destroy() {
 
 }
 
-void CoreEntity::Slime::update() {
+void Engine::Entity::Slime::update() {
 	anim_controller.update();
 
-	if (physics.collision_mask & CollisionType::BOTTOM || physics.platform_collision) {
+	if (physics.collision_mask & Engine::Physics::CollisionType::BOTTOM || physics.platform_collision) {
 		time_standing += TimeManager::deltaTime;
 		physics.linear_velocity.x = 0.0f;
 		current_state = SLIME_ANIM_STATE::SLIME_IDLE;
@@ -44,7 +44,7 @@ void CoreEntity::Slime::update() {
 	current_sprite = anim_controller.current_sprite;
 }
 
-void CoreEntity::Slime::change_anim() {
+void Engine::Entity::Slime::change_anim() {
 	switch (current_state) {
 	case SLIME_ANIM_STATE::SLIME_IDLE:
 		anim_controller.play(anim_idle);

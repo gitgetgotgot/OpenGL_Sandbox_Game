@@ -4,7 +4,7 @@
 #include "UI/Image.h"
 #include <Utility/FunctionWrapper.h>
 
-namespace CoreUI {
+namespace Engine::UI {
 	class Button : public UI_Component<Button> {
 	public:
 		Button() = default;

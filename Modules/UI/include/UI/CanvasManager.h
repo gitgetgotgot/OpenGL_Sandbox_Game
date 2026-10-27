@@ -1,7 +1,7 @@
 #pragma once
 #include "UI/Canvas.h"
 
-namespace CoreUI {
+namespace Engine::UI {
 	class CanvasManager {
 	public:
 		static CanvasManager& get_instance() {

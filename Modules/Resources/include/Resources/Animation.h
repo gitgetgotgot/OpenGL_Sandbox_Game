@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <string>
 
-namespace CoreAnimation {
+namespace Engine::Resource {
 	class AnimationClip {
 	public:
 		void add_sprite(uint32_t sprite_id);
@@ -17,7 +17,7 @@ namespace CoreAnimation {
 
 	class AnimationClipManager {
 	public:
-		static AnimationClipManager& get_instance() {
+		static AnimationClipManager& Instance() {
 			static AnimationClipManager mgr;
 			return mgr;
 		}
@@ -37,7 +37,7 @@ namespace CoreAnimation {
 
 	class AnimatorManager {
 	public:
-		static AnimatorManager& get_instance() {
+		static AnimatorManager& Instance() {
 			static AnimatorManager mgr;
 			return mgr;
 		}
@@ -61,7 +61,7 @@ namespace CoreAnimation {
 		uint32_t animator_id = 0;
 		Animator* animator_ptr = nullptr;
 		AnimationClip* current_clip = nullptr;
-		CoreResource::Sprite* current_sprite = nullptr;
+		Engine::Resource::Sprite* current_sprite = nullptr;
 		float current_frame_time = 0.0f;
 		uint32_t current_sprite_index = 0;
 		uint32_t max_sprite_index = 0;

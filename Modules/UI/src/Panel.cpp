@@ -2,13 +2,13 @@
 #include "UI/UI_ObjectManager.h"
 #include <Resources/Sprite.h>
 
-void CoreUI::Panel::_update_buffer_data(UI_RenderContext& c, UI_RenderState& s) {
+void Engine::UI::Panel::_update_buffer_data(UI_RenderContext& c, UI_RenderState& s) {
 	if (sprite_ID == 0) return;
 	update_render_queue(c, s, 6);
 	c.sprites_buffer.insert(c.sprites_buffer.end(), sprite_vertices, sprite_vertices + 4);
 }
 
-void CoreUI::Panel::_update_data() {
+void Engine::UI::Panel::_update_data() {
 	is_dirty = false;
 	if (sprite_ID == 0) return;
 
@@ -20,7 +20,7 @@ void CoreUI::Panel::_update_data() {
 	float size_x = tr.size.x;
 	float size_y = tr.size.y;
 
-	CoreResource::Sprite& sprite = CoreResource::SpriteManager::Instance().get_sprite(sprite_ID);
+	Engine::Resource::Sprite& sprite = Engine::Resource::SpriteManager::Instance().get_sprite(sprite_ID);
 	glm::vec2& size_ratio = sprite.ratio;
 	x += (1.0f - size_ratio.x) * size_x * 0.5f;
 	y += (1.0f - size_ratio.y) * size_y * 0.5f;
@@ -32,22 +32,22 @@ void CoreUI::Panel::_update_data() {
 	sprite_vertices[3] = UI_Vertex2f(x + size_x, y, sprite.U0 + sprite.W, sprite.V0, sprite.tex_array_id, sprite.tex_id, color);
 }
 
-void CoreUI::Panel::set_sprite(uint32_t sprite_ID) {
+void Engine::UI::Panel::set_sprite(uint32_t sprite_ID) {
 	this->sprite_ID = sprite_ID;
 	mark_dirty();
 }
 
-void CoreUI::Panel::set_color(glm::vec4 color) {
+void Engine::UI::Panel::set_color(glm::vec4 color) {
 	this->color = color;
 	mark_dirty();
 }
 
-void CoreUI::Panel::set_color(float r, float g, float b, float a) {
+void Engine::UI::Panel::set_color(float r, float g, float b, float a) {
 	color.x = r, color.y = g, color.z = b, color.w = a;
 	mark_dirty();
 }
 
-void CoreUI::Panel::flip(bool X, bool Y) {
+void Engine::UI::Panel::flip(bool X, bool Y) {
 	flip_x = X; flip_y = Y;
 	mark_dirty();
 }

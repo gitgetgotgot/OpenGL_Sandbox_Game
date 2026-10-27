@@ -1,5 +1,4 @@
 #pragma once
-//#include "World.h"
 #include <IOSystem/InputHandler.h>
 #include <Rendering/OpenGL_Renderer.h>
 
@@ -29,7 +28,7 @@ private:
 
 	//Player player;
 	//Graphics main objects
-	std::unique_ptr<OpenGL_Renderer> renderer;
+	std::unique_ptr<Engine::Graphics::OpenGL_Renderer> renderer;
 
 	//World data
 	//std::unique_ptr<World> world;

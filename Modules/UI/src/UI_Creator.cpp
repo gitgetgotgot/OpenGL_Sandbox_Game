@@ -13,21 +13,21 @@
 #include <Resources/Sprite.h>
 #include <IOSystem/SystemContext.h>
 
-CoreUI::UI_Canvas_Ptr CoreUI::UI_Creator::create_canvas() {
+Engine::UI::UI_Canvas_Ptr Engine::UI::UI_Creator::create_canvas() {
 	return CanvasManager::get_instance().add();
 }
 
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_ui_empty_object() {
+Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_ui_empty_object() {
 	return UI_ObjectManager::get_instance().add();
 }
 
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_image() {
+Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_image() {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
 	obj->add_component<Image>()->Setup_As_Regular();
 	return obj;
 }
 
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_image(
+Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_image(
 	uint32_t sprite_id, glm::vec2 size, glm::vec2 local_pos, glm::vec4 color
 ) {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
@@ -40,13 +40,13 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_image(
 	return obj;
 }
 
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_image9sliced() {
+Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_image9sliced() {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
 	obj->add_component<Image>()->Setup_As_Nine_Sliced();
 	return obj;
 }
 
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_image9sliced(
+Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_image9sliced(
 	uint32_t sprite9sliced_id, glm::vec2 size, glm::vec2 local_pos, glm::vec4 color
 ) {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
@@ -59,13 +59,13 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_image9sliced(
 	return obj;
 }
 
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_tiled_image() {
+Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_tiled_image() {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
 	obj->add_component<TiledImage>();
 	return obj;
 }
 
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_tiled_image(
+Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_tiled_image(
 	uint32_t sprite_id, glm::vec2 size, glm::vec2 local_pos, glm::vec2 tiles_count, glm::vec4 color
 ) {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
@@ -78,13 +78,13 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_tiled_image(
 	return obj;
 }
 
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_SDF_text() {
+Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_SDF_text() {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
 	obj->add_component<SDF_Text>();
 	return obj;
 }
 
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_SDF_text(
+Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_SDF_text(
 	glm::vec2 size, glm::vec2 local_pos, std::string text, glm::vec4 text_color, float text_height
 ) {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
@@ -97,13 +97,13 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_SDF_text(
 	return obj;
 }
 
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_panel() {
+Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_panel() {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
 	obj->add_component<Panel>();
 	return obj;
 }
 
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_panel(
+Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_panel(
 	glm::vec2 size, glm::vec2 local_pos, uint32_t sprite_id, glm::vec4 color
 ) {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
@@ -115,13 +115,13 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_panel(
 	return obj;
 }
 
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_button() {
+Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_button() {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
 	obj->add_component<Button>();
 	return obj;
 }
 
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_button_image(
+Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_button_image(
 	glm::vec2 size, glm::vec2 local_pos, bool image_is_9_sliced, uint32_t sprite_id, bool has_text,
 	std::string txt, glm::vec4 text_color, float text_height
 ) {
@@ -159,13 +159,13 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_button_image(
 	return obj;
 }
 
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_input_field() {
+Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_input_field() {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
 	obj->add_component<InputField>();
 	return obj;
 }
 
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_input_field_image(
+Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_input_field_image(
 	glm::vec2 size, glm::vec2 local_pos, bool image_is_9_sliced, uint32_t back_sprite_id, glm::vec4 text_color, float text_height, float border_size, float sliced_img_border_size
 ) {
 	UI_Obj_Ptr field_obj = UI_ObjectManager::get_instance().add();
@@ -198,7 +198,7 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_input_field_image(
 	cursor_obj->transform.set_size(text_height * 0.05f, text_height);
 	auto cursor_img = cursor_obj->add_component<Image>();
 	cursor_img->Setup_As_Regular();
-	cursor_img->set_sprite(CoreResource::SpriteManager::Instance().get_sprite_id("Core:White").value());
+	cursor_img->set_sprite(Engine::Resource::SpriteManager::Instance().get_sprite_id("Core:White").value());
 
 	field_obj.add_child(img_obj);
 	field_obj.add_child(text_obj);
@@ -207,13 +207,13 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_input_field_image(
 	return field_obj;
 }
 
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_scroll_view() {
+Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_scroll_view() {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
 	obj->add_component<ScrollView>();
 	return obj;
 }
 
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_scroll_view(glm::vec2 size, glm::vec2 local_pos) {
+Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_scroll_view(glm::vec2 size, glm::vec2 local_pos) {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
 	obj->transform.set_local_pos(local_pos);
 	obj->transform.set_size(size);
@@ -229,13 +229,13 @@ CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_scroll_view(glm::vec2 size, glm::v
 	return obj;
 }
 
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_scroll_bar() {
+Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_scroll_bar() {
 	UI_Obj_Ptr obj = UI_ObjectManager::get_instance().add();
 	obj->add_component<ScrollBar>();
 	return obj;
 }
 
-CoreUI::UI_Obj_Ptr CoreUI::UI_Creator::create_scroll_bar(
+Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_scroll_bar(
 	glm::vec2 scroll_area_size, glm::vec2 track_size, glm::vec2 thumb_size, glm::vec2 local_pos,
 	bool track_9_sliced, bool thumb_9_sliced, uint32_t track_sprite_id, uint32_t thumb_sprite_id,
 	glm::vec4 track_color, glm::vec4 thumb_color,

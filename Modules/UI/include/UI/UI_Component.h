@@ -1,8 +1,8 @@
 #pragma once
-#include <Utility/UI_Data.h>
+#include "UI/UI_Data.h"
 #include <vector>
 
-namespace CoreUI {
+namespace Engine::UI {
 	namespace CompFn {
 		using Fn_Update_UI_Data = void(*)(void*, UI_RenderContext&, UI_RenderState&);
 		using Fn_Void_Void = void(*)(void*);

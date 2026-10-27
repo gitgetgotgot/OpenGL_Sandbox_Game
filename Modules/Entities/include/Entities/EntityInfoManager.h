@@ -2,10 +2,10 @@
 #include "Entities/EntityInfo.h"
 #include <deque>
 
-namespace CoreEntity {
+namespace Engine::Entity {
 	class EntityInfoManager {
 	public:
-		static EntityInfoManager& get_instance() {
+		static EntityInfoManager& Instance() {
 			static EntityInfoManager mgr;
 			return mgr;
 		}

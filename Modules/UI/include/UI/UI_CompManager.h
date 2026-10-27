@@ -2,7 +2,7 @@
 #include "UI/UI_Component.h"
 #include <Utility/SparseSet.h>
 
-namespace CoreUI {
+namespace Engine::UI {
 	class UI_ComponentEntry {
 	public:
 		UI_ComponentEntry() = default;

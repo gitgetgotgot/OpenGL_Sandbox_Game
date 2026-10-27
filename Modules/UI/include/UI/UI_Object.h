@@ -3,7 +3,7 @@
 #include "UI/UI_Comp_Ptr.h"
 #include "UI/UI_Behaviour.h"
 
-namespace CoreUI {
+namespace Engine::UI {
 	class UI_Object {
 	public:
 		UI_Object(uint32_t id);

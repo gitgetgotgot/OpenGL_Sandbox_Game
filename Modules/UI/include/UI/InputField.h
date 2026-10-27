@@ -3,7 +3,7 @@
 #include "UI/Image.h"
 #include "UI/SDF_Text.h"
 
-namespace CoreUI {
+namespace Engine::UI {
 	class InputField : public UI_Component<InputField> {
 	public:
 		InputField() = default;

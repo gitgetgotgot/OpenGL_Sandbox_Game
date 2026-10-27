@@ -1,7 +1,7 @@
 #pragma once
-#include "UI/UI_ComponentManager.h"
+#include "UI/UI_CompManager.h"
 
-namespace CoreUI {
+namespace Engine::UI {
 	template<typename T>
 	class UI_Component_Ptr {
 	public:

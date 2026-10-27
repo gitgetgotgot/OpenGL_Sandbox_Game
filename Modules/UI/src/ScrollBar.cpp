@@ -3,25 +3,25 @@
 #include <IOSystem/SystemContext.h>
 #include <algorithm>
 
-void CoreUI::ScrollBar::set_value(float value) {
+void Engine::UI::ScrollBar::set_value(float value) {
 	scroll_value = std::clamp(value, 0.0f, 1.0f);
 	_update_thumb_pos();
 }
 
-void CoreUI::ScrollBar::set_direction(ScrollDirection direction) {
+void Engine::UI::ScrollBar::set_direction(ScrollDirection direction) {
 	this->direction = direction;
 }
 
-void CoreUI::ScrollBar::set_scroll_mode(ScrollMode mode) {
+void Engine::UI::ScrollBar::set_scroll_mode(ScrollMode mode) {
 	scroll_mode = mode;
 }
 
-void CoreUI::ScrollBar::set_steps_amount(uint16_t steps) {
+void Engine::UI::ScrollBar::set_steps_amount(uint16_t steps) {
 	if (steps < 1 || steps > 1000) return;
 	thumb_step_size = 1.0f / static_cast<float>(steps);
 }
 
-void CoreUI::ScrollBar::set_thumb_size_ratio(float ratio) {
+void Engine::UI::ScrollBar::set_thumb_size_ratio(float ratio) {
 	// clamp so size is always between 5% and 100% of track_size
 	const float thumb_size_ratio = std::clamp(ratio, 0.05f, 1.0f);
 	
@@ -45,7 +45,7 @@ void CoreUI::ScrollBar::set_thumb_size_ratio(float ratio) {
 	_update_thumb_pos();
 }
 
-void CoreUI::ScrollBar::bind_components(UI_Component_Ptr<Image>& track_img, UI_Component_Ptr<Image>& thumb_img) {
+void Engine::UI::ScrollBar::bind_components(UI_Component_Ptr<Image>& track_img, UI_Component_Ptr<Image>& thumb_img) {
 	this->track_img = track_img;
 	this->thumb_img = thumb_img;
 
@@ -65,7 +65,7 @@ void CoreUI::ScrollBar::bind_components(UI_Component_Ptr<Image>& track_img, UI_C
 	}
 }
 
-void CoreUI::ScrollBar::_update_thumb_pos() {
+void Engine::UI::ScrollBar::_update_thumb_pos() {
 	UI_Object* thumb_obj = UI_ObjectManager::get_instance().get(thumb_img.get_id());
 	if (!thumb_obj) return;
 
@@ -79,7 +79,7 @@ void CoreUI::ScrollBar::_update_thumb_pos() {
 	}
 }
 
-void CoreUI::ScrollBar::_on_track_held() {
+void Engine::UI::ScrollBar::_on_track_held() {
 	UI_Object* track_obj = UI_ObjectManager::get_instance().get(track_img.get_id());
 	if (!track_obj || !max_thumb_range) return;
 
@@ -102,7 +102,7 @@ void CoreUI::ScrollBar::_on_track_held() {
 	}
 }
 
-void CoreUI::ScrollBar::_on_thumb_drag(glm::vec2& scroll_thumb_cursor_delta) {
+void Engine::UI::ScrollBar::_on_thumb_drag(glm::vec2& scroll_thumb_cursor_delta) {
 	UI_Object* track_obj = UI_ObjectManager::get_instance().get(track_img.get_id());
 	if (!track_obj || !max_thumb_range) return;
 
@@ -129,7 +129,7 @@ void CoreUI::ScrollBar::_on_thumb_drag(glm::vec2& scroll_thumb_cursor_delta) {
 	}
 }
 
-void CoreUI::ScrollBar::_on_thumb_step(float thumb_global_x, float thumb_global_y) {
+void Engine::UI::ScrollBar::_on_thumb_step(float thumb_global_x, float thumb_global_y) {
 	if (direction == ScrollBar::SCROLLBAR_HORIZONTAL) {
 		if (SystemContext::mouse.ortho_x_pos - thumb_global_x > 0.0f) scroll_raw_offset += max_thumb_range * 0.1f;
 		else scroll_raw_offset -= max_thumb_range * 0.1f;

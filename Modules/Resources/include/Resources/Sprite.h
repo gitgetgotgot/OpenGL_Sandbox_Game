@@ -1,4 +1,5 @@
 #pragma once
+#include <Utility/DataParser.h>
 #include <glm/glm.hpp>
 #include <vector>
 #include <string>
@@ -6,11 +7,7 @@
 #include <cstdint>
 #include <optional>
 
-namespace CoreResource {
-	namespace Limits {
-		constexpr uint8_t MINIMUM_9SLICED_SPRITES_SIZE = 1;
-		constexpr uint8_t MINIMUM_SPRITES_SIZE = 1;
-	}
+namespace Engine::Resource {
 	class Sprite {
 	public:
 		Sprite() {}
@@ -36,16 +33,14 @@ namespace CoreResource {
 		uint32_t tex_array_id = 0;
 		uint32_t tex_id = 0;
 		float U0 = 0.0f, V0 = 0.0f, W = 0.0f, H = 0.0f;
-		float
-			uv_margin_left = 0.0f,
-			uv_margin_right = 0.0f,
-			uv_margin_top = 0.0f,
-			uv_margin_bottom = 0.0f;
-		float
-			ratio_left = 0.0f,
-			ratio_right = 0.0f,
-			ratio_top = 0.0f,
-			ratio_bottom = 0.0f;
+		float uv_margin_left = 0.0f;
+		float uv_margin_right = 0.0f;
+		float uv_margin_top = 0.0f;
+		float uv_margin_bottom = 0.0f;
+		float ratio_left = 0.0f;
+		float ratio_right = 0.0f;
+		float ratio_top = 0.0f;
+		float ratio_bottom = 0.0f;
 	};
 
 	class SpriteManager {
@@ -76,5 +71,8 @@ namespace CoreResource {
 		std::unordered_map<std::string, uint32_t> UID_to_ID;
 		std::vector<Sprite> sprites;
 		std::vector<Sprite9Sliced> sprites9sliced;
+
+		uint8_t MINIMUM_9SLICED_SPRITES_SIZE = 1;
+		uint8_t MINIMUM_SPRITES_SIZE = 1;
 	};
 }

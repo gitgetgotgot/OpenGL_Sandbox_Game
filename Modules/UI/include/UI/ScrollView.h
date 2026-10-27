@@ -3,7 +3,7 @@
 #include "UI/ScrollBar.h"
 #include "UI/ScrollViewContent.h"
 
-namespace CoreUI {
+namespace Engine::UI {
 	class ScrollView : public UI_Component<ScrollView> {
 		friend class UI_BehaviourSystem;
 		friend class Canvas;

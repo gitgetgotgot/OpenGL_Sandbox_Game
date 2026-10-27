@@ -1,8 +1,7 @@
 #pragma once
 #include <cstdint>
-#include <iostream>
 
-namespace CoreUI {
+namespace Engine::UI {
 	struct UI_Behaviour_VTable {
 		void(*on_pointer_enter)(void*) = nullptr;
 		void(*on_pointer_hover)(void*) = nullptr;

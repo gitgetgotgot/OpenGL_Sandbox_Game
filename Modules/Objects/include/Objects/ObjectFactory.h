@@ -1,7 +1,7 @@
 #pragma once
 #include "Objects/ObjectInfo.h"
 
-namespace CoreObject {
+namespace Engine::Object {
 	class _ObjectFactoryI {
 	public:
 		virtual void add_object(const DataNode& data) = 0;
@@ -29,7 +29,7 @@ namespace CoreObject {
 
 	class ObjectFactoryRegistry {
 	public:
-		static ObjectFactoryRegistry& get_instance() {
+		static ObjectFactoryRegistry& Instance() {
 			static ObjectFactoryRegistry registry;
 			return registry;
 		}

@@ -12,8 +12,8 @@ public:
 	void _show_mod_info();
 
 	uint32_t mod_id = 0;
-	CoreUI::UI_Component_Ptr<CoreUI::SDF_Text> toggle_button_text;
-	inline static CoreAudio::AudioSource button_click_sound;
+	Engine::UI::UI_Component_Ptr<Engine::UI::SDF_Text> toggle_button_text;
+	inline static Engine::Audio::AudioSource button_click_sound;
 };
 
 class ModsPage {
@@ -31,15 +31,15 @@ public:
 private:
 	ModsPage() = default;
 	~ModsPage() = default;
-	CoreUI::UI_Canvas_Ptr canvas;
+	Engine::UI::UI_Canvas_Ptr canvas;
 
-	CoreUI::UI_Obj_Ptr mods_list_obj;
-	CoreUI::UI_Obj_Ptr mod_description_obj;
+	Engine::UI::UI_Obj_Ptr mods_list_obj;
+	Engine::UI::UI_Obj_Ptr mod_description_obj;
 
-	CoreUI::UI_Obj_Ptr mods_content;
-	CoreUI::UI_Component_Ptr<CoreUI::ScrollView> mods_view;
-	CoreUI::UI_Component_Ptr<CoreUI::ScrollView> mod_description_view;
-	CoreUI::UI_Component_Ptr<CoreUI::SDF_Text> mod_description;
+	Engine::UI::UI_Obj_Ptr mods_content;
+	Engine::UI::UI_Component_Ptr<Engine::UI::ScrollView> mods_view;
+	Engine::UI::UI_Component_Ptr<Engine::UI::ScrollView> mod_description_view;
+	Engine::UI::UI_Component_Ptr<Engine::UI::SDF_Text> mod_description;
 	std::vector<ModElement> mod_elements;
-	CoreAudio::AudioSource button_click_sound;
+	Engine::Audio::AudioSource button_click_sound;
 };

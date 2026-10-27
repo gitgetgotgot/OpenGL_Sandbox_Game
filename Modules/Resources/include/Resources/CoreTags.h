@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 
-namespace TagID {
+namespace Engine::Resource::Tag {
 //Objects
 	//Block
 	inline uint16_t IS_SOLID_BLOCK;
@@ -53,8 +53,6 @@ namespace TagID {
 
 //Entities
 	inline uint16_t IS_SLIME;
-}
 
-namespace CoreTags {
 	void register_core_tags();
 }

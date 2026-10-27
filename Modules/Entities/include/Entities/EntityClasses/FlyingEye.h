@@ -2,7 +2,7 @@
 #include <Entities/EntityClasses/Mob.h>
 #include <Entities/EntityFactory.h>
 
-namespace CoreEntity {
+namespace Engine::Entity {
 	class FlyingEye : public Mob {
 		uint32_t flying_anim = 0;
 	public:

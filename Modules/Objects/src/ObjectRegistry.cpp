@@ -10,14 +10,14 @@
 #include "Objects/ObjectTypes/ArmorInfo.h"
 #include "Objects/ObjectTypes/ArtifactInfo.h"
 
-void CoreObject::register_core_object_factories() {
-	ObjectFactoryRegistry::get_instance().register_factory("Class:Core:Wall",		std::make_unique<WallInfoFactory>());
-	ObjectFactoryRegistry::get_instance().register_factory("Class:Core:Block",		std::make_unique<BlockInfoFactory>());
-	ObjectFactoryRegistry::get_instance().register_factory("Class:Core:MultiBlock", std::make_unique<MultiBlockInfoFactory>());
-	ObjectFactoryRegistry::get_instance().register_factory("Class:Core:Item",		std::make_unique<ItemInfoFactory>());
-	ObjectFactoryRegistry::get_instance().register_factory("Class:Core:Weapon",		std::make_unique<WeaponInfoFactory>());
-	ObjectFactoryRegistry::get_instance().register_factory("Class:Core:Ammo",		std::make_unique<AmmoInfoFactory>());
-	ObjectFactoryRegistry::get_instance().register_factory("Class:Core:Consumable", std::make_unique<ConsumableInfoFactory>());
-	ObjectFactoryRegistry::get_instance().register_factory("Class:Core:Armor",		std::make_unique<ArmorInfoFactory>());
-	ObjectFactoryRegistry::get_instance().register_factory("Class:Core:Artifact",	std::make_unique<ArtifactInfoFactory>());
+void Engine::Object::register_core_object_factories() {
+	ObjectFactoryRegistry::Instance().register_factory("Class:Core:Wall",		std::make_unique<WallInfoFactory>());
+	ObjectFactoryRegistry::Instance().register_factory("Class:Core:Block",		std::make_unique<BlockInfoFactory>());
+	ObjectFactoryRegistry::Instance().register_factory("Class:Core:MultiBlock", std::make_unique<MultiBlockInfoFactory>());
+	ObjectFactoryRegistry::Instance().register_factory("Class:Core:Item",		std::make_unique<ItemInfoFactory>());
+	ObjectFactoryRegistry::Instance().register_factory("Class:Core:Weapon",		std::make_unique<WeaponInfoFactory>());
+	ObjectFactoryRegistry::Instance().register_factory("Class:Core:Ammo",		std::make_unique<AmmoInfoFactory>());
+	ObjectFactoryRegistry::Instance().register_factory("Class:Core:Consumable", std::make_unique<ConsumableInfoFactory>());
+	ObjectFactoryRegistry::Instance().register_factory("Class:Core:Armor",		std::make_unique<ArmorInfoFactory>());
+	ObjectFactoryRegistry::Instance().register_factory("Class:Core:Artifact",	std::make_unique<ArtifactInfoFactory>());
 }

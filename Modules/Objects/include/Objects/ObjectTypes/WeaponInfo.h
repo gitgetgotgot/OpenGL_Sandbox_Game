@@ -1,7 +1,7 @@
 #pragma once
 #include "Objects/ObjectFactory.h"
 
-namespace CoreObject {
+namespace Engine::Object {
 	struct ProjectileEntry {
 		uint16_t id = 0;
 		float cooldown = 0.0f;

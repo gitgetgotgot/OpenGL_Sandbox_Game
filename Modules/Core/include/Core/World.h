@@ -8,8 +8,8 @@
 
 struct ChunkRenderBuffer {
 	uint32_t x = 0, y = 0;
-	std::unique_ptr<VAO> vao;
-	std::unique_ptr<VBO> vbo;
+	std::unique_ptr<Engine::Graphics::VAO> vao;
+	std::unique_ptr<Engine::Graphics::VBO> vbo;
 	sparse_set<Vertex2f> vertices;
 	uint32_t index_count = 0;
 };
@@ -33,7 +33,7 @@ public:
 	void init_chunk_buffers();
 	void uninit();
 	void update();
-	void render(std::unique_ptr<OpenGL_Renderer>& renderer);
+	void render(std::unique_ptr<Engine::Graphics::OpenGL_Renderer>& renderer);
 
 	void update_chunks(uint32_t& camera_chunk_x, uint32_t& camera_chunk_y);
 	void load_chunk_buffer(uint32_t chunk_world_x, uint32_t chunk_world_y, uint32_t chunk_buffer_index);
@@ -51,7 +51,7 @@ public:
 private:
 	uint16_t width = 0, height = 0;
 	WorldSlot* world_slots = nullptr;
-	std::unordered_map<uint32_t, std::unique_ptr<CoreObject::ObjectComponent>> object_components;
+	std::unordered_map<uint32_t, std::unique_ptr<Engine::Object::ObjectComponent>> object_components;
 	ChunkRenderBuffer* render_buffers[RENDERABLE_CHUNKS_SIZE];
 
 	uint32_t last_chunk_x = 0;
@@ -62,10 +62,10 @@ private:
 	int current_buffer_y_max = 3;
 	int MAX_CHUNK_X = 0, MAX_CHUNK_Y = 0;
 
-	std::unique_ptr<ShaderProgram> shader;
-	std::unique_ptr<UBO> sprites_ubo;
+	std::unique_ptr<Engine::Graphics::ShaderProgram> shader;
+	std::unique_ptr<Engine::Graphics::UBO> sprites_ubo;
 	Universal_UBO_Data sprites_ubo_data;
-	std::unique_ptr<EBO> ebo;
+	std::unique_ptr<Engine::Graphics::EBO> ebo;
 	//std::unique_ptr<SSBO> spriteLightMapSSBO;
 	//ShaderLightingInfo* lightMap_data = nullptr;
 

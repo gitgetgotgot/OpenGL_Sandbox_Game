@@ -2,7 +2,7 @@
 #include <stb_image.h>
 #include <glad/gl.h>
 
-CoreResource::TextureResourceData::TextureResourceData(TextureResourceData&& other) {
+Engine::Resource::TextureArrayManager::TextureResourceData::TextureResourceData(TextureResourceData&& other) {
 	image_bytes = other.image_bytes; other.image_bytes = nullptr;
 	imgWidth = other.imgWidth;
 	imgHeight = other.imgHeight;
@@ -11,7 +11,8 @@ CoreResource::TextureResourceData::TextureResourceData(TextureResourceData&& oth
 	UID = std::move(other.UID);
 }
 
-CoreResource::TextureResourceData& CoreResource::TextureResourceData::operator=(TextureResourceData&& other) {
+Engine::Resource::TextureArrayManager::TextureResourceData&
+Engine::Resource::TextureArrayManager::TextureResourceData::operator=(TextureResourceData&& other) {
 	if (this != &other) {
 		image_bytes = other.image_bytes; other.image_bytes = nullptr;
 		imgWidth = other.imgWidth;
@@ -23,11 +24,11 @@ CoreResource::TextureResourceData& CoreResource::TextureResourceData::operator=(
 	return *this;
 }
 
-CoreResource::TextureResourceData::~TextureResourceData() {
+Engine::Resource::TextureArrayManager::TextureResourceData::~TextureResourceData() {
 	if(image_bytes) stbi_image_free(image_bytes);
 }
 
-void CoreResource::TextureArrayManager::init() {
+void Engine::Resource::TextureArrayManager::init() {
 	// read texture bytes without alignment or padding (correctly load textures of different formats and sizes)
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -41,24 +42,24 @@ void CoreResource::TextureArrayManager::init() {
 		0/*2048*/,
 		0/*4096*/
 	};
-	const TextureArray::ResizeStrategy array_resize_str[8] = {
-		TextureArray::ResizeStrategy::Resize_by_50_percent,
-		TextureArray::ResizeStrategy::Resize_by_50_percent,
-		TextureArray::ResizeStrategy::Resize_by_50_percent,
-		TextureArray::ResizeStrategy::Resize_by_50_percent,
-		TextureArray::ResizeStrategy::Resize_by_50_percent,
-		TextureArray::ResizeStrategy::Resize_by_5,
-		TextureArray::ResizeStrategy::Resize_by_2,
-		TextureArray::ResizeStrategy::Resize_by_1,
+	const Engine::Graphics::TextureArray::ResizeStrategy array_resize_str[8] = {
+		Engine::Graphics::TextureArray::ResizeStrategy::Resize_by_50_percent,
+		Engine::Graphics::TextureArray::ResizeStrategy::Resize_by_50_percent,
+		Engine::Graphics::TextureArray::ResizeStrategy::Resize_by_50_percent,
+		Engine::Graphics::TextureArray::ResizeStrategy::Resize_by_50_percent,
+		Engine::Graphics::TextureArray::ResizeStrategy::Resize_by_50_percent,
+		Engine::Graphics::TextureArray::ResizeStrategy::Resize_by_5,
+		Engine::Graphics::TextureArray::ResizeStrategy::Resize_by_2,
+		Engine::Graphics::TextureArray::ResizeStrategy::Resize_by_1,
 	};
 	uint32_t tex_res = 32;
 	for (uint32_t i = 0; i < 8; ++i) {
-		texture_arrays[i] = std::make_unique<TextureArray>();
+		texture_arrays[i] = std::make_unique<Engine::Graphics::TextureArray>();
 		texture_arrays[i]->setup_texture_array(tex_res, tex_res, array_size[i], false, 4, array_resize_str[i]);
 		tex_res *= 2;
 	}
-	fonts_texture_array = std::make_unique<TextureArray>();
-	fonts_texture_array->setup_texture_array(1024, 1024, 1, true, 1, TextureArray::ResizeStrategy::Resize_by_1);
+	fonts_texture_array = std::make_unique<Engine::Graphics::TextureArray>();
+	fonts_texture_array->setup_texture_array(1024, 1024, 1, true, 1, Engine::Graphics::TextureArray::ResizeStrategy::Resize_by_1);
 
 	for (uint32_t i = 0; i < 8; ++i) {
 		texture_arrays[i]->bind(i);
@@ -66,21 +67,21 @@ void CoreResource::TextureArrayManager::init() {
 	fonts_texture_array->bind(10);
 }
 
-void CoreResource::TextureArrayManager::uninit() {
+void Engine::Resource::TextureArrayManager::uninit() {
 	for (uint32_t i = 0; i < 8; ++i) {
 		texture_arrays[i].reset();
 	}
 	fonts_texture_array.reset();
 }
 
-void CoreResource::TextureArrayManager::bind_texture_arrays() {
+void Engine::Resource::TextureArrayManager::bind_texture_arrays() {
 	for (uint32_t i = 0; i < 8; ++i) {
 		texture_arrays[i]->bind(i);
 	}
 	fonts_texture_array->bind(10);
 }
 
-void CoreResource::TextureArrayManager::add_texture_to_queue(std::filesystem::path& file_path, std::string& UID) {
+void Engine::Resource::TextureArrayManager::add_texture_to_queue(std::filesystem::path& file_path, std::string& UID) {
 	int imgWidth, imgHeight, numOfColorChannels;
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* image_bytes = stbi_load(file_path.string().c_str(), &imgWidth, &imgHeight, &numOfColorChannels, 0);
@@ -90,7 +91,7 @@ void CoreResource::TextureArrayManager::add_texture_to_queue(std::filesystem::pa
 	textures_queue.emplace(image_bytes, imgHeight, imgWidth, numOfColorChannels, file_path, UID);
 }
 
-bool CoreResource::TextureArrayManager::load_textures_from_queue() {
+bool Engine::Resource::TextureArrayManager::load_textures_from_queue() {
 	std::unique_lock lock(tex_queue_mutex);
 	if (textures_queue.empty()) {
 		if (queue_ready) return true;
@@ -103,11 +104,11 @@ bool CoreResource::TextureArrayManager::load_textures_from_queue() {
 	return false;
 }
 
-void CoreResource::TextureArrayManager::mark_queue_ready() {
+void Engine::Resource::TextureArrayManager::mark_queue_ready() {
 	queue_ready = true;
 }
 
-void CoreResource::TextureArrayManager::load_texture(std::filesystem::path file_path, std::string UID) {
+void Engine::Resource::TextureArrayManager::load_texture(std::filesystem::path file_path, std::string UID) {
 	int imgWidth, imgHeight, numOfColorChannels;
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* image_bytes = stbi_load(file_path.string().c_str(), &imgWidth, &imgHeight, &numOfColorChannels, 0);
@@ -128,7 +129,7 @@ void CoreResource::TextureArrayManager::load_texture(std::filesystem::path file_
 	stbi_image_free(image_bytes);
 }
 
-void CoreResource::TextureArrayManager::load_texture(TextureResourceData& data) {
+void Engine::Resource::TextureArrayManager::load_texture(TextureResourceData& data) {
 	int texture_array_index = get_array_index(data.imgWidth, data.imgHeight);
 	if (texture_array_index < 0)
 		throw std::runtime_error("Texture <" + data.file_path.string() + "> has incorrect size!");
@@ -139,26 +140,27 @@ void CoreResource::TextureArrayManager::load_texture(TextureResourceData& data) 
 	texture_arrays[texture_array_index]->add_2D_texture(data.image_bytes, data.imgWidth, data.imgHeight, data.numOfColorChannels);
 }
 
-void CoreResource::TextureArrayManager::load_font_texture(unsigned char* data, int width, int height, int channels, std::string UID) {
+void Engine::Resource::TextureArrayManager::load_font_texture(unsigned char* data, int width, int height, int channels, std::string UID) {
 	font_UID_to_ID[UID] = fonts_texture_array->get_current_size();
 	fonts_texture_array->add_2D_texture(data, width, height, channels);
 }
 
-std::optional<CoreResource::TextureID> CoreResource::TextureArrayManager::get_texture_id(std::string& UID) {
+std::optional<Engine::Resource::TextureArrayManager::TextureID>
+Engine::Resource::TextureArrayManager::get_texture_id(std::string& UID) {
 	if (auto it = UID_to_ID.find(UID); it != UID_to_ID.end()) {
 		return it->second;
 	}
 	else return std::nullopt;
 }
 
-std::optional<uint16_t> CoreResource::TextureArrayManager::get_font_texture_id(std::string& UID) {
+std::optional<uint16_t> Engine::Resource::TextureArrayManager::get_font_texture_id(std::string& UID) {
 	if (auto it = font_UID_to_ID.find(UID); it != font_UID_to_ID.end()) {
 		return it->second;
 	}
 	else return std::nullopt;
 }
 
-uint32_t CoreResource::TextureArrayManager::get_texture_array_res(uint16_t tex_array_id) {
+uint32_t Engine::Resource::TextureArrayManager::get_texture_array_res(uint16_t tex_array_id) {
 	switch (tex_array_id) {
 	case 0: return 32;
 	case 1: return 64;
@@ -172,7 +174,7 @@ uint32_t CoreResource::TextureArrayManager::get_texture_array_res(uint16_t tex_a
 	}
 }
 
-int CoreResource::TextureArrayManager::get_array_index(uint32_t tex_width, uint32_t tex_height) {
+int Engine::Resource::TextureArrayManager::get_array_index(uint32_t tex_width, uint32_t tex_height) {
 	if (tex_width != tex_height) return -1;
 	switch (tex_width) {
 		case 32:   return 0;

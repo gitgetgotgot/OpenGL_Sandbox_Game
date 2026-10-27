@@ -4,25 +4,24 @@
 #include <unordered_map>
 #include <optional>
 
-namespace CoreResource {
-	enum EffectType : uint8_t {
-		isHealSickness		= 0,
-		isBuff				= 1,
-		isDebuff			= 2,
-		isDamagingDebuff	= 3,
-		isUpgrade			= 4,
-		isHealing			= 5
-	};
-	enum EffectStatType : uint8_t {
-		isTypeless	= 0,
-		isHP		= 1,
-		isDef		= 2,
-		isMana		= 3,
-		isSpeed		= 4,
-		isRegen		= 5
-	};
-
+namespace Engine::Resource {
 	struct Effect {
+		enum EffectType : uint8_t {
+			isHealSickness = 0,
+			isBuff = 1,
+			isDebuff = 2,
+			isDamagingDebuff = 3,
+			isUpgrade = 4,
+			isHealing = 5
+		};
+		enum EffectStatType : uint8_t {
+			isTypeless = 0,
+			isHP = 1,
+			isDef = 2,
+			isMana = 3,
+			isSpeed = 4,
+			isRegen = 5
+		};
 		Effect(float duration, uint32_t id) : duration{ duration }, id{ id } {}
 		bool updateEffect(float deltaTime);
 		
@@ -35,7 +34,8 @@ namespace CoreResource {
 
 	class EffectData {
 	public:
-		EffectData(EffectType type, std::string_view uid, EffectStatType stat, uint32_t ui_sprite_id, float effect_value,
+		EffectData() = default;
+		EffectData(Effect::EffectType type, std::string_view uid, Effect::EffectStatType stat, uint32_t ui_sprite_id, float effect_value,
 			uint32_t particle_id = 0, float particle_spawn_cd = 0.0f, float dmg_cd = 0.0f) :
 			effect_type{ type }, uid{ uid }, stat_type{ stat }, sprite_id{ ui_sprite_id }, effect_value{ effect_value },
 			particle_id{ particle_id }, particle_spawn_cd{ particle_spawn_cd }, dmg_cd{ dmg_cd }
@@ -50,19 +50,20 @@ namespace CoreResource {
 		float particle_spawn_cd = 0.0f; //time between every particle spawned
 		float dmg_cd = 0.0f; //cd for a damaging debuff
 		float effect_value = 0.0f; //value of effect that is applied to HP, DEF, Mana, Damage, etc.
-		EffectStatType stat_type = EffectStatType::isTypeless;
-		EffectType effect_type = EffectType::isBuff;
+		Effect::EffectStatType stat_type = Effect::EffectStatType::isTypeless;
+		Effect::EffectType effect_type = Effect::EffectType::isBuff;
 		std::string_view uid, name;
 	};
 
 	class EffectsManager {
 	public:
-		static EffectsManager& get_instance() {
+		static EffectsManager& Instance() {
 			static EffectsManager effectsMgr;
 			return effectsMgr;
 		}
+		void setup();
 		void ClearData();
-		void add_effect_info(EffectType type, std::string uid, EffectStatType stat,
+		void add_effect_info(Effect::EffectType type, std::string uid, Effect::EffectStatType stat,
 			float effect_value, uint32_t ui_sprite_id, uint32_t particle_id = 0,
 			float particleSpawnInterval = 0.0f, float inflict_dmg_cd_time = 0.0f
 		);
@@ -75,5 +76,4 @@ namespace CoreResource {
 		std::unordered_map<std::string_view, uint32_t> effect_UID_to_ID;
 		std::vector<EffectData> effects;
 	};
-
 }

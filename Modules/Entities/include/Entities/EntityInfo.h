@@ -3,7 +3,7 @@
 #include <Utility/DynamicArray.h>
 #include <Utility/DataParser.h>
 
-namespace CoreEntity {
+namespace Engine::Entity {
 	enum EntityMainType : uint8_t {
 		isMob, isProjectile, isPet, isNPC
 	};

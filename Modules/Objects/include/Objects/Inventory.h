@@ -10,7 +10,7 @@ struct TooltipData {
 struct DynamicSlot {
 	float current_size = 0.1f;
 	glm::vec2 current_pos{ 0.0f };
-	InventorySlot item_data;
+	Engine::Resource::InventorySlot item_data;
 };
 
 class Inventory {
@@ -22,11 +22,11 @@ public:
 	bool place_item(uint16_t item_id, uint16_t& amount);
 	void craft_item();
 	void spend_active_item();
-	void process_slot_LB_click(uint32_t slot_id, InventorySlot* slots_ptr);
-	void process_slot_RB_click(uint32_t slot_id, InventorySlot* slots_ptr);
+	void process_slot_LB_click(uint32_t slot_id, Engine::Resource::InventorySlot* slots_ptr);
+	void process_slot_RB_click(uint32_t slot_id, Engine::Resource::InventorySlot* slots_ptr);
 
 	uint16_t get_active_item_id() const;
-	void open_chest(InventorySlot* chest_slots_ptr);
+	void open_chest(Engine::Resource::InventorySlot* chest_slots_ptr);
 	void update_dynamic_craft_slots();
 	void update_dynamic_craft_slots_items();
 	void update_crafts();
@@ -44,9 +44,9 @@ public:
 	static const uint32_t INVENTORY_CHEST_SIZE = 40;
 	static const uint16_t MAX_STACK_COUNT = 9999;
 
-	InventorySlot items[INVENTORY_SIZE];
-	InventorySlot cursor_item;
-	InventorySlot* active_chest_items_ptr = nullptr;
+	Engine::Resource::InventorySlot items[INVENTORY_SIZE];
+	Engine::Resource::InventorySlot cursor_item;
+	Engine::Resource::InventorySlot* active_chest_items_ptr = nullptr;
 	TooltipData tooltipData;
 
 	DynamicSlot craft_slots[6];

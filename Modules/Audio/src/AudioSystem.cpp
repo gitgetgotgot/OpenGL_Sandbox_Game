@@ -1,7 +1,7 @@
 #include "Audio/AudioSystem.h"
 #include <iostream>
 
-void CoreAudio::AudioSystem::init() {
+void Engine::Audio::AudioSystem::init() {
     ma_result res = ma_engine_init(nullptr, &audio_engine);
     if (res != MA_SUCCESS) {
         throw std::runtime_error("[AudioSystem] Audio Engine failed to initialize!");
@@ -28,7 +28,7 @@ void CoreAudio::AudioSystem::init() {
     sound_groups.emplace_back();
 }
 
-void CoreAudio::AudioSystem::uninit() {
+void Engine::Audio::AudioSystem::uninit() {
     for (auto& sound : sounds_pool) {
         if (sound.is_used) {
             ma_sound_stop(&sound.sound);
@@ -51,7 +51,7 @@ void CoreAudio::AudioSystem::uninit() {
     ma_engine_uninit(&audio_engine);
 }
 
-void CoreAudio::AudioSystem::update() {
+void Engine::Audio::AudioSystem::update() {
     size_t size = sounds_pool.size();
     for (size_t i = 0; i < size; ++i) {
         PoolSound& sound = sounds_pool[i];
@@ -68,7 +68,7 @@ void CoreAudio::AudioSystem::update() {
     }
 }
 
-void CoreAudio::AudioSystem::load_audio_as_pcm(
+void Engine::Audio::AudioSystem::load_audio_as_pcm(
     const std::filesystem::path& filePath,
     const std::string UID,
     const std::string group_UID,
@@ -116,7 +116,7 @@ void CoreAudio::AudioSystem::load_audio_as_pcm(
     total_audio_pcm_bytes_size += new_audio_res->pcm_data.size() * sizeof(float);
 }
 
-void CoreAudio::AudioSystem::load_audio_as_stream(
+void Engine::Audio::AudioSystem::load_audio_as_stream(
     const std::filesystem::path& filePath,
     const std::string UID,
     const std::string group_UID,
@@ -145,14 +145,14 @@ void CoreAudio::AudioSystem::load_audio_as_stream(
     audio_stream_database.emplace_back(std::move(audio_res));
 }
 
-void CoreAudio::AudioSystem::add_sound_group(const std::string UID) {
+void Engine::Audio::AudioSystem::add_sound_group(const std::string UID) {
     std::string_view uid_view = sound_group_UID.emplace_back(UID);
     UID_to_ID.emplace(uid_view, sound_groups.size());
     auto& new_group = sound_groups.emplace_back(std::make_unique<SoundGroup>());
     ma_sound_group_init(&audio_engine, 0, NULL, &new_group->group);
 }
 
-void CoreAudio::AudioSystem::play_audio_directly(const std::filesystem::path& path) {
+void Engine::Audio::AudioSystem::play_audio_directly(const std::filesystem::path& path) {
     if (!std::filesystem::exists(path)) {
         std::cerr << "[AudioSystem] Audio file doesn't exist: " << std::filesystem::absolute(path) << std::endl;
         return;
@@ -160,7 +160,7 @@ void CoreAudio::AudioSystem::play_audio_directly(const std::filesystem::path& pa
     ma_engine_play_sound(&audio_engine, path.string().data(), nullptr);
 }
 
-CoreAudio::Sound_Instance_ID CoreAudio::AudioSystem::play_audio_pcm(
+Engine::Audio::Sound_Instance_ID Engine::Audio::AudioSystem::play_audio_pcm(
     const uint16_t& sound_ID, bool loop, bool positioned, float x, float y, float z
 ) {
     if (free_sounds.empty())
@@ -199,7 +199,7 @@ CoreAudio::Sound_Instance_ID CoreAudio::AudioSystem::play_audio_pcm(
     return Sound_Instance_ID{ static_cast<uint8_t>(free_index), sound_slot.generation };
 }
 
-CoreAudio::Sound_Instance_ID CoreAudio::AudioSystem::play_audio_stream(
+Engine::Audio::Sound_Instance_ID Engine::Audio::AudioSystem::play_audio_stream(
     const uint16_t& sound_ID, bool loop, bool positioned, float x, float y, float z
 ) {
     if (free_stream_sounds.empty())
@@ -240,7 +240,7 @@ CoreAudio::Sound_Instance_ID CoreAudio::AudioSystem::play_audio_stream(
     return Sound_Instance_ID{ static_cast<uint8_t>(free_index), sound_slot.generation };
 }
 
-CoreAudio::Sound_Instance_ID CoreAudio::AudioSystem::play_sound(
+Engine::Audio::Sound_Instance_ID Engine::Audio::AudioSystem::play_sound(
     const uint16_t& sound_ID, bool loop, bool positioned, float x, float y, float z
 ) {
     SoundEntry& entry = sounds[sound_ID];
@@ -248,31 +248,31 @@ CoreAudio::Sound_Instance_ID CoreAudio::AudioSystem::play_sound(
     else return play_audio_stream(entry.id, loop, positioned, x, y, z);
 }
 
-void CoreAudio::AudioSystem::stop_sound(const uint16_t& sound_id, const uint8_t& instance, const uint8_t& gen) {
+void Engine::Audio::AudioSystem::stop_sound(const uint16_t& sound_id, const uint8_t& instance, const uint8_t& gen) {
     SoundEntry& entry = sounds[sound_id];
     if (entry.type == SOUND_PCM) stop_pcm_sound(instance, gen);
     else stop_stream_sound(instance, gen);
 }
 
-bool CoreAudio::AudioSystem::sound_is_playing(const uint16_t& sound_id, const uint8_t& instance, const uint8_t& gen) {
+bool Engine::Audio::AudioSystem::sound_is_playing(const uint16_t& sound_id, const uint8_t& instance, const uint8_t& gen) {
     SoundEntry& entry = sounds[sound_id];
     if (entry.type == SOUND_PCM) return pcm_sound_is_playing(instance, gen);
     else return stream_sound_is_playing(instance, gen);
 }
 
-bool CoreAudio::AudioSystem::pcm_sound_is_playing(const uint8_t& instance, const uint8_t& gen) {
+bool Engine::Audio::AudioSystem::pcm_sound_is_playing(const uint8_t& instance, const uint8_t& gen) {
     PoolSound& sound = sounds_pool[instance];
     return sound.is_used && gen == sound.generation && ma_sound_is_playing(&sound.sound);
 }
 
-void CoreAudio::AudioSystem::stop_pcm_sound(const uint8_t& instance, const uint8_t& gen) {
+void Engine::Audio::AudioSystem::stop_pcm_sound(const uint8_t& instance, const uint8_t& gen) {
     PoolSound& sound = sounds_pool[instance];
     if (gen != sound.generation || !sound.is_used) return;
     ma_sound_stop(&sound.sound);
     free_pcm_sound(instance);
 }
 
-void CoreAudio::AudioSystem::free_pcm_sound(const uint8_t& instance) {
+void Engine::Audio::AudioSystem::free_pcm_sound(const uint8_t& instance) {
     PoolSound& sound = sounds_pool[instance];
     --audio_pcm_database[sound.sound_id]->current_instance_count;
     sound.is_used = false;
@@ -280,19 +280,19 @@ void CoreAudio::AudioSystem::free_pcm_sound(const uint8_t& instance) {
     free_sounds.push_back(instance);
 }
 
-bool CoreAudio::AudioSystem::stream_sound_is_playing(const uint8_t& instance, const uint8_t& gen) {
+bool Engine::Audio::AudioSystem::stream_sound_is_playing(const uint8_t& instance, const uint8_t& gen) {
     PoolStreamSound& sound = stream_sounds_pool[instance];
     return sound.is_used && gen == sound.generation && ma_sound_is_playing(&sound.sound);
 }
 
-void CoreAudio::AudioSystem::stop_stream_sound(const uint8_t& instance, const uint8_t& gen) {
+void Engine::Audio::AudioSystem::stop_stream_sound(const uint8_t& instance, const uint8_t& gen) {
     PoolStreamSound& sound = stream_sounds_pool[instance];
     if (gen != sound.generation || !sound.is_used) return;
     ma_sound_stop(&sound.sound);
     free_stream_sound(instance);
 }
 
-void CoreAudio::AudioSystem::free_stream_sound(const uint8_t& instance) {
+void Engine::Audio::AudioSystem::free_stream_sound(const uint8_t& instance) {
     PoolStreamSound& sound = stream_sounds_pool[instance];
     if (!sound.is_used) return;
     --audio_stream_database[sound.sound_id]->current_instance_count;
@@ -302,28 +302,28 @@ void CoreAudio::AudioSystem::free_stream_sound(const uint8_t& instance) {
     free_stream_sounds.push_back(instance);
 }
 
-void CoreAudio::AudioSystem::set_listener_pos(float x, float y, float z) {
+void Engine::Audio::AudioSystem::set_listener_pos(float x, float y, float z) {
     ma_engine_listener_set_position(&audio_engine, 0, x, y, z);
 }
-void CoreAudio::AudioSystem::set_listener_direction(float x, float y, float z) {
+void Engine::Audio::AudioSystem::set_listener_direction(float x, float y, float z) {
     ma_engine_listener_set_direction(&audio_engine, 0, x, y, z);
 }
 
-void CoreAudio::AudioSystem::set_master_volume(float volume) {
+void Engine::Audio::AudioSystem::set_master_volume(float volume) {
     ma_engine_set_volume(&audio_engine, volume);
 }
-float CoreAudio::AudioSystem::get_master_volume() {
+float Engine::Audio::AudioSystem::get_master_volume() {
     return ma_engine_get_volume(&audio_engine);
 }
 
-void CoreAudio::AudioSystem::set_group_volume(uint32_t ID, float volume) {
+void Engine::Audio::AudioSystem::set_group_volume(uint32_t ID, float volume) {
     ma_sound_group_set_volume(&sound_groups[ID]->group, volume);
 }
-float CoreAudio::AudioSystem::get_group_volume(uint32_t ID) {
+float Engine::Audio::AudioSystem::get_group_volume(uint32_t ID) {
     return ma_sound_group_get_volume(&sound_groups[ID]->group);
 }
 
-std::optional<uint32_t> CoreAudio::AudioSystem::get_id_with_uid(std::string_view UID) const {
+std::optional<uint32_t> Engine::Audio::AudioSystem::get_id_with_uid(std::string_view UID) const {
     if (const auto it = UID_to_ID.find(UID); it != UID_to_ID.end())
         return it->second;
     else

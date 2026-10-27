@@ -3,7 +3,7 @@
 #include "UI/Image.h"
 #include <Utility/FunctionWrapper.h>
 
-namespace CoreUI {
+namespace Engine::UI {
 	class ScrollBar : public UI_Component<ScrollBar> {
 		friend class UI_BehaviourSystem;
 	public:

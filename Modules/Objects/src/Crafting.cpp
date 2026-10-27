@@ -5,7 +5,7 @@ void CraftingSystem::ClearData() {
 	items_crafts = {};
 }
 
-void CraftingSystem::update_available_crafts(InventorySlot* inventory_slots_ptr, uint32_t slots_size, uint32_t player_flags) {
+void CraftingSystem::update_available_crafts(Engine::Resource::InventorySlot* inventory_slots_ptr, uint32_t slots_size, uint32_t player_flags) {
 	std::unordered_map</*ID*/uint16_t, /*Amount*/uint16_t> unique_items;
 	unique_items.reserve(slots_size);
 
@@ -13,7 +13,7 @@ void CraftingSystem::update_available_crafts(InventorySlot* inventory_slots_ptr,
 	checked_crafts.clear();
 
 	for (uint32_t i = 0; i < slots_size; i++) {
-		InventorySlot& inv_slot = inventory_slots_ptr[i];
+		Engine::Resource::InventorySlot& inv_slot = inventory_slots_ptr[i];
 		unique_items[inv_slot.item_id] += inv_slot.amount; //element is created it not exists
 	}
 

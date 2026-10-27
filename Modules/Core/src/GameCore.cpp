@@ -28,13 +28,13 @@ bool GameEngine::update() {
 void GameEngine::render() {
 	renderer->clear(0.0, 0.0, 0.0);
 
-	CoreResource::TextureArrayManager::Instance().bind_texture_arrays();
+	Engine::Resource::TextureArrayManager::Instance().bind_texture_arrays();
 
 	if (game_render_state == Game_State::inWorld) {
 		WorldManager::Instance().render(renderer);
 	}
 
-	CoreUI::UI_System::Instance().render(renderer);
+	Engine::UI::UI_System::Instance().render(renderer);
 
 	renderer->present();
 }
@@ -77,10 +77,10 @@ void GameEngine::main_loop() {
 }
 
 void GameEngine::uninit() {
-	CoreResource::TextureArrayManager::Instance().uninit();
-	CoreAudio::AudioSystem::Instance().uninit();
-	CoreUI::UI_System::Instance().uninit();
-	CoreEntity::EntitySystem::Instance().uninit();
+	Engine::Resource::TextureArrayManager::Instance().uninit();
+	Engine::Audio::AudioSystem::Instance().uninit();
+	Engine::UI::UI_System::Instance().uninit();
+	Engine::Entity::EntitySystem::Instance().uninit();
 
 	WorldManager::Instance().clear();
 
@@ -119,7 +119,7 @@ void GameEngine::init_OpenGL() {
 	std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
 
 	// setup main renderer with OpenGL
-	renderer = std::make_unique<OpenGL_Renderer>(window);
+	renderer = std::make_unique<Engine::Graphics::OpenGL_Renderer>(window);
 
 	// OpenGL base settings
 	glEnable(GL_BLEND);
@@ -133,14 +133,16 @@ void GameEngine::init_input() {
 }
 
 void GameEngine::init_main_resources() {
-	CoreResource::TextureArrayManager::Instance().init();
+	Engine::Resource::TextureArrayManager::Instance().init();
 
-	CoreAudio::AudioSystem::Instance().init();
-	CoreAudio::AudioSystem::Instance().add_sound_group("Core:UI");
-	CoreAudio::AudioSystem::Instance().add_sound_group("Core:Music");
-	CoreAudio::AudioSystem::Instance().add_sound_group("Core:SFX");
+	Engine::Audio::AudioSystem::Instance().init();
+	Engine::Audio::AudioSystem::Instance().add_sound_group("Core:UI");
+	Engine::Audio::AudioSystem::Instance().add_sound_group("Core:Music");
+	Engine::Audio::AudioSystem::Instance().add_sound_group("Core:SFX");
 
-	CoreUI::UI_System::Instance().init();
+	Engine::UI::UI_System::Instance().init();
+
+	Engine::Entity::EntitySystem::Instance().init();
 
 	ResourceLoader::Instance().load_minimal_core_resources();
 	SettingsManager::Instance().load_settings();
@@ -172,8 +174,8 @@ void GameEngine::loading_update() {
 	// lock mutex for resources loader when updating systems
 	ResourceLoader::Instance().lock_resources_mutex();
 	MainMenuManager::Instance().update();
-	CoreUI::UI_System::Instance().update();
-	CoreAudio::AudioSystem::Instance().update();
+	Engine::UI::UI_System::Instance().update();
+	Engine::Audio::AudioSystem::Instance().update();
 	ResourceLoader::Instance().unlock_resources_mutex();
 
 	// load availale resources from queue in main thread (textures)
@@ -204,6 +206,6 @@ void GameEngine::gameplay_update() {
 	}
 	}
 
-	CoreUI::UI_System::Instance().update();
-	CoreAudio::AudioSystem::Instance().update();
+	Engine::UI::UI_System::Instance().update();
+	Engine::Audio::AudioSystem::Instance().update();
 }

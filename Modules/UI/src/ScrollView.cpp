@@ -1,38 +1,38 @@
 #include "UI/ScrollView.h"
 #include "UI/UI_ObjectManager.h"
 
-void CoreUI::ScrollView::set_group_layout(GroupLayout layout) {
+void Engine::UI::ScrollView::set_group_layout(GroupLayout layout) {
 	this->layout = layout;
 }
 
-void CoreUI::ScrollView::set_border_offsets(float offset_left, float offset_top) {
+void Engine::UI::ScrollView::set_border_offsets(float offset_left, float offset_top) {
 	border_x_offset = offset_left;
 	border_y_offset = offset_top;
 }
 
-void CoreUI::ScrollView::set_content_children_offset(float children_offset) {
+void Engine::UI::ScrollView::set_content_children_offset(float children_offset) {
 	content_children_offset = children_offset;
 }
 
-void CoreUI::ScrollView::set_mouse_wheel_scroll_speed(float speed) {
+void Engine::UI::ScrollView::set_mouse_wheel_scroll_speed(float speed) {
 	mouse__wheel_scroll_speed = speed;
 }
 
-void CoreUI::ScrollView::bind_content(UI_Component_Ptr<ScrollViewContent>& c) {
+void Engine::UI::ScrollView::bind_content(UI_Component_Ptr<ScrollViewContent>& c) {
 	content = c;
 }
 
-void CoreUI::ScrollView::bind_vertical_scrollbar(UI_Component_Ptr<ScrollBar>& sb) {
+void Engine::UI::ScrollView::bind_vertical_scrollbar(UI_Component_Ptr<ScrollBar>& sb) {
 	this->scrollbar_Y = sb;
 	scrollbar_Y->on_value_changed.set_callback_method<ScrollViewContent, &ScrollViewContent::_set_normalized_offset_y>(content.operator->());
 }
 
-void CoreUI::ScrollView::bind_horizontal_scrollbar(UI_Component_Ptr<ScrollBar>& sb) {
+void Engine::UI::ScrollView::bind_horizontal_scrollbar(UI_Component_Ptr<ScrollBar>& sb) {
 	this->scrollbar_X = sb;
 	scrollbar_X->on_value_changed.set_callback_method<ScrollViewContent, &ScrollViewContent::_set_normalized_offset_x>(content.operator->());
 }
 
-void CoreUI::ScrollView::update_content() {
+void Engine::UI::ScrollView::update_content() {
 	//amount of children is changed -> replace all children
 	auto& scroll_view_content = *content;
 	auto content_obj = UI_ObjectManager::get_instance().get(content.get_id());
@@ -94,7 +94,7 @@ void CoreUI::ScrollView::update_content() {
 	}
 }
 
-void CoreUI::ScrollView::force_update_content() {
+void Engine::UI::ScrollView::force_update_content() {
 	content->last_children_size = 0;
 	update_content();
 }

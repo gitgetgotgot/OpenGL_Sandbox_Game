@@ -3,7 +3,7 @@
 #include <Utility/SparseSet.h>
 #include <unordered_map>
 
-namespace CoreUI {
+namespace Engine::UI {
 	struct UI_Dirty_Flags {
 		bool dirty_transform = false;
 		bool dirty_component = false;

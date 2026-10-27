@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <string>
 
-namespace CoreAudio {
+namespace Engine::Audio {
 	class AudioGroupMixer {
 	public:
 		void setup_mixer(uint32_t group_ID);

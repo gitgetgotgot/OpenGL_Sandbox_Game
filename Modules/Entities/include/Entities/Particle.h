@@ -2,7 +2,7 @@
 #include <Rendering/OpenGL_Renderer.h>
 #include <Utility/Math.h>
 #include <Resources/Sprite.h>
-#include <Resources/Lights.h>
+#include <Resources/Light.h>
 #include <Utility/GameContext.h>
 #include <glm/glm.hpp>
 
@@ -13,7 +13,7 @@ struct ParticleInfo {
 
 class ParticlesManager {
 public:
-	static ParticlesManager* get_instance() {
+	static ParticlesManager* Instance() {
 		static ParticlesManager pMgr;
 		return &pMgr;
 	}
@@ -46,14 +46,14 @@ public:
 
 class ParticleSystem {
 public:
-	static ParticleSystem* get_instance() {
+	static ParticleSystem* Instance() {
 		static ParticleSystem system;
 		return &system;
 	}
 	void init();
 	void emit_particle(uint32_t particle_id, glm::vec2 emitter_center, glm::vec2 emitter_size);
 	void update();
-	void render(std::unique_ptr<OpenGL_Renderer>& renderer);
+	void render(std::unique_ptr<Engine::Graphics::OpenGL_Renderer>& renderer);
 private:
 	ParticleSystem(){}
 	~ParticleSystem(){}

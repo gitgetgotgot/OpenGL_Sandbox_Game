@@ -2,64 +2,64 @@
 #include "UI/UI_ObjectManager.h"
 #include <Resources/Sprite.h>
 
-void CoreUI::Image::_update_buffer_data(UI_RenderContext& c, UI_RenderState& s) {
+void Engine::UI::Image::_update_buffer_data(UI_RenderContext& c, UI_RenderState& s) {
 	if (sprite_ID == 0) return;
 	update_render_queue(c, s, INDEX_SIZE);
 	c.sprites_buffer.insert(c.sprites_buffer.end(), image_vertices.data, image_vertices.data + image_vertices.size); // THINK ABOUT std::memcpy!!!
 }
 
-void CoreUI::Image::_update_data() {
+void Engine::UI::Image::_update_data() {
 	is_dirty = false;
 	if (sprite_ID == 0) return;
 	data_updater(*this);
 	dirty_mask = ImageMask::IMAGE_CLEAN;
 }
 
-void CoreUI::Image::Setup_As_Regular() {
+void Engine::UI::Image::Setup_As_Regular() {
 	image_type = ImageType::RegularImage;
 	INDEX_SIZE = 6;
 	image_vertices = DynamicArray<UI_Vertex2f>(4);
 	data_updater = &Image::update_as_regular;
 }
 
-void CoreUI::Image::Setup_As_Nine_Sliced() {
+void Engine::UI::Image::Setup_As_Nine_Sliced() {
 	image_type = ImageType::NineSlicedImage;
 	INDEX_SIZE = 54;
 	image_vertices = DynamicArray<UI_Vertex2f>(36);
 	data_updater = &Image::update_as_nine_sliced;
 }
 
-void CoreUI::Image::set_sprite(uint32_t sprite_ID) {
+void Engine::UI::Image::set_sprite(uint32_t sprite_ID) {
 	this->sprite_ID = sprite_ID;
 	mark_dirty();
 	dirty_mask |= ImageMask::IMAGE_SPRITE;
 }
 
-void CoreUI::Image::set_color(glm::vec4& color) {
+void Engine::UI::Image::set_color(glm::vec4& color) {
 	this->image_color = color;
 	mark_dirty();
 	dirty_mask |= ImageMask::IMAGE_COLOR;
 }
 
-void CoreUI::Image::set_flip(bool X, bool Y) {
+void Engine::UI::Image::set_flip(bool X, bool Y) {
 	flip_x = X; flip_y = Y;
 	mark_dirty();
 
 }
 
-void CoreUI::Image::set_border_size(float normalized_size) {
+void Engine::UI::Image::set_border_size(float normalized_size) {
 	this->border_normalized_size = normalized_size;
 	mark_dirty();
 	dirty_mask |= ImageMask::IMAGE_BORDER;
 }
 
-void CoreUI::Image::update_as_regular(Image& img) {
+void Engine::UI::Image::update_as_regular(Image& img) {
 	UI_Object* obj = UI_ObjectManager::get_instance().get(img.object_id);
 	UI_Vertex2f* vertex = img.image_vertices.data;
 
 	if (img.dirty_mask & ImageMask::IMAGE_TRANSFORM || img.dirty_mask & ImageMask::IMAGE_SPRITE) {
 		UI_Transform& tr = obj->transform;
-		CoreResource::Sprite& s = CoreResource::SpriteManager::Instance().get_sprite(img.sprite_ID);
+		Engine::Resource::Sprite& s = Engine::Resource::SpriteManager::Instance().get_sprite(img.sprite_ID);
 
 		float size_x = tr.size.x;
 		float size_y = tr.size.y;
@@ -89,12 +89,12 @@ void CoreUI::Image::update_as_regular(Image& img) {
 	}
 }
 
-void CoreUI::Image::update_as_nine_sliced(Image& img) {
+void Engine::UI::Image::update_as_nine_sliced(Image& img) {
 	UI_Object* obj = UI_ObjectManager::get_instance().get(img.object_id);
 	UI_Vertex2f* v_buf = nullptr;
 
 	if (img.dirty_mask & ImageMask::IMAGE_TRANSFORM || img.dirty_mask & ImageMask::IMAGE_BORDER) {
-		CoreResource::Sprite9Sliced& sprite = CoreResource::SpriteManager::Instance().get_sprite9sliced(img.sprite_ID);
+		Engine::Resource::Sprite9Sliced& sprite = Engine::Resource::SpriteManager::Instance().get_sprite9sliced(img.sprite_ID);
 		float margin_left	= sprite.ratio_left * img.border_normalized_size;
 		float margin_right	= sprite.ratio_right * img.border_normalized_size;
 		float margin_top	= sprite.ratio_top * img.border_normalized_size;
@@ -145,7 +145,7 @@ void CoreUI::Image::update_as_nine_sliced(Image& img) {
 		update_buffer_transform_part(); //RT
 	}
 	if (img.dirty_mask & ImageMask::IMAGE_SPRITE) {
-		CoreResource::Sprite9Sliced& sprite = CoreResource::SpriteManager::Instance().get_sprite9sliced(img.sprite_ID);
+		Engine::Resource::Sprite9Sliced& sprite = Engine::Resource::SpriteManager::Instance().get_sprite9sliced(img.sprite_ID);
 		float
 			U_0 = sprite.U0, U_1 = U_0 + sprite.W,
 			V_0 = sprite.V0, V_1 = V_0 + sprite.H;

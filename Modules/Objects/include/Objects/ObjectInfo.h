@@ -28,7 +28,7 @@ struct DamageText {
 	std::string text;
 };*/
 
-namespace CoreObject {
+namespace Engine::Object {
 	enum ObjectType : uint8_t {
 		None, isMultiBlockTile, isWall, isBlock, isMultiBlock, isItem, isWeapon, isAmmo, isConsumable, isArmor, isArtifact, isCoin
 	};
@@ -47,8 +47,8 @@ namespace CoreObject {
 		std::string_view uid, name;
 		DynamicArray<uint16_t> tags;
 		DynamicArray<uint32_t> sprites;
-		DynamicArray<DropEntry> drops;
-		DynamicArray<EffectEntry> effects;
+		DynamicArray<Engine::Resource::DropEntry> drops;
+		DynamicArray<Engine::Resource::EffectEntry> effects;
 		DynamicArray<uint16_t> lights;
 	};
 }
