@@ -7,13 +7,13 @@ This engine should be considered as a pet-project.
 
 # Used libraries
 
-GLFW - window, input/output
-GLM - math
-nlohmann_json - serialization
-stb - image load/save
-miniaudio - sounds/music
-GLAD - OpenGL loader
-</i>msdfgen probably will be added later for MSDF text</i>
+**GLFW - window, input/output**</br>
+**GLM - math**</br>
+**nlohmann_json - serialization**</br>
+**stb - image load/save**</br>
+**miniaudio - sounds/music**</br>
+**GLAD - OpenGL loader**</br>
+*msdfgen probably will be added later for MSDF text*
 
 ## License
 
