@@ -1,6 +1,6 @@
 #include <IOSystem/SystemContext.h>
-#include "Core/Menu/SettingsPage.h"
-#include <Core/MainMenuManager.h>
+#include "Core/MainMenuUI/SettingsPage.h"
+#include <Core/MainMenuUI/MenuUIController.h>
 #include <UI/Button.h>
 #include <Core/SettingsManager.h>
 #include <Resources/Sprite.h>
@@ -94,7 +94,7 @@ void SettingsPage::setup_page() {
 	button_resolution->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<SettingsPage, &SettingsPage::change_resolution>(this);
 	button_fullscreen->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<SettingsPage, &SettingsPage::toggle_fullscreen>(this);
 	button_vsync->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<SettingsPage, &SettingsPage::toggle_vsync>(this);
-	button_exit->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<MainMenuManager, &MainMenuManager::close_settings_page>(&MainMenuManager::Instance());
+	button_exit->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<MenuUIController, &MenuUIController::close_settings_page>(&MenuUIController::Instance());
 
 	canvas->add_object(settings_logo);
 	canvas->add_object(button_resolution);

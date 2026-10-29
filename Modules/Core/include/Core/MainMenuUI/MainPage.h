@@ -6,7 +6,7 @@
 class MainPage {
 private:
 	enum MenuTooltip : uint8_t {
-		TOOLTIP_NONE, TOOLTIP_LOAD_RESOURCES, TOOLTIP_LOAD_WORLD, TOOLTIP_GENERATE_WORLD
+		TOOLTIP_NONE, TOOLTIP_LOAD_RESOURCES, TOOLTIP_LOAD_WORLD, TOOLTIP_SAVE_WORLD, TOOLTIP_GENERATE_WORLD
 	};
 	struct TooltipLoadRes {
 		Engine::UI::UI_Component_Ptr<Engine::UI::SDF_Text> loading_text;
@@ -15,6 +15,12 @@ private:
 		void update();
 	};
 	struct TooltipLoadWorld {
+		Engine::UI::UI_Component_Ptr<Engine::UI::SDF_Text> loading_text;
+		float time_loading = 0.0f;
+		uint32_t phase = 0;
+		void update();
+	};
+	struct TooltipSaveWorld {
 		Engine::UI::UI_Component_Ptr<Engine::UI::SDF_Text> loading_text;
 		float time_loading = 0.0f;
 		uint32_t phase = 0;
@@ -38,6 +44,8 @@ public:
 	void hide_tooltip_res_load();
 	void show_tooltip_world_load();
 	void hide_tooltip_world_load();
+	void show_tooltip_world_save();
+	void hide_tooltip_world_save();
 	void show_tooltip_world_gen();
 	void hide_tooltip_world_gen();
 private:
@@ -47,10 +55,12 @@ private:
 
 	Engine::UI::UI_Obj_Ptr tooltip_load_res_obj;
 	Engine::UI::UI_Obj_Ptr tooltip_load_world_obj;
+	Engine::UI::UI_Obj_Ptr tooltip_save_world_obj;
 	Engine::UI::UI_Obj_Ptr tooltip_gen_world_obj;
 
 	TooltipLoadRes tooltip_load_res;
 	TooltipLoadWorld tooltip_load_world;
+	TooltipSaveWorld tooltip_save_world;
 	TooltipGenWorld tooltip_gen_world;
 
 	Engine::UI::UI_Component_Ptr<Engine::UI::SDF_Text> FPS_text;

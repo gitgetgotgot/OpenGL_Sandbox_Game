@@ -1,15 +1,15 @@
 #pragma once
 #include <Audio/AudioSource.h>
 
-class MainMenuManager {
+class MenuUIController {
 private:
-	enum MenuCurrentState : uint8_t {
+	enum MainMenuState : uint8_t {
 		in_MainMenu, in_Saves, in_Creator, in_Settings, in_Mods,
-		Loading_World, Generating_World
+		Loading_World, Generating_World, Saving_World
 	};
 public:
-	static MainMenuManager& Instance() {
-		static MainMenuManager menu;
+	static MenuUIController& Instance() {
+		static MenuUIController menu;
 		return menu;
 	}
 	void init();
@@ -24,6 +24,9 @@ public:
 
 	void start_world_loading();
 	void stop_world_loading();
+
+	void start_world_saving();
+	void stop_world_saving();
 
 	void load_saves();
 	void load_mods();
@@ -45,10 +48,10 @@ public:
 	void open_creator_page();
 	void close_creator_page();
 private:
-	MainMenuManager() = default;
-	~MainMenuManager() = default;
+	MenuUIController() = default;
+	~MenuUIController() = default;
 
 	Engine::Audio::AudioSource button_click_sound;
 	Engine::Audio::AudioSource music_test;
-	MenuCurrentState current_state = MenuCurrentState::in_MainMenu;
+	MainMenuState current_state = MainMenuState::in_MainMenu;
 };

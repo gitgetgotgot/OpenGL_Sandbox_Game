@@ -1,5 +1,5 @@
-#include "Core/Menu/SavesPage.h"
-#include "Core/MainMenuManager.h"
+#include "Core/MainMenuUI/SavesPage.h"
+#include "Core/MainMenuUI/MenuUIController.h"
 #include "Core/WorldManager.h"
 #include <UI/ScrollView.h>
 #include <UI/Button.h>
@@ -27,7 +27,7 @@ void SaveElement::_save_world() {
 
 void SaveElement::_load_world_save() {
 	button_click_sound.play();
-	MainMenuManager::Instance().start_world_loading();
+	MenuUIController::Instance().start_world_loading();
 	WorldManager::Instance().load_world(file_path);
 }
 
@@ -58,8 +58,8 @@ void SavesPage::setup_page() {
 		true, "Create", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
 
-	button_back->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<MainMenuManager, &MainMenuManager::close_saves_page>(&MainMenuManager::Instance());
-	button_create->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<MainMenuManager, &MainMenuManager::open_creator_page>(&MainMenuManager::Instance());
+	button_back->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<MenuUIController, &MenuUIController::close_saves_page>(&MenuUIController::Instance());
+	button_create->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<MenuUIController, &MenuUIController::open_creator_page>(&MenuUIController::Instance());
 
 	//saves background
 	auto label_background_obj = Engine::UI::UI_Creator::create_image9sliced(

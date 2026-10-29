@@ -1,5 +1,5 @@
-#include "Core/Menu/MainMenuPage.h"
-#include "Core/MainMenuManager.h"
+#include "Core/MainMenuUI/MainMenuPage.h"
+#include "Core/MainMenuUI/MenuUIController.h"
 #include <UI/Button.h>
 #include <UI/SDF_Text.h>
 #include <IOSystem/SystemContext.h>
@@ -48,10 +48,10 @@ void MainMenuPage::setup_page() {
 		glm::vec2(1.0f, 0.1f), glm::vec2(-SystemContext::display.ratio + 0.525f, -0.95f), "Version 1.0.0", glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), 0.075f
 	);
 
-	button_play->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<MainMenuManager, &MainMenuManager::open_saves_page>(&MainMenuManager::Instance());
-	button_settings->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<MainMenuManager, &MainMenuManager::open_settings_page>(&MainMenuManager::Instance());
-	button_mods->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<MainMenuManager, &MainMenuManager::open_mods_page>(&MainMenuManager::Instance());
-	button_exit->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<MainMenuManager, &MainMenuManager::exit_game>(&MainMenuManager::Instance());
+	button_play->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<MenuUIController, &MenuUIController::open_saves_page>(&MenuUIController::Instance());
+	button_settings->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<MenuUIController, &MenuUIController::open_settings_page>(&MenuUIController::Instance());
+	button_mods->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<MenuUIController, &MenuUIController::open_mods_page>(&MenuUIController::Instance());
+	button_exit->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<MenuUIController, &MenuUIController::exit_game>(&MenuUIController::Instance());
 
 	canvas->add_object(button_play);
 	canvas->add_object(button_settings);

@@ -84,13 +84,14 @@ void Engine::UI::UI_BehaviourSystem::update(UI_RenderContext& ctx) {
 		}
 
 		// block raycast
-		if (pointed_now && comp_base->blocks_input)
+		if (pointed_now && comp_base->blocks_input) {
 			raycast_is_captured = true;
-
+			SystemContext::mouse.blocked_by_UI = true;
+		}
 	}
-
-	if (SystemContext::mouse.lb_is_pressed() && !focus_changed_in_frame)
+	if (SystemContext::mouse.lb_is_pressed() && !focus_changed_in_frame) {
 		focused_component_id = 0;
+	}
 }
 
 Engine::UI::UI_BehaviourEntry* Engine::UI::UI_BehaviourSystem::add(uint32_t ui_object_id, void* ptr, UI_Behaviour_VTable* vt) {

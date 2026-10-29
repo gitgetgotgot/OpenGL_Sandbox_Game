@@ -1,4 +1,4 @@
-#include "Core/Menu/MainPage.h"
+#include "Core/MainMenuUI/MainPage.h"
 #include <Resources/Sprite.h>
 #include <UI/UI_Creator.h>
 #include <Utility/TimeManager.h>
@@ -28,6 +28,18 @@ void MainPage::TooltipLoadWorld::update() {
 		else if (phase == 3) loading_text->set_text("Loading World...");
 	}
 }
+void MainPage::TooltipSaveWorld::update() {
+	time_loading += TimeManager::deltaTime;
+	if (time_loading >= 0.2f) {
+		time_loading = 0.0f;
+		++phase;
+		if (phase == 4) phase = 0;
+		if (phase == 0)		 loading_text->set_text("Saving World");
+		else if (phase == 1) loading_text->set_text("Saving World.");
+		else if (phase == 2) loading_text->set_text("Saving World..");
+		else if (phase == 3) loading_text->set_text("Saving World...");
+	}
+}
 void MainPage::TooltipGenWorld::update() {
 	time_loading += TimeManager::deltaTime;
 	if (time_loading >= 0.2f) {
@@ -55,6 +67,9 @@ void MainPage::update() {
 		break;
 	case MenuTooltip::TOOLTIP_GENERATE_WORLD:
 		tooltip_gen_world.update();
+		break;
+	case MenuTooltip::TOOLTIP_SAVE_WORLD:
+		tooltip_save_world.update();
 		break;
 	}
 }
@@ -107,14 +122,26 @@ void MainPage::setup_page() {
 	tooltip_load_world_obj.add_child(loading_label3);
 	tooltip_load_world.loading_text = loading_label3->get_component<Engine::UI::SDF_Text>();
 
+	// tooltip for saving world
+	tooltip_save_world_obj = Engine::UI::UI_Creator::create_image9sliced(
+		frame0_id, glm::vec2(1.5f, 0.5f), glm::vec2(0.0f), glm::vec4(1.0f)
+	);
+	auto loading_label4 = Engine::UI::UI_Creator::create_SDF_text(
+		glm::vec2(1.4f, 0.1f), glm::vec2(0.0f, 0.0f), "", glm::vec4(1.0f), 0.08f
+	);
+	tooltip_save_world_obj.add_child(loading_label4);
+	tooltip_save_world.loading_text = loading_label4->get_component<Engine::UI::SDF_Text>();
+
 	canvas->add_object(background);
 	canvas->add_object(fps_label);
 	canvas->add_object(tooltip_load_res_obj);
 	canvas->add_object(tooltip_gen_world_obj);
 	canvas->add_object(tooltip_load_world_obj);
+	canvas->add_object(tooltip_save_world_obj);
 	tooltip_load_res_obj->is_enabled = false;
 	tooltip_gen_world_obj->is_enabled = false;
 	tooltip_load_world_obj->is_enabled = false;
+	tooltip_save_world_obj->is_enabled = false;
 }
 
 void MainPage::show_tooltip_res_load() {
@@ -137,6 +164,17 @@ void MainPage::hide_tooltip_world_load() {
 	tooltip_load_world.time_loading = 0.0f;
 	current_tooltip = MenuTooltip::TOOLTIP_NONE;
 	tooltip_load_world_obj->is_enabled = false;
+}
+
+void MainPage::show_tooltip_world_save() {
+	tooltip_save_world.loading_text->set_text("Saving World...");
+	current_tooltip = MenuTooltip::TOOLTIP_SAVE_WORLD;
+	tooltip_save_world_obj->is_enabled = true;
+}
+void MainPage::hide_tooltip_world_save() {
+	tooltip_save_world.time_loading = 0.0f;
+	current_tooltip = MenuTooltip::TOOLTIP_NONE;
+	tooltip_save_world_obj->is_enabled = false;
 }
 
 void MainPage::show_tooltip_world_gen() {

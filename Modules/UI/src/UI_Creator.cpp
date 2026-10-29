@@ -225,6 +225,7 @@ Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_scroll_view(glm::vec2 size
 	obj.add_child(content_obj);
 
 	scroll_view->is_interactable = true;
+	scroll_view->blocks_input = true;
 	scroll_view->bind_content(scroll_view_content);
 	return obj;
 }
@@ -270,6 +271,7 @@ Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_scroll_bar(
 	obj.add_child(thumb_obj);
 
 	scroll_bar->is_interactable = true;
+	scroll_bar->blocks_input = true;
 	scroll_bar->set_direction(vertical ? ScrollBar::SCROLLBAR_VERTICAL : ScrollBar::SCROLLBAR_HORIZONTAL);
 	scroll_bar->set_scroll_mode(slider_mode ? ScrollBar::SLIDER_MODE : ScrollBar::PAGEABLE_MODE);
 	scroll_bar->bind_components(track_image, thumb_image);

@@ -7,6 +7,16 @@
 #include <Objects/ObjectManager.h>
 #include <iostream>
 
+World::~World() {
+	if (world_slots) {
+		delete[] world_slots;
+	}
+	for (int i = 0; i < RENDERABLE_CHUNKS_SIZE; i++) {
+		delete render_buffers[i];
+	}
+	main_player_ptr = nullptr;
+}
+
 void World::init_render_buffers() {
 	//CoreEntity::EntitySystem::Instance().set_world_data(world_slots, width, height, &object_components);
 
@@ -75,10 +85,16 @@ void World::init_render_buffers() {
 }
 
 void World::init_tiles_buffer() {
-	//create world slots
 	world_slots = new WorldSlot[width * height];
 	MAX_CHUNK_X = width / CHUNK_SIZE;
 	MAX_CHUNK_Y = height / CHUNK_SIZE;
+}
+
+void World::uninit_tiles_buffer() {
+	if (world_slots) {
+		delete[] world_slots;
+		world_slots = nullptr;
+	}
 }
 
 void World::init_chunk_buffers() {
@@ -170,7 +186,7 @@ void World::update() {
 	}
 	//main_player_ptr->inventory.update();
 
-	if (!SystemContext::mouse.overlapped_by_UI_layer) {
+	if (!SystemContext::mouse.blocked_by_UI) {
 		if (SystemContext::mouse.lb_is_pressed())
 			process_LB_click();
 		if (SystemContext::mouse.rb_is_pressed())
@@ -618,12 +634,4 @@ void World::save_world_data_in_file(const char* filePath) {
 		}
 	}
 	write.close();
-}
-
-World::~World() {
-	delete[] world_slots;
-	for (int i = 0; i < RENDERABLE_CHUNKS_SIZE; i++) {
-		delete render_buffers[i];
-	}
-	main_player_ptr = nullptr;
 }

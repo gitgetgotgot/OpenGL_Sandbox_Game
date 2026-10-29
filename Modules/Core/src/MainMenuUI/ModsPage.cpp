@@ -1,5 +1,5 @@
-#include "Core/Menu/ModsPage.h"
-#include "Core/MainMenuManager.h"
+#include "Core/MainMenuUI/ModsPage.h"
+#include "Core/MainMenuUI/MenuUIController.h"
 #include <UI/UI_Creator.h>
 #include <UI/ScrollView.h>
 #include <UI/Button.h>
@@ -50,7 +50,7 @@ void ModsPage::setup_page() {
 			glm::vec2(1.0f, 0.1f), glm::vec2(0.0f, -0.85f), true, button64_id,
 			true, "Back", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 		);
-		button_back->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<MainMenuManager, &MainMenuManager::close_mods_page>(&MainMenuManager::Instance());
+		button_back->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<MenuUIController, &MenuUIController::close_mods_page>(&MenuUIController::Instance());
 
 		//mods background
 		auto label_background_obj = Engine::UI::UI_Creator::create_image9sliced(

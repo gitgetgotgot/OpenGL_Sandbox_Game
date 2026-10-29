@@ -11,7 +11,9 @@ public:
     }
     void create_world(const std::string& name, const World::WorldOptions& options);
     void load_world(const std::filesystem::path& save_file_path);
-    void save_world(const std::filesystem::path& save_file_path);
+    void save_world();
+    void free_world_data();
+
     void switch_active_world(const std::string& name);
     void update_active_world_buffers();
     void update();
@@ -24,9 +26,9 @@ public:
 private:
     void _world_generator(const std::string& name, const World::WorldOptions& options);
     void _world_loader(const std::filesystem::path& save_file_path);
-    void _world_saver(const std::filesystem::path& save_file_path);
+    void _world_saver();
 
-    void _build_world(
+    void _build_world_data(
         uint16_t world_width, uint16_t world_height,
         WorldSlot* world_slots,
         std::unordered_map<uint32_t, std::unique_ptr<Engine::Object::ObjectComponent>>& components
@@ -42,6 +44,7 @@ private:
     ~WorldManager() = default;
     std::unordered_map<std::string, std::unique_ptr<World>> worlds;
     World* active_world = nullptr;
+    std::string active_world_name;
 
     std::unique_ptr<std::jthread> worker_thread;
     std::atomic_bool world_created = false;

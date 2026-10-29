@@ -1,6 +1,6 @@
-#include "Core/MainMenuManager.h"
-#include "Core/Menu/CreatorPage.h"
-#include "Core/Menu/SavesPage.h"
+#include "Core/MainMenuUI/MenuUIController.h"
+#include "Core/MainMenuUI/CreatorPage.h"
+#include "Core/MainMenuUI/SavesPage.h"
 #include "Core/WorldManager.h"
 #include <IOSystem/SystemContext.h>
 #include <UI/UI_Creator.h>
@@ -9,7 +9,7 @@
 
 void CreatorPage::update() {
 	if (SystemContext::keyBoard.key_is_pressed(Key::KeyEscape)) {
-		MainMenuManager::Instance().close_creator_page();
+		MenuUIController::Instance().close_creator_page();
 	}
 }
 
@@ -80,7 +80,7 @@ void CreatorPage::setup_page() {
 		glm::vec2(1.0f, 0.1f), glm::vec2(0.0f, -0.85f), true, regular_button_sprite_id,
 		true, "Back", glm::vec4(0.9f, 0.9f, 0.9f, 1.0f), 0.07f
 	);
-	button_back->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<MainMenuManager, &MainMenuManager::close_creator_page>(&MainMenuManager::Instance());
+	button_back->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<MenuUIController, &MenuUIController::close_creator_page>(&MenuUIController::Instance());
 
 	canvas->add_object(background_obj);
 	canvas->add_object(world_name_label);
@@ -115,8 +115,12 @@ void CreatorPage::start_world_creation() {
 	else if (world_size_id == 3)
 		world_options.size = World::WorldOptions::WorldSize::LARGE_PLUS_PLUS;
 
-	MainMenuManager::Instance().start_world_generation();
+	MenuUIController::Instance().start_world_generation();
 	WorldManager::Instance().create_world(input_text, world_options);
+}
+
+std::string& CreatorPage::get_last_created_save_name() {
+	return world_input_field->field_text->text;
 }
 
 void CreatorPage::_choose_world_size_1() {

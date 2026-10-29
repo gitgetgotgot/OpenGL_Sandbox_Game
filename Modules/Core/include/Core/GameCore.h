@@ -5,7 +5,7 @@
 class GameEngine {
 public:
 	enum Game_State : uint8_t {
-		inMainMenu, inWorld, LoadingResources
+		inMainMenu, inGame, LoadingResources
 	};
 	~GameEngine();
 	bool update();
@@ -26,14 +26,8 @@ private:
 	void(GameEngine::* update_proc)() = nullptr;
 	GLFWwindow* window;
 
-	//Player player;
-	//Graphics main objects
 	std::unique_ptr<Engine::Graphics::OpenGL_Renderer> renderer;
 
-	//World data
-	//std::unique_ptr<World> world;
-
-	//game state
 	inline static Game_State game_update_state = LoadingResources;
 	inline static Game_State game_render_state = inMainMenu;
 };

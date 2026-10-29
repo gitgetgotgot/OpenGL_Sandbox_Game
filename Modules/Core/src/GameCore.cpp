@@ -1,8 +1,10 @@
 #include "Core/GameCore.h"
 #include "Core/ResourceLoader.h"
-#include "Core/MainMenuManager.h"
 #include "Core/SettingsManager.h"
 #include "Core/WorldManager.h"
+#include "Core/MainMenuUI/MenuUIController.h"
+#include "Core/GameUI/GameUIController.h"
+
 #include <UI/UI_System.h>
 #include <Audio/AudioSystem.h>
 #include <Resources/TextureArrayMgr.h>
@@ -30,7 +32,7 @@ void GameEngine::render() {
 
 	Engine::Resource::TextureArrayManager::Instance().bind_texture_arrays();
 
-	if (game_render_state == Game_State::inWorld) {
+	if (game_render_state == Game_State::inGame) {
 		WorldManager::Instance().render(renderer);
 	}
 
@@ -45,7 +47,7 @@ void GameEngine::input_end_frame() {
 	SystemContext::mouse.wheel_offset = 0;
 	SystemContext::mouse.delta_x = 0;
 	SystemContext::mouse.delta_y = 0;
-	SystemContext::mouse.overlapped_by_UI_layer = false;
+	SystemContext::mouse.blocked_by_UI = false;
 
 	for (int i = 0; i <= GLFW_KEY_LAST; i++) {
 		SystemContext::keyBoard.keyStatesPrev[i] = SystemContext::keyBoard.keyStatesCurr[i];
@@ -146,13 +148,14 @@ void GameEngine::init_main_resources() {
 
 	ResourceLoader::Instance().load_minimal_core_resources();
 	SettingsManager::Instance().load_settings();
-	MainMenuManager::Instance().init();
+	MenuUIController::Instance().init();
+	GameUIController::Instance().init();
 
 	glfwShowWindow(window);
 
 	update_proc = &GameEngine::loading_update;
 	ResourceLoader::Instance().start_resources_loading();
-	MainMenuManager::Instance().start_loading_resources();
+	MenuUIController::Instance().start_loading_resources();
 
 	/*
 	player.inventory.init();
@@ -173,7 +176,7 @@ void GameEngine::init_main_resources() {
 void GameEngine::loading_update() {
 	// lock mutex for resources loader when updating systems
 	ResourceLoader::Instance().lock_resources_mutex();
-	MainMenuManager::Instance().update();
+	MenuUIController::Instance().update();
 	Engine::UI::UI_System::Instance().update();
 	Engine::Audio::AudioSystem::Instance().update();
 	ResourceLoader::Instance().unlock_resources_mutex();
@@ -184,28 +187,29 @@ void GameEngine::loading_update() {
 	// change update proc if resources are loaded
 	if (ResourceLoader::Instance().resources_loading_ready()) {
 		ResourceLoader::Instance().stop_resources_loading();
-		MainMenuManager::Instance().stop_loading_resources();
-		MainMenuManager::Instance().open_main_menu_page();
-		MainMenuManager::Instance().load_mods();
+		MenuUIController::Instance().stop_loading_resources();
+		MenuUIController::Instance().open_main_menu_page();
+		MenuUIController::Instance().load_mods();
 		game_update_state = Game_State::inMainMenu;
 		update_proc = &GameEngine::gameplay_update;
 	}
 }
 
 void GameEngine::gameplay_update() {
+	Engine::UI::UI_System::Instance().update();
+	Engine::Audio::AudioSystem::Instance().update();
+
 	switch (game_update_state) {
 	case Game_State::inMainMenu: {
-		MainMenuManager::Instance().update();
+		MenuUIController::Instance().update();
 		game_render_state = Game_State::inMainMenu;
 		break;
 	}
-	case Game_State::inWorld: {
+	case Game_State::inGame: {
+		GameUIController::Instance().update();
 		WorldManager::Instance().update();
-		game_render_state = Game_State::inWorld;
+		game_render_state = Game_State::inGame;
 		break;
 	}
 	}
-
-	Engine::UI::UI_System::Instance().update();
-	Engine::Audio::AudioSystem::Instance().update();
 }

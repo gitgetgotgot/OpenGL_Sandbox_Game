@@ -28,8 +28,10 @@ public:
 		enum WorldSize : uint8_t { SMALL, MEDIUM, LARGE, LARGE_PLUS_PLUS };
 		WorldSize size;
 	};
+	~World();
 	void init_render_buffers();
 	void init_tiles_buffer();
+	void uninit_tiles_buffer();
 	void init_chunk_buffers();
 	void uninit();
 	void update();
@@ -47,7 +49,6 @@ public:
 	bool destroy_tile(uint32_t world_x, uint32_t world_y);
 
 	void save_world_data_in_file(const char* filePath);
-	~World();
 private:
 	uint16_t width = 0, height = 0;
 	WorldSlot* world_slots = nullptr;

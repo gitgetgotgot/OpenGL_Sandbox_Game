@@ -14,6 +14,7 @@ public:
 	void enable(bool state);
 	void setup_page();
 	void start_world_creation();
+	std::string& get_last_created_save_name();
 private:
 	CreatorPage() = default;
 	~CreatorPage() = default;

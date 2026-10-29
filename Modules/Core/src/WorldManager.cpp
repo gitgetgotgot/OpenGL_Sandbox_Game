@@ -1,6 +1,7 @@
 #include "Core/WorldManager.h"
-#include "Core/Menu/SavesPage.h"
+#include "Core/MainMenuUI/SavesPage.h"
 #include <Objects/ObjectManager.h>
+#include <iostream>
 
 void WorldManager::create_world(const std::string& name, const World::WorldOptions& options) {
 	world_created = false;
@@ -19,12 +20,20 @@ void WorldManager::load_world(const std::filesystem::path& save_file_path) {
 	worker_thread = std::make_unique<std::jthread>(&WorldManager::_world_loader, this, save_file_path);
 }
 
-void WorldManager::save_world(const std::filesystem::path& save_file_path) {
+void WorldManager::save_world() {
+	world_saved = false;
+	worker_thread.reset();
+	worker_thread = std::make_unique<std::jthread>(&WorldManager::_world_saver, this);
+}
 
+void WorldManager::free_world_data() {
+	// worlds data contains GPU buffers and is fully deleted only in main thread after saving because of OpenGL context
+	worlds.erase(active_world_name);
 }
 
 void WorldManager::switch_active_world(const std::string& name) {
 	active_world = worlds[name].get();
+	active_world_name = name;
 }
 
 void WorldManager::update_active_world_buffers() {
@@ -79,12 +88,12 @@ void WorldManager::_world_generator(const std::string& name, const World::WorldO
 	WorldSlot* world_slots = new WorldSlot[width * height];
 	std::unordered_map<uint32_t, std::unique_ptr<Engine::Object::ObjectComponent>> components;
 
-	_build_world(width, height, world_slots, components);
+	_build_world_data(width, height, world_slots, components);
 
 	_save_world_data(name, width, height, world_slots, components);
 
 	delete[] world_slots;
-	//std::this_thread::sleep_for(std::chrono::seconds(2));
+	std::this_thread::sleep_for(std::chrono::seconds(1));
 	world_created = true;
 }
 
@@ -142,17 +151,25 @@ void WorldManager::_world_loader(const std::filesystem::path& save_file_path) {
 		}
 	}
 	switch_active_world(world_name);
-	//std::this_thread::sleep_for(std::chrono::seconds(2));
+	std::this_thread::sleep_for(std::chrono::seconds(1));
 	world_loaded = true;
 }
 
-void WorldManager::_world_saver(const std::filesystem::path& save_file_path) {
+void WorldManager::_world_saver() {
+	// 1) save world data
+	_save_world_data(
+		active_world_name, active_world->width, active_world->height,
+		active_world->world_slots, active_world->object_components
+	);
 
-	std::this_thread::sleep_for(std::chrono::seconds(2));
+	// 2) delete world tiles data
+	active_world->uninit_tiles_buffer();
+
+	std::this_thread::sleep_for(std::chrono::seconds(1));
 	world_saved = true;
 }
 
-void WorldManager::_build_world(
+void WorldManager::_build_world_data(
 	uint16_t world_width, uint16_t world_height,
 	WorldSlot* world_slots,
 	std::unordered_map<uint32_t, std::unique_ptr<Engine::Object::ObjectComponent>>& components
@@ -291,12 +308,14 @@ void WorldManager::_save_world_data(
 	const std::unordered_map<uint32_t, std::unique_ptr<Engine::Object::ObjectComponent>>& components
 ) {
 	std::filesystem::path root = RESOURCE_ROOT;
-	std::filesystem::path saves_path = root / "Saves";
-	if (!std::filesystem::exists(saves_path)) {
-		std::filesystem::create_directory(saves_path);
+	std::filesystem::path save_path = root / "Saves" / name;
+	std::error_code ec;
+	// all necessary folders will be created if they dont't exist (if no error occurs)
+	std::filesystem::create_directories(save_path, ec);
+	if (ec) {
+		std::cerr << "Error occured while trying to save world <" << name << ">: " << ec.message() << std::endl;
+		return;
 	}
-	std::filesystem::path save_path = saves_path / name;
-	std::filesystem::create_directory(save_path);
 
 	std::filesystem::path file_path;
 	// meta file
@@ -346,6 +365,4 @@ void WorldManager::_save_world_data(
 		std::ofstream out(file_path, std::ios::binary);
 		// write entities data
 	}
-
-	SavesPage::Instance().load_save(name);
 }
