@@ -1,194 +1,218 @@
 #include <Utility/DataParser.h>
+#include <Utility/Logger.h>
+#include <Utility/Hash.h>
 
-const DataNode& DataNode::operator[](std::string key) const {
-	auto it = children.find(key);
-	if (it == children.end())
-		throw std::runtime_error("Child <" + key + "> not found");
-	return it->second;
-}
-
-bool DataNode::has_child(std::string name) const {
-	return children.find(name) != children.end();
-}
-
-void DataParser::parse_data(std::filesystem::path& path, bool DEBUG) {
-	if (DEBUG) return parse_JSON_format(path);
+bool Engine::Util::DataParser::parse_data(std::filesystem::path& path, bool parse_json_file) {
+	if (parse_json_file) return parse_JSON_format(path);
 	else return parse_binary_format(path);
 }
 
-void DataParser::parse_binary_format(std::filesystem::path& path) {
+bool Engine::Util::DataParser::parse_binary_format(std::filesystem::path& path) {
 	std::ifstream file(path, std::ios::binary);
-	if (!file.is_open())
-		throw std::runtime_error("[Data Parser] Cannot open file: " + path.string());
-	try{
-		write_from_binary(file, node_root);
+	if (!file.is_open()) {
+		Engine::Util::Logger::Log("Data Parser: Cannot open file: " + path.string());
+		return false;
 	}
-	catch (const std::exception& e) {
-		throw std::runtime_error("File " + path.string() + " is corrupted: " + e.what());
+
+	std::vector<uint8_t> bin_data;
+
+	uint64_t file_hash = 0;
+	file.read(reinterpret_cast<char*>(&file_hash), sizeof(file_hash));
+
+	uint64_t data_size;
+	file.read(reinterpret_cast<char*>(&data_size), sizeof(data_size));
+
+	bin_data.resize(data_size);
+	file.read(reinterpret_cast<char*>(bin_data.data()), data_size);
+
+	uint64_t file_real_hash = Engine::Util::Hash::FNV_1a_64(bin_data);
+
+	if (file_hash != file_real_hash) {
+		Engine::Util::Logger::Log("Data Parser: Corrupted file: " + path.string());
+		return false;
 	}
+
+	uint64_t pointer_offset = 0;
+	write_from_binary(bin_data, node_root, pointer_offset);
+
+	return true;
 }
 
-void DataParser::parse_JSON_format(std::filesystem::path& path) {
+bool Engine::Util::DataParser::parse_JSON_format(std::filesystem::path& path) {
 	std::ifstream file(path);
-	if (!file.is_open())
-		throw std::runtime_error("[Data Parser] Cannot open file: " + path.string());
-	nlohmann::json json;
-	file >> json;
-	write_from_JSON(json, node_root);
+	if (!file.is_open()) {
+		Engine::Util::Logger::Log("Data Parser: Cannot open file: " + path.string());
+		return false;
+	}
+	node_root = nlohmann::json::parse(file, nullptr, false);
+	if (node_root.is_discarded()) {
+		Engine::Util::Logger::Log("Data Parser: Invalid syntax in JSON file: " + path.string());
+		return false;
+	}
+	return true;
 }
 
-void DataParser::parse_JSON_to_binary(std::filesystem::path& path) {
+bool Engine::Util::DataParser::parse_JSON_to_binary(std::filesystem::path& path) {
 	std::ifstream file(path);
-	if (!file.is_open())
-		throw std::runtime_error("[Data Parser] Cannot open file: " + path.string());
-	nlohmann::json json;
-	file >> json;
+	if (!file.is_open()) {
+		Engine::Util::Logger::Log("Data Parser: Cannot open file: " + path.string());
+		return false;
+	}
+	nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
+	if (json.is_discarded()) {
+		Engine::Util::Logger::Log("Data Parser: Invalid syntax in JSON file: " + path.string());
+		return false;
+	}
 
 	std::filesystem::path new_file_path = path;
-	new_file_path.replace_extension(".DATA");
+	new_file_path.replace_extension(".data");
 	std::ofstream bin_file(new_file_path, std::ios::binary);
+	if (!bin_file.is_open()) {
+		Engine::Util::Logger::Log("Data Parser: Cannot create binary file: " + new_file_path.string());
+		return false;
+	}
 
-	write_JSON_to_binary(bin_file, json);
+	std::vector<uint8_t> bin_data;
+	write_JSON_to_binary(bin_data, json);
+
+	uint64_t file_hash = 0;
+	bin_file.write(reinterpret_cast<const char*>(&file_hash), sizeof(file_hash));
+
+	uint64_t data_size = bin_data.size();
+	bin_file.write(reinterpret_cast<const char*>(&data_size), sizeof(data_size));
+
+	bin_file.write(reinterpret_cast<const char*>(bin_data.data()), data_size);
+
+	file_hash = Engine::Util::Hash::FNV_1a_64(bin_data);
+
+	bin_file.seekp(0);
+	bin_file.write(reinterpret_cast<const char*>(&file_hash), sizeof(file_hash));
+
+	return true;
 }
 
-void DataParser::write_from_JSON(const nlohmann::json& j, DataNode& data) {
-	if (j.is_object()) {
-		data.node_type = DataNodeType::Node_Object;
-		for (auto& pair : j.items()) {
-			DataNode& child = data.children[pair.key()];
-			write_from_JSON(pair.value(), child);
-		}
-	}
-	else if (j.is_array()) {
-		data.node_type = DataNodeType::Node_Array;
-		for (auto& val : j) {
-			DataNode& child = data.array.emplace_back();
-			write_from_JSON(val, child);
-		}
-	}
-	else if (j.is_number()) {
-		data.node_type = DataNodeType::Node_Value;
-		data.value = j.dump();
-	}
-	else if (j.is_string()) {
-		data.node_type = DataNodeType::Node_Value;
-		data.value = j.get<std::string>();
-	}
-	else if (j.is_boolean()) {
-		data.node_type = DataNodeType::Node_Value;
-		data.value = j.get<bool>() ? "true" : "false";
-	}
-	else if (j.is_null()) {
-		data.node_type = DataNodeType::Node_NULL;
-	}
-}
-
-void DataParser::write_JSON_to_binary(std::ofstream& out, const nlohmann::json& j) {
+void Engine::Util::DataParser::write_JSON_to_binary(std::vector<uint8_t>& out_data, const nlohmann::json& j) {
 	if (j.is_object()) {
 		DataNodeType type = DataNodeType::Node_Object;
-		out.write(reinterpret_cast<const char*>(&type), sizeof(type));
+		append_data_to_bin_buffer(out_data, &type, sizeof(type));
 
 		uint32_t size = j.size();
-		out.write(reinterpret_cast<const char*>(&size), sizeof(size));
+		append_data_to_bin_buffer(out_data, &size, sizeof(size));
 
 		for (auto& pair : j.items()) {
 			std::string child_name = pair.key();
 			for (auto& c : child_name) c ^= 0x45;
 			uint32_t len = child_name.size();
-			out.write(reinterpret_cast<const char*>(&len), sizeof(len));
-			out.write(child_name.data(), len);
+			append_data_to_bin_buffer(out_data, &len, sizeof(len));
+			append_data_to_bin_buffer(out_data, child_name.data(), len);
 
-			write_JSON_to_binary(out, pair.value());
+			write_JSON_to_binary(out_data, pair.value());
 		}
 	}
 	else if (j.is_array()) {
 		DataNodeType type = DataNodeType::Node_Array;
-		out.write(reinterpret_cast<const char*>(&type), sizeof(type));
+		append_data_to_bin_buffer(out_data, &type, sizeof(type));
 
 		uint32_t array_size = j.size();
-		out.write(reinterpret_cast<const char*>(&array_size), sizeof(array_size));
+		append_data_to_bin_buffer(out_data, &array_size, sizeof(array_size));
 
-		for (auto& val : j) write_JSON_to_binary(out, val);
+		for (auto& val : j) write_JSON_to_binary(out_data, val);
 	}
 	else if (j.is_number()) {
 		DataNodeType type = DataNodeType::Node_Value;
-		out.write(reinterpret_cast<const char*>(&type), sizeof(type));
+		append_data_to_bin_buffer(out_data, &type, sizeof(type));
 
 		std::string value = j.dump();
 		for (auto& c : value) c ^= 0x45;
 		uint32_t len = value.size();
-		out.write(reinterpret_cast<const char*>(&len), sizeof(len));
-		out.write(value.data(), len);
+		append_data_to_bin_buffer(out_data, &len, sizeof(len));
+		append_data_to_bin_buffer(out_data, value.data(), len);
 	}
 	else if (j.is_string()) {
 		DataNodeType type = DataNodeType::Node_Value;
-		out.write(reinterpret_cast<const char*>(&type), sizeof(type));
+		append_data_to_bin_buffer(out_data, &type, sizeof(type));
 
 		std::string value = j.get<std::string>();
 		for (auto& c : value) c ^= 0x45;
 		uint32_t len = value.size();
-		out.write(reinterpret_cast<const char*>(&len), sizeof(len));
-		out.write(value.data(), len);
+		append_data_to_bin_buffer(out_data, &len, sizeof(len));
+		append_data_to_bin_buffer(out_data, value.data(), len);
 	}
 	else if (j.is_boolean()) {
 		DataNodeType type = DataNodeType::Node_Value;
-		out.write(reinterpret_cast<const char*>(&type), sizeof(type));
+		append_data_to_bin_buffer(out_data, &type, sizeof(type));
 
 		std::string value = j.get<bool>() ? "true" : "false";
 		for (auto& c : value) c ^= 0x45;
 		uint32_t len = value.size();
-		out.write(reinterpret_cast<const char*>(&len), sizeof(len));
-		out.write(value.data(), len);
+		append_data_to_bin_buffer(out_data, &len, sizeof(len));
+		append_data_to_bin_buffer(out_data, value.data(), len);
 	}
 	else if (j.is_null()) {
 		DataNodeType type = DataNodeType::Node_NULL;
-		out.write(reinterpret_cast<const char*>(&type), sizeof(type));
+		append_data_to_bin_buffer(out_data, &type, sizeof(type));
 	}
 }
 
-void DataParser::write_from_binary(std::ifstream& in, DataNode& data) {
+void Engine::Util::DataParser::write_from_binary(std::vector<uint8_t>& in, nlohmann::json& j, uint64_t& pointer_offset) {
 	DataNodeType type{};
-	in.read(reinterpret_cast<char*>(&type), sizeof(type));
-	data.node_type = type;
+	read_data_from_bin_buffer(in, pointer_offset, &type, sizeof(type));
 
 	if (type == DataNodeType::Node_Object) {
+		j = nlohmann::json::object();
+
 		uint32_t size{};
-		in.read(reinterpret_cast<char*>(&size), sizeof(size));
-		data.children.reserve(size);
+		read_data_from_bin_buffer(in, pointer_offset, &size, sizeof(size));
 		for (uint32_t i = 0; i < size; i++) {
 			uint32_t len{};
-			in.read(reinterpret_cast<char*>(&len), sizeof(len));
+			read_data_from_bin_buffer(in, pointer_offset, &len, sizeof(len));
 			std::string child_name; child_name.resize(len);
-			in.read(child_name.data(), len);
+			read_data_from_bin_buffer(in, pointer_offset, child_name.data(), len);
 			for (auto& c : child_name) c ^= 0x45;
 
-			DataNode& child = data.children[child_name];
-			write_from_binary(in, child);
+			write_from_binary(in, j[child_name], pointer_offset);
 		}
 	}
 	else if (type == DataNodeType::Node_Array) {
+		j = nlohmann::json::array();
+
 		uint32_t array_size{};
-		in.read(reinterpret_cast<char*>(&array_size), sizeof(array_size));
-		data.array.reserve(array_size);
+		read_data_from_bin_buffer(in, pointer_offset, &array_size, sizeof(array_size));
+		j.get_ref<nlohmann::json::array_t&>().reserve(array_size);
+
 		for (uint32_t i = 0; i < array_size; i++) {
-			DataNode& node = data.array.emplace_back();
-			write_from_binary(in, node);
+			write_from_binary(in, j.emplace_back(), pointer_offset);
 		}
 	}
 	else if (type == DataNodeType::Node_Value) {
 		uint32_t len{};
-		in.read(reinterpret_cast<char*>(&len), sizeof(len));
-		std::string value; value.resize(len);
-		in.read(value.data(), len);
-		for (auto& c : value) c ^= 0x45;
-		data.value = value;
+		read_data_from_bin_buffer(in, pointer_offset, &len, sizeof(len));
+		std::string value_str;
+		value_str.resize(len);
+		read_data_from_bin_buffer(in, pointer_offset, value_str.data(), len);
+		for (auto& c : value_str) c ^= 0x45;
+
+		if (value_str == "true") j = true;
+		else if (value_str == "false") j = false;
+		else {
+			// number or string
+			j = nlohmann::json::parse(value_str, nullptr, false);
+			if (j.is_discarded()) {
+				j = value_str; // if can't parse as number, then it's string
+			}
+		}
+	}
+	else {
+		j = nullptr;
 	}
 }
 
-void DataParser::read_text_file(std::filesystem::path& path, std::string& str) {
+bool Engine::Util::DataParser::read_text_file(std::filesystem::path& path, std::string& str) {
 	std::ifstream file(path, std::ios::binary);
-	if (!file.is_open())
-		throw std::runtime_error("[Data Parser] Cannot open file: " + path.string());
+	if (!file.is_open()) {
+		Engine::Util::Logger::Log("Data Parser: Cannot open file: " + path.string());
+		return false;
+	}
 	file.seekg(0, std::ios::end);
 	size_t count = file.tellg();
 	file.seekg(0, std::ios::beg);
@@ -196,4 +220,17 @@ void DataParser::read_text_file(std::filesystem::path& path, std::string& str) {
 	file.read(str.data(), count);
 
 	str.erase(std::remove(str.begin(), str.end(), '\r'), str.end());
+
+	return true;
+}
+
+void Engine::Util::DataParser::append_data_to_bin_buffer(std::vector<uint8_t>& bin_data, const void* data_ptr, size_t data_size) {
+	size_t old_size = bin_data.size();
+	bin_data.resize(old_size + data_size);
+	std::memcpy(bin_data.data() + old_size, data_ptr, data_size);
+}
+
+void Engine::Util::DataParser::read_data_from_bin_buffer(const std::vector<uint8_t>& bin_data, uint64_t& pointer_offset, void* data_ptr, size_t data_size) {
+	std::memcpy(data_ptr, bin_data.data() + pointer_offset, data_size);
+	pointer_offset += data_size;
 }

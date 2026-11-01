@@ -1,5 +1,5 @@
 #pragma once
-#include <IOSystem/InputHandler.h>
+#include <DeviceSystem/InputHandler.h>
 #include <Rendering/OpenGL_Renderer.h>
 
 class GameEngine {

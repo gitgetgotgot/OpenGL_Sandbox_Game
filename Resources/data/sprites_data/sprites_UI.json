@@ -1,7 +1,7 @@
 [
   {
     "UID": "Core:BasicSlot",
-    "texture": "Core:UI.png",
+    "texture": "Core:UI",
     "padding": 0,
     "sprite": {
       "U0": 32,
@@ -13,7 +13,7 @@
   },
   {
     "UID": "Core:ChestSlot",
-    "texture": "Core:UI.png",
+    "texture": "Core:UI",
     "padding": 0,
     "sprite": {
       "U0": 64,
@@ -25,7 +25,7 @@
   },
   {
     "UID": "Core:HotbarFrame",
-    "texture": "Core:UI.png",
+    "texture": "Core:UI",
     "padding": 0,
     "sprite": {
       "U0": 96,
@@ -37,7 +37,7 @@
   },
   {
     "UID": "Core:CraftSlot",
-    "texture": "Core:UI.png",
+    "texture": "Core:UI",
     "padding": 0,
     "sprite": {
       "U0": 128,
@@ -49,7 +49,7 @@
   },
   {
     "UID": "Core:CraftBorder",
-    "texture": "Core:UI.png",
+    "texture": "Core:UI",
     "padding": 0,
     "sprite": {
       "U0": 160,
@@ -61,7 +61,7 @@
   },
   {
     "UID": "Core:HeartFull",
-    "texture": "Core:UI.png",
+    "texture": "Core:UI",
     "padding": 0,
     "sprite": {
       "U0": 224,
@@ -73,7 +73,7 @@
   },
   {
     "UID": "Core:HeartHalf",
-    "texture": "Core:UI.png",
+    "texture": "Core:UI",
     "padding": 0,
     "sprite": {
       "U0": 256,
@@ -85,7 +85,7 @@
   },
   {
     "UID": "Core:HeartEmpty",
-    "texture": "Core:UI.png",
+    "texture": "Core:UI",
     "padding": 0,
     "sprite": {
       "U0": 288,
@@ -97,7 +97,7 @@
   },
   {
     "UID": "Core:ManaFull",
-    "texture": "Core:UI.png",
+    "texture": "Core:UI",
     "padding": 0,
     "sprite": {
       "U0": 320,
@@ -109,7 +109,7 @@
   },
   {
     "UID": "Core:ManaHalf",
-    "texture": "Core:UI.png",
+    "texture": "Core:UI",
     "padding": 0,
     "sprite": {
       "U0": 352,
@@ -121,7 +121,7 @@
   },
   {
     "UID": "Core:ManaEmpty",
-    "texture": "Core:UI.png",
+    "texture": "Core:UI",
     "padding": 0,
     "sprite": {
       "U0": 384,

@@ -1,18 +1,18 @@
 #include "Objects/ObjectTypes/MultiBlockInfo.h"
 #include <Resources/ResourceErrors.h>
 
-void Engine::Object::MultiBlockInfo::fill_data(const DataNode& data) {
+void Engine::Object::MultiBlockInfo::fill_data(const nlohmann::json& data) {
 	ObjectInfo::fill_data(data);
 	try {
-		float tiles_width = data["width"].get_as<float>();
-		float tiles_height = data["height"].get_as<float>();
-		float toughness = data["toughness"].get_as<float>();
+		float tiles_width = data["width"].get<float>();
+		float tiles_height = data["height"].get<float>();
+		float toughness = data["toughness"].get<float>();
 		bool collision = false, platform_collision = false;
 
-		if (data.has_child("collision"))
-			collision = data["collision"].get_as<bool>();
-		if (data.has_child("platform_collision"))
-			platform_collision = data["platform_collision"].get_as<bool>();
+		if (data.contains("collision"))
+			collision = data["collision"].get<bool>();
+		if (data.contains("platform_collision"))
+			platform_collision = data["platform_collision"].get<bool>();
 
 		this->tiles_width = tiles_width;
 		this->tiles_height = tiles_height;

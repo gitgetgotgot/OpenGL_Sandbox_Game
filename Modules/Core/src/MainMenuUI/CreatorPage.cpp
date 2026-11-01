@@ -1,14 +1,14 @@
 #include "Core/MainMenuUI/MenuUIController.h"
 #include "Core/MainMenuUI/CreatorPage.h"
 #include "Core/MainMenuUI/SavesPage.h"
-#include "Core/WorldManager.h"
-#include <IOSystem/SystemContext.h>
+#include "Core/World/WorldManager.h"
+#include <DeviceSystem/DeviceContext.h>
 #include <UI/UI_Creator.h>
 #include <Resources/Sprite.h>
 #include <iostream>
 
 void CreatorPage::update() {
-	if (SystemContext::keyBoard.key_is_pressed(Key::KeyEscape)) {
+	if (DeviceContext::keyBoard.key_is_pressed(Key::KeyEscape)) {
 		MenuUIController::Instance().close_creator_page();
 	}
 }

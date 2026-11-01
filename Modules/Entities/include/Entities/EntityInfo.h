@@ -15,14 +15,14 @@ namespace Engine::Entity {
 		void _set_UID(std::string_view uid);
 		bool _has_tag(const uint16_t& TAG) const;
 		void _sort_tags() const;
-		virtual void fill_data(const DataNode& data);
-		virtual void fill_dependent_data(const DataNode& data);
+		virtual void fill_data(const nlohmann::json& data);
+		virtual void fill_dependent_data(const nlohmann::json& data);
 	public:
 		EntityMainType main_type = EntityMainType::isMob;
 		std::string_view uid, name;
 		uint16_t factory_ID = 0;
-		DynamicArray<uint16_t> tags;
-		DynamicArray<uint16_t> lights;
+		Engine::Util::DynamicArray<uint16_t> tags;
+		Engine::Util::DynamicArray<uint16_t> lights;
 	};
 
 	/*

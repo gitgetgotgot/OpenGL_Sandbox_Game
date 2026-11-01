@@ -22,52 +22,60 @@ void Engine::Object::ObjectInfo::_sort_tags() const {
 	std::sort(tags.data, tags.data + tags.size);
 }
 
-void Engine::Object::ObjectInfo::fill_data(const DataNode& data) {
-	auto& sprites_v = data["sprites"].array;
+void Engine::Object::ObjectInfo::fill_data(const nlohmann::json& data) {
+	const auto& sprites_v = data["sprites"].get<std::vector<nlohmann::json>>();
 	uint32_t size = sprites_v.size();
-	this->sprites = DynamicArray<uint32_t>(size);
+	this->sprites = Engine::Util::DynamicArray<uint32_t>(size);
+
 	for (uint32_t i = 0; i < size; i++) {
-		std::string sprite_UID = sprites_v[i].get_as<std::string>();
+		std::string sprite_UID = sprites_v[i].get<std::string>();
 		auto sprite_global_id = Engine::Resource::SpriteManager::Instance().get_sprite_id(sprite_UID);
+
 		if (sprite_global_id.has_value())
 			this->sprites[i] = sprite_global_id.value();
 		else
 			Engine::Resource::throw_reference_error(std::string(this->uid), sprite_UID);
 	}
-	if (data.has_child("effects")) {
-		auto& effects_v = data["effects"].array;
+	if (data.contains("effects")) {
+		const auto& effects_v = data["effects"].get<std::vector<nlohmann::json>>();
 		uint32_t effects_size = effects_v.size();
-		this->effects = DynamicArray<Engine::Resource::EffectEntry>(effects_size);
+		this->effects = Engine::Util::DynamicArray<Engine::Resource::EffectEntry>(effects_size);
+
 		for (uint32_t i = 0; i < effects_size; i++) {
-			std::string effect_UID = effects_v[i]["effect_UID"].get_as<std::string>();
-			float duration = effects_v[i]["duration"].get_as<float>();
+			std::string effect_UID = effects_v[i]["effect_UID"].get<std::string>();
+			float duration = effects_v[i]["duration"].get<float>();
 			auto effect_id_opt = Engine::Resource::EffectsManager::Instance().get_effect_id(effect_UID);
+
 			if (effect_id_opt.has_value())
 				this->effects[i] = Engine::Resource::EffectEntry{ (uint16_t)effect_id_opt.value(), duration };
 			else
 				Engine::Resource::throw_reference_error(std::string(this->uid), effect_UID);
 		}
 	}
-	if (data.has_child("lights")) {
-		auto& lights_v = data["lights"].array;
+	if (data.contains("lights")) {
+		const auto& lights_v = data["lights"].get<std::vector<nlohmann::json>>();
 		uint32_t lights_size = lights_v.size();
-		this->lights = DynamicArray<uint16_t>(lights_size);
+		this->lights = Engine::Util::DynamicArray<uint16_t>(lights_size);
+
 		for (uint32_t i = 0; i < lights_size; i++) {
-			std::string light_UID = lights_v[i].get_as<std::string>();
+			std::string light_UID = lights_v[i].get<std::string>();
 			auto light_id_opt = Engine::Resource::LightSourceManager::Instance().get_light_id(light_UID);
+
 			if (light_id_opt.has_value())
 				this->lights[i] = light_id_opt.value();
 			else
 				Engine::Resource::throw_reference_error(std::string(this->uid), light_UID);
 		}
 	}
-	if (data.has_child("tags")) {
-		auto& tags_v = data["tags"].array;
+	if (data.contains("tags")) {
+		const auto& tags_v = data["tags"].get<std::vector<nlohmann::json>>();
 		uint32_t tags_size = tags_v.size();
-		this->tags = DynamicArray<uint16_t>(tags_size);
+		this->tags = Engine::Util::DynamicArray<uint16_t>(tags_size);
+
 		for (uint32_t i = 0; i < tags_size; i++) {
-			std::string tag_UID = tags_v[i].get_as<std::string>();
+			std::string tag_UID = tags_v[i].get<std::string>();
 			auto tag_id_opt = Engine::Resource::Tag::TagRegistry::Instance().get_tag(tag_UID);
+
 			if (tag_id_opt.has_value())
 				this->tags[i] = tag_id_opt.value();
 			else
@@ -77,15 +85,17 @@ void Engine::Object::ObjectInfo::fill_data(const DataNode& data) {
 	}
 }
 
-void Engine::Object::ObjectInfo::fill_dependent_data(const DataNode& data) {
-	if (data.has_child("drops")) {
-		auto& drops_v = data["drops"].array;
+void Engine::Object::ObjectInfo::fill_dependent_data(const nlohmann::json& data) {
+	if (data.contains("drops")) {
+		const auto& drops_v = data["drops"].get<std::vector<nlohmann::json>>();
 		uint32_t size = drops_v.size();
-		this->drops = DynamicArray<Engine::Resource::DropEntry>(size);
+		this->drops = Engine::Util::DynamicArray<Engine::Resource::DropEntry>(size);
+
 		for (uint32_t i = 0; i < size; i++) {
-			std::string drop_UID = drops_v[i]["UID"].get_as<std::string>();
-			uint16_t drop_Amount = drops_v[i]["Amount"].get_as<uint16_t>();
+			std::string drop_UID = drops_v[i]["UID"].get<std::string>();
+			uint16_t drop_Amount = drops_v[i]["Amount"].get<uint16_t>();
 			auto drop_global_id = ObjectManager::Instance().get_object_id(drop_UID);
+
 			if (drop_global_id.has_value()) {
 				this->drops[i].id = drop_global_id.value();
 				this->drops[i].amount = drop_Amount;

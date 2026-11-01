@@ -5,12 +5,12 @@ void Engine::Mods::ModsManager::ClearData() {
 	UID_storage = {};
 }
 
-Engine::Mods::ModInfo& Engine::Mods::ModsManager::add(const DataNode& data) {
+Engine::Mods::ModInfo& Engine::Mods::ModsManager::add(const nlohmann::json& data) {
 	ModInfo& mod = mods.emplace_back();
-	std::string UID = data["mod_UID"].get_as<std::string>();
-	std::string version = data["version"].get_as<std::string>();
-	bool has_dll = data["has_dll"].get_as<bool>();
-	bool enabled = data["enabled"].get_as<bool>();
+	std::string UID = data["mod_UID"].get<std::string>();
+	std::string version = data["version"].get<std::string>();
+	bool has_dll = data["has_dll"].get<bool>();
+	bool enabled = data["enabled"].get<bool>();
 	
 	mod.UID = UID_storage.emplace_back(UID);
 	mod.version = version;

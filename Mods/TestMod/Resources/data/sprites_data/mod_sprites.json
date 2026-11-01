@@ -1,7 +1,7 @@
 [
   {
     "UID": "TestMod:mod_icon",
-    "texture": "TestMod:mod_icon.png",
+    "texture": "TestMod:mod_icon",
     "padding": 0,
     "sprite": {
       "U0": 0,

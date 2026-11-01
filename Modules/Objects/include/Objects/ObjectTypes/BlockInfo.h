@@ -5,7 +5,7 @@ namespace Engine::Object {
 	class BlockInfo : public ObjectInfo {
 	public:
 		BlockInfo(ObjectType type) : ObjectInfo(type) {}
-		void fill_data(const DataNode& data) override;
+		void fill_data(const nlohmann::json& data) override;
 		float toughness = 1;
 		bool collision = false;
 		bool platform_collision = false; //object behaves like a platform with only one direction collision

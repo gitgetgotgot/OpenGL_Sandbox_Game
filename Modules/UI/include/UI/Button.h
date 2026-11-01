@@ -2,7 +2,7 @@
 #include "UI/UI_Comp_Ptr.h"
 #include "UI/SDF_Text.h"
 #include "UI/Image.h"
-#include <Utility/FunctionWrapper.h>
+#include <Utility/CallbackWrapper.h>
 
 namespace Engine::UI {
 	class Button : public UI_Component<Button> {
@@ -28,9 +28,9 @@ namespace Engine::UI {
 		bool _is_pointed = false;
 		bool _is_pressed = false;
 
-		FunctionWrapper<> on_button_click;
-		FunctionWrapper<> on_cursor_enter;
-		FunctionWrapper<> on_cursor_exit;
+		Engine::Util::CallbackWrapper<> on_button_click;
+		Engine::Util::CallbackWrapper<> on_cursor_enter;
+		Engine::Util::CallbackWrapper<> on_cursor_exit;
 		UI_Component_Ptr<Image> button_image;
 		UI_Component_Ptr<SDF_Text> button_text;
 	private:

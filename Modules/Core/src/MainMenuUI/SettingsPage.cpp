@@ -1,4 +1,4 @@
-#include <IOSystem/SystemContext.h>
+#include <DeviceSystem/DeviceContext.h>
 #include "Core/MainMenuUI/SettingsPage.h"
 #include <Core/MainMenuUI/MenuUIController.h>
 #include <UI/Button.h>
@@ -15,8 +15,13 @@ void SettingsPage::enable(bool state) {
 	canvas->is_enabled = state;
 }
 
+void SettingsPage::set_page_layer_index(uint32_t layer_index) {
+	canvas->set_layer_index(layer_index);
+}
+
 void SettingsPage::setup_page() {
 	canvas = Engine::UI::UI_Creator::create_canvas();
+	canvas->set_layer_index(2); // set to 2 because it's also used in game menu, apart from main menu
 
 	button_click_sound.setup_source("Core:Button");
 
@@ -108,7 +113,7 @@ void SettingsPage::setup_page() {
 	canvas->add_object(sfx_volume_text);
 	canvas->add_object(button_exit);
 
-	DisplayController::DisplayVideoMode& mode = SystemContext::display.get_current_video_mode();
+	DisplayController::DisplayVideoMode& mode = DeviceContext::display.get_current_video_mode();
 	text_builder.add_text("Resolution: ").add_int(mode.width).add_text("x").add_int(mode.height);
 	resolution_text->set_text(text_builder.data());
 	text_builder.reset();
@@ -131,7 +136,7 @@ void SettingsPage::setup_page() {
 void SettingsPage::change_resolution() {
 	button_click_sound.play();
 	SettingsManager::Instance().change_resolution();
-	DisplayController::DisplayVideoMode& mode = SystemContext::display.get_current_video_mode();
+	DisplayController::DisplayVideoMode& mode = DeviceContext::display.get_current_video_mode();
 	text_builder.add_text("Resolution: ").add_int(mode.width).add_text("x").add_int(mode.height);
 	resolution_text->set_text(text_builder.data());
 	text_builder.reset();

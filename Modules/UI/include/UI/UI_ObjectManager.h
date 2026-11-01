@@ -27,7 +27,7 @@ namespace Engine::UI {
 	private:
 		UI_ObjectManager() {}
 		~UI_ObjectManager() {}
-		sparse_set<UI_Object> objects;
+		Engine::Util::sparse_set<UI_Object> objects;
 		std::vector<uint32_t> free_ids;
 		uint32_t current_max_id = 1;
 		std::unordered_map<uint32_t, UI_Dirty_Flags> dirty_objects;

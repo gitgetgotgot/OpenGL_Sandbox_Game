@@ -13,6 +13,7 @@ public:
 	}
 	void update();
 	void enable(bool state);
+	void set_page_layer_index(uint32_t layer_index);
 	void setup_page();
 private:
 	SettingsPage() = default;
@@ -34,6 +35,6 @@ private:
 	Engine::UI::UI_Component_Ptr<Engine::UI::ScrollBar> volume_slider_sfx;
 	Engine::UI::UI_Component_Ptr<Engine::UI::ScrollBar> volume_slider_music;
 
-	TextBufferBuilder text_builder;
+	Engine::Util::TextBufferBuilder text_builder;
 	Engine::Audio::AudioSource button_click_sound;
 };

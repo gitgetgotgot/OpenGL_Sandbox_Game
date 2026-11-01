@@ -20,27 +20,31 @@ void Engine::Entity::EntityInfo::_sort_tags() const {
 	std::sort(tags.data, tags.data + tags.size);
 }
 
-void Engine::Entity::EntityInfo::fill_data(const DataNode& data) {
-	if (data.has_child("lights")) {
-		auto& lights_v = data["lights"].array;
+void Engine::Entity::EntityInfo::fill_data(const nlohmann::json& data) {
+	if (data.contains("lights")) {
+		const auto& lights_v = data["lights"].get<std::vector<nlohmann::json>>();
 		uint32_t lights_size = lights_v.size();
-		this->lights = DynamicArray<uint16_t>(lights_size);
+		this->lights = Engine::Util::DynamicArray<uint16_t>(lights_size);
+
 		for (uint32_t i = 0; i < lights_size; i++) {
-			std::string light_UID = lights_v[i].get_as<std::string>();
+			std::string light_UID = lights_v[i].get<std::string>();
 			auto light_id_opt = Engine::Resource::LightSourceManager::Instance().get_light_id(light_UID);
+
 			if (light_id_opt.has_value())
 				this->lights[i] = light_id_opt.value();
 			else
 				Engine::Resource::throw_reference_error(std::string(this->uid), light_UID);
 		}
 	}
-	if (data.has_child("tags")) {
-		auto& tags_v = data["tags"].array;
+	if (data.contains("tags")) {
+		const auto& tags_v = data["tags"].get<std::vector<nlohmann::json>>();
 		uint32_t tags_size = tags_v.size();
-		this->tags = DynamicArray<uint16_t>(tags_size);
+		this->tags = Engine::Util::DynamicArray<uint16_t>(tags_size);
+
 		for (uint32_t i = 0; i < tags_size; i++) {
-			std::string tag_UID = tags_v[i].get_as<std::string>();
+			std::string tag_UID = tags_v[i].get<std::string>();
 			auto tag_id_opt = Engine::Resource::Tag::TagRegistry::Instance().get_tag(tag_UID);
+
 			if (tag_id_opt.has_value())
 				this->tags[i] = tag_id_opt.value();
 			else
@@ -48,7 +52,7 @@ void Engine::Entity::EntityInfo::fill_data(const DataNode& data) {
 		}
 		_sort_tags();
 	}
-	std::string entity_class_UID = data["class_UID"].get_as<std::string>();
+	std::string entity_class_UID = data["class_UID"].get<std::string>();
 	auto entity_factory_id_opt = EntityFactoryRegistry::Instance().get_factory_id(entity_class_UID);
 	if (entity_factory_id_opt.has_value())
 		this->factory_ID = entity_factory_id_opt.value();
@@ -56,6 +60,6 @@ void Engine::Entity::EntityInfo::fill_data(const DataNode& data) {
 		Engine::Resource::throw_reference_error(std::string(this->uid), entity_class_UID);
 }
 
-void Engine::Entity::EntityInfo::fill_dependent_data(const DataNode& data) {
+void Engine::Entity::EntityInfo::fill_dependent_data(const nlohmann::json& data) {
 
 }

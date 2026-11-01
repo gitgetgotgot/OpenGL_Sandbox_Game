@@ -1,16 +1,16 @@
 #include "Objects/ObjectTypes/BlockInfo.h"
 #include <Resources/ResourceErrors.h>
 
-void Engine::Object::BlockInfo::fill_data(const DataNode& data) {
+void Engine::Object::BlockInfo::fill_data(const nlohmann::json& data) {
 	ObjectInfo::fill_data(data);
 	try {
-		float toughness = data["toughness"].get_as<float>();
+		float toughness = data["toughness"].get<float>();
 		bool collision = false, platform_collision = false;
 
-		if (data.has_child("collision"))
-			collision = data["collision"].get_as<bool>();
-		if (data.has_child("platform_collision"))
-			platform_collision = data["platform_collision"].get_as<bool>();
+		if (data.contains("collision"))
+			collision = data["collision"].get<bool>();
+		if (data.contains("platform_collision"))
+			platform_collision = data["platform_collision"].get<bool>();
 
 		this->toughness = toughness;
 		this->collision = collision;

@@ -2,7 +2,6 @@
 
 #include <Resources/Effect.h>
 #include <Physics/Colliders.h>
-#include <Objects/Inventory.h>
 
 struct PlayerStats {
 	std::vector<Engine::Resource::Effect> effects;
@@ -26,7 +25,7 @@ struct PlayerStats {
 struct Player {
 	//stats
 	PlayerStats stats;
-	Inventory inventory;
+	//Inventory inventory;
 	//hitbox and physics
 	Engine::Physics::Collider_2D_AABB hitbox;
 	glm::vec2 sprite_left_down_corner;

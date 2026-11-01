@@ -1,10 +1,11 @@
 #pragma once
 #include <Audio/AudioSource.h>
+#include <UI/Canvas.h>
 
 class GameUIController {
 private:
 	enum GameMenuState : uint8_t {
-		in_GamePlay, in_GamePause, in_GameSettings
+		in_GamePlay, in_GamePlayConsole, in_GamePause, in_GameSettings
 	};
 public:
 	static GameUIController& Instance() {
@@ -26,11 +27,16 @@ public:
 	void show_inventory();
 	void hide_inventory();
 
+	void notify_exit_to_main_menu();
+private:
 	void exit_to_main_menu();
+	void gameplay_update();
 private:
 	GameUIController() = default;
 	~GameUIController() = default;
 
+	Engine::UI::UI_Canvas_Ptr canvas_background;
 	Engine::Audio::AudioSource button_click_sound;
 	GameMenuState current_state = GameMenuState::in_GamePlay;
+	bool should_exit_to_main_menu = false;
 };

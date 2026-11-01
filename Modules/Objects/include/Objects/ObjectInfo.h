@@ -40,16 +40,16 @@ namespace Engine::Object {
 		void _set_UID(std::string_view uid);
 		bool _has_tag(const uint16_t& TAG) const;
 		void _sort_tags() const;
-		virtual void fill_data(const DataNode& data);
-		virtual void fill_dependent_data(const DataNode& data);
+		virtual void fill_data(const nlohmann::json& data);
+		virtual void fill_dependent_data(const nlohmann::json& data);
 	public:
 		ObjectType objectType = ObjectType::None;
 		std::string_view uid, name;
-		DynamicArray<uint16_t> tags;
-		DynamicArray<uint32_t> sprites;
-		DynamicArray<Engine::Resource::DropEntry> drops;
-		DynamicArray<Engine::Resource::EffectEntry> effects;
-		DynamicArray<uint16_t> lights;
+		Engine::Util::DynamicArray<uint16_t> tags;
+		Engine::Util::DynamicArray<uint32_t> sprites;
+		Engine::Util::DynamicArray<Engine::Resource::DropEntry> drops;
+		Engine::Util::DynamicArray<Engine::Resource::EffectEntry> effects;
+		Engine::Util::DynamicArray<uint16_t> lights;
 	};
 }
 

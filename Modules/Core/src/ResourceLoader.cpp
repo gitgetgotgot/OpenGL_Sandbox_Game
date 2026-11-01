@@ -8,25 +8,26 @@
 #include <Resources/CoreTags.h>
 #include <Resources/TagRegistry.h>
 #include <Resources/ModsManager.h>
+#include <Resources/Craft.h>
 #include <Objects/ObjectRegistry.h>
 #include <Objects/ObjectManager.h>
 #include <Objects/ObjectFactory.h>
-#include <Objects/Crafting.h>
 #include <Entities/EntityRegistry.h>
 #include <Entities/EntityInfoManager.h>
 #include <Entities/EntityInfoFactory.h>
 #include <Entities/EntityFactory.h>
-#include <IOSystem/SystemContext.h>
+#include <DeviceSystem/DeviceContext.h>
+#include <Utility/Logger.h>
 #include <iostream>
 
 ResourceLoader::~ResourceLoader() {
-	DynamicLibLoader lib_loader;
+	Engine::Util::DynamicLibLoader lib_loader;
 	for (auto& lib : library_handles) {
 		lib_loader.unload_library(lib.handle);
 	}
 }
 
-void ResourceLoader::load_minimal_core_resources() {
+bool ResourceLoader::load_minimal_core_resources() {
 	if (DEBUG)
 		data_extension = ".json";
 	else
@@ -44,42 +45,54 @@ void ResourceLoader::load_minimal_core_resources() {
 	Engine::Resource::EffectsManager::Instance().setup();
 	Engine::Object::ObjectManager::Instance().setup();
 
-	std::cout << "[" << SystemContext::get_current_system_time() << "] ResourceLoader: Base Resources loading started\n";
+	std::cout << "[" << DeviceContext::get_current_system_time() << "] ResourceLoader: Base Resources loading started\n";
 	// load base font
 	Engine::Resource::FontManager::Instance().load_font("Resources/fonts/verdana_SDF", "Core");
-	std::cout << "[" << SystemContext::get_current_system_time() << "] ResourceLoader: Base font loaded\n";
+	std::cout << "[" << DeviceContext::get_current_system_time() << "] ResourceLoader: Base font loaded\n";
 
 	// load base UI textures
 	std::string textures[] = {
-		"White.png", "Gradient.png", "Gradient2.png", "UI_Button32p.png", "UI_Button64p.png", "UI_Button64p1.png", "UI_Button64p2.png",
-		"UI_Frame0.png", "UI_Frame1.png", "UI_StoneWall.png", "UI_ButtonPlay.png", "UI_ButtonDelete.png", "UI_ButtonInfo.png"
+		"White", "Gradient", "Gradient2", "UI_Button32p", "UI_Button64p", "UI_Button64p1", "UI_Button64p2",
+		"UI_Frame0", "UI_Frame1", "UI_StoneWall", "UI_ButtonPlay", "UI_ButtonDelete", "UI_ButtonInfo"
 	};
-	for (auto& tex : textures) {
-		std::filesystem::path tex_path = resources_root / "Resources/BaseData/textures" / tex;
+	for (auto& tex_name : textures) {
+		std::string file = tex_name + ".png";
+		std::filesystem::path tex_path = resources_root / "Resources/BaseData/textures" / file;
 		if (!std::filesystem::exists(tex_path)) {
-			throw std::runtime_error("Fatal Error: Couldn't load base UI textures");
+			Engine::Util::Logger::Log("Fatal Error: Couldn't load base UI textures");
+			return false;
 		}
-		std::string UID = "Core:" + tex_path.filename().string();
+		std::string UID = "Core:" + tex_name;
 		Engine::Resource::TextureArrayManager::Instance().load_texture(tex_path, UID);
 	}
-	std::cout << "[" << SystemContext::get_current_system_time() << "] ResourceLoader: Base textures loaded\n";
+	std::cout << "[" << DeviceContext::get_current_system_time() << "] ResourceLoader: Base textures loaded\n";
 
 	// load base sprites
 	std::filesystem::path resource_path = resources_root / "Resources/BaseData/sprites";
 	if (!std::filesystem::exists(resource_path / "base_sprites.json")) {
-		throw std::runtime_error("Fatal Error: Couldn't load base sprites");
+		Engine::Util::Logger::Log("Fatal Error: Couldn't find base sprites meta");
+		return false;
 	}
-	_load_sprites(resource_path);
-	std::cout << "[" << SystemContext::get_current_system_time() << "] ResourceLoader: Base sprites loaded\n";
+	if (_load_sprites(resource_path) == false) {
+		Engine::Util::Logger::Log("Fatal Error: Couldn't load base sprites");
+		return false;
+	}
+	std::cout << "[" << DeviceContext::get_current_system_time() << "] ResourceLoader: Base sprites loaded\n";
 
 	// load base audio
 	resource_path = resources_root / "Resources/BaseData/audio";
 	if (!std::filesystem::exists(resource_path / "audio_data/base_audio.json")) {
-		throw std::runtime_error("Fatal Error: Couldn't load base audio");
+		Engine::Util::Logger::Log("Fatal Error: Couldn't find base audio meta");
+		return false;
 	}
-	_load_audio(resource_path);
-	std::cout << "[" << SystemContext::get_current_system_time() << "] ResourceLoader: Base audio loaded\n";
-	std::cout << "[" << SystemContext::get_current_system_time() << "] ResourceLoader: Base Resources loading finished\n\n";
+	if (_load_audio(resource_path) == false) {
+		Engine::Util::Logger::Log("Fatal Error: Couldn't load base audio");
+		return false;
+	}
+	std::cout << "[" << DeviceContext::get_current_system_time() << "] ResourceLoader: Base audio loaded\n";
+
+	std::cout << "[" << DeviceContext::get_current_system_time() << "] ResourceLoader: Base Resources loading finished\n\n";
+	return true;
 }
 
 void ResourceLoader::start_resources_loading() {
@@ -87,7 +100,7 @@ void ResourceLoader::start_resources_loading() {
 	can_load_next_batch = false;
 	should_load_textures = true;
 	resource_loader = std::make_unique<std::thread>(&ResourceLoader::Load_Resources, this);
-	std::cout << "[" << SystemContext::get_current_system_time() << "] ResourceLoader: Game resources loading started\n";
+	std::cout << "[" << DeviceContext::get_current_system_time() << "] ResourceLoader: Game resources loading started\n";
 }
 
 void ResourceLoader::load_resources_from_queue() {
@@ -103,7 +116,7 @@ void ResourceLoader::load_resources_from_queue() {
 void ResourceLoader::stop_resources_loading() {
 	resource_loader->join();
 	resource_loader.reset();
-	std::cout << "[" << SystemContext::get_current_system_time() << "] ResourceLoader: Game resources loading finished\n\n";
+	std::cout << "[" << DeviceContext::get_current_system_time() << "] ResourceLoader: Game resources loading finished\n\n";
 }
 
 bool ResourceLoader::resources_loading_ready() {
@@ -119,26 +132,29 @@ void ResourceLoader::unlock_resources_mutex() {
 }
 
 void ResourceLoader::Load_Resources() {
-	find_mods();
-	//load_libraries();
+	// if any loader returns failure --> explain Error with Logger and give a choice to exit, hot-reload or turn off broken mod
+	bool ok = true;
+
+	ok = find_mods();
+	//if (success) success = load_libraries();
 
 	// LOAD ORDER IS IMPORTANT (each category is loaded from base files first and then from all mods)
 	// textures are loaded in queue and through main thread, sprites and audio are loaded using resources mutex
 	// all other resources are loaded straight in loader thread
-	load_textures();
-	load_resources(LoadResType::R_SPRITE, "Resources/data/sprites_data", true);
-	load_resources(LoadResType::R_AUDIO, "Resources/audio", true);
-	load_resources(LoadResType::R_LIGHT, "Resources/data/lights_data", true);
-	load_resources(LoadResType::R_PARTICLE, "Resources/data/particles_data", true);
-	load_resources(LoadResType::R_EFFECT, "Resources/data/effects_data", true);
-	load_resources(LoadResType::R_OBJECT, "Resources/data/objects_data", true);
-	load_resources(LoadResType::R_CRAFT, "Resources/data/crafts_data", true);
-	load_resources(LoadResType::R_ANIM_CLIP, "Resources/data/anim_data/clips", true);
-	load_resources(LoadResType::R_ANIMATOR, "Resources/data/anim_data/animators", true);
-	load_resources(LoadResType::R_ENTITY, "Resources/data/entity_data", true);
+	if (ok) ok = load_textures();
+	if (ok) ok = load_resources(LoadResType::R_SPRITE, "Resources/data/sprites_data", true);
+	if (ok) ok = load_resources(LoadResType::R_AUDIO, "Resources/audio", true);
+	if (ok) ok = load_resources(LoadResType::R_LIGHT, "Resources/data/lights_data", true);
+	if (ok) ok = load_resources(LoadResType::R_PARTICLE, "Resources/data/particles_data", true);
+	if (ok) ok = load_resources(LoadResType::R_EFFECT, "Resources/data/effects_data", true);
+	if (ok) ok = load_resources(LoadResType::R_OBJECT, "Resources/data/objects_data", true);
+	if (ok) ok = load_resources(LoadResType::R_CRAFT, "Resources/data/crafts_data", true);
+	if (ok) ok = load_resources(LoadResType::R_ANIM_CLIP, "Resources/data/anim_data/clips", true);
+	if (ok) ok = load_resources(LoadResType::R_ANIMATOR, "Resources/data/anim_data/animators", true);
+	if (ok) ok = load_resources(LoadResType::R_ENTITY, "Resources/data/entity_data", true);
 
-	resolve_items_dependencies();
-	resolve_entities_dependencies();
+	if (ok) ok = resolve_items_dependencies();
+	if (ok) ok = resolve_entities_dependencies();
 	//std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 	resources_are_loaded = true;
 }
@@ -152,16 +168,16 @@ void ResourceLoader::notify_loader() {
 }
 
 void ResourceLoader::Hot_Reload() {
-	//textures_array.reset();
+	//Engine::Resource::TextureArrayManager::Instance().clear
 	Engine::Resource::SpriteManager::Instance().ClearData();
 	Engine::Resource::LightSourceManager::Instance().ClearData();
-	//particles mgr
+	//particles clear
 	Engine::Resource::EffectsManager::Instance().ClearData();
-	Engine::Object::ObjectManager::Instance().ClearData();
-	Engine::Object::ObjectFactoryRegistry::Instance().ClearData();
-	CraftingSystem::get_instance().ClearData();
+	Engine::Resource::CraftManager::Instance().ClearData();
 	Engine::Resource::AnimationClipManager::Instance().ClearData();
 	Engine::Resource::AnimatorManager::Instance().ClearData();
+	Engine::Object::ObjectManager::Instance().ClearData();
+	Engine::Object::ObjectFactoryRegistry::Instance().ClearData();
 	Engine::Entity::EntityInfoFactoryRegistry::Instance().ClearData();
 	Engine::Entity::EntityFactoryRegistry::Instance().ClearData();
 	Engine::Entity::EntityInfoManager::Instance().ClearData();
@@ -182,7 +198,7 @@ void ResourceLoader::find_mods() const {
 		if (!std::filesystem::exists(info_path))
 			throw std::runtime_error("Mod has no <mod.json> in " + mod_folder_path.string());
 
-		DataParser parser;
+		Engine::Util::DataParser parser;
 		parser.parse_JSON_format(info_path);
 		try {
 			Engine::Mods::ModInfo& mod = Engine::Mods::ModsManager::Instance().add(parser.node_root);
@@ -202,7 +218,7 @@ void ResourceLoader::load_libraries() {
 	typedef void(*REGISTER_OBJECT_FACTORIES)(Engine::Object::ObjectFactoryRegistry * obj_registry);
 	typedef void(*REGISTER_ENTITY_INFO_FACTORIES)(Engine::Entity::EntityInfoFactoryRegistry * entity_info_registry);
 	typedef void(*REGISTER_ENTITY_FACTORIES)(Engine::Entity::EntityFactoryRegistry * entity_registry);
-	DynamicLibLoader lib_loader;
+	Engine::Util::DynamicLibLoader lib_loader;
 	void* lib_handle = nullptr;
 	void* fun = nullptr;
 
@@ -249,11 +265,12 @@ void ResourceLoader::load_libraries() {
 
 void ResourceLoader::load_textures() {
 	auto _load_textures = [&](std::filesystem::path& textures_path, std::string& source_name) {
-		for (const auto& entry : std::filesystem::directory_iterator(textures_path)) {
+		for (const auto& entry : std::filesystem::recursive_directory_iterator(textures_path)) {
 			if (!entry.is_regular_file()) continue;
 			std::filesystem::path file_path = entry.path();
 			if (file_path.extension() == ".png") {
 				std::string texture_UID = source_name + ":" + file_path.filename().string();
+				texture_UID = texture_UID.substr(0, texture_UID.find_last_of("."));
 				Engine::Resource::TextureArrayManager::Instance().add_texture_to_queue(file_path, texture_UID);
 			}
 		}
@@ -267,7 +284,7 @@ void ResourceLoader::load_textures() {
 		// find mod icon texture and add sprite for this icon
 		textures_path = mod_info.mod_folder_path / "mod_icon.png";
 		if (std::filesystem::exists(textures_path)) {
-			std::string texture_UID = source_name + ":" + "mod_icon.png";
+			std::string texture_UID = source_name + ":mod_icon";
 			Engine::Resource::TextureArrayManager::Instance().add_texture_to_queue(textures_path, texture_UID);
 		}
 		// find mod textures
@@ -340,15 +357,15 @@ void ResourceLoader::_load_sprites(std::filesystem::path& sprites_path) {
 		std::filesystem::path file_path = entry.path();
 		if (file_path.extension() != data_extension) continue;
 
-		DataParser parser;
+		Engine::Util::DataParser parser;
 		parser.parse_data(file_path, DEBUG);
-		for (const auto& s : parser.node_root.array) {
-			if (!s.has_child("UID"))
+		for (const auto& s : parser.node_root) {
+			if (!s.contains("UID"))
 				throw std::runtime_error("Sprite entry in " + file_path.string() + " has no UID!");
-			std::string UID = s["UID"].get_as<std::string>();
+			std::string UID = s["UID"].get<std::string>();
 			try {
-				std::string texture_UID = s["texture"].get_as<std::string>();
-				uint32_t padding = s["padding"].get_as<uint32_t>();
+				std::string texture_UID = s["texture"].get<std::string>();
+				uint32_t padding = s["padding"].get<uint32_t>();
 
 				auto tex_id_opt = Engine::Resource::TextureArrayManager::Instance().get_texture_id(texture_UID);
 				if (!tex_id_opt.has_value())
@@ -357,17 +374,17 @@ void ResourceLoader::_load_sprites(std::filesystem::path& sprites_path) {
 				uint32_t tex_id = tex_id_opt.value().index;
 
 				auto& sprite = s["sprite"];
-				uint32_t u0 = sprite["U0"].get_as<uint32_t>();
-				uint32_t v0 = sprite["V0"].get_as<uint32_t>();
-				uint32_t w = sprite["w"].get_as<uint32_t>();
-				uint32_t h = sprite["h"].get_as<uint32_t>();
+				uint32_t u0 = sprite["U0"].get<uint32_t>();
+				uint32_t v0 = sprite["V0"].get<uint32_t>();
+				uint32_t w = sprite["w"].get<uint32_t>();
+				uint32_t h = sprite["h"].get<uint32_t>();
 				//9-sliced sprite
-				if (sprite.has_child("border")) {
+				if (sprite.contains("border")) {
 					auto& border = sprite["border"];
-					uint32_t left = border["left"].get_as<uint32_t>();
-					uint32_t right = border["right"].get_as<uint32_t>();
-					uint32_t top = border["top"].get_as<uint32_t>();
-					uint32_t bottom = border["bottom"].get_as<uint32_t>();
+					uint32_t left = border["left"].get<uint32_t>();
+					uint32_t right = border["right"].get<uint32_t>();
+					uint32_t top = border["top"].get<uint32_t>();
+					uint32_t bottom = border["bottom"].get<uint32_t>();
 					{
 						std::lock_guard lock(resources_mutex);
 						Engine::Resource::SpriteManager::Instance().add_sprite9sliced(UID, u0, v0, w, h, left, right, top, bottom, tex_array_id, tex_id);
@@ -375,7 +392,7 @@ void ResourceLoader::_load_sprites(std::filesystem::path& sprites_path) {
 				}
 				//regular sprite
 				else {
-					float base_size = sprite["base_size"].get_as<float>();
+					float base_size = sprite["base_size"].get<float>();
 					{
 						std::lock_guard lock(resources_mutex);
 						Engine::Resource::SpriteManager::Instance().add_sprite(UID, u0, v0, w, h, base_size, tex_array_id, tex_id);
@@ -396,17 +413,17 @@ void ResourceLoader::_load_audio(std::filesystem::path& audio_path) {
 		std::filesystem::path file_path = entry.path();
 		if (file_path.extension() != data_extension) continue;
 
-		DataParser parser;
+		Engine::Util::DataParser parser;
 		parser.parse_data(file_path, DEBUG);
-		for (const auto& audio : parser.node_root.array) {
-			if (!audio.has_child("UID"))
+		for (const auto& audio : parser.node_root) {
+			if (!audio.contains("UID"))
 				throw std::runtime_error("Audio entry in " + file_path.string() + " has no UID!");
-			std::string UID = audio["UID"].get_as<std::string>();
+			std::string UID = audio["UID"].get<std::string>();
 			try {
-				std::filesystem::path file_path = audio_path / audio["file"].get_as<std::string>();
-				std::string sound_group = audio["group"].get_as<std::string>();
-				bool load_as_PCM = audio["PCM"].get_as<bool>();
-				uint8_t max_instance = audio["MAX_INSTANCE"].get_as<uint8_t>();
+				std::filesystem::path file_path = audio_path / audio["file"].get<std::string>();
+				std::string sound_group = audio["group"].get<std::string>();
+				bool load_as_PCM = audio["PCM"].get<bool>();
+				uint8_t max_instance = audio["MAX_INSTANCE"].get<uint8_t>();
 				if (load_as_PCM) {
 					std::lock_guard lock(resources_mutex);
 					Engine::Audio::AudioSystem::Instance().load_audio_as_pcm(file_path, UID, sound_group, max_instance);
@@ -429,17 +446,17 @@ void ResourceLoader::_load_lights(std::filesystem::path& lights_path) const {
 		std::filesystem::path file_path = entry.path();
 		if (file_path.extension() != data_extension) continue;
 
-		DataParser parser;
+		Engine::Util::DataParser parser;
 		parser.parse_data(file_path, DEBUG);
-		for (const auto& light : parser.node_root.array) {
-			if (!light.has_child("UID"))
+		for (const auto& light : parser.node_root) {
+			if (!light.contains("UID"))
 				throw std::runtime_error("Light entry in " + file_path.string() + " has no UID!");
-			std::string UID = light["UID"].get_as<std::string>();
+			std::string UID = light["UID"].get<std::string>();
 			try {
-				float radius = light["radius"].get_as<float>();
-				float r = light["r"].get_as<float>();
-				float g = light["g"].get_as<float>();
-				float b = light["b"].get_as<float>();
+				float radius = light["radius"].get<float>();
+				float r = light["r"].get<float>();
+				float g = light["g"].get<float>();
+				float b = light["b"].get<float>();
 				Engine::Resource::LightSourceManager::Instance().add_light(UID, radius, glm::vec3(r, g, b));
 			}
 			catch (const std::exception& e) {
@@ -459,25 +476,25 @@ void ResourceLoader::_load_effects(std::filesystem::path& effects_path) const {
 		std::filesystem::path file_path = entry.path();
 		if (file_path.extension() != data_extension) continue;
 
-		DataParser parser;
+		Engine::Util::DataParser parser;
 		parser.parse_data(file_path, DEBUG);
-		for (const auto& effect : parser.node_root.array) {
-			if (!effect.has_child("UID"))
+		for (const auto& effect : parser.node_root) {
+			if (!effect.contains("UID"))
 				throw std::runtime_error("Effect entry in " + file_path.string() + " has no UID!");
-			std::string UID = effect["UID"].get_as<std::string>();
+			std::string UID = effect["UID"].get<std::string>();
 			try {
-				std::string sprite_UID = effect["sprite_UID"].get_as<std::string>();
+				std::string sprite_UID = effect["sprite_UID"].get<std::string>();
 				auto sprite_global_id = Engine::Resource::SpriteManager::Instance().get_sprite_id(sprite_UID);
 				if (!sprite_global_id)
 					Engine::Resource::throw_reference_error(UID, sprite_UID);
-				uint8_t effect_type_id = effect["effect_type"].get_as<uint8_t>();
-				uint8_t stat_type_id = effect["stat_type"].get_as<uint8_t>();
-				float value = effect["value"].get_as<float>();
+				uint8_t effect_type_id = effect["effect_type"].get<uint8_t>();
+				uint8_t stat_type_id = effect["stat_type"].get<uint8_t>();
+				float value = effect["value"].get<float>();
 
 				uint32_t particle_id = 0;
 				float p_spawn_cd = 0.0f, dmg_cd = 0.0f;
-				if (effect.has_child("dmg_cd")) dmg_cd = effect["dmg_cd"].get_as<float>();
-				if (effect.has_child("particle")) {
+				if (effect.contains("dmg_cd")) dmg_cd = effect["dmg_cd"].get<float>();
+				if (effect.contains("particle")) {
 					auto& p = effect["particle"];
 
 				}
@@ -500,12 +517,12 @@ void ResourceLoader::_load_objects(std::filesystem::path& objects_path) {
 		std::filesystem::path file_path = entry.path();
 		if (file_path.extension() != data_extension) continue;
 
-		DataParser& parser = item_data_parsers.emplace_back();
+		Engine::Util::DataParser& parser = item_data_parsers.emplace_back();
 		parser.parse_data(file_path, DEBUG);
-		for (const auto& item : parser.node_root.array) {
-			if (!item.has_child("class_UID"))
+		for (const auto& item : parser.node_root) {
+			if (!item.contains("class_UID"))
 				throw std::runtime_error("Item entry in " + file_path.string() + " has no class UID!");
-			std::string class_uid = item["class_UID"].get_as<std::string>();
+			std::string class_uid = item["class_UID"].get<std::string>();
 			auto factory_id = Engine::Object::ObjectFactoryRegistry::Instance().get_factory_id(class_uid);
 			if (!factory_id)
 				throw std::runtime_error("Info Class " + class_uid + " from file " + file_path.string() + " not found!");
@@ -521,34 +538,59 @@ void ResourceLoader::_load_crafts(std::filesystem::path& crafts_path) const {
 		std::filesystem::path file_path = entry.path();
 		if (file_path.extension() != data_extension) continue;
 
-		DataParser parser;
+		Engine::Util::DataParser parser;
 		parser.parse_data(file_path, DEBUG);
-		for (const auto& craft : parser.node_root.array) {
-			if (!craft.has_child("result_UID"))
+		for (const auto& craft : parser.node_root) {
+			if (!craft.contains("result_UID"))
 				throw std::runtime_error("Craft entry in " + file_path.string() + " has no result_UID!");
-			std::string result_UID = craft["result_UID"].get_as<std::string>();
+			std::string result_UID = craft["result_UID"].get<std::string>();
 			try {
 				auto item_info_id = Engine::Object::ObjectManager::Instance().get_object_id(result_UID);
 				if (!item_info_id.has_value())
 					throw std::runtime_error("Craft entry in " + file_path.string() + ": <" + result_UID + "> doesn't exist!");
+
 				uint16_t item_id = item_info_id.value();
-				uint16_t amount = craft["amount"].get_as<uint16_t>();
-				uint16_t condition_id = craft["condition"].get_as<uint16_t>();
+				uint16_t amount = craft["amount"].get<uint16_t>();
 
-				auto& items = craft["items"].array;
-				std::vector<CraftingPair> craft_pairs;
-				craft_pairs.reserve(items.size());
+				Engine::Util::DynamicArray<uint16_t> craft_tags;
+				Engine::Resource::CraftableItem::CraftTagsUsage tags_usage;
+				if (craft.contains("craft_tags")) {
+					const auto& craft_tags_v = craft["craft_tags"].get<std::vector<std::string>>();
+					craft_tags = Engine::Util::DynamicArray<uint16_t>(craft_tags_v.size());
+					uint8_t index = 0;
+					for (auto& tag_name : craft_tags_v) {
+						auto tag_id_opt = Engine::Resource::Tag::TagRegistry::Instance().get_tag(tag_name);
+						if(tag_id_opt.has_value())
+							craft_tags[index++] = tag_id_opt.value();
+						else
+							Engine::Resource::throw_reference_error("Craft entry with item id = " + item_id, tag_name);
+					}
+					if (craft["tags_usage"].get<std::string>() == "ANY") {
+						tags_usage = Engine::Resource::CraftableItem::CraftTagsUsage::USAGE_ANY;
+					}
+					else {
+						tags_usage = Engine::Resource::CraftableItem::CraftTagsUsage::USAGE_ALL;
+					}
+				}
+				else {
+					craft_tags = Engine::Util::DynamicArray<uint16_t>(1);
+					craft_tags[0] = 0; // Tag Core:None
+					tags_usage = Engine::Resource::CraftableItem::CraftTagsUsage::USAGE_ANY;
+				}
 
-				for (auto& i : items) {
-					std::string item_UID = i["item_UID"].get_as<std::string>();
+				const auto& items = craft["items"].get<std::vector<nlohmann::json>>();
+				Engine::Util::DynamicArray<Engine::Resource::CraftingPair> craft_pairs(items.size());
+				uint8_t index = 0;
+				for (const auto& i : items) {
+					std::string item_UID = i["item_UID"].get<std::string>();
 					auto item_info_ID = Engine::Object::ObjectManager::Instance().get_object_id(item_UID);
 					if (!item_info_ID.has_value())
 						Engine::Resource::throw_reference_error(result_UID, item_UID);
 					uint16_t item_ID = item_info_ID.value();
-					uint16_t item_amount = i["item_amount"].get_as<uint16_t>();
-					craft_pairs.emplace_back((uint16_t)item_ID, item_amount);
+					uint16_t item_amount = i["item_amount"].get<uint16_t>();
+					craft_pairs[index++] = Engine::Resource::CraftingPair((uint16_t)item_ID, item_amount);
 				}
-				CraftingSystem::get_instance().add(item_id, amount, CraftCondition(condition_id), std::move(craft_pairs));
+				Engine::Resource::CraftManager::Instance().add_craft(item_id, amount, std::move(craft_tags), tags_usage, std::move(craft_pairs));
 			}
 			catch (const std::exception& e) {
 				Engine::Resource::throw_resource_error(result_UID, std::string("In file ") + file_path.string() + ": " + e.what());
@@ -563,25 +605,25 @@ void ResourceLoader::_load_clips(std::filesystem::path& clips_path) const {
 		std::filesystem::path file_path = entry.path();
 		if (file_path.extension() != data_extension) continue;
 
-		DataParser parser;
+		Engine::Util::DataParser parser;
 		parser.parse_data(file_path, DEBUG);
-		for (const auto& clip_data : parser.node_root.array) {
-			if (!clip_data.has_child("UID"))
+		for (const auto& clip_data : parser.node_root) {
+			if (!clip_data.contains("UID"))
 				throw std::runtime_error("Clip entry in " + file_path.string() + " has no UID!");
-			std::string UID = clip_data["UID"].get_as<std::string>();
+			std::string UID = clip_data["UID"].get<std::string>();
 			try {
 				Engine::Resource::AnimationClip& clip = Engine::Resource::AnimationClipManager::Instance().add_clip(UID);
 
-				bool loop = clip_data["loop"].get_as<bool>();
-				float frame_time = clip_data["frame_time"].get_as<float>();
-				auto& sprites = clip_data["sprites"].array;
+				bool loop = clip_data["loop"].get<bool>();
+				float frame_time = clip_data["frame_time"].get<float>();
+				const auto& sprites = clip_data["sprites"].get<std::vector<nlohmann::json>>();
 
 				clip.looping = loop;
 				uint32_t sprites_size = sprites.size();
 				clip.sprites.reserve(sprites_size);
 				clip.set_frame_time(frame_time);
 				for (uint32_t i = 0; i < sprites_size; i++) {
-					std::string sprite_UID = sprites[i].get_as<std::string>();
+					std::string sprite_UID = sprites[i].get<std::string>();
 					auto sprite_global_id = Engine::Resource::SpriteManager::Instance().get_sprite_id(sprite_UID);
 					if (!sprite_global_id.has_value())
 						Engine::Resource::throw_reference_error(UID, sprite_UID);
@@ -601,19 +643,19 @@ void ResourceLoader::_load_animators(std::filesystem::path& animators_path) cons
 		std::filesystem::path file_path = entry.path();
 		if (file_path.extension() != data_extension) continue;
 
-		DataParser parser;
+		Engine::Util::DataParser parser;
 		parser.parse_data(file_path, DEBUG);
-		for (const auto& animator_data : parser.node_root.array) {
-			if (!animator_data.has_child("UID"))
+		for (const auto& animator_data : parser.node_root) {
+			if (!animator_data.contains("UID"))
 				throw std::runtime_error("Animator entry in " + file_path.string() + " has no UID!");
-			std::string UID = animator_data["UID"].get_as<std::string>();
+			std::string UID = animator_data["UID"].get<std::string>();
 			try {
 				Engine::Resource::Animator& animator = Engine::Resource::AnimatorManager::Instance().add_animator(UID);
-				auto& clips = animator_data["clips"].array;
+				const auto& clips = animator_data["clips"].get<std::vector<nlohmann::json>>();
 				uint32_t clips_size = clips.size();
 				animator.clips.reserve(clips_size);
 				for (uint32_t i = 0; i < clips_size; i++) {
-					std::string clip_UID = clips[i].get_as<std::string>();
+					std::string clip_UID = clips[i].get<std::string>();
 					auto clip_id_opt = Engine::Resource::AnimationClipManager::Instance().get_clip_id(clip_UID);
 					if (!clip_id_opt.has_value())
 						Engine::Resource::throw_reference_error(UID, clip_UID);
@@ -633,12 +675,12 @@ void ResourceLoader::_load_entities(std::filesystem::path& entities_path) {
 		std::filesystem::path file_path = entry.path();
 		if (file_path.extension() != data_extension) continue;
 
-		DataParser& parser = entity_data_parsers.emplace_back();
+		Engine::Util::DataParser& parser = entity_data_parsers.emplace_back();
 		parser.parse_data(file_path, DEBUG);
-		for (const auto& entity_data : parser.node_root.array) {
-			if (!entity_data.has_child("info_class_UID"))
+		for (const auto& entity_data : parser.node_root) {
+			if (!entity_data.contains("info_class_UID"))
 				throw std::runtime_error("Entity entry in " + file_path.string() + " has no info_class_UID!");
-			std::string info_class_uid = entity_data["info_class_UID"].get_as<std::string>();
+			std::string info_class_uid = entity_data["info_class_UID"].get<std::string>();
 			auto factory_id = Engine::Entity::EntityInfoFactoryRegistry::Instance().get_factory_id(info_class_uid);
 			if (!factory_id.has_value())
 				throw std::runtime_error("Info Class " + info_class_uid + " from file " + file_path.string() + " not found!");
@@ -651,7 +693,7 @@ void ResourceLoader::_load_entities(std::filesystem::path& entities_path) {
 void ResourceLoader::resolve_items_dependencies() {
 	uint16_t object_ID = 2;
 	for (const auto& parser : item_data_parsers) {
-		for (const auto& data_node : parser.node_root.array) {
+		for (const auto& data_node : parser.node_root) {
 			Engine::Object::ObjectManager::Instance().get_object_info(object_ID)->fill_dependent_data(data_node);
 			object_ID++;
 		}
@@ -662,7 +704,7 @@ void ResourceLoader::resolve_items_dependencies() {
 void ResourceLoader::resolve_entities_dependencies() {
 	uint16_t entity_ID = 0;
 	for (const auto& parser : entity_data_parsers) {
-		for (const auto& data_node : parser.node_root.array) {
+		for (const auto& data_node : parser.node_root) {
 			Engine::Entity::EntityInfoManager::Instance().get_entity_info(entity_ID)->fill_dependent_data(data_node);
 			entity_ID++;
 		}

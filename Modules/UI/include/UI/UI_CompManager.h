@@ -54,6 +54,6 @@ namespace Engine::UI {
 	private:
 		UI_ComponentManager() {}
 		~UI_ComponentManager() {}
-		sparse_set<UI_ComponentEntry> components;
+		Engine::Util::sparse_set<UI_ComponentEntry> components;
 	};
 }

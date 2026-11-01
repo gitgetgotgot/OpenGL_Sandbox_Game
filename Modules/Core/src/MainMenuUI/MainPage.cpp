@@ -2,10 +2,10 @@
 #include <Resources/Sprite.h>
 #include <UI/UI_Creator.h>
 #include <Utility/TimeManager.h>
-#include <IOSystem/SystemContext.h>
+#include <DeviceSystem/DeviceContext.h>
 
 void MainPage::TooltipLoadRes::update() {
-	time_loading += TimeManager::deltaTime;
+	time_loading += Engine::Util::TimeManager::deltaTime;
 	if (time_loading >= 0.2f) {
 		time_loading = 0.0f;
 		++phase;
@@ -17,7 +17,7 @@ void MainPage::TooltipLoadRes::update() {
 	}
 }
 void MainPage::TooltipLoadWorld::update() {
-	time_loading += TimeManager::deltaTime;
+	time_loading += Engine::Util::TimeManager::deltaTime;
 	if (time_loading >= 0.2f) {
 		time_loading = 0.0f;
 		++phase;
@@ -29,7 +29,7 @@ void MainPage::TooltipLoadWorld::update() {
 	}
 }
 void MainPage::TooltipSaveWorld::update() {
-	time_loading += TimeManager::deltaTime;
+	time_loading += Engine::Util::TimeManager::deltaTime;
 	if (time_loading >= 0.2f) {
 		time_loading = 0.0f;
 		++phase;
@@ -41,7 +41,7 @@ void MainPage::TooltipSaveWorld::update() {
 	}
 }
 void MainPage::TooltipGenWorld::update() {
-	time_loading += TimeManager::deltaTime;
+	time_loading += Engine::Util::TimeManager::deltaTime;
 	if (time_loading >= 0.2f) {
 		time_loading = 0.0f;
 		++phase;
@@ -54,7 +54,7 @@ void MainPage::TooltipGenWorld::update() {
 }
 
 void MainPage::update() {
-	text_builder.add_int(TimeManager::Instance().get_current_FPS());
+	text_builder.add_int(Engine::Util::TimeManager::Instance().get_current_FPS());
 	FPS_text->set_text(text_builder.data());
 	text_builder.reset();
 
@@ -88,7 +88,7 @@ void MainPage::setup_page() {
 		stone_wall_sprite_id, glm::vec2(4.0, 2.0f), glm::vec2(0.0f), glm::vec2(4.0f, 2.0f), glm::vec4(0.7f, 0.7f, 0.7f, 1.0f)
 	);
 	auto fps_label = Engine::UI::UI_Creator::create_SDF_text(
-		glm::vec2(0.05f, 0.05f), glm::vec2(-SystemContext::display.ratio + 0.05f, 0.95f), "fps", glm::vec4(1.0f), 0.05f
+		glm::vec2(0.05f, 0.05f), glm::vec2(-DeviceContext::display.ratio + 0.05f, 0.95f), "fps", glm::vec4(1.0f), 0.05f
 	);
 	FPS_text = fps_label->get_component<Engine::UI::SDF_Text>();
 

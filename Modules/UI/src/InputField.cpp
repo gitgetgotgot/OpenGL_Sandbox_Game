@@ -28,7 +28,7 @@ bool Engine::UI::InputField::in_focus() const {
 
 void Engine::UI::InputField::_update_cursor() {
 	if (is_in_focus) {
-		current_cursor_cd += TimeManager::deltaTime;
+		current_cursor_cd += Engine::Util::TimeManager::deltaTime;
 		if (current_cursor_cd >= cursor_blink_cd) {
 			current_cursor_cd = 0.0f;
 			cursor_visible = !cursor_visible;

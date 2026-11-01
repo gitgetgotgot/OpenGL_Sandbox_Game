@@ -1,115 +1,116 @@
 [
   {
-    "result_UID": "Item:Core:Workbench",
+    "result_UID": "Core:Workbench",
     "amount": 1,
-    "condition": 0,
     "items": [
       {
-        "item_UID": "Item:Core:Oak Planks",
+        "item_UID": "Core:Oak Planks",
         "item_amount": 15
       }
     ]
   },
   {
-    "result_UID": "Item:Core:Oak Platform",
+    "result_UID": "Core:Oak Platform",
     "amount": 2,
-    "condition": 0,
     "items": [
       {
-        "item_UID": "Item:Core:Oak Planks",
+        "item_UID": "Core:Oak Planks",
         "item_amount": 1
       }
     ]
   },
   {
-    "result_UID": "Item:Core:Torch",
+    "result_UID": "Core:Torch",
     "amount": 3,
-    "condition": 0,
     "items": [
       {
-        "item_UID": "Item:Core:Oak Planks",
+        "item_UID": "Core:Oak Planks",
         "item_amount": 1
       },
       {
-        "item_UID": "Item:Core:Gel",
+        "item_UID": "Core:Gel",
         "item_amount": 1
       }
     ]
   },
   {
-    "result_UID": "Item:Core:Ice Torch",
+    "result_UID": "Core:Ice Torch",
     "amount": 3,
-    "condition": 0,
     "items": [
       {
-        "item_UID": "Item:Core:Torch",
+        "item_UID": "Core:Torch",
         "item_amount": 3
       },
       {
-        "item_UID": "Item:Core:Ice",
+        "item_UID": "Core:Ice",
         "item_amount": 1
       }
     ]
   },
   {
-    "result_UID": "Item:Core:Furnace",
+    "result_UID": "Core:Furnace",
     "amount": 1,
-    "condition": 1,
+    "craft_tags": [ "Core:Workbench" ],
+    "tags_usage": "ANY",
     "items": [
       {
-        "item_UID": "Item:Core:Stone",
+        "item_UID": "Core:Stone",
         "item_amount": 20
       },
       {
-        "item_UID": "Item:Core:Oak Planks",
+        "item_UID": "Core:Oak Planks",
         "item_amount": 5
       },
       {
-        "item_UID": "Item:Core:Torch",
+        "item_UID": "Core:Torch",
         "item_amount": 3
       }
     ]
   },
   {
-    "result_UID": "Item:Core:Anvil",
+    "result_UID": "Core:Anvil",
     "amount": 1,
-    "condition": 1,
+    "craft_tags": [ "Core:Workbench" ],
+    "tags_usage": "ANY",
     "items": [
       {
-        "item_UID": "Item:Core:Iron Ingot",
+        "item_UID": "Core:Iron Ingot",
         "item_amount": 5
       }
     ]
   },
   {
-    "result_UID": "Item:Core:Copper Ingot",
+    "result_UID": "Core:Copper Ingot",
     "amount": 1,
-    "condition": 2,
+    "craft_tags": [ "Core:Furnace" ],
+    "tags_usage": "ANY",
     "items": [
       {
-        "item_UID": "Item:Core:Copper Ore",
+        "item_UID": "Core:Copper Ore",
         "item_amount": 3
       }
     ]
   },
   {
-    "result_UID": "Item:Core:Iron Ingot",
+    "result_UID": "Core:Iron Ingot",
     "amount": 1,
-    "condition": 2,
+    "craft_tags": [ "Core:Furnace" ],
+    "tags_usage": "ANY",
     "items": [
       {
-        "item_UID": "Item:Core:Iron Ore",
+        "item_UID": "Core:Iron Ore",
         "item_amount": 3
       }
     ]
   },
   {
-    "result_UID": "Item:Core:Gold Ingot",
+    "result_UID": "Core:Gold Ingot",
     "amount": 1,
-    "condition": 2,
+    "craft_tags": [ "Core:Furnace" ],
+    "tags_usage": "ANY",
     "items": [
       {
-        "item_UID": "Item:Core:Gold Ore",
+        "item_UID": "Core:Gold Ore",
         "item_amount": 3
       }
     ]

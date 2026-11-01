@@ -5,12 +5,15 @@ namespace Engine::UI {
 	class Canvas {
 	public:
 		void add_object(UI_Obj_Ptr& new_object);
+		void set_layer_index(uint32_t layer);
+		uint32_t get_layer_index() const;
 		void update_canvas_objects_data(UI_RenderContext& ctx, UI_RenderState state);
 		void update_child_object(UI_Object& object, UI_RenderContext& ctx, UI_RenderState state);
 		UI_Transform transform;
 		// Canvas stores UI objects in ordered container
 		std::vector<uint32_t> objects;
 		bool is_enabled = true;
+		uint32_t layer_index = 0;
 	private:
 		uint16_t add_clip_rect(const UI_Transform& tr, std::vector<ClipRectangle>& clip_rects);
 		uint16_t add_content_offset(const glm::vec2& offset, std::vector<glm::vec2>& content_offsets, uint16_t current_content_offset_id);

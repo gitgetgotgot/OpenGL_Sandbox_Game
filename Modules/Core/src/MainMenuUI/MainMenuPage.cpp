@@ -2,7 +2,7 @@
 #include "Core/MainMenuUI/MenuUIController.h"
 #include <UI/Button.h>
 #include <UI/SDF_Text.h>
-#include <IOSystem/SystemContext.h>
+#include <DeviceSystem/DeviceContext.h>
 #include <Resources/Sprite.h>
 #include <UI/UI_Creator.h>
 
@@ -45,7 +45,7 @@ void MainMenuPage::setup_page() {
 	_menu_logo_text->set_alignment(Engine::UI::SDF_Text::TextHorizAlign::Center_Align, Engine::UI::SDF_Text::TextVertAlign::Middle_Align);
 
 	auto version = Engine::UI::UI_Creator::create_SDF_text(
-		glm::vec2(1.0f, 0.1f), glm::vec2(-SystemContext::display.ratio + 0.525f, -0.95f), "Version 1.0.0", glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), 0.075f
+		glm::vec2(1.0f, 0.1f), glm::vec2(-DeviceContext::display.ratio + 0.525f, -0.95f), "Version 1.0.0", glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), 0.075f
 	);
 
 	button_play->get_component<Engine::UI::Button>()->on_button_click.set_callback_method<MenuUIController, &MenuUIController::open_saves_page>(&MenuUIController::Instance());

@@ -1,6 +1,6 @@
 #include "UI/ScrollBar.h"
 #include "UI/UI_ObjectManager.h"
-#include <IOSystem/SystemContext.h>
+#include <DeviceSystem/DeviceContext.h>
 #include <algorithm>
 
 void Engine::UI::ScrollBar::set_value(float value) {
@@ -86,11 +86,11 @@ void Engine::UI::ScrollBar::_on_track_held() {
 	float current_scroll_value = 0.0f;
 
 	if (direction == ScrollDirection::SCROLLBAR_HORIZONTAL) {
-		scroll_raw_offset = std::clamp(SystemContext::mouse.ortho_x_pos - track_obj->transform.global_pos.x, min_thumb_offset, min_thumb_offset + max_thumb_range);
+		scroll_raw_offset = std::clamp(DeviceContext::mouse.ortho_x_pos - track_obj->transform.global_pos.x, min_thumb_offset, min_thumb_offset + max_thumb_range);
 		current_scroll_value = (scroll_raw_offset - min_thumb_offset) / max_thumb_range;
 	}
 	else {
-		scroll_raw_offset = std::clamp(SystemContext::mouse.ortho_y_pos - track_obj->transform.global_pos.y, min_thumb_offset - max_thumb_range, min_thumb_offset);
+		scroll_raw_offset = std::clamp(DeviceContext::mouse.ortho_y_pos - track_obj->transform.global_pos.y, min_thumb_offset - max_thumb_range, min_thumb_offset);
 		current_scroll_value = (min_thumb_offset - scroll_raw_offset) / max_thumb_range;
 	}
 
@@ -110,13 +110,13 @@ void Engine::UI::ScrollBar::_on_thumb_drag(glm::vec2& scroll_thumb_cursor_delta)
 
 	if (direction == ScrollDirection::SCROLLBAR_HORIZONTAL) {
 		scroll_raw_offset = std::clamp(
-			SystemContext::mouse.ortho_x_pos - track_obj->transform.global_pos.x + scroll_thumb_cursor_delta.x, min_thumb_offset, min_thumb_offset + max_thumb_range
+			DeviceContext::mouse.ortho_x_pos - track_obj->transform.global_pos.x + scroll_thumb_cursor_delta.x, min_thumb_offset, min_thumb_offset + max_thumb_range
 		);
 		current_scroll_value = (scroll_raw_offset - min_thumb_offset) / max_thumb_range;
 	}
 	else {
 		scroll_raw_offset = std::clamp(
-			SystemContext::mouse.ortho_y_pos - track_obj->transform.global_pos.y + scroll_thumb_cursor_delta.y, min_thumb_offset - max_thumb_range, min_thumb_offset
+			DeviceContext::mouse.ortho_y_pos - track_obj->transform.global_pos.y + scroll_thumb_cursor_delta.y, min_thumb_offset - max_thumb_range, min_thumb_offset
 		);
 		current_scroll_value = (min_thumb_offset - scroll_raw_offset) / max_thumb_range;
 	}
@@ -131,13 +131,13 @@ void Engine::UI::ScrollBar::_on_thumb_drag(glm::vec2& scroll_thumb_cursor_delta)
 
 void Engine::UI::ScrollBar::_on_thumb_step(float thumb_global_x, float thumb_global_y) {
 	if (direction == ScrollBar::SCROLLBAR_HORIZONTAL) {
-		if (SystemContext::mouse.ortho_x_pos - thumb_global_x > 0.0f) scroll_raw_offset += max_thumb_range * 0.1f;
+		if (DeviceContext::mouse.ortho_x_pos - thumb_global_x > 0.0f) scroll_raw_offset += max_thumb_range * 0.1f;
 		else scroll_raw_offset -= max_thumb_range * 0.1f;
 		scroll_raw_offset = std::clamp(scroll_raw_offset, min_thumb_offset, min_thumb_offset + max_thumb_range);
 		scroll_value = (scroll_raw_offset - min_thumb_offset) / max_thumb_range;
 	}
 	else {
-		if (SystemContext::mouse.ortho_y_pos - thumb_global_y > 0.0f) scroll_raw_offset += max_thumb_range * 0.1f;
+		if (DeviceContext::mouse.ortho_y_pos - thumb_global_y > 0.0f) scroll_raw_offset += max_thumb_range * 0.1f;
 		else scroll_raw_offset -= max_thumb_range * 0.1f;
 		scroll_raw_offset = std::clamp(scroll_raw_offset, min_thumb_offset - max_thumb_range, min_thumb_offset);
 		scroll_value = (min_thumb_offset - scroll_raw_offset) / max_thumb_range;

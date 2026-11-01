@@ -3,7 +3,7 @@
 #include <deque>
 #include <cstdint>
 
-namespace CoreMemory {
+namespace Engine::Util {
 	class MemoryPool {
 	public:
 		class PoolBucket {

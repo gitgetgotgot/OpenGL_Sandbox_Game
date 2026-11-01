@@ -6,10 +6,10 @@
 #include "Core/MainMenuUI/ModsPage.h"
 #include "Core/MainMenuUI/CreatorPage.h"
 
-#include "Core/WorldManager.h"
+#include "Core/World/WorldManager.h"
 #include "Core/GameCore.h"
 
-#include <IOSystem/SystemContext.h>
+#include <DeviceSystem/DeviceContext.h>
 #include <thread>
 
 void MenuUIController::init() {
@@ -28,7 +28,7 @@ void MenuUIController::init() {
 	CreatorPage::Instance().enable(false);
 
 	button_click_sound.setup_source("Core:Button");
-	music_test.setup_source("Core:MusicTest");
+	//music_test.setup_source("Core:MusicTest");
 
 	SavesPage::Instance().load_saves();
 }
@@ -136,7 +136,7 @@ void MenuUIController::close_main_menu_page() {
 
 void MenuUIController::exit_game() {
 	button_click_sound.play();
-	SystemContext::exit_application();
+	DeviceContext::exit_application();
 	std::this_thread::sleep_for(std::chrono::milliseconds(250));
 }
 

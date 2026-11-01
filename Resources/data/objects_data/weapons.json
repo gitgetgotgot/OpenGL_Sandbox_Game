@@ -1,6 +1,6 @@
 [
   {
-    "UID": "Item:Core:Copper Pickaxe",
+    "UID": "Core:Copper Pickaxe",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Pickaxe" ],
     "power": 1,
@@ -15,7 +15,7 @@
     "sprites": [ "Core:Copper Pickaxe" ]
   },
   {
-    "UID": "Item:Core:Copper Axe",
+    "UID": "Core:Copper Axe",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Axe" ],
     "power": 1,
@@ -30,7 +30,7 @@
     "sprites": [ "Core:Copper Axe" ]
   },
   {
-    "UID": "Item:Core:Copper Dagger",
+    "UID": "Core:Copper Dagger",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Piercing" ],
     "dmg": 3,
@@ -43,7 +43,7 @@
     "sprites": [ "Core:Copper Dagger" ]
   },
   {
-    "UID": "Item:Core:Copper Sword",
+    "UID": "Core:Copper Sword",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Sword" ],
     "dmg": 4,
@@ -56,7 +56,7 @@
     "sprites": [ "Core:Copper Sword" ]
   },
   {
-    "UID": "Item:Core:Copper Hammer",
+    "UID": "Core:Copper Hammer",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Hammer" ],
     "power": 1,
@@ -71,7 +71,7 @@
     "sprites": [ "Core:Copper Hammer" ]
   },
   {
-    "UID": "Item:Core:Copper Bow",
+    "UID": "Core:Copper Bow",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Bow" ],
     "dmg": 3,
@@ -84,7 +84,7 @@
     "sprites": [ "Core:Copper Bow" ]
   },
   {
-    "UID": "Item:Core:Iron Pickaxe",
+    "UID": "Core:Iron Pickaxe",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Pickaxe" ],
     "power": 1,
@@ -99,7 +99,7 @@
     "sprites": [ "Core:Iron Pickaxe" ]
   },
   {
-    "UID": "Item:Core:Iron Axe",
+    "UID": "Core:Iron Axe",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Axe" ],
     "power": 1,
@@ -114,7 +114,7 @@
     "sprites": [ "Core:Iron Axe" ]
   },
   {
-    "UID": "Item:Core:Iron Dagger",
+    "UID": "Core:Iron Dagger",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Piercing" ],
     "dmg": 3,
@@ -127,7 +127,7 @@
     "sprites": [ "Core:Iron Dagger" ]
   },
   {
-    "UID": "Item:Core:Iron Sword",
+    "UID": "Core:Iron Sword",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Sword" ],
     "dmg": 4,
@@ -140,7 +140,7 @@
     "sprites": [ "Core:Iron Sword" ]
   },
   {
-    "UID": "Item:Core:Iron Hammer",
+    "UID": "Core:Iron Hammer",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Hammer" ],
     "power": 1,
@@ -155,7 +155,7 @@
     "sprites": [ "Core:Iron Hammer" ]
   },
   {
-    "UID": "Item:Core:Iron Bow",
+    "UID": "Core:Iron Bow",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Bow" ],
     "dmg": 3,
@@ -168,7 +168,7 @@
     "sprites": [ "Core:Iron Bow" ]
   },
   {
-    "UID": "Item:Core:Golden Pickaxe",
+    "UID": "Core:Golden Pickaxe",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Pickaxe" ],
     "power": 1,
@@ -183,7 +183,7 @@
     "sprites": [ "Core:Golden Pickaxe" ]
   },
   {
-    "UID": "Item:Core:Golden Axe",
+    "UID": "Core:Golden Axe",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Axe" ],
     "power": 1,
@@ -198,7 +198,7 @@
     "sprites": [ "Core:Golden Axe" ]
   },
   {
-    "UID": "Item:Core:Golden Dagger",
+    "UID": "Core:Golden Dagger",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Piercing" ],
     "dmg": 3,
@@ -211,7 +211,7 @@
     "sprites": [ "Core:Golden Dagger" ]
   },
   {
-    "UID": "Item:Core:Golden Sword",
+    "UID": "Core:Golden Sword",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Sword" ],
     "dmg": 4,
@@ -224,7 +224,7 @@
     "sprites": [ "Core:Golden Sword" ]
   },
   {
-    "UID": "Item:Core:Golden Hammer",
+    "UID": "Core:Golden Hammer",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Hammer" ],
     "power": 1,
@@ -239,7 +239,7 @@
     "sprites": [ "Core:Golden Hammer" ]
   },
   {
-    "UID": "Item:Core:Golden Bow",
+    "UID": "Core:Golden Bow",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Bow" ],
     "dmg": 3,
@@ -252,7 +252,7 @@
     "sprites": [ "Core:Golden Bow" ]
   },
   {
-    "UID": "Item:Core:Magic Wand",
+    "UID": "Core:Magic Wand",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Magical" ],
     "use_mana_cost": 5,
@@ -268,7 +268,7 @@
     "sprites": [ "Core:Magic Wand" ]
   },
   {
-    "UID": "Item:Core:Shuriken",
+    "UID": "Core:Shuriken",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Throwable" ],
     "dmg": 5,
@@ -281,7 +281,7 @@
     "sprites": [ "Core:Shuriken" ]
   },
   {
-    "UID": "Item:Core:Throwable Knife",
+    "UID": "Core:Throwable Knife",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Throwable" ],
     "dmg": 5,
@@ -294,7 +294,7 @@
     "sprites": [ "Core:Throwable Knife" ]
   },
   {
-    "UID": "Item:Core:Game.cpp",
+    "UID": "Core:Game.cpp",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Magical" ],
     "use_mana_cost": 5,
@@ -310,7 +310,7 @@
     "sprites": [ "Core:Game.cpp" ]
   },
   {
-    "UID": "Item:Core:Pistol",
+    "UID": "Core:Pistol",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Gun" ],
     "dmg": 5,
@@ -323,7 +323,7 @@
     "sprites": [ "Core:Pistol" ]
   },
   {
-    "UID": "Item:Core:Shotgun",
+    "UID": "Core:Shotgun",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Shotgun" ],
     "dmg": 5,
@@ -336,7 +336,7 @@
     "sprites": [ "Core:Shotgun" ]
   },
   {
-    "UID": "Item:Core:Trident",
+    "UID": "Core:Trident",
     "class_UID": "Class:Core:Weapon",
     "tags": [ "Core:Piercing" ],
     "dmg": 5,

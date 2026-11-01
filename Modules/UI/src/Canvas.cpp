@@ -4,11 +4,20 @@
 #include "UI/CanvasManager.h"
 #include "UI/UI_System.h"
 #include "UI/ScrollView.h"
-#include <IOSystem/SystemContext.h>
+#include <DeviceSystem/DeviceContext.h>
 
 void Engine::UI::Canvas::add_object(UI_Obj_Ptr& object) {
 	if (!object) return;
 	objects.emplace_back(object.get_id());
+}
+
+void Engine::UI::Canvas::set_layer_index(uint32_t layer) {
+	layer_index = layer;
+	CanvasManager::Instance().mark_canvases_order_dirty();
+}
+
+uint32_t Engine::UI::Canvas::get_layer_index() const {
+	return layer_index;
 }
 
 void Engine::UI::Canvas::update_canvas_objects_data(UI_RenderContext& ctx, UI_RenderState state) {
@@ -60,12 +69,12 @@ void Engine::UI::Canvas::update_child_object(UI_Object& object, UI_RenderContext
 }
 
 uint16_t Engine::UI::Canvas::add_clip_rect(const UI_Transform& tr, std::vector<ClipRectangle>& clip_rects) {
-	uint32_t x = ((tr.global_pos.x - tr.size.x * 0.5f) * SystemContext::display.double_x_ratio + 0.5f) * SystemContext::display.width;
-	uint32_t y = ((tr.global_pos.y - tr.size.y * 0.5f) * 0.5f + 0.5f) * SystemContext::display.height;
-	uint32_t w = tr.size.x * SystemContext::display.double_x_ratio * SystemContext::display.width;
-	uint32_t h = tr.size.y * 0.5f * SystemContext::display.height;
+	uint32_t x = ((tr.global_pos.x - tr.size.x * 0.5f) * DeviceContext::display.double_x_ratio + 0.5f) * DeviceContext::display.width;
+	uint32_t y = ((tr.global_pos.y - tr.size.y * 0.5f) * 0.5f + 0.5f) * DeviceContext::display.height;
+	uint32_t w = tr.size.x * DeviceContext::display.double_x_ratio * DeviceContext::display.width;
+	uint32_t h = tr.size.y * 0.5f * DeviceContext::display.height;
 	clip_rects.emplace_back(x, y, w, h, tr.global_pos.x, tr.global_pos.y, tr.size.x, tr.size.y).overlaps_with_mouse(
-		SystemContext::mouse.ortho_x_pos, SystemContext::mouse.ortho_y_pos
+		DeviceContext::mouse.ortho_x_pos, DeviceContext::mouse.ortho_y_pos
 	);
 	return clip_rects.size() - 1;
 }
@@ -78,15 +87,15 @@ uint16_t Engine::UI::Canvas::add_content_offset(const glm::vec2& offset, std::ve
 
 
 Engine::UI::Canvas* Engine::UI::UI_Canvas_Ptr::operator->() const {
-	return CanvasManager::get_instance().get(id);
+	return CanvasManager::Instance().get(id);
 }
 
 Engine::UI::Canvas& Engine::UI::UI_Canvas_Ptr::operator*() const {
-	return *CanvasManager::get_instance().get(id);
+	return *CanvasManager::Instance().get(id);
 }
 
 Engine::UI::UI_Canvas_Ptr::operator bool() const {
-	return id != 0 && CanvasManager::get_instance().get(id);
+	return id != 0 && CanvasManager::Instance().get(id);
 }
 
 Engine::UI::UI_Canvas_Ptr& Engine::UI::UI_Canvas_Ptr::operator=(const UI_Canvas_Ptr& other) noexcept {

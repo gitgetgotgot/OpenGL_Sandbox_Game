@@ -1,14 +1,14 @@
-﻿#include <Utility/TimeManager.h>
+﻿#include "Utility/TimeManager.h"
 
-TimeManager::TimeManager() {
+Engine::Util::TimeManager::TimeManager() {
 	previous_time = std::chrono::steady_clock::now();
 }
 
-TimeManager::~TimeManager() {
+Engine::Util::TimeManager::~TimeManager() {
 
 }
 
-void TimeManager::update() {
+void Engine::Util::TimeManager::update() {
 	//delta time
 	current_time = std::chrono::steady_clock::now();
 	deltaTime = std::chrono::duration<float>(current_time - previous_time).count();
@@ -28,7 +28,7 @@ void TimeManager::update() {
 	rainbow_color_time = std::fmod(rainbow_color_time + rainbow_speed * deltaTime, rainbow_period);
 }
 
-void TimeManager::update_world_time() {
+void Engine::Util::TimeManager::update_world_time() {
 	//check if day/night ended
 	if (cycle_time >= dayTime) {
 		cycle_time = 0.0;
@@ -68,29 +68,29 @@ void TimeManager::update_world_time() {
 	cycle_time += deltaTime;
 }
 
-float TimeManager::get_rainbow_time() {
+float Engine::Util::TimeManager::get_rainbow_time() {
 	return rainbow_color_time;
 }
 
-float TimeManager::get_global_light_value() {
+float Engine::Util::TimeManager::get_global_light_value() {
 	return day_ratio;
 }
 
-int TimeManager::get_current_FPS() {
+int Engine::Util::TimeManager::get_current_FPS() {
 	return current_FPS;
 }
 
-glm::vec3& TimeManager::get_sky_color() {
+glm::vec3& Engine::Util::TimeManager::get_sky_color() {
 	return skyColor;
 }
 
-glm::vec4 TimeManager::getRainbowColor() {
+glm::vec4 Engine::Util::TimeManager::getRainbowColor() {
 	float r = std::sin(rainbow_color_time + 0.0f) * 0.5f + 0.5f;
 	float g = std::sin(rainbow_color_time + 2.094f) * 0.5f + 0.5f; // 120° = 2π/3
 	float b = std::sin(rainbow_color_time + 4.188f) * 0.5f + 0.5f; // 240° = 4π/3
 	return glm::vec4(r, g, b, 1.f);
 }
 
-void TimeManager::toggle_dayTime() {
+void Engine::Util::TimeManager::toggle_dayTime() {
 	isDay = !isDay;
 }

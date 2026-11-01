@@ -1,7 +1,7 @@
 #pragma once
 #include "UI/UI_Comp_Ptr.h"
 #include "UI/Image.h"
-#include <Utility/FunctionWrapper.h>
+#include <Utility/CallbackWrapper.h>
 
 namespace Engine::UI {
 	class ScrollBar : public UI_Component<ScrollBar> {
@@ -22,7 +22,7 @@ namespace Engine::UI {
 		void set_thumb_size_ratio(float ratio);
 		void bind_components(UI_Component_Ptr<Image>& track_img, UI_Component_Ptr<Image>& thumb_img);
 
-		FunctionWrapper<float> on_value_changed;
+		Engine::Util::CallbackWrapper<float> on_value_changed;
 		float scroll_value = 0.0f;
 		bool is_discrete = true;
 	private:

@@ -1,6 +1,6 @@
 #pragma once
 #include <Resources/Animation.h>
-#include <Utility/EntityData.h>
+#include "Entities/EntityData.h"
 
 namespace Engine::Entity {
 	class EntityBase {

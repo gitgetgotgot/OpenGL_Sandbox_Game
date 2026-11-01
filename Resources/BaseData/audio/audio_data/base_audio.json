@@ -5,12 +5,5 @@
     "group": "Core:SFX",
     "PCM": true,
     "MAX_INSTANCE": 2
-  },
-  {
-    "UID": "Core:MusicTest",
-    "file": "music/Music-Overworld_Day.mp3",
-    "group": "Core:Music",
-    "PCM": false,
-    "MAX_INSTANCE": 1
   }
 ]

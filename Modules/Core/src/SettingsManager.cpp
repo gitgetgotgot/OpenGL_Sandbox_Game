@@ -1,7 +1,7 @@
 #include "Core/SettingsManager.h"
-#include <IOSystem/SystemContext.h>
+#include <DeviceSystem/DeviceContext.h>
 #include <Audio/AudioSystem.h>
-#include <Utility/DataParser.h>
+#include <fstream>
 
 void SettingsManager::load_settings() {
 	mixer_ui.setup_mixer("Core:UI");
@@ -9,48 +9,39 @@ void SettingsManager::load_settings() {
 	mixer_sfx.setup_mixer("Core:SFX");
 
 	std::filesystem::path settings_file_path = RESOURCE_ROOT;
-	settings_file_path /= "game_settings.json";
+	settings_file_path /= "Config/game_config.json";
 	if (!std::filesystem::exists(settings_file_path)) {
 		throw std::runtime_error("Fatal Error, Couldn't load settings file!");
 	}
-	DataParser parser;
-	parser.parse_JSON_format(settings_file_path);
-	const auto& screen = parser.node_root["screen"];
-	const bool fullscreen = screen["fullscreen"].get_as<bool>();
-	const bool vsync = screen["vsync"].get_as<bool>();
-	const auto& res = screen["resolution"];
-	const uint32_t width = res["width"].get_as<uint32_t>();
-	const uint32_t height = res["height"].get_as<uint32_t>();
+	
+	std::ifstream config_read(settings_file_path);
+	nlohmann::json j;
+	config_read >> j;
 
-	SystemContext::display.toggle_fullscreen(fullscreen);
-	this->fullscreen = fullscreen;
+	config = j.get<Config>();
 
-	SystemContext::display.toggle_VSYNC(vsync);
-	this->vsync_on = vsync;
+	DeviceContext::display.toggle_fullscreen(config.screen.fullscreen);
+	DeviceContext::display.toggle_VSYNC(config.screen.vsync);
 
-	SystemContext::display.change_resolution(width, height);
+	DeviceContext::display.change_resolution(config.screen.width, config.screen.height);
 
-	const auto& volume = parser.node_root["volume"];
-	const uint32_t master_v = volume["master"].get_as<uint32_t>();
-	const uint32_t music_v = volume["music"].get_as<uint32_t>();
-	const uint32_t sfx_v = volume["sfx"].get_as<uint32_t>();
-	set_master_volume((float)master_v / 100.0f);
-	set_music_volume((float)music_v / 100.0f);
-	set_sfx_volume((float)sfx_v / 100.0f);
+	set_master_volume((float)config.volume.master / 100.0f);
+	set_music_volume((float)config.volume.music / 100.0f);
+	set_sfx_volume((float)config.volume.sfx / 100.0f);
 }
 
 void SettingsManager::change_resolution() {
-	SystemContext::display.change_resolution(true);
+	DeviceContext::display.change_resolution(true);
 }
 
 void SettingsManager::toggle_fullscreen() {
-	fullscreen = !fullscreen;
-	SystemContext::display.toggle_fullscreen(fullscreen);
+	config.screen.fullscreen = !config.screen.fullscreen;
+	DeviceContext::display.toggle_fullscreen(config.screen.fullscreen);
 }
 
 void SettingsManager::toggle_vsync() {
-	vsync_on = !vsync_on;
-	SystemContext::display.toggle_VSYNC(vsync_on);
+	config.screen.vsync = !config.screen.vsync;
+	DeviceContext::display.toggle_VSYNC(config.screen.vsync);
 }
 
 void SettingsManager::set_master_volume(float volume) {

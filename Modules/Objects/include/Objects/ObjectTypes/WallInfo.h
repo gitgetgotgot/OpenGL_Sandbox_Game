@@ -5,7 +5,7 @@ namespace Engine::Object {
 	class WallInfo : public ObjectInfo {
 	public:
 		WallInfo(ObjectType type) : ObjectInfo(type) {}
-		void fill_data(const DataNode& data) override;
+		void fill_data(const nlohmann::json& data) override;
 		float toughness = 1.0f;
 	};
 

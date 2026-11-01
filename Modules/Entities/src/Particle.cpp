@@ -12,7 +12,7 @@ bool Particle::update(float deltaTime) {
 	angle += 180.f * deltaTime; //180 degrees per second
 	if (angle > 360.0f) angle -= 360.0f;
 
-	GameMath::update_2D_TRS(modelMatrix, sprite_center, sprite_size, angle);
+	Engine::Util::Math::update_2D_TRS(modelMatrix, sprite_center, sprite_size, angle);
 	return false;
 }
 
@@ -38,7 +38,7 @@ void ParticleSystem::update() {
 		if (info.light_id > 0) {
 			//update_lighting(particle.sprite_center, info.light.light_color, info.light.light_radius * BLOCK_VISIBLE_SIZE, false);
 		}
-		if (particle.update(TimeManager::deltaTime)) {
+		if (particle.update(Engine::Util::TimeManager::deltaTime)) {
 			particles.erase(particles.begin() + i);
 			i--;
 			continue;

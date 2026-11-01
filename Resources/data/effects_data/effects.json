@@ -1,62 +1,62 @@
 [
   {
-    "UID": "Effect:Core:MushroomHeal",
+    "UID": "Core:MushroomHeal",
     "sprite_UID": "Core:Empty",
     "effect_type": 5,
     "stat_type": 1,
     "value": 25.0
   },
   {
-    "UID": "Effect:Core:PotionHeal",
+    "UID": "Core:PotionHeal",
     "sprite_UID": "Core:Empty",
     "effect_type": 5,
     "stat_type": 1,
     "value": 50.0
   },
   {
-    "UID": "Effect:Core:PotionSickness",
+    "UID": "Core:PotionSickness",
     "sprite_UID": "Core:Empty",
     "effect_type": 0,
     "stat_type": 0,
     "value": 0.0
   },
   {
-    "UID": "Effect:Core:LifeCrystalBuff",
+    "UID": "Core:LifeCrystalBuff",
     "sprite_UID": "Core:Empty",
     "effect_type": 4,
     "stat_type": 1,
     "value": 20.0
   },
   {
-    "UID": "Effect:Core:ManaCrystalBuff",
+    "UID": "Core:ManaCrystalBuff",
     "sprite_UID": "Core:Empty",
     "effect_type": 4,
     "stat_type": 3,
     "value": 20.0
   },
   {
-    "UID": "Effect:Core:DefBuff",
+    "UID": "Core:DefBuff",
     "sprite_UID": "Core:Empty",
     "effect_type": 1,
     "stat_type": 2,
     "value": 10.0
   },
   {
-    "UID": "Effect:Core:SpeedBuff",
+    "UID": "Core:SpeedBuff",
     "sprite_UID": "Core:Empty",
     "effect_type": 1,
     "stat_type": 4,
     "value": 0.25
   },
   {
-    "UID": "Effect:Core:RegenBuff",
+    "UID": "Core:RegenBuff",
     "sprite_UID": "Core:Empty",
     "effect_type": 1,
     "stat_type": 5,
     "value": 0.5
   },
   {
-    "UID": "Effect:Core:Burning",
+    "UID": "Core:Burning",
     "sprite_UID": "Core:Empty",
     "effect_type": 3,
     "stat_type": 1,
@@ -68,7 +68,7 @@
     }
   },
   {
-    "UID": "Effect:Core:FrostBurning",
+    "UID": "Core:FrostBurning",
     "sprite_UID": "Core:Empty",
     "effect_type": 3,
     "stat_type": 1,
@@ -80,7 +80,7 @@
     }
   },
   {
-    "UID": "Effect:Core:Poisoning",
+    "UID": "Core:Poisoning",
     "sprite_UID": "Core:Empty",
     "effect_type": 3,
     "stat_type": 1,

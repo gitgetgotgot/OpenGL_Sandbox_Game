@@ -2,6 +2,7 @@
 #include "Resources/TagRegistry.h"
 
 void Engine::Resource::Tag::register_core_tags() {
+	IS_NONE =			TagRegistry::Instance().add_tag("Core:None");
 	//Block
 	IS_SOLID_BLOCK =	TagRegistry::Instance().add_tag("Core:SolidBlock");
 	IS_WOOD =			TagRegistry::Instance().add_tag("Core:Wood");

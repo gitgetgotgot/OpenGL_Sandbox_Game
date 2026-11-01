@@ -58,7 +58,7 @@ void Engine::Resource::AnimatorController::set_animator(uint32_t id) {
 void Engine::Resource::AnimatorController::update() {
 	if (!is_playing) return;
 
-	current_frame_time += TimeManager::deltaTime * speed;
+	current_frame_time += Engine::Util::TimeManager::deltaTime * speed;
 	if (current_frame_time >= current_clip->frame_time) {
 		current_frame_time = 0.0f;
 		current_sprite_index++;

@@ -14,7 +14,7 @@ namespace Engine::Mods {
 		std::string version;
 		std::string description;
 		std::filesystem::path mod_folder_path;
-		DynamicArray<DependentMod> dependent_mods;
+		Engine::Util::DynamicArray<DependentMod> dependent_mods;
 		bool has_dll;
 		bool enabled;
 	};
@@ -26,7 +26,7 @@ namespace Engine::Mods {
 			return mgr;
 		}
 		void ClearData();
-		ModInfo& add(const DataNode& data);
+		ModInfo& add(const nlohmann::json& data);
 		std::vector<ModInfo>& get_mods();
 		ModInfo& get_mod(uint32_t id);
 	private:

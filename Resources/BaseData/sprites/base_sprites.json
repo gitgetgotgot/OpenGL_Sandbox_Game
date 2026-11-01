@@ -1,7 +1,7 @@
 [
   {
     "UID": "Core:White",
-    "texture": "Core:White.png",
+    "texture": "Core:White",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -13,7 +13,7 @@
   },
   {
     "UID": "Core:Gradient",
-    "texture": "Core:Gradient.png",
+    "texture": "Core:Gradient",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -25,7 +25,7 @@
   },
   {
     "UID": "Core:Gradient2",
-    "texture": "Core:Gradient2.png",
+    "texture": "Core:Gradient2",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -37,7 +37,7 @@
   },
   {
     "UID": "Core:UI_StoneWall",
-    "texture": "Core:UI_StoneWall.png",
+    "texture": "Core:UI_StoneWall",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -49,7 +49,7 @@
   },
   {
     "UID": "Core:UI_ButtonPlay",
-    "texture": "Core:UI_ButtonPlay.png",
+    "texture": "Core:UI_ButtonPlay",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -61,7 +61,7 @@
   },
   {
     "UID": "Core:UI_ButtonDelete",
-    "texture": "Core:UI_ButtonDelete.png",
+    "texture": "Core:UI_ButtonDelete",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -73,7 +73,7 @@
   },
   {
     "UID": "Core:UI_ButtonInfo",
-    "texture": "Core:UI_ButtonInfo.png",
+    "texture": "Core:UI_ButtonInfo",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -85,7 +85,7 @@
   },
   {
     "UID": "Core:UI_IconFrame",
-    "texture": "Core:UI_Frame0.png",
+    "texture": "Core:UI_Frame0",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -97,7 +97,7 @@
   },
   {
     "UID": "Core:UI_Button32p",
-    "texture": "Core:UI_Button32p.png",
+    "texture": "Core:UI_Button32p",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -114,7 +114,7 @@
   },
   {
     "UID": "Core:UI_Button64p",
-    "texture": "Core:UI_Button64p.png",
+    "texture": "Core:UI_Button64p",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -131,7 +131,7 @@
   },
   {
     "UID": "Core:UI_Button64p1",
-    "texture": "Core:UI_Button64p1.png",
+    "texture": "Core:UI_Button64p1",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -148,7 +148,7 @@
   },
   {
     "UID": "Core:UI_Button64p2",
-    "texture": "Core:UI_Button64p2.png",
+    "texture": "Core:UI_Button64p2",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -165,7 +165,7 @@
   },
   {
     "UID": "Core:UI_Frame0",
-    "texture": "Core:UI_Frame0.png",
+    "texture": "Core:UI_Frame0",
     "padding": 0,
     "sprite": {
       "U0": 0,
@@ -182,7 +182,7 @@
   },
   {
     "UID": "Core:UI_Frame1",
-    "texture": "Core:UI_Frame1.png",
+    "texture": "Core:UI_Frame1",
     "padding": 0,
     "sprite": {
       "U0": 0,

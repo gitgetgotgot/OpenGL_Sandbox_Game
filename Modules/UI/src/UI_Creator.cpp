@@ -11,10 +11,9 @@
 #include "UI/ScrollViewContent.h"
 #include "UI/ScrollBar.h"
 #include <Resources/Sprite.h>
-#include <IOSystem/SystemContext.h>
 
 Engine::UI::UI_Canvas_Ptr Engine::UI::UI_Creator::create_canvas() {
-	return CanvasManager::get_instance().add();
+	return CanvasManager::Instance().add();
 }
 
 Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_ui_empty_object() {

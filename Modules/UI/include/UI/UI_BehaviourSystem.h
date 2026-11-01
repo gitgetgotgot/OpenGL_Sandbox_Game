@@ -43,7 +43,7 @@ namespace Engine::UI {
 	
 	class UI_BehaviourSystem {
 	public:
-		static UI_BehaviourSystem& get_instance() {
+		static UI_BehaviourSystem& Instance() {
 			static UI_BehaviourSystem sys;
 			return sys;
 		}
@@ -60,7 +60,7 @@ namespace Engine::UI {
 		void process_SCROLL_VIEW_event(UI_ComponentBase*& comp_base, bool& pointed_now);
 		void process_SCROLL_BAR_event(UI_ComponentBase*& comp_base, bool& pointed_now);
 
-		sparse_set<UI_BehaviourEntry> behaviours;
+		Engine::Util::sparse_set<UI_BehaviourEntry> behaviours;
 		uint32_t focused_component_id = 0;
 		uint32_t prev_focused_id = 0;
 		bool focus_changed_in_frame = false;

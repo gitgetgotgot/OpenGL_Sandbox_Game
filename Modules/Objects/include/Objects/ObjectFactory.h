@@ -4,7 +4,7 @@
 namespace Engine::Object {
 	class _ObjectFactoryI {
 	public:
-		virtual void add_object(const DataNode& data) = 0;
+		virtual void add_object(const nlohmann::json& data) = 0;
 		virtual ~_ObjectFactoryI() {}
 	protected:
 		ObjectInfo* register_object_info(std::unique_ptr<ObjectInfo> new_object_info, const std::string& UID);
@@ -15,13 +15,13 @@ namespace Engine::Object {
 	public:
 		static_assert(std::is_base_of_v<ObjectInfo, T>, "T must inherit from ObjectInfo");
 
-		void add_object(const DataNode& data) override {
+		void add_object(const nlohmann::json& data) override {
 			T* info = create_object_info(data);
 			info->fill_data(data);
 		}
 	protected:
-		T* create_object_info(const DataNode& data) {
-			std::string UID = data["UID"].get_as<std::string>();
+		T* create_object_info(const nlohmann::json& data) {
+			std::string UID = data["UID"].get<std::string>();
 			std::unique_ptr<ObjectInfo> new_info = std::make_unique<T>(MAIN_TYPE);
 			return static_cast<T*>(register_object_info(std::move(new_info), UID));
 		}

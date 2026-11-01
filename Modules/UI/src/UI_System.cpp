@@ -2,7 +2,7 @@
 #include "UI/UI_ObjectManager.h"
 #include "UI/CanvasManager.h"
 #include "UI/UI_BehaviourSystem.h"
-#include <IOSystem/SystemContext.h>
+#include <DeviceSystem/DeviceContext.h>
 
 void Engine::UI::UI_System::init() {
 	namespace EG = Engine::Graphics;
@@ -74,7 +74,7 @@ void Engine::UI::UI_System::init() {
 	ubo = std::make_unique<EG::UBO>();
 	ubo->bind_UBO(1);
 	ubo_data.viewMatrix = glm::mat4(1.0f);
-	ubo_data.projectionMatrix = glm::ortho(-SystemContext::display.ratio, SystemContext::display.ratio, -1.0f, 1.0f);
+	ubo_data.projectionMatrix = glm::ortho(-DeviceContext::display.ratio, DeviceContext::display.ratio, -1.0f, 1.0f);
 	ubo->set_data(&ubo_data, sizeof(UI_UBO), EG::UBO::UBO_USAGE::USAGE_DYNAMIC);
 
 	//reserve memory for buffers (this size should be enough for most scenarios)
@@ -111,8 +111,8 @@ void Engine::UI::UI_System::update() {
 
 	// place default clip rect and content offset
 	render_context.clip_rects.emplace_back(
-		0, 0, SystemContext::display.width, SystemContext::display.height,
-		0.0f, 0.0f, SystemContext::display.ratio * 2.0f, 2.0f
+		0, 0, DeviceContext::display.width, DeviceContext::display.height,
+		0.0f, 0.0f, DeviceContext::display.ratio * 2.0f, 2.0f
 	).mouse_inside = true;
 	render_context.content_offsets.emplace_back(0.0f, 0.0f);
 
@@ -121,12 +121,10 @@ void Engine::UI::UI_System::update() {
 
 	// update all UI object buffers, build render queue and hit queue
 	UI_RenderState state;
-	for (auto& canvas : CanvasManager::get_instance().get_canvases()) {
-		if (canvas.is_enabled) canvas.update_canvas_objects_data(render_context, state);
-	}
+	CanvasManager::Instance().update_render_queue(render_context, state);
 
 	// update interactable components
-	UI_BehaviourSystem::get_instance().update(render_context);
+	UI_BehaviourSystem::Instance().update(render_context);
 
 	sprites_vbo->update_data(render_context.sprites_buffer.data(), render_context.sprites_buffer.size() * sizeof(UI_Vertex2f));
 	sdf_text_vbo->update_data(render_context.sdf_text_buffer.data(), render_context.sdf_text_buffer.size() * sizeof(UI_Text_Vertex2f));
@@ -137,7 +135,7 @@ void Engine::UI::UI_System::render(std::unique_ptr<Engine::Graphics::OpenGL_Rend
 	sdf_text_INDEX_OFFSET = 0;
 
 	renderer->useScissorTest(true);
-	renderer->setScissorRect(0, 0, SystemContext::display.width, SystemContext::display.height);
+	renderer->setScissorRect(0, 0, DeviceContext::display.width, DeviceContext::display.height);
 
 	ubo_data.content_offset = glm::vec2(0.0f);
 	ubo->update_data(&ubo_data, sizeof(UI_UBO));

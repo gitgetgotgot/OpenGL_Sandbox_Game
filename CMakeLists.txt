@@ -14,7 +14,7 @@ add_game_module(Physics)
 add_game_module(Rendering)
 add_game_module(Resources)
 add_game_module(UI)
-add_game_module(IOSystem)
+add_game_module(DeviceSystem)
 add_game_module(Utility)
 add_game_module(EngineAPI)
 
@@ -50,12 +50,12 @@ target_link_libraries(Resources
         Rendering
 )
 
-target_link_libraries(IOSystem
+target_link_libraries(DeviceSystem
     PRIVATE
         glad::glad
         glfw
 )
-target_link_libraries(IOSystem PUBLIC Utility)
+target_link_libraries(DeviceSystem PUBLIC Utility)
 
 target_link_libraries(Audio PUBLIC miniaudio::miniaudio)
 
@@ -63,7 +63,7 @@ target_link_libraries(Physics PUBLIC glm::glm)
 
 target_link_libraries(UI PUBLIC Rendering)
 target_link_libraries(UI PUBLIC Resources)
-target_link_libraries(UI PUBLIC IOSystem)
+target_link_libraries(UI PUBLIC DeviceSystem)
 target_link_libraries(UI PUBLIC Audio)
 
 target_link_libraries(Objects PUBLIC UI)

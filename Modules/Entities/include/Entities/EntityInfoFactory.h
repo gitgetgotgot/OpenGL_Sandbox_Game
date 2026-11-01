@@ -5,7 +5,7 @@ namespace Engine::Entity {
 	class EntityInfoFactoryI {
 	public:
 		virtual ~EntityInfoFactoryI() {}
-		virtual void add_entity_info(const DataNode& data) = 0;
+		virtual void add_entity_info(const nlohmann::json& data) = 0;
 	protected:
 		EntityInfo* register_entity_info(std::unique_ptr<EntityInfo> new_entity_info, const std::string& UID);
 	};
@@ -14,13 +14,13 @@ namespace Engine::Entity {
 	class EntityInfoFactory : public EntityInfoFactoryI {
 	public:
 		static_assert(std::is_base_of_v<EntityInfo, T>, "T must inherit from EntityInfo");
-		void add_entity_info(const DataNode& data) override {
+		void add_entity_info(const nlohmann::json& data) override {
 			T* info = create_entity_info(data);
 			info->fill_data(data);
 		}
 	protected:
-		T* create_entity_info(const DataNode& data) {
-			std::string UID = data["UID"].get_as<std::string>();
+		T* create_entity_info(const nlohmann::json& data) {
+			std::string UID = data["UID"].get<std::string>();
 			std::unique_ptr<EntityInfo> new_info = std::make_unique<T>(MAIN_TYPE);
 			return static_cast<T*>(register_entity_info(std::move(new_info), UID));
 		}

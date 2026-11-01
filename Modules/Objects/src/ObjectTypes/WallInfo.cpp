@@ -1,10 +1,10 @@
 #include "Objects/ObjectTypes/WallInfo.h"
 #include <Resources/ResourceErrors.h>
 
-void Engine::Object::WallInfo::fill_data(const DataNode& data) {
+void Engine::Object::WallInfo::fill_data(const nlohmann::json& data) {
 	ObjectInfo::fill_data(data);
 	try {
-		float toughness = data["toughness"].get_as<float>();
+		float toughness = data["toughness"].get<float>();
 		this->toughness = toughness;
 	}
 	catch (const std::exception& e) {

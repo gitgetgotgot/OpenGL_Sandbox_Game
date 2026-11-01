@@ -1,0 +1,13 @@
+* change exceptions with try/catch on std::error_code and turn off exceptions?
+* add .pack conversion for multiple .png textures
+* add "load_mode" option for mods in mod.json:
+	"simple" - load .json or .png from Resources
+	"packed" - load .data or .pack from Resources
+* save options in .json
+* game UI
+* player
+* world and entities
+* engine API for modding and tools for data parcing
+* remove resource typename from UID in different resources (type of resource is already known in each manager and loader)
+	(Item:Core:Name ---> Core:Name)
+	Also check UID loading in object class!!!

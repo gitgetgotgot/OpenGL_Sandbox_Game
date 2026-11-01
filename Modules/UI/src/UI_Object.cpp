@@ -13,7 +13,7 @@ void Engine::UI::UI_Object::add_child(UI_Object* child) {
 }
 
 void Engine::UI::UI_Object::add_behaviour(void* ptr, UI_Behaviour_VTable* vt) const {
-	UI_BehaviourSystem::get_instance().add(object_id, ptr, vt);
+	UI_BehaviourSystem::Instance().add(object_id, ptr, vt);
 }
 
 

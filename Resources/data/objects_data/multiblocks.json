@@ -1,97 +1,142 @@
 [
   {
-    "UID": "Item:Core:Workbench",
+    "UID": "Core:Workbench",
     "class_UID": "Class:Core:MultiBlock",
     "tags": [ "Core:Workbench" ],
     "toughness": 1,
-    "drop_UID": "Item:Core:Workbench",
+    "drops": [
+      {
+        "UID": "Core:Workbench",
+        "Amount": 1
+      }
+    ],
     "width": 2,
     "height": 1,
     "platform_collision": true,
     "sprites": [ "Core:Workbench" ]
   },
   {
-    "UID": "Item:Core:Furnace",
+    "UID": "Core:Furnace",
     "class_UID": "Class:Core:MultiBlock",
     "tags": [ "Core:Furnace" ],
     "toughness": 1,
-    "drop_UID": "Item:Core:Furnace",
+    "drops": [
+      {
+        "UID": "Core:Furnace",
+        "Amount": 1
+      }
+    ],
     "width": 3,
     "height": 2,
     "lights": [ "Light:Core:Fire" ],
     "sprites": [ "Core:Furnace" ]
   },
   {
-    "UID": "Item:Core:Anvil",
+    "UID": "Core:Anvil",
     "class_UID": "Class:Core:MultiBlock",
     "tags": [ "Core:Anvil" ],
     "toughness": 1,
-    "drop_UID": "Item:Core:Anvil",
+    "drops": [
+      {
+        "UID": "Core:Anvil",
+        "Amount": 1
+      }
+    ],
     "width": 2,
     "height": 1,
     "sprites": [ "Core:Anvil" ]
   },
   {
-    "UID": "Item:Core:Oak Table",
+    "UID": "Core:Oak Table",
     "class_UID": "Class:Core:MultiBlock",
     "tags": [ "Core:Table" ],
     "toughness": 1,
-    "drop_UID": "Item:Core:Oak Table",
+    "drops": [
+      {
+        "UID": "Core:Oak Table",
+        "Amount": 1
+      }
+    ],
     "width": 3,
     "height": 2,
     "sprites": [ "Core:Oak Table" ]
   },
   {
-    "UID": "Item:Core:Oak Chair",
+    "UID": "Core:Oak Chair",
     "class_UID": "Class:Core:MultiBlock",
     "tags": [ "Core:Chair" ],
     "toughness": 1,
-    "drop_UID": "Item:Core:Oak Chair",
+    "drops": [
+      {
+        "UID": "Core:Oak Chair",
+        "Amount": 1
+      }
+    ],
     "width": 1,
     "height": 2,
     "sprites": [ "Core:Oak Chair" ]
   },
   {
-    "UID": "Item:Core:Oak Chair(R)",
+    "UID": "Core:Oak Chair(R)",
     "class_UID": "Class:Core:MultiBlock",
     "tags": [ "Core:Chair" ],
     "toughness": 1,
-    "drop_UID": "Item:Core:Oak Chair(R)",
+    "drops": [
+      {
+        "UID": "Core:Oak Chair",
+        "Amount": 1
+      }
+    ],
     "width": 1,
     "height": 2,
     "sprites": [ "Core:Oak Chair(R)" ]
   },
   {
-    "UID": "Item:Core:Chest",
+    "UID": "Core:Chest",
     "class_UID": "Class:Core:MultiBlock",
     "tags": [ "Core:Chest" ],
     "toughness": 1,
-    "drop_UID": "Item:Core:Chest",
+    "drops": [
+      {
+        "UID": "Core:Chest",
+        "Amount": 1
+      }
+    ],
     "width": 2,
     "height": 2,
     "sprites": [ "Core:Chest" ]
   },
   {
-    "UID": "Item:Core:ChestOpen",
+    "UID": "Core:ChestOpen",
     "class_UID": "Class:Core:MultiBlock",
     "tags": [ "Core:Chest" ],
     "toughness": 1,
-    "drop_UID": "Item:Core:Chest",
+    "drops": [
+      {
+        "UID": "Core:Chest",
+        "Amount": 1
+      }
+    ],
     "width": 2,
     "height": 2,
     "sprites": [ "Core:ChestOpen" ]
   },
   {
-    "UID": "Item:Core:Life Crystal",
+    "UID": "Core:Life Crystal",
     "class_UID": "Class:Core:MultiBlock",
     "tags": [ "Core:LyfeCrystal" ],
     "toughness": 1,
-    "drop_UID": "Item:Core:Life Crystal",
+    "drops": [
+      {
+        "UID": "Core:Life Crystal",
+        "Amount": 1
+      }
+    ],
     "width": 2,
     "height": 2,
     "effects": [
       {
-        "effect_UID": "Effect:Core:LifeCrystalBuff",
+        "effect_UID": "Core:LifeCrystalBuff",
         "duration": 10.0
       }
     ],
@@ -99,31 +144,46 @@
     "sprites": [ "Core:Life Crystal" ]
   },
   {
-    "UID": "Item:Core:Oak Door",
+    "UID": "Core:Oak Door",
     "class_UID": "Class:Core:MultiBlock",
     "tags": [ "Core:Door" ],
     "toughness": 1,
-    "drop_UID": "Item:Core:Oak Door",
+    "drops": [
+      {
+        "UID": "Core:Oak Door",
+        "Amount": 1
+      }
+    ],
     "width": 2,
     "height": 3,
     "sprites": [ "Core:Oak Door" ]
   },
   {
-    "UID": "Item:Core:Oak Door(R)",
+    "UID": "Core:Oak Door(R)",
     "class_UID": "Class:Core:MultiBlock",
     "tags": [ "Core:Door" ],
     "toughness": 1,
-    "drop_UID": "Item:Core:Oak Door",
+    "drops": [
+      {
+        "UID": "Core:Oak Door",
+        "Amount": 1
+      }
+    ],
     "width": 2,
     "height": 3,
     "sprites": [ "Core:Oak Door(R)" ]
   },
   {
-    "UID": "Item:Core:Oak Door(C)",
+    "UID": "Core:Oak Door(C)",
     "class_UID": "Class:Core:MultiBlock",
     "tags": [ "Core:Door" ],
     "toughness": 1,
-    "drop_UID": "Item:Core:Oak Door",
+    "drops": [
+      {
+        "UID": "Core:Oak Door",
+        "Amount": 1
+      }
+    ],
     "width": 1,
     "height": 3,
     "collision": true,

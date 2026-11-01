@@ -2,6 +2,7 @@
 #include <cstdint>
 
 namespace Engine::Resource::Tag {
+	inline uint16_t IS_NONE;
 //Objects
 	//Block
 	inline uint16_t IS_SOLID_BLOCK;

@@ -1,7 +1,7 @@
 #include "Core/GameCore.h"
 #include "Core/ResourceLoader.h"
 #include "Core/SettingsManager.h"
-#include "Core/WorldManager.h"
+#include "Core/World/WorldManager.h"
 #include "Core/MainMenuUI/MenuUIController.h"
 #include "Core/GameUI/GameUIController.h"
 
@@ -16,11 +16,11 @@ GameEngine::~GameEngine() {
 }
 
 bool GameEngine::update() {
-	TimeManager::Instance().update();
+	Engine::Util::TimeManager::Instance().update();
 
-	SystemContext::mouse.get_mouse_ortho_coords(SystemContext::display);
+	DeviceContext::mouse.get_mouse_ortho_coords(DeviceContext::display);
 
-	if (SystemContext::should_exit()) return 0;
+	if (DeviceContext::should_exit()) return 0;
 
 	(this->*update_proc)();
 
@@ -42,18 +42,18 @@ void GameEngine::render() {
 }
 
 void GameEngine::input_end_frame() {
-	SystemContext::mouse.lb_prev = SystemContext::mouse.lb_curr;
-	SystemContext::mouse.rb_prev = SystemContext::mouse.rb_curr;
-	SystemContext::mouse.wheel_offset = 0;
-	SystemContext::mouse.delta_x = 0;
-	SystemContext::mouse.delta_y = 0;
-	SystemContext::mouse.blocked_by_UI = false;
+	DeviceContext::mouse.lb_prev = DeviceContext::mouse.lb_curr;
+	DeviceContext::mouse.rb_prev = DeviceContext::mouse.rb_curr;
+	DeviceContext::mouse.wheel_offset = 0;
+	DeviceContext::mouse.delta_x = 0;
+	DeviceContext::mouse.delta_y = 0;
+	DeviceContext::mouse.blocked_by_UI = false;
 
 	for (int i = 0; i <= GLFW_KEY_LAST; i++) {
-		SystemContext::keyBoard.keyStatesPrev[i] = SystemContext::keyBoard.keyStatesCurr[i];
+		DeviceContext::keyBoard.keyStatesPrev[i] = DeviceContext::keyBoard.keyStatesCurr[i];
 	}
 
-	SystemContext::keyBoard.currentPressedChars.clear();
+	DeviceContext::keyBoard.currentPressedChars.clear();
 }
 
 void GameEngine::init() {
@@ -82,7 +82,7 @@ void GameEngine::uninit() {
 	Engine::Resource::TextureArrayManager::Instance().uninit();
 	Engine::Audio::AudioSystem::Instance().uninit();
 	Engine::UI::UI_System::Instance().uninit();
-	Engine::Entity::EntitySystem::Instance().uninit();
+	Engine::Core::EntitySystem::Instance().uninit();
 
 	WorldManager::Instance().clear();
 
@@ -130,8 +130,8 @@ void GameEngine::init_OpenGL() {
 
 void GameEngine::init_input() {
 	InputHandler::setGLFWwindowCallbacks(window);
-	SystemContext::display.window = window;
-	SystemContext::display.setup_monitor_video_modes();
+	DeviceContext::display.window = window;
+	DeviceContext::display.setup_monitor_video_modes();
 }
 
 void GameEngine::init_main_resources() {
@@ -144,7 +144,7 @@ void GameEngine::init_main_resources() {
 
 	Engine::UI::UI_System::Instance().init();
 
-	Engine::Entity::EntitySystem::Instance().init();
+	Engine::Core::EntitySystem::Instance().init();
 
 	ResourceLoader::Instance().load_minimal_core_resources();
 	SettingsManager::Instance().load_settings();

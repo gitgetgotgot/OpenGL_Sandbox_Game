@@ -24,7 +24,7 @@ public:
 		static ResourceLoader loader;
 		return loader;
 	}
-	void load_minimal_core_resources();
+	bool load_minimal_core_resources();
 	void start_resources_loading();
 	void load_resources_from_queue();
 	void stop_resources_loading();
@@ -35,33 +35,33 @@ public:
 private:
 	void Load_Resources();
 	void notify_loader();
-	void find_mods() const;
-	void load_libraries();
+	bool find_mods() const;
+	bool load_libraries();
 
-	void load_textures();
-	void load_resources(LoadResType res_type, std::string resources_path, bool load_from_mods);
-	void _load_sprites(std::filesystem::path& file_path);
-	void _load_audio(std::filesystem::path& file_path);
-	void _load_lights(std::filesystem::path& lights_path) const;
-	void _load_particles(std::filesystem::path& particles_path) const;
-	void _load_effects(std::filesystem::path& effects_path) const;
-	void _load_objects(std::filesystem::path& objects_path);
-	void _load_crafts(std::filesystem::path& crafts_path) const;
-	void _load_clips(std::filesystem::path& clips_path) const;
-	void _load_animators(std::filesystem::path& animators_path) const;
-	void _load_entities(std::filesystem::path& entities_path);
+	bool load_textures();
+	bool load_resources(LoadResType res_type, std::string resources_path, bool load_from_mods);
+	bool _load_sprites(std::filesystem::path& file_path);
+	bool _load_audio(std::filesystem::path& file_path);
+	bool _load_lights(std::filesystem::path& lights_path) const;
+	bool _load_particles(std::filesystem::path& particles_path) const;
+	bool _load_effects(std::filesystem::path& effects_path) const;
+	bool _load_objects(std::filesystem::path& objects_path);
+	bool _load_crafts(std::filesystem::path& crafts_path) const;
+	bool _load_clips(std::filesystem::path& clips_path) const;
+	bool _load_animators(std::filesystem::path& animators_path) const;
+	bool _load_entities(std::filesystem::path& entities_path);
 
-	void resolve_items_dependencies();
-	void resolve_entities_dependencies();
+	bool resolve_items_dependencies();
+	bool resolve_entities_dependencies();
 private:
 	ResourceLoader() {}
 	~ResourceLoader();
 
 	// items and entities data is cached when loading
-	std::vector<DataParser> item_data_parsers;
-	std::vector<DataParser> entity_data_parsers;
+	std::vector<Engine::Util::DataParser> item_data_parsers;
+	std::vector<Engine::Util::DataParser> entity_data_parsers;
 
-	std::vector<LibraryHandle> library_handles;
+	std::vector<Engine::Util::LibraryHandle> library_handles;
 	std::filesystem::path data_extension;
 	std::filesystem::path resources_root;
 

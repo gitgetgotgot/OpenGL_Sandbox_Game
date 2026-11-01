@@ -5,7 +5,7 @@ namespace Engine::Object {
 	class AmmoInfo : public ObjectInfo {
 	public:
 		AmmoInfo(ObjectType type) : ObjectInfo(type) {}
-		void fill_data(const DataNode& data) override;
+		void fill_data(const nlohmann::json& data) override;
 		uint32_t entity_id;
 		uint32_t damage;
 	};

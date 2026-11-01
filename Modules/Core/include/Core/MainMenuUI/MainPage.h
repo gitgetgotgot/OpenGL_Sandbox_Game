@@ -66,5 +66,5 @@ private:
 	Engine::UI::UI_Component_Ptr<Engine::UI::SDF_Text> FPS_text;
 	
 	MenuTooltip current_tooltip = MenuTooltip::TOOLTIP_NONE;
-	TextBufferBuilder text_builder;
+	Engine::Util::TextBufferBuilder text_builder;
 };
