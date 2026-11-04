@@ -9,7 +9,7 @@
 #include <Utility/DataParser.h>
 #include <Utility/DynamicLib.h>
 
-#if DEBUG_MODE
+#ifdef DEBUG_MODE
 constexpr bool DEBUG = true;
 #else
 constexpr bool DEBUG = false;
@@ -20,6 +20,7 @@ class ResourceLoader {
 		R_TEXTURE, R_SPRITE, R_AUDIO, R_LIGHT, R_PARTICLE, R_EFFECT, R_OBJECT, R_CRAFT, R_ANIM_CLIP, R_ANIMATOR, R_ENTITY
 	};
 public:
+	enum LoadStatus : uint8_t { LOAD_NOT_READY, LOAD_READY, LOAD_FAILED, LOAD_FATAL_ERROR };
 	static ResourceLoader& Instance() {
 		static ResourceLoader loader;
 		return loader;
@@ -28,11 +29,16 @@ public:
 	void start_resources_loading();
 	void load_resources_from_queue();
 	void stop_resources_loading();
-	bool resources_loading_ready();
+	LoadStatus get_loading_status();
 	void lock_resources_mutex();
 	void unlock_resources_mutex();
 	void Hot_Reload();
 private:
+	bool load_base_fonts();
+	bool load_base_textures();
+	bool load_base_sprites();
+	bool load_base_audio();
+
 	void Load_Resources();
 	void notify_loader();
 	bool find_mods() const;
@@ -40,17 +46,6 @@ private:
 
 	bool load_textures();
 	bool load_resources(LoadResType res_type, std::string resources_path, bool load_from_mods);
-	bool _load_sprites(std::filesystem::path& file_path);
-	bool _load_audio(std::filesystem::path& file_path);
-	bool _load_lights(std::filesystem::path& lights_path) const;
-	bool _load_particles(std::filesystem::path& particles_path) const;
-	bool _load_effects(std::filesystem::path& effects_path) const;
-	bool _load_objects(std::filesystem::path& objects_path);
-	bool _load_crafts(std::filesystem::path& crafts_path) const;
-	bool _load_clips(std::filesystem::path& clips_path) const;
-	bool _load_animators(std::filesystem::path& animators_path) const;
-	bool _load_entities(std::filesystem::path& entities_path);
-
 	bool resolve_items_dependencies();
 	bool resolve_entities_dependencies();
 private:
@@ -58,19 +53,18 @@ private:
 	~ResourceLoader();
 
 	// items and entities data is cached when loading
-	std::vector<Engine::Util::DataParser> item_data_parsers;
+	std::vector<Engine::Util::DataParser> object_data_parsers;
 	std::vector<Engine::Util::DataParser> entity_data_parsers;
 
 	std::vector<Engine::Util::LibraryHandle> library_handles;
 	std::filesystem::path data_extension;
-	std::filesystem::path resources_root;
 
 	std::unique_ptr<std::thread> resource_loader;
 	std::mutex resources_mutex;
 	std::unique_lock<std::mutex> resources_lock{ resources_mutex, std::defer_lock };
 	std::mutex tex_load_mutex;
 	std::condition_variable tex_load_cv;
-	std::atomic_bool resources_are_loaded = false;
+	std::atomic<LoadStatus> load_status = LoadStatus::LOAD_NOT_READY;
 	bool can_load_next_batch = false;
 	bool should_load_textures = true;
 };

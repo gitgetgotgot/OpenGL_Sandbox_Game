@@ -4,6 +4,7 @@
 #include <optional>
 #include <unordered_map>
 #include <glm/ext/vector_float3.hpp>
+#include <Utility/DataParser.h>
 
 namespace Engine::Resource {
 	struct LightSource {
@@ -21,6 +22,10 @@ namespace Engine::Resource {
 		}
 		void setup();
 		void ClearData();
+		bool load_lights_from_data(
+			std::filesystem::path& data_file_path,
+			Engine::Util::DataParser& parser
+		);
 		void add_light(std::string uid, float radius, glm::vec3 color);
 		std::optional<uint32_t> get_light_id(std::string light_UID);
 		LightSource& get_light(uint32_t id);

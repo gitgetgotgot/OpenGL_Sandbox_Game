@@ -1,7 +1,9 @@
-#include <Entities/Particle.h>
+#include "Core/System/ParticleSystem.h"
 #include <Utility/TimeManager.h>
+#include <Utility/Math.h>
+#include <Resources/Particle.h>
 
-bool Particle::update(float deltaTime) {
+bool ParticleEntity::update(float deltaTime) {
 	currentTime += deltaTime;
 	if (currentTime >= lifeTime) {
 		return true; //return true if particle should be destroyed
@@ -17,14 +19,14 @@ bool Particle::update(float deltaTime) {
 }
 
 void ParticleSystem::init() {
-	particlesMgr = ParticlesManager::Instance();
+	
 }
 
 void ParticleSystem::emit_particle(uint32_t particle_id, glm::vec2 emitter_center, glm::vec2 emitter_size) {
 	glm::vec2 center(emitter_center.x - emitter_size.x * 0.5f + float(rand() % int(emitter_size.x)),
 		emitter_center.y - emitter_size.y * 0.5f + float(rand() % int(emitter_size.y))
 	);
-	particles.emplace_back(Particle(
+	particles.emplace_back(ParticleEntity(
 		particle_id, 2.f, center,
 		glm::vec2(0.5f, 0.5f),
 		glm::vec2(0.f, 1.0f))
@@ -33,8 +35,8 @@ void ParticleSystem::emit_particle(uint32_t particle_id, glm::vec2 emitter_cente
 
 void ParticleSystem::update() {
 	for (int i = 0; i < particles.size(); i++) {
-		Particle& particle = particles[i];
-		ParticleInfo& info = particlesMgr->get_particle_info(particle.id);
+		ParticleEntity& particle = particles[i];
+		Engine::Resource::ParticleInfo& info = Engine::Resource::ParticleManager::Instance().get_particle_info(particle.id);
 		if (info.light_id > 0) {
 			//update_lighting(particle.sprite_center, info.light.light_color, info.light.light_radius * BLOCK_VISIBLE_SIZE, false);
 		}

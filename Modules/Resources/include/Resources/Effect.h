@@ -3,6 +3,7 @@
 #include <deque>
 #include <unordered_map>
 #include <optional>
+#include <Utility/DataParser.h>
 
 namespace Engine::Resource {
 	struct Effect {
@@ -63,6 +64,10 @@ namespace Engine::Resource {
 		}
 		void setup();
 		void ClearData();
+		bool load_effects_from_data(
+			std::filesystem::path& data_file_path,
+			Engine::Util::DataParser& parser
+		);
 		void add_effect_info(Effect::EffectType type, std::string uid, Effect::EffectStatType stat,
 			float effect_value, uint32_t ui_sprite_id, uint32_t particle_id = 0,
 			float particleSpawnInterval = 0.0f, float inflict_dmg_cd_time = 0.0f

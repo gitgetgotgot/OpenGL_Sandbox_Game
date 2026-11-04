@@ -19,6 +19,10 @@ namespace Engine::Object {
 		ObjectInfo* register_object_info(std::unique_ptr<ObjectInfo> new_object_info, const std::string& UID);
 		void setup();
 		void ClearData();
+		bool load_objects_from_data(
+			std::filesystem::path& data_file_path,
+			Engine::Util::DataParser& parser
+		);
 		ObjectInfo* get_object_info(uint16_t ID);
 		std::optional<uint16_t> get_object_id(std::string_view UID);
 		void build_ID_to_UID_table(std::vector<std::string_view>& table);

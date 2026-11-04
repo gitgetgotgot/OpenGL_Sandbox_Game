@@ -21,7 +21,7 @@ namespace Engine::Entity {
 	public:
 		Mob(uint32_t entity_id, glm::vec2 spawn_center);
 
-		Engine::Resource::AnimatorController anim_controller;
+		Engine::Entity::AnimatorComponent anim_comp;
 		MobStats stats;
 		Engine::Physics::EntityPhysics physics;
 		Engine::Physics::Collider_2D_AABB hitbox;

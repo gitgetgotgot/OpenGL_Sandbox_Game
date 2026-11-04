@@ -1,4 +1,5 @@
 #include "Resources/TextureArrayMgr.h"
+#include <Utility/Logger.h>
 #include <stb_image.h>
 #include <glad/gl.h>
 
@@ -31,6 +32,8 @@ Engine::Resource::TextureArrayManager::TextureResourceData::~TextureResourceData
 void Engine::Resource::TextureArrayManager::init() {
 	// read texture bytes without alignment or padding (correctly load textures of different formats and sizes)
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	stbi_set_flip_vertically_on_load(true);
 
 	const uint32_t array_size[8] = {
 		10/*32*/,
@@ -68,6 +71,7 @@ void Engine::Resource::TextureArrayManager::init() {
 }
 
 void Engine::Resource::TextureArrayManager::uninit() {
+
 	for (uint32_t i = 0; i < 8; ++i) {
 		texture_arrays[i].reset();
 	}
@@ -81,14 +85,25 @@ void Engine::Resource::TextureArrayManager::bind_texture_arrays() {
 	fonts_texture_array->bind(10);
 }
 
-void Engine::Resource::TextureArrayManager::add_texture_to_queue(std::filesystem::path& file_path, std::string& UID) {
+bool Engine::Resource::TextureArrayManager::add_texture_to_queue(std::filesystem::path& file_path, std::string& UID) {
 	int imgWidth, imgHeight, numOfColorChannels;
-	stbi_set_flip_vertically_on_load(true);
 	unsigned char* image_bytes = stbi_load(file_path.string().c_str(), &imgWidth, &imgHeight, &numOfColorChannels, 0);
-	stbi_set_flip_vertically_on_load(false);
+
+	if (image_bytes == nullptr) {
+		Engine::Util::Logger::Log("Couldn't read Texture file <" + file_path.string() + ">!");
+		return false;
+	}
+
+	int texture_array_index = get_array_index(imgWidth, imgHeight);
+	if (texture_array_index < 0) {
+		stbi_image_free(image_bytes);
+		Engine::Util::Logger::Log("Texture <" + file_path.string() + "> has incorrect size!");
+		return false;
+	}
 
 	std::lock_guard lock(tex_queue_mutex);
 	textures_queue.emplace(image_bytes, imgHeight, imgWidth, numOfColorChannels, file_path, UID);
+	return true;
 }
 
 bool Engine::Resource::TextureArrayManager::load_textures_from_queue() {
@@ -108,16 +123,20 @@ void Engine::Resource::TextureArrayManager::mark_queue_ready() {
 	queue_ready = true;
 }
 
-void Engine::Resource::TextureArrayManager::load_texture(std::filesystem::path file_path, std::string UID) {
+bool Engine::Resource::TextureArrayManager::load_texture(std::filesystem::path file_path, std::string UID) {
 	int imgWidth, imgHeight, numOfColorChannels;
-	stbi_set_flip_vertically_on_load(true);
 	unsigned char* image_bytes = stbi_load(file_path.string().c_str(), &imgWidth, &imgHeight, &numOfColorChannels, 0);
+
+	if (image_bytes == nullptr) {
+		Engine::Util::Logger::Log("Couldn't read Texture file <" + file_path.string() + ">!");
+		return false;
+	}
 
 	int texture_array_index = get_array_index(imgWidth, imgHeight);
 	if (texture_array_index < 0) {
-		stbi_set_flip_vertically_on_load(false);
 		stbi_image_free(image_bytes);
-		throw std::runtime_error("Texture <" + file_path.string() + "> has incorrect size!");
+		Engine::Util::Logger::Log("Texture <" + file_path.string() + "> has incorrect size!");
+		return false;
 	}
 
 	uint16_t tex_index = texture_arrays[texture_array_index]->get_current_size();
@@ -125,14 +144,13 @@ void Engine::Resource::TextureArrayManager::load_texture(std::filesystem::path f
 
 	texture_arrays[texture_array_index]->add_2D_texture(image_bytes, imgWidth, imgHeight, numOfColorChannels);
 
-	stbi_set_flip_vertically_on_load(false);
 	stbi_image_free(image_bytes);
+
+	return true;
 }
 
 void Engine::Resource::TextureArrayManager::load_texture(TextureResourceData& data) {
 	int texture_array_index = get_array_index(data.imgWidth, data.imgHeight);
-	if (texture_array_index < 0)
-		throw std::runtime_error("Texture <" + data.file_path.string() + "> has incorrect size!");
 
 	uint16_t tex_index = texture_arrays[texture_array_index]->get_current_size();
 	UID_to_ID[data.UID] = TextureID{ static_cast<uint16_t>(texture_array_index), tex_index };

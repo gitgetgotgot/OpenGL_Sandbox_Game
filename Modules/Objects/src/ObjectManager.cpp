@@ -1,4 +1,6 @@
 #include "Objects/ObjectManager.h"
+#include <Utility/Logger.h>
+#include <Objects/ObjectFactory.h>
 
 Engine::Object::ObjectInfo* Engine::Object::ObjectManager::register_object_info(
 	std::unique_ptr<Engine::Object::ObjectInfo> new_object_info, const std::string& UID
@@ -20,6 +22,30 @@ void Engine::Object::ObjectManager::ClearData() {
 	UID_storage = {};
 	UID_to_ID = {};
 	std::vector<std::unique_ptr<ObjectInfo>>().swap(objects);
+}
+
+bool Engine::Object::ObjectManager::load_objects_from_data(
+	std::filesystem::path& data_file_path,
+	Engine::Util::DataParser& parser
+) {
+	using DP = Engine::Util::DataParser;
+	for (const auto& j : parser.node_root) {
+		std::string class_uid;
+		if (DP::get_json_value<std::string, DP::JsonValue::V_STRING>(class_uid, j, "class_UID") == false) {
+			Engine::Util::Logger::Log("Invalid syntax for Object in <" + data_file_path.string() + ">!");
+			return false;
+		}
+		auto factory_id = Engine::Object::ObjectFactoryRegistry::Instance().get_factory_id(class_uid);
+		if (!factory_id) {
+			Engine::Util::Logger::Log("Referenced Class <" + class_uid + "> not found in >" + data_file_path.string() + ">!");
+			return false;
+		}
+		Engine::Object::_ObjectFactoryI* factory = Engine::Object::ObjectFactoryRegistry::Instance().get_factory(factory_id.value());
+		if (factory->add_object(j) == false) {
+			return false;
+		}
+	}
+	return true;
 }
 
 Engine::Object::ObjectInfo* Engine::Object::ObjectManager::get_object_info(uint16_t ID) {

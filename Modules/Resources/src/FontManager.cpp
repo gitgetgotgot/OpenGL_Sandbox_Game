@@ -1,8 +1,9 @@
 #include "Resources/FontManager.h"
 #include "Resources/TextureArrayMgr.h"
+#include <Utility/Logger.h>
 #include <fstream>
 
-void Engine::Resource::FontManager::load_font(std::filesystem::path font_folder_path, std::string source) {
+bool Engine::Resource::FontManager::load_font(std::filesystem::path font_folder_path, std::string source) {
 	std::filesystem::path file_path;
 	std::string file_name;
 	std::string font_name = font_folder_path.filename().string();
@@ -16,7 +17,8 @@ void Engine::Resource::FontManager::load_font(std::filesystem::path font_folder_
 	file_path = font_folder_path / file_name;
 	if (!std::filesystem::exists(file_path)) {
 		fonts.pop_back();
-		throw std::runtime_error("<" + file_name + "> not found in " + font_folder_path.string());
+		Engine::Util::Logger::Log("<" + file_name + "> not found in " + font_folder_path.string());
+		return false;
 	}
 	std::ifstream atlas_file(file_path, std::ios::binary);
 
@@ -30,7 +32,8 @@ void Engine::Resource::FontManager::load_font(std::filesystem::path font_folder_
 	file_path = font_folder_path / file_name;
 	if (!std::filesystem::exists(file_path)) {
 		fonts.pop_back();
-		throw std::runtime_error("<" + file_name + "> not found in " + font_folder_path.string());
+		Engine::Util::Logger::Log("<" + file_name + "> not found in " + font_folder_path.string());
+		return false;
 	}
 	std::ifstream meta_file(file_path, std::ios::binary);
 
@@ -46,6 +49,8 @@ void Engine::Resource::FontManager::load_font(std::filesystem::path font_folder_
 
 	std::string font_UID = source + ":" + font_name;
 	Engine::Resource::TextureArrayManager::Instance().load_font_texture(sdf.data(), glyph_atlas_size, glyph_atlas_size, 1, font_UID);
+
+	return true;
 }
 
 std::optional<uint32_t> Engine::Resource::FontManager::get_font_id(std::string font_UID) {

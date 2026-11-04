@@ -58,6 +58,7 @@ target_link_libraries(DeviceSystem
 target_link_libraries(DeviceSystem PUBLIC Utility)
 
 target_link_libraries(Audio PUBLIC miniaudio::miniaudio)
+target_link_libraries(Audio PRIVATE Utility)
 
 target_link_libraries(Physics PUBLIC glm::glm)
 
@@ -79,18 +80,33 @@ target_link_libraries(EngineAPI PUBLIC Entities)
 
 
 target_compile_definitions(Core PRIVATE
-    $<$<CONFIG:Debug>:RESOURCE_ROOT="${PROJECT_SOURCE_DIR}">
-    $<$<CONFIG:Release>:RESOURCE_ROOT="">
     $<$<CONFIG:Debug>:DEBUG_MODE=1>
     $<$<CONFIG:Release>:DEBUG_MODE=0>
 )
 
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    COMMAND ${CMAKE_COMMAND} -E remove_directory "$<TARGET_FILE_DIR:${PROJECT_NAME}>/Resources"
+    COMMAND ${CMAKE_COMMAND} -E 
+        $<IF:$<CONFIG:Debug>,create_symlink,copy_directory>
         "${CMAKE_CURRENT_SOURCE_DIR}/Resources"
         "$<TARGET_FILE_DIR:${PROJECT_NAME}>/Resources"
-    COMMENT "Copy Resources folder in build folder"
+    COMMAND ${CMAKE_COMMAND} -E echo "Resources successfully configured for $<CONFIG> mode."
+    COMMENT "Configuring Resources (Symlink for Debug, Copy for Release)."
+)
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/Config"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/Config"
+    COMMENT "Copy Config folder to build folder."
+)
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/Mods"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/Mods"
+    COMMENT "Copy Config folder to build folder."
 )
 
 add_executable(DataCompiler

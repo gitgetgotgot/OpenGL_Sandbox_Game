@@ -1,11 +1,10 @@
 #pragma once
 #include <Utility/DataParser.h>
 #include <glm/glm.hpp>
-#include <vector>
-#include <string>
 #include <unordered_map>
 #include <cstdint>
 #include <optional>
+#include <mutex>
 
 namespace Engine::Resource {
 	class Sprite {
@@ -50,7 +49,13 @@ namespace Engine::Resource {
 			return spriteMgr;
 		}
 		void setup();
+		void RememberBaseData();
 		void ClearData();
+		bool load_sprites_from_data(
+			std::filesystem::path& data_file_path,
+			Engine::Util::DataParser& parser,
+			std::mutex& resources_mutex
+		);
 		void add_sprite(
 			std::string UID, uint32_t U0, uint32_t V0, uint32_t width, uint32_t height,
 			float base_world_size, uint32_t tex_array_id, uint32_t tex_id

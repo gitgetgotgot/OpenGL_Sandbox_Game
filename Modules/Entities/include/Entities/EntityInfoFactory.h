@@ -5,7 +5,7 @@ namespace Engine::Entity {
 	class EntityInfoFactoryI {
 	public:
 		virtual ~EntityInfoFactoryI() {}
-		virtual void add_entity_info(const nlohmann::json& data) = 0;
+		virtual bool add_entity_info(const nlohmann::json& data) = 0;
 	protected:
 		EntityInfo* register_entity_info(std::unique_ptr<EntityInfo> new_entity_info, const std::string& UID);
 	};
@@ -14,9 +14,10 @@ namespace Engine::Entity {
 	class EntityInfoFactory : public EntityInfoFactoryI {
 	public:
 		static_assert(std::is_base_of_v<EntityInfo, T>, "T must inherit from EntityInfo");
-		void add_entity_info(const nlohmann::json& data) override {
+		bool add_entity_info(const nlohmann::json& data) override {
 			T* info = create_entity_info(data);
 			info->fill_data(data);
+			return true;
 		}
 	protected:
 		T* create_entity_info(const nlohmann::json& data) {

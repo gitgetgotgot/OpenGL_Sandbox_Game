@@ -7,7 +7,7 @@
 * game UI
 * player
 * world and entities
-* engine API for modding and tools for data parcing
-* remove resource typename from UID in different resources (type of resource is already known in each manager and loader)
-	(Item:Core:Name ---> Core:Name)
-	Also check UID loading in object class!!!
+* engine API for modding and tools for data parcing?
+* think about mutex lock in sprites and audio loaders?
+* remake json load for objects and entities in their classes and factory interface
+* probably remake usage of animator components and update them as components of entities in AnimationSystem

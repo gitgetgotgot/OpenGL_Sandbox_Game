@@ -305,7 +305,7 @@
       }
     ],
     "collision": false,
-    "lights": [ "Light:Core:Torch" ],
+    "lights": [ "Core:Torch" ],
     "sprites": [ "Core:Torch" ]
   },
   {
@@ -320,7 +320,7 @@
       }
     ],
     "collision": false,
-    "lights": [ "Light:Core:Torch" ],
+    "lights": [ "Core:Torch" ],
     "sprites": [ "Core:Torch(L)" ]
   },
   {
@@ -335,7 +335,7 @@
       }
     ],
     "collision": false,
-    "lights": [ "Light:Core:Torch" ],
+    "lights": [ "Core:Torch" ],
     "sprites": [ "Core:Torch(R)" ]
   },
   {
@@ -350,7 +350,7 @@
       }
     ],
     "collision": false,
-    "lights": [ "Light:Core:IceTorch" ],
+    "lights": [ "Core:IceTorch" ],
     "sprites": [ "Core:Ice Torch" ]
   },
   {
@@ -365,7 +365,7 @@
       }
     ],
     "collision": false,
-    "lights": [ "Light:Core:IceTorch" ],
+    "lights": [ "Core:IceTorch" ],
     "sprites": [ "Core:Ice Torch(L)" ]
   },
   {
@@ -380,7 +380,7 @@
       }
     ],
     "collision": false,
-    "lights": [ "Light:Core:IceTorch" ],
+    "lights": [ "Core:IceTorch" ],
     "sprites": [ "Core:Ice Torch(R)" ]
   },
   {

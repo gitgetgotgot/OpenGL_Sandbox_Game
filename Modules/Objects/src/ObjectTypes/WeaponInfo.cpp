@@ -1,5 +1,4 @@
 #include "Objects/ObjectTypes/WeaponInfo.h"
-#include <Resources/ResourceErrors.h>
 
 void Engine::Object::WeaponInfo::fill_data(const nlohmann::json& data) {
 	ObjectInfo::fill_data(data);
@@ -27,7 +26,7 @@ void Engine::Object::WeaponInfo::fill_data(const nlohmann::json& data) {
 		this->use_mana_cost = use_mana_cost;
 	}
 	catch (const std::exception& e) {
-		Engine::Resource::throw_resource_error(uid, e.what());
+		//Engine::Resource::throw_resource_error(uid, e.what());
 	}
 	/*auto& sounds_v = data["sounds"].array;
 	uint8_t size = sounds_v.size();

@@ -2,8 +2,10 @@
 #include <deque>
 #include <optional>
 #include <memory>
+#include <mutex>
 #include <unordered_map>
 #include "Audio/AudioData.h"
+#include <Utility/DataParser.h>
 
 namespace Engine::Audio {
     class AudioSystem {
@@ -16,16 +18,22 @@ namespace Engine::Audio {
         void uninit();
         void update();
 
-        void load_audio_as_pcm(
+        bool load_audio_from_data(
+            std::filesystem::path& audio_folder_path,
+            std::filesystem::path& data_file_path,
+            Engine::Util::DataParser& parser,
+            std::mutex& resources_mutex
+        );
+        bool load_audio_as_pcm(
             const std::filesystem::path& filePath,
-            const std::string UID,
-            const std::string group_UID,
+            const std::string& UID,
+            const std::string& group_UID,
             uint8_t MAX_INSTANCE
         );
-        void load_audio_as_stream(
+        bool load_audio_as_stream(
             const std::filesystem::path& filePath,
-            const std::string UID,
-            const std::string group_UID,
+            const std::string& UID,
+            const std::string& group_UID,
             uint8_t MAX_INSTANCE
         );
         void add_sound_group(const std::string UID);

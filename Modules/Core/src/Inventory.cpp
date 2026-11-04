@@ -477,7 +477,7 @@ void Inventory::update_crafts() {
 	update_dynamic_craft_slots_items();*/
 }
 
-Engine::Resource::CraftableItem& Inventory::get_craft_item(uint32_t index) {
+Engine::Core::Craft::CraftableItem& Inventory::get_craft_item(uint32_t index) {
 	//return CraftingSystem::get_instance().get_available_craft(index);
-	return Engine::Resource::CraftManager::Instance().get_craft(0);
+	return Engine::Core::Craft::CraftManager::Instance().get_craft(0);
 }

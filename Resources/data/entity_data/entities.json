@@ -1,6 +1,6 @@
 [
   {
-    "UID": "Entity:Core:Slime",
+    "UID": "Core:Slime",
     "info_class_UID": "Class:Core:Mob",
     "class_UID": "Class:Core:Slime",
     "tags": [ "Core:Slime" ],
@@ -13,7 +13,7 @@
     "collider_h": 1.5,
     "drops": [
       {
-        "item_UID": "Item:Core:Gel",
+        "item_UID": "Core:Gel",
         "chance": 50.0,
         "min": 2,
         "max": 2

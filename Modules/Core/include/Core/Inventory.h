@@ -1,5 +1,5 @@
 #pragma once
-#include <Resources/Craft.h>
+#include <Core/System/Craft.h>
 #include <Resources/ResourceData.h>
 #include <glm/ext/vector_float2.hpp>
 
@@ -31,7 +31,7 @@ public:
 	void update_dynamic_craft_slots();
 	void update_dynamic_craft_slots_items();
 	void update_crafts();
-	Engine::Resource::CraftableItem& get_craft_item(uint32_t index);
+	Engine::Core::Craft::CraftableItem& get_craft_item(uint32_t index);
 
 	bool is_open = false;
 	bool has_open_chest = false;

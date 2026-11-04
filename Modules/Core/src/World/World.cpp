@@ -593,6 +593,7 @@ bool World::destroy_tile(uint32_t world_x, uint32_t world_y) {
 }
 
 void World::save_world_data_in_file(const char* filePath) {
+	/*
 	std::ofstream write(filePath, std::ios::binary);
 	uint16_t write_value = 0;
 
@@ -634,4 +635,5 @@ void World::save_world_data_in_file(const char* filePath) {
 		}
 	}
 	write.close();
+	*/
 }

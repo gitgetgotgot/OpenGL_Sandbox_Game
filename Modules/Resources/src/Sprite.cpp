@@ -1,5 +1,6 @@
 #include "Resources/Sprite.h"
 #include "Resources/TextureArrayMgr.h"
+#include <Utility/Logger.h>
 
 Engine::Resource::Sprite::Sprite(
 	float U0, float V0, float width, float height,
@@ -48,9 +49,79 @@ void Engine::Resource::SpriteManager::setup() {
 	UID_to_ID["Core:Empty"] = 0;
 }
 
+void Engine::Resource::SpriteManager::RememberBaseData() {
+	MINIMUM_9SLICED_SPRITES_SIZE = sprites9sliced.size();
+	MINIMUM_SPRITES_SIZE = sprites.size();
+}
+
 void Engine::Resource::SpriteManager::ClearData() {
 	sprites.resize(MINIMUM_SPRITES_SIZE);
 	sprites9sliced.resize(MINIMUM_9SLICED_SPRITES_SIZE);
+}
+
+bool Engine::Resource::SpriteManager::load_sprites_from_data(
+	std::filesystem::path& data_file_path,
+	Engine::Util::DataParser& parser,
+	std::mutex& resources_mutex
+) {
+	using DP = Engine::Util::DataParser;
+	for (const auto& j : parser.node_root) {
+		std::string UID, texture_UID;
+		uint32_t padding, u0, v0, w, h;
+		nlohmann::json sprite;
+
+		bool ok = true;
+		ok &= DP::get_json_value<std::string, DP::JsonValue::V_STRING>(UID, j, "UID");
+		ok &= DP::get_json_value<std::string, DP::JsonValue::V_STRING>(texture_UID, j, "texture");
+
+		auto tex_id_opt = Engine::Resource::TextureArrayManager::Instance().get_texture_id(texture_UID);
+		if (!tex_id_opt.has_value()) {
+			Engine::Util::Logger::Log("Couldn't find referenced resource <" + texture_UID + "> for Sprite <" + UID + "> in <" + data_file_path.string() + ">!");
+			return false;
+		}
+		uint32_t tex_array_id = tex_id_opt.value().array_id;
+		uint32_t tex_id = tex_id_opt.value().index;
+
+		ok &= DP::get_json_value<uint32_t, DP::JsonValue::V_UINT>(padding, j, "padding");
+		ok &= DP::get_json_value<nlohmann::json, DP::JsonValue::V_OBJECT>(sprite, j, "sprite");
+		ok &= DP::get_json_value<uint32_t, DP::JsonValue::V_UINT>(u0, sprite, "U0");
+		ok &= DP::get_json_value<uint32_t, DP::JsonValue::V_UINT>(v0, sprite, "V0");
+		ok &= DP::get_json_value<uint32_t, DP::JsonValue::V_UINT>(w, sprite, "w");
+		ok &= DP::get_json_value<uint32_t, DP::JsonValue::V_UINT>(h, sprite, "h");
+
+		if (sprite.contains("border")) {
+			nlohmann::json border;
+			uint32_t left, right, top, bottom;
+			ok &= DP::get_json_value<nlohmann::json, DP::JsonValue::V_OBJECT>(border, sprite, "border");
+			ok &= DP::get_json_value<uint32_t, DP::JsonValue::V_UINT>(left, border, "left");
+			ok &= DP::get_json_value<uint32_t, DP::JsonValue::V_UINT>(right, border, "right");
+			ok &= DP::get_json_value<uint32_t, DP::JsonValue::V_UINT>(top, border, "top");
+			ok &= DP::get_json_value<uint32_t, DP::JsonValue::V_UINT>(bottom, border, "bottom");
+
+			if (ok) {
+				std::lock_guard lock(resources_mutex);
+				add_sprite9sliced(UID, u0, v0, w, h, left, right, top, bottom, tex_array_id, tex_id);
+			}
+			else {
+				Engine::Util::Logger::Log("Invalid syntax for Sprite in <" + data_file_path.string() + ">!");
+				return false;
+			}
+		}
+		else {
+			float base_size;
+			ok &= DP::get_json_value<float, DP::JsonValue::V_FLOAT>(base_size, sprite, "base_size");
+
+			if (ok) {
+				std::lock_guard lock(resources_mutex);
+				add_sprite(UID, u0, v0, w, h, base_size, tex_array_id, tex_id);
+			}
+			else {
+				Engine::Util::Logger::Log("Invalid syntax found for Sprite in <" + data_file_path.string() + ">!");
+				return false;
+			}
+		}
+	}
+	return true;
 }
 
 void Engine::Resource::SpriteManager::add_sprite(

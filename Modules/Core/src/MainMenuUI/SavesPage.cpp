@@ -105,8 +105,7 @@ void SavesPage::setup_page() {
 }
 
 void SavesPage::load_saves() {
-	std::filesystem::path root = RESOURCE_ROOT;
-	std::filesystem::path saves_path = root / "Saves";
+	std::filesystem::path saves_path = "Saves";
 	if (!std::filesystem::exists(saves_path)) {
 		std::filesystem::create_directory(saves_path);
 		return;
@@ -126,8 +125,8 @@ void SavesPage::load_saves() {
 }
 
 void SavesPage::load_save(const std::string& save_name) {
-	std::filesystem::path root = RESOURCE_ROOT;
-	std::filesystem::path save_path = root / "Saves" / save_name;
+	std::filesystem::path root = "Saves";
+	std::filesystem::path save_path = root / save_name;
 	if (!std::filesystem::exists(save_path)) {
 		return;
 	}

@@ -4,8 +4,9 @@
 #include <unordered_map>
 #include <vector>
 #include <Utility/DynamicArray.h>
+#include <Utility/DataParser.h>
 
-namespace Engine::Resource {
+namespace Engine::Core::Craft {
 	struct CraftingPair {
 		CraftingPair() {}
 		CraftingPair(uint16_t item_id, uint16_t amount) :
@@ -42,6 +43,10 @@ namespace Engine::Resource {
 			return c;
 		}
 		void ClearData();
+		bool load_crafts_from_data(
+			std::filesystem::path& data_file_path,
+			Engine::Util::DataParser& parser
+		);
 		void add_craft(
 			uint16_t item_id, uint16_t amount, Engine::Util::DynamicArray<uint16_t> craft_tags,
 			CraftableItem::CraftTagsUsage tags_usage, Engine::Util::DynamicArray<CraftingPair> items_needed

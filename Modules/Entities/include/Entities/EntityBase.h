@@ -1,5 +1,5 @@
 #pragma once
-#include <Resources/Animation.h>
+#include "Entities/AnimatorComp.h"
 #include "Entities/EntityData.h"
 
 namespace Engine::Entity {

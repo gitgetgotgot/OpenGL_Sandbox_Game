@@ -37,10 +37,13 @@ namespace Engine::Resource {
 		void init();
 		void uninit();
 		void bind_texture_arrays();
-		void add_texture_to_queue(std::filesystem::path& file_path, std::string& UID);
+		// may have errors while loading data, so return bool
+		bool add_texture_to_queue(std::filesystem::path& file_path, std::string& UID);
+		// returns true if all textures are loaded
 		bool load_textures_from_queue();
 		void mark_queue_ready();
-		void load_texture(std::filesystem::path file_path, std::string UID);
+		// may have errors while loading data, so return bool
+		bool load_texture(std::filesystem::path file_path, std::string UID);
 		void load_texture(TextureResourceData& data);
 		void load_font_texture(unsigned char* data, int width, int height, int channels, std::string UID);
 		std::optional<TextureID> get_texture_id(std::string& UID);

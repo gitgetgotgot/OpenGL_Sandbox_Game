@@ -30,7 +30,7 @@ namespace Engine::Resource {
 			static FontManager mgr;
 			return mgr;
 		}
-		void load_font(std::filesystem::path font_folder_path, std::string source);
+		bool load_font(std::filesystem::path font_folder_path, std::string source);
 		std::optional<uint32_t> get_font_id(std::string font_UID);
 		Font& get_font(uint32_t font_id);
 	private:

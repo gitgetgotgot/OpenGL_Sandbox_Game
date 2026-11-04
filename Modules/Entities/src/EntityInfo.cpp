@@ -2,7 +2,6 @@
 #include "Entities/EntityFactory.h"
 #include <Resources/Light.h>
 #include <Resources/TagRegistry.h>
-#include <Resources/ResourceErrors.h>
 
 Engine::Entity::EntityInfo::EntityInfo(EntityMainType type) : main_type{ type } {}
 
@@ -32,8 +31,9 @@ void Engine::Entity::EntityInfo::fill_data(const nlohmann::json& data) {
 
 			if (light_id_opt.has_value())
 				this->lights[i] = light_id_opt.value();
-			else
-				Engine::Resource::throw_reference_error(std::string(this->uid), light_UID);
+			else {
+				//Engine::Resource::throw_reference_error(std::string(this->uid), light_UID);
+			}
 		}
 	}
 	if (data.contains("tags")) {
@@ -47,8 +47,9 @@ void Engine::Entity::EntityInfo::fill_data(const nlohmann::json& data) {
 
 			if (tag_id_opt.has_value())
 				this->tags[i] = tag_id_opt.value();
-			else
-				Engine::Resource::throw_reference_error(std::string(this->uid), tag_UID);
+			else {
+				//Engine::Resource::throw_reference_error(std::string(this->uid), tag_UID);
+			}
 		}
 		_sort_tags();
 	}
@@ -56,8 +57,9 @@ void Engine::Entity::EntityInfo::fill_data(const nlohmann::json& data) {
 	auto entity_factory_id_opt = EntityFactoryRegistry::Instance().get_factory_id(entity_class_UID);
 	if (entity_factory_id_opt.has_value())
 		this->factory_ID = entity_factory_id_opt.value();
-	else
-		Engine::Resource::throw_reference_error(std::string(this->uid), entity_class_UID);
+	else {
+		//Engine::Resource::throw_reference_error(std::string(this->uid), entity_class_UID);
+	}
 }
 
 void Engine::Entity::EntityInfo::fill_dependent_data(const nlohmann::json& data) {

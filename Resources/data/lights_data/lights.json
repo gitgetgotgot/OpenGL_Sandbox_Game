@@ -1,83 +1,83 @@
 [
   {
-    "UID": "Light:Core:Torch",
+    "UID": "Core:Torch",
     "radius": 5.0,
     "r": 1.0,
     "g": 1.0,
     "b": 0.0
   },
   {
-    "UID": "Light:Core:IceTorch",
+    "UID": "Core:IceTorch",
     "radius": 5.0,
     "r": 0.0,
     "g": 0.9,
     "b": 1.0
   },
   {
-    "UID": "Light:Core:Fire",
+    "UID": "Core:Fire",
     "radius": 3.0,
     "r": 1.0,
     "g": 1.0,
     "b": 0.0
   },
   {
-    "UID": "Light:Core:FrostFire",
+    "UID": "Core:FrostFire",
     "radius": 3.0,
     "r": 0.0,
     "g": 0.9,
     "b": 1.0
   },
   {
-    "UID": "Light:Core:StarLight",
+    "UID": "Core:StarLight",
     "radius": 3.0,
     "r": 1.0,
     "g": 0.9,
     "b": 0.9
   },
   {
-    "UID": "Light:Core:DarkLight",
+    "UID": "Core:DarkLight",
     "radius": 3.0,
     "r": 0.306,
     "g": 0.086,
     "b": 0.702
   },
   {
-    "UID": "Light:Core:HellLight",
+    "UID": "Core:HellLight",
     "radius": 3.0,
     "r": 1.0,
     "g": 0.76,
     "b": 0.03
   },
   {
-    "UID": "Light:Core:FireSpark",
+    "UID": "Core:FireSpark",
     "radius": 1.0,
     "r": 1.0,
     "g": 1.0,
     "b": 0.0
   },
   {
-    "UID": "Light:Core:FrostFireSpark",
+    "UID": "Core:FrostFireSpark",
     "radius": 1.0,
     "r": 0.0,
     "g": 0.9,
     "b": 1.0
   },
   {
-    "UID": "Light:Core:BulletLight",
+    "UID": "Core:BulletLight",
     "radius": 1.0,
     "r": 0.5,
     "g": 0.0,
     "b": 0.0
   },
   {
-    "UID": "Light:Core:MagentaBulletLight",
+    "UID": "Core:MagentaBulletLight",
     "radius": 1.0,
     "r": 0.506,
     "g": 0.286,
     "b": 0.902
   },
   {
-    "UID": "Light:Core:RedLight",
+    "UID": "Core:RedLight",
     "radius": 3.0,
     "r": 0.8,
     "g": 0.2,

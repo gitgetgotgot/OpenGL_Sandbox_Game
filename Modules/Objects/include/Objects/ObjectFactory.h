@@ -4,7 +4,7 @@
 namespace Engine::Object {
 	class _ObjectFactoryI {
 	public:
-		virtual void add_object(const nlohmann::json& data) = 0;
+		virtual bool add_object(const nlohmann::json& data) = 0;
 		virtual ~_ObjectFactoryI() {}
 	protected:
 		ObjectInfo* register_object_info(std::unique_ptr<ObjectInfo> new_object_info, const std::string& UID);
@@ -15,9 +15,10 @@ namespace Engine::Object {
 	public:
 		static_assert(std::is_base_of_v<ObjectInfo, T>, "T must inherit from ObjectInfo");
 
-		void add_object(const nlohmann::json& data) override {
+		bool add_object(const nlohmann::json& data) override {
 			T* info = create_object_info(data);
 			info->fill_data(data);
+			return true;
 		}
 	protected:
 		T* create_object_info(const nlohmann::json& data) {

@@ -3,9 +3,9 @@
 #include <Utility/GameContext.h>
 
 void Engine::Entity::Slime::on_create() {
-	anim_idle = anim_controller.get_clip_id(0);
-	anim_jump = anim_controller.get_clip_id(1);
-	anim_controller.play(anim_idle);
+	anim_idle = anim_comp.get_clip_id(0);
+	anim_jump = anim_comp.get_clip_id(1);
+	anim_comp.play(anim_idle);
 }
 
 void Engine::Entity::Slime::on_destroy() {
@@ -13,7 +13,7 @@ void Engine::Entity::Slime::on_destroy() {
 }
 
 void Engine::Entity::Slime::update() {
-	anim_controller.update();
+	anim_comp.update();
 
 	if (physics.collision_mask & Engine::Physics::CollisionType::BOTTOM || physics.platform_collision) {
 		time_standing += Engine::Util::TimeManager::deltaTime;
@@ -41,16 +41,16 @@ void Engine::Entity::Slime::update() {
 		prev_state = current_state;
 	}
 	
-	current_sprite = anim_controller.current_sprite;
+	current_sprite = anim_comp.current_sprite;
 }
 
 void Engine::Entity::Slime::change_anim() {
 	switch (current_state) {
 	case SLIME_ANIM_STATE::SLIME_IDLE:
-		anim_controller.play(anim_idle);
+		anim_comp.play(anim_idle);
 		break;
 	case SLIME_ANIM_STATE::SLIME_JUMP:
-		anim_controller.play(anim_jump);
+		anim_comp.play(anim_jump);
 		break;
 	}
 }

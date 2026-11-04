@@ -8,8 +8,7 @@ void SettingsManager::load_settings() {
 	mixer_music.setup_mixer("Core:Music");
 	mixer_sfx.setup_mixer("Core:SFX");
 
-	std::filesystem::path settings_file_path = RESOURCE_ROOT;
-	settings_file_path /= "Config/game_config.json";
+	std::filesystem::path settings_file_path = "Config/game_config.json";
 	if (!std::filesystem::exists(settings_file_path)) {
 		throw std::runtime_error("Fatal Error, Couldn't load settings file!");
 	}

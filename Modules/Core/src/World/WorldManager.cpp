@@ -1,6 +1,7 @@
 #include "Core/World/WorldManager.h"
 #include "Core/MainMenuUI/SavesPage.h"
 #include <Objects/ObjectManager.h>
+#include <fstream>
 #include <iostream>
 
 void WorldManager::create_world(const std::string& name, const World::WorldOptions& options) {
@@ -307,8 +308,8 @@ void WorldManager::_save_world_data(
 	const WorldSlot* world_slots,
 	const std::unordered_map<uint32_t, std::unique_ptr<Engine::Object::ObjectComponent>>& components
 ) {
-	std::filesystem::path root = RESOURCE_ROOT;
-	std::filesystem::path save_path = root / "Saves" / name;
+	std::filesystem::path root = "Saves";
+	std::filesystem::path save_path = root / name;
 	std::error_code ec;
 	// all necessary folders will be created if they dont't exist (if no error occurs)
 	std::filesystem::create_directories(save_path, ec);

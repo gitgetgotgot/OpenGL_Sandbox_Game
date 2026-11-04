@@ -11,6 +11,10 @@ namespace Engine::Entity {
 		}
 		EntityInfo* register_entity_info(std::unique_ptr<EntityInfo> new_entity_info, const std::string& UID);
 		void ClearData();
+		bool load_entities_from_data(
+			std::filesystem::path& data_file_path,
+			Engine::Util::DataParser& parser
+		);
 		EntityInfo* get_entity_info(uint16_t ID);
 		std::optional<uint16_t> get_entity_id(std::string_view UID);
 	private:

@@ -1,6 +1,7 @@
 #include <Utility/DataParser.h>
 #include <Utility/Logger.h>
 #include <Utility/Hash.h>
+#include <fstream>
 
 bool Engine::Util::DataParser::parse_data(std::filesystem::path& path, bool parse_json_file) {
 	if (parse_json_file) return parse_JSON_format(path);

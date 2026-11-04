@@ -9,6 +9,7 @@
 #include <Audio/AudioSystem.h>
 #include <Resources/TextureArrayMgr.h>
 #include <Utility/TimeManager.h>
+#include <Utility/Logger.h>
 #include <iostream>
 
 GameEngine::~GameEngine() {
@@ -146,7 +147,10 @@ void GameEngine::init_main_resources() {
 
 	Engine::Core::EntitySystem::Instance().init();
 
-	ResourceLoader::Instance().load_minimal_core_resources();
+	if (ResourceLoader::Instance().load_minimal_core_resources() == false) {
+		DeviceContext::exit_application();
+		std::cout << Engine::Util::Logger::Get_Last_Log() << std::endl;
+	}
 	SettingsManager::Instance().load_settings();
 	MenuUIController::Instance().init();
 	GameUIController::Instance().init();
@@ -163,13 +167,8 @@ void GameEngine::init_main_resources() {
 		uint16_t amount = rand() % 10000;
 		player.inventory.place_item(i, amount);
 	}
-
 	player.inventory.update_crafts();
 	player.inventory.update_dynamic_craft_slots_items();
-	player.inventory.current_player_flags = (uint32_t)CraftCondition::c_WORKBENCH;
-
-	world = std::make_unique<World>();
-	world->init(&player);
 	*/
 }
 
@@ -185,13 +184,17 @@ void GameEngine::loading_update() {
 	ResourceLoader::Instance().load_resources_from_queue();
 
 	// change update proc if resources are loaded
-	if (ResourceLoader::Instance().resources_loading_ready()) {
+	if (ResourceLoader::Instance().get_loading_status() != ResourceLoader::LOAD_NOT_READY) {
 		ResourceLoader::Instance().stop_resources_loading();
 		MenuUIController::Instance().stop_loading_resources();
 		MenuUIController::Instance().open_main_menu_page();
 		MenuUIController::Instance().load_mods();
 		game_update_state = Game_State::inMainMenu;
 		update_proc = &GameEngine::gameplay_update;
+		if (ResourceLoader::Instance().get_loading_status() == ResourceLoader::LOAD_FAILED) {
+			DeviceContext::exit_application();
+			std::cout << Engine::Util::Logger::Get_Last_Log() << std::endl;
+		}
 	}
 }
 

@@ -1,5 +1,5 @@
 #include "Audio/AudioSystem.h"
-#include <iostream>
+#include <Utility/Logger.h>
 
 void Engine::Audio::AudioSystem::init() {
     ma_result res = ma_engine_init(nullptr, &audio_engine);
@@ -68,31 +68,72 @@ void Engine::Audio::AudioSystem::update() {
     }
 }
 
-void Engine::Audio::AudioSystem::load_audio_as_pcm(
+bool Engine::Audio::AudioSystem::load_audio_from_data(
+    std::filesystem::path& audio_folder_path,
+    std::filesystem::path& data_file_path,
+    Engine::Util::DataParser& parser,
+    std::mutex& resources_mutex
+) {
+    using DP = Engine::Util::DataParser;
+
+    for (const auto& j : parser.node_root) {
+        std::string UID, file_path, group;
+        bool is_pcm;
+        uint8_t max_instance;
+
+        bool ok = true;
+        ok &= DP::get_json_value<std::string, DP::JsonValue::V_STRING>(UID, j, "UID");
+        ok &= DP::get_json_value<std::string, DP::JsonValue::V_STRING>(file_path, j, "file");
+        ok &= DP::get_json_value<std::string, DP::JsonValue::V_STRING>(group, j, "group");
+        ok &= DP::get_json_value<bool, DP::JsonValue::V_BOOL>(is_pcm, j, "PCM");
+        ok &= DP::get_json_value<uint8_t, DP::JsonValue::V_UINT>(max_instance, j, "MAX_INSTANCE");
+        if (!ok) {
+            Engine::Util::Logger::Log("Invalid syntax for AudioSource in <" + data_file_path.string() + ">!");
+            return false;
+        }
+
+        if (ok) {
+            // Resources / audio / audiofile_path
+            std::filesystem::path audio_file_full_path = audio_folder_path / file_path;
+            if (is_pcm) {
+                std::lock_guard lock(resources_mutex);
+                ok &= load_audio_as_pcm(audio_file_full_path, UID, group, max_instance);
+            }
+            else {
+                std::lock_guard lock(resources_mutex);
+                ok &= load_audio_as_stream(audio_file_full_path, UID, group, max_instance);
+            }
+        }
+        if (!ok) return false;
+    }
+    return true;
+}
+
+bool Engine::Audio::AudioSystem::load_audio_as_pcm(
     const std::filesystem::path& filePath,
-    const std::string UID,
-    const std::string group_UID,
+    const std::string& UID,
+    const std::string& group_UID,
     uint8_t MAX_INSTANCE
 ) {
     ma_decoder decoder;
     ma_decoder_config config = ma_decoder_config_init(ma_format_f32, 2, 48000); // Stereo - 2 output channels
 
     if (ma_decoder_init_file(filePath.string().data(), &config, &decoder) != MA_SUCCESS) {
-        std::cerr << "[AudioSystem] File doesnt exist or currupted: " << filePath << std::endl;
-        return;
+        Engine::Util::Logger::Log("AudioSystem: File doesnt exist or currupted: " + filePath.string());
+        return false;
     }
     ma_uint64 total_frames = 0;
     if (ma_decoder_get_length_in_pcm_frames(&decoder, &total_frames) != MA_SUCCESS) {
-        std::cerr << "[AudioSystem] Failed to get length for: " << filePath << std::endl;
-        return;
+        Engine::Util::Logger::Log("AudioSystem: Failed to get length for: " + filePath.string());
+        return false;
     }
     auto audio_res = std::make_unique<AudioResource>();
     audio_res->pcm_data.resize(total_frames * decoder.outputChannels);
 
     ma_uint64 frames_read = 0;
     if (ma_decoder_read_pcm_frames(&decoder, audio_res->pcm_data.data(), total_frames, &frames_read) != MA_SUCCESS) {
-        std::cerr << "[AudioSystem] Failed to read PCM frames for: " << filePath << std::endl;
-        return;
+        Engine::Util::Logger::Log("AudioSystem: Failed to read PCM frames for: " + filePath.string());
+        return false;
     }
     audio_res->frames_read = frames_read;
     audio_res->channels = decoder.outputChannels;
@@ -102,8 +143,8 @@ void Engine::Audio::AudioSystem::load_audio_as_pcm(
     if (group_id.has_value())
         audio_res->sound_group_ID = group_id.value();
     else {
-        std::cerr << "[AudioSystem] Failed to get group for PCM sound: " << filePath << std::endl;
-        return;
+        Engine::Util::Logger::Log("AudioSystem: Failed to get group for PCM sound: " + filePath.string());
+        return false;
     }
 
     ma_decoder_uninit(&decoder);
@@ -114,19 +155,19 @@ void Engine::Audio::AudioSystem::load_audio_as_pcm(
     auto& new_audio_res = audio_pcm_database.emplace_back(std::move(audio_res));
 
     total_audio_pcm_bytes_size += new_audio_res->pcm_data.size() * sizeof(float);
+    return true;
 }
 
-void Engine::Audio::AudioSystem::load_audio_as_stream(
+bool Engine::Audio::AudioSystem::load_audio_as_stream(
     const std::filesystem::path& filePath,
-    const std::string UID,
-    const std::string group_UID,
+    const std::string& UID,
+    const std::string& group_UID,
     uint8_t MAX_INSTANCE
 ) {
     if (!std::filesystem::exists(filePath)) {
-        std::cerr << "[AudioSystem] File doesnt exist or currupted: " << filePath << std::endl;
-        return;
+        Engine::Util::Logger::Log("AudioSystem: File doesnt exist or currupted: " + filePath.string());
+        return false;
     }
-
     auto audio_res = std::make_unique<AudioStreamResource>();
     audio_res->file_path = filePath;
     audio_res->MAX_INSTANCE_COUNT = MAX_INSTANCE;
@@ -135,14 +176,15 @@ void Engine::Audio::AudioSystem::load_audio_as_stream(
     if (group_id.has_value())
         audio_res->sound_group_ID = group_id.value();
     else {
-        std::cerr << "[AudioSystem] Failed to get group for Stream sound: " << filePath << std::endl;
-        return;
+        Engine::Util::Logger::Log("AudioSystem: Failed to get group for Stream sound: " + filePath.string());
+        return false;
     }
 
     std::string_view uid_view = sound_UID.emplace_back(UID);
     UID_to_ID.emplace(uid_view, sounds.size());
     sounds.emplace_back(SoundEntry{ SoundType::SOUND_STREAM,static_cast<uint16_t>(audio_stream_database.size()) });
     audio_stream_database.emplace_back(std::move(audio_res));
+    return true;
 }
 
 void Engine::Audio::AudioSystem::add_sound_group(const std::string UID) {
@@ -154,7 +196,7 @@ void Engine::Audio::AudioSystem::add_sound_group(const std::string UID) {
 
 void Engine::Audio::AudioSystem::play_audio_directly(const std::filesystem::path& path) {
     if (!std::filesystem::exists(path)) {
-        std::cerr << "[AudioSystem] Audio file doesn't exist: " << std::filesystem::absolute(path) << std::endl;
+        Engine::Util::Logger::Log("AudioSystem: Audio file doesn't exist: " + path.string());
         return;
     }
     ma_engine_play_sound(&audio_engine, path.string().data(), nullptr);

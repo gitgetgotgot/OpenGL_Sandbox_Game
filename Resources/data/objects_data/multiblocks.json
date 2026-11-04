@@ -28,7 +28,7 @@
     ],
     "width": 3,
     "height": 2,
-    "lights": [ "Light:Core:Fire" ],
+    "lights": [ "Core:Fire" ],
     "sprites": [ "Core:Furnace" ]
   },
   {
@@ -140,7 +140,7 @@
         "duration": 10.0
       }
     ],
-    "lights": [ "Light:Core:RedLight" ],
+    "lights": [ "Core:RedLight" ],
     "sprites": [ "Core:Life Crystal" ]
   },
   {

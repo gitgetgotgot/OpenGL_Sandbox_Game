@@ -4,7 +4,6 @@
 #include <Resources/Light.h>
 #include <Resources/Effect.h>
 #include <Resources/TagRegistry.h>
-#include <Resources/ResourceErrors.h>
 
 Engine::Object::ObjectInfo::ObjectInfo(ObjectType type) : objectType{ type } {}
 
@@ -33,8 +32,9 @@ void Engine::Object::ObjectInfo::fill_data(const nlohmann::json& data) {
 
 		if (sprite_global_id.has_value())
 			this->sprites[i] = sprite_global_id.value();
-		else
-			Engine::Resource::throw_reference_error(std::string(this->uid), sprite_UID);
+		else {
+			//Engine::Resource::throw_reference_error(std::string(this->uid), sprite_UID);
+		}
 	}
 	if (data.contains("effects")) {
 		const auto& effects_v = data["effects"].get<std::vector<nlohmann::json>>();
@@ -48,8 +48,9 @@ void Engine::Object::ObjectInfo::fill_data(const nlohmann::json& data) {
 
 			if (effect_id_opt.has_value())
 				this->effects[i] = Engine::Resource::EffectEntry{ (uint16_t)effect_id_opt.value(), duration };
-			else
-				Engine::Resource::throw_reference_error(std::string(this->uid), effect_UID);
+			else {
+				//Engine::Resource::throw_reference_error(std::string(this->uid), effect_UID);
+			}
 		}
 	}
 	if (data.contains("lights")) {
@@ -63,8 +64,9 @@ void Engine::Object::ObjectInfo::fill_data(const nlohmann::json& data) {
 
 			if (light_id_opt.has_value())
 				this->lights[i] = light_id_opt.value();
-			else
-				Engine::Resource::throw_reference_error(std::string(this->uid), light_UID);
+			else {
+				//Engine::Resource::throw_reference_error(std::string(this->uid), light_UID);
+			}
 		}
 	}
 	if (data.contains("tags")) {
@@ -78,8 +80,9 @@ void Engine::Object::ObjectInfo::fill_data(const nlohmann::json& data) {
 
 			if (tag_id_opt.has_value())
 				this->tags[i] = tag_id_opt.value();
-			else
-				Engine::Resource::throw_reference_error(std::string(this->uid), tag_UID);
+			else {
+				//Engine::Resource::throw_reference_error(std::string(this->uid), tag_UID);
+			}
 		}
 		_sort_tags();
 	}
@@ -100,8 +103,9 @@ void Engine::Object::ObjectInfo::fill_dependent_data(const nlohmann::json& data)
 				this->drops[i].id = drop_global_id.value();
 				this->drops[i].amount = drop_Amount;
 			}
-			else
-				Engine::Resource::throw_reference_error(std::string(this->uid), drop_UID);
+			else {
+				//Engine::Resource::throw_reference_error(std::string(this->uid), drop_UID);
+			}
 		}
 	}
 }
