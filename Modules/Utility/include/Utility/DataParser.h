@@ -34,7 +34,7 @@ namespace Engine::Util {
 	};
 
 	template<typename T, DataParser::JsonValue value>
-	static bool DataParser::get_json_value(T& field, const nlohmann::json& j, const std::string& field_name) {
+	bool DataParser::get_json_value(T& field, const nlohmann::json& j, const std::string& field_name) {
 		if (auto it = j.find(field_name); it != j.end()) {
 			switch (value) {
 				case DataParser::JsonValue::V_INT:
@@ -63,7 +63,7 @@ namespace Engine::Util {
 	}
 
 	template<typename T, DataParser::JsonValue value>
-	static bool DataParser::get_json_array(T& field, const nlohmann::json& j, const std::string& field_name) {
+	bool DataParser::get_json_array(T& field, const nlohmann::json& j, const std::string& field_name) {
 		if (auto it = j.find(field_name); it != j.end()) {
 			if (!it->is_array()) return false;
 
