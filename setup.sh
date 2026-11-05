@@ -10,7 +10,8 @@ echo "=== Install Conan dependencies (Release) ==="
 conan install . --build=missing -s build_type=Release
 
 echo "=== CMake configuration (conan-default) ==="
-cmake --preset conan-default
+cmake --preset conan-debug
+cmake --preset conan-release
 
 echo "=== Ready! ==="
 echo "To build Debug (should run as administrator):   cmake --build --preset conan-debug"
