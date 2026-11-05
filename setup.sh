@@ -4,10 +4,10 @@
 set -e
 
 echo "=== Установка зависимостей через Conan (Debug) ==="
-conan install . --output-folder=build/debug --build=missing -s build_type=Debug -c tools.system.package_manager:mode=install
+conan install . --output-folder=build/debug --build=missing -s build_type=Debug -c tools.system.package_manager:mode=check
 
 echo "=== Установка зависимостей через Conan (Release) ==="
-conan install . --output-folder=build/release --build=missing -s build_type=Release -c tools.system.package_manager:mode=install
+conan install . --output-folder=build/release --build=missing -s build_type=Release -c tools.system.package_manager:mode=check
 
 echo "=== Настройка конфигурации CMake (Debug) ==="
 cmake -B build/debug -S . -DCMAKE_TOOLCHAIN_FILE=build/debug/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Debug
