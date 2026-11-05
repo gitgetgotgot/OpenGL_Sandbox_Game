@@ -8,6 +8,7 @@ namespace Engine::UI {
 	public:
 		UI_Object(uint32_t id);
 		void add_child(UI_Object* child);
+		void destroy() const;
 		template<typename T> UI_Component_Ptr<T> add_component();
 		template<typename T> UI_Component_Ptr<T> get_component();
 		template<typename T> T* add_component_behaviour();
@@ -22,7 +23,7 @@ namespace Engine::UI {
 	inline UI_Component_Ptr<T> UI_Object::add_component() {
 		static_assert(std::is_base_of_v<UI_Component<T>, T>, "T must inherit from UI_Component<T>");
 		void* comp = new T(object_id);
-		UI_ComponentManager::get_instance().add(comp, T::get_vt(), object_id);
+		UI_ComponentManager::Instance().add(comp, T::get_vt(), object_id);
 		return UI_Component_Ptr<T>(object_id);
 	}
 
@@ -51,6 +52,7 @@ namespace Engine::UI {
 		UI_Obj_Ptr& operator=(const UI_Obj_Ptr&) noexcept;
 		UI_Obj_Ptr& operator=(UI_Obj_Ptr&&) noexcept;
 		bool add_child(UI_Obj_Ptr& child) const;
+		void destroy();
 		UI_Obj_Ptr get_child_by_index(uint32_t index) const;
 		uint32_t get_id() const { return obj_id; }
 		void reset() { obj_id = 0; }

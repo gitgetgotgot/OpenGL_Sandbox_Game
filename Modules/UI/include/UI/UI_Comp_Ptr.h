@@ -31,17 +31,17 @@ namespace Engine::UI {
 
 	template<typename T>
 	inline T* UI_Component_Ptr<T>::operator->() const {
-		return static_cast<T*>(UI_ComponentManager::get_instance().get(obj_id)->component);
+		return static_cast<T*>(UI_ComponentManager::Instance().get(obj_id)->component);
 	}
 
 	template<typename T>
 	inline T& UI_Component_Ptr<T>::operator*() const {
-		return *static_cast<T*>(UI_ComponentManager::get_instance().get(obj_id)->component);
+		return *static_cast<T*>(UI_ComponentManager::Instance().get(obj_id)->component);
 	}
 
 	template<typename T>
 	inline UI_Component_Ptr<T>::operator bool() const {
-		return obj_id != 0 && UI_ComponentManager::get_instance().get(obj_id);
+		return obj_id != 0 && UI_ComponentManager::Instance().get(obj_id);
 	}
 
 	template<typename T>

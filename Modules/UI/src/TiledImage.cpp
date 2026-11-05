@@ -12,7 +12,7 @@ void Engine::UI::TiledImage::_update_data() {
 	is_dirty = false;
 	if (sprite_ID == 0) return;
 
-	UI_Object* obj = UI_ObjectManager::get_instance().get(object_id);
+	UI_Object* obj = UI_ObjectManager::Instance().get(object_id);
 	if (dirty_mask & TiledImageMask::TILED_IMAGE_TRANSFORM) {
 		UI_Transform& tr = obj->transform;
 		const float size_x = tr.size.x;

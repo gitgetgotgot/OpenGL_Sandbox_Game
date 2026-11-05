@@ -12,6 +12,7 @@ namespace Engine::UI {
 			TopLeft,	TopCenter,    TopRight
 		};
 		UI_Transform() {}
+		void set_anchor(Anchor anchor);
 		void set_local_pos(float x, float y);
 		void set_local_pos(glm::vec2 pos);
 		void set_size(float width, float height);
@@ -21,6 +22,8 @@ namespace Engine::UI {
 		void set_width(float width);
 		void set_height(float height);
 		void add_child(UI_Transform& transform);
+		bool remove_child(UI_Transform& transform);
+		bool remove_child(uint32_t child_id);
 		void translate(float x, float y);
 		void translate(glm::vec2 vec);
 		void force_update();
@@ -40,7 +43,9 @@ namespace Engine::UI {
 		};
 		inline static uint8_t COMPONENT_TRANSFORM = 1 << 0;
 		bool is_dirty = false;
+		bool is_destroyed = false;
 		void update_transform();
 		void mark_dirty();
+		void mark_destroyed();
 	};
 }

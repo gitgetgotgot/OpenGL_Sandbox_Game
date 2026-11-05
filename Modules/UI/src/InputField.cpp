@@ -12,8 +12,8 @@ void Engine::UI::InputField::bind_components(
 	field_cursor = cursor;
 	field_cursor->is_visible = false;
 	float cursor_offset = field_text->get_char_offset(cursor_position);
-	cursor_initial_x_pos = -UI_ObjectManager::get_instance().get(field_text.get_id())->transform.size.x * 0.5f;
-	auto& cursor_tr = UI_ObjectManager::get_instance().get(field_cursor.get_id())->transform;
+	cursor_initial_x_pos = -UI_ObjectManager::Instance().get(field_text.get_id())->transform.size.x * 0.5f;
+	auto& cursor_tr = UI_ObjectManager::Instance().get(field_cursor.get_id())->transform;
 	cursor_initial_x_pos += cursor_tr.size.x * 0.5f;
 	cursor_tr.set_local_pos(cursor_initial_x_pos + cursor_offset, 0.0f);
 }
@@ -45,7 +45,7 @@ void Engine::UI::InputField::_on_focus_get() {
 	if (f_text.size() < cursor_position) {
 		cursor_position = 0;
 		float cursor_offset = field_text->get_char_offset(cursor_position);
-		UI_ObjectManager::get_instance().get(field_cursor.get_id())->transform.set_local_pos(cursor_initial_x_pos + cursor_offset, 0.0f);
+		UI_ObjectManager::Instance().get(field_cursor.get_id())->transform.set_local_pos(cursor_initial_x_pos + cursor_offset, 0.0f);
 	}
 }
 
@@ -59,7 +59,7 @@ void Engine::UI::InputField::_on_char_input(uint32_t code) {
 	field_text->add_char_to_text(char(code), cursor_position);
 	cursor_position++;
 	float cursor_offset = field_text->get_char_offset(cursor_position);
-	UI_ObjectManager::get_instance().get(field_cursor.get_id())->transform.set_local_pos(cursor_initial_x_pos + cursor_offset, 0.0f);
+	UI_ObjectManager::Instance().get(field_cursor.get_id())->transform.set_local_pos(cursor_initial_x_pos + cursor_offset, 0.0f);
 }
 
 void Engine::UI::InputField::_on_char_remove() {
@@ -67,7 +67,7 @@ void Engine::UI::InputField::_on_char_remove() {
 	field_text->remove_char_from_text(cursor_position - 1);
 	cursor_position--;
 	float cursor_offset = field_text->get_char_offset(cursor_position);
-	UI_ObjectManager::get_instance().get(field_cursor.get_id())->transform.set_local_pos(cursor_initial_x_pos + cursor_offset, 0.0f);
+	UI_ObjectManager::Instance().get(field_cursor.get_id())->transform.set_local_pos(cursor_initial_x_pos + cursor_offset, 0.0f);
 }
 
 void Engine::UI::InputField::_on_cursor_position_changed(bool backwards) {
@@ -79,5 +79,5 @@ void Engine::UI::InputField::_on_cursor_position_changed(bool backwards) {
 	field_cursor->is_visible = true;
 	current_cursor_cd = 0.0f;
 	float cursor_offset = field_text->get_char_offset(cursor_position);
-	UI_ObjectManager::get_instance().get(field_cursor.get_id())->transform.set_local_pos(cursor_initial_x_pos + cursor_offset, 0.0f);
+	UI_ObjectManager::Instance().get(field_cursor.get_id())->transform.set_local_pos(cursor_initial_x_pos + cursor_offset, 0.0f);
 }

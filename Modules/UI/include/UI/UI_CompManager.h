@@ -41,7 +41,7 @@ namespace Engine::UI {
 
 	class UI_ComponentManager {
 	public:
-		static UI_ComponentManager& get_instance() {
+		static UI_ComponentManager& Instance() {
 			static UI_ComponentManager mgr;
 			return mgr;
 		}

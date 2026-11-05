@@ -23,13 +23,13 @@ uint32_t Engine::UI::Canvas::get_layer_index() const {
 void Engine::UI::Canvas::update_canvas_objects_data(UI_RenderContext& ctx, UI_RenderState state) {
 	//every canvas always starts with default clip rectangle (id = 0), that can be changed in children
 	for (auto& obj_id : objects) {
-		UI_Object* obj = UI_ObjectManager::get_instance().get(obj_id);
+		UI_Object* obj = UI_ObjectManager::Instance().get(obj_id);
 		if(obj && obj->is_enabled) update_child_object(*obj, ctx, state);
 	}
 }
 
 void Engine::UI::Canvas::update_child_object(UI_Object& object, UI_RenderContext& ctx, UI_RenderState state) {
-	UI_ComponentEntry* comp = UI_ComponentManager::get_instance().get(object.object_id);
+	UI_ComponentEntry* comp = UI_ComponentManager::Instance().get(object.object_id);
 	if (comp) {
 		UI_ComponentBase* base_comp = static_cast<UI_ComponentBase*>(comp->component);
 		const bool is_renderable = base_comp->render_type != UI_Render_Type::UI_NONE;
@@ -63,7 +63,7 @@ void Engine::UI::Canvas::update_child_object(UI_Object& object, UI_RenderContext
 		}
 	}
 	for (auto& child_id : object.transform.children) {
-		UI_Object* child = UI_ObjectManager::get_instance().get(child_id);
+		UI_Object* child = UI_ObjectManager::Instance().get(child_id);
 		if (child) update_child_object(*child, ctx, state);
 	}
 }

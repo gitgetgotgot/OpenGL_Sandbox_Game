@@ -19,7 +19,7 @@ void Engine::UI::UI_BehaviourSystem::update(UI_RenderContext& ctx) {
 		// take component
 		UI_HitEntry& hit_entry = ctx.hit_queue[i];
 		UI_ComponentBase* comp_base = static_cast<UI_ComponentBase*>(hit_entry.component);
-		UI_Object* obj = UI_ObjectManager::get_instance().get(comp_base->object_id);
+		UI_Object* obj = UI_ObjectManager::Instance().get(comp_base->object_id);
 
 		// check if it is pointed by cursor (only if raycast is not blocked already and cursor is in clip rect)
 		const glm::vec2& obj_offset = ctx.content_offsets[hit_entry.content_offset_id];
@@ -221,7 +221,7 @@ void Engine::UI::UI_BehaviourSystem::process_SCROLL_BAR_event(UI_ComponentBase*&
 		}
 	}
 	else { // PAGEABLE_MODE
-		UI_Object* thumb_obj = UI_ObjectManager::get_instance().get(scroll_bar->thumb_img.get_id());
+		UI_Object* thumb_obj = UI_ObjectManager::Instance().get(scroll_bar->thumb_img.get_id());
 		if (!thumb_obj) return;
 
 		UI_Transform& thumb_tr = thumb_obj->transform;

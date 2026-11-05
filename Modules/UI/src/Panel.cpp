@@ -12,7 +12,7 @@ void Engine::UI::Panel::_update_data() {
 	is_dirty = false;
 	if (sprite_ID == 0) return;
 
-	UI_Object* obj = UI_ObjectManager::get_instance().get(object_id);
+	UI_Object* obj = UI_ObjectManager::Instance().get(object_id);
 
 	UI_Transform& tr = obj->transform;
 	float x = tr.global_pos.x - tr.size.x * tr.pivot.x;

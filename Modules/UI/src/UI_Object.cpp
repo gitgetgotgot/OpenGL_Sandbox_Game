@@ -12,6 +12,10 @@ void Engine::UI::UI_Object::add_child(UI_Object* child) {
 	return transform.add_child(child->transform);
 }
 
+void Engine::UI::UI_Object::destroy() const {
+	UI_ObjectManager::Instance().destroy(object_id);
+}
+
 void Engine::UI::UI_Object::add_behaviour(void* ptr, UI_Behaviour_VTable* vt) const {
 	UI_BehaviourSystem::Instance().add(object_id, ptr, vt);
 }
@@ -24,15 +28,15 @@ Engine::UI::UI_Obj_Ptr::UI_Obj_Ptr(const UI_Obj_Ptr& other) noexcept {
 }
 
 Engine::UI::UI_Object* Engine::UI::UI_Obj_Ptr::operator->() const {
-	return UI_ObjectManager::get_instance().get(obj_id);
+	return UI_ObjectManager::Instance().get(obj_id);
 }
 
 Engine::UI::UI_Object& Engine::UI::UI_Obj_Ptr::operator*() const {
-	return *UI_ObjectManager::get_instance().get(obj_id);
+	return *UI_ObjectManager::Instance().get(obj_id);
 }
 
 Engine::UI::UI_Obj_Ptr::operator bool() const {
-	return obj_id != 0 && UI_ObjectManager::get_instance().get(obj_id);
+	return obj_id != 0 && UI_ObjectManager::Instance().get(obj_id);
 }
 
 Engine::UI::UI_Obj_Ptr& Engine::UI::UI_Obj_Ptr::operator=(const UI_Obj_Ptr& other) noexcept {
@@ -52,14 +56,19 @@ Engine::UI::UI_Obj_Ptr& Engine::UI::UI_Obj_Ptr::operator=(UI_Obj_Ptr&& other) no
 
 bool Engine::UI::UI_Obj_Ptr::add_child(UI_Obj_Ptr& child) const {
 	if (obj_id == child.obj_id) return false;
-	auto obj = UI_ObjectManager::get_instance().get(obj_id);
-	auto child_obj = UI_ObjectManager::get_instance().get(child.obj_id);
+	auto obj = UI_ObjectManager::Instance().get(obj_id);
+	auto child_obj = UI_ObjectManager::Instance().get(child.obj_id);
 	if (!obj || !child_obj) return false;
 	obj->add_child(child_obj);
 	return true;
 }
 
+void Engine::UI::UI_Obj_Ptr::destroy() {
+	UI_ObjectManager::Instance().destroy(obj_id);
+	obj_id = 0;
+}
+
 Engine::UI::UI_Obj_Ptr Engine::UI::UI_Obj_Ptr::get_child_by_index(uint32_t index) const {
-	auto obj = UI_ObjectManager::get_instance().get(obj_id);
+	auto obj = UI_ObjectManager::Instance().get(obj_id);
 	return UI_Obj_Ptr(obj->transform.children[index]);
 }

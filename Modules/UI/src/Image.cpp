@@ -54,7 +54,7 @@ void Engine::UI::Image::set_border_size(float normalized_size) {
 }
 
 void Engine::UI::Image::update_as_regular(Image& img) {
-	UI_Object* obj = UI_ObjectManager::get_instance().get(img.object_id);
+	UI_Object* obj = UI_ObjectManager::Instance().get(img.object_id);
 	UI_Vertex2f* vertex = img.image_vertices.data;
 
 	if (img.dirty_mask & ImageMask::IMAGE_TRANSFORM || img.dirty_mask & ImageMask::IMAGE_SPRITE) {
@@ -90,7 +90,7 @@ void Engine::UI::Image::update_as_regular(Image& img) {
 }
 
 void Engine::UI::Image::update_as_nine_sliced(Image& img) {
-	UI_Object* obj = UI_ObjectManager::get_instance().get(img.object_id);
+	UI_Object* obj = UI_ObjectManager::Instance().get(img.object_id);
 	UI_Vertex2f* v_buf = nullptr;
 
 	if (img.dirty_mask & ImageMask::IMAGE_TRANSFORM || img.dirty_mask & ImageMask::IMAGE_BORDER) {

@@ -1,21 +1,29 @@
 @echo off
-REM Скрипт установки зависимостей Conan и конфигурации CMake (Debug + Release)
+chcp 65001 > nul
 
-echo === Установка зависимостей через Conan (Debug и Release) ===
-conan install . --output-folder=build --build=missing -s build_type=Debug
-if %errorlevel% neq 0 exit /b %errorlevel%
+echo === Install Conan dependencies (Debug) ===
+conan install . --build=missing -s build_type=Debug
+if %errorlevel% neq 0 goto error
 
-conan install . --output-folder=build --build=missing -s build_type=Release
-if %errorlevel% neq 0 exit /b %errorlevel%
+echo === Install Conan dependencies (Release) ===
+conan install . --build=missing -s build_type=Release
+if %errorlevel% neq 0 goto error
 
-echo === Настройка конфигурации CMake (Debug) ===
-cmake -B build/debug -S . -DCMAKE_TOOLCHAIN_FILE=build/build/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Debug
-if %errorlevel% neq 0 exit /b %errorlevel%
+echo === CMake configuration (conan-default) ===
+cmake --preset conan-default
+if %errorlevel% neq 0 goto error
 
-echo === Настройка конфигурации CMake (Release) ===
-cmake -B build/release -S . -DCMAKE_TOOLCHAIN_FILE=build/build/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release
-if %errorlevel% neq 0 exit /b %errorlevel%
+echo === Ready! ===
+echo To build Debug:   cmake --build --preset conan-debug
+echo To build Release: cmake --build --preset conan-release
+goto end
 
-echo === Готово! ===
-echo Для сборки Debug:   cmake --build build/debug
-echo Для сборки Release: cmake --build build/release
+:error
+echo.
+echo [!] Ошибка настройки!
+pause
+exit /b %errorlevel%
+
+:end
+echo.
+pause

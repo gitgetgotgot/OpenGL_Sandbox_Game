@@ -35,7 +35,7 @@ void Engine::UI::ScrollView::bind_horizontal_scrollbar(UI_Component_Ptr<ScrollBa
 void Engine::UI::ScrollView::update_content() {
 	//amount of children is changed -> replace all children
 	auto& scroll_view_content = *content;
-	auto content_obj = UI_ObjectManager::get_instance().get(content.get_id());
+	auto content_obj = UI_ObjectManager::Instance().get(content.get_id());
 	if (UI_Transform& tr = content_obj->transform; scroll_view_content.last_children_size != tr.children.size()) {
 		scroll_view_content.last_children_size = tr.children.size();
 
@@ -54,7 +54,7 @@ void Engine::UI::ScrollView::update_content() {
 		const bool is_vertical = layout == ScrollView::GroupLayout::LAYOUT_VERTICAL;
 
 		for (auto& child_id : tr.children) {
-			UI_Transform& child_tr = UI_ObjectManager::get_instance().get(child_id)->transform;
+			UI_Transform& child_tr = UI_ObjectManager::Instance().get(child_id)->transform;
 			child_tr.set_local_pos(
 				current_x_offset + child_tr.size.x * 0.5f,
 				current_y_offset - child_tr.size.y * 0.5f

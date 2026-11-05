@@ -79,11 +79,11 @@ void SettingsPage::setup_page() {
 		glm::vec2(1.0f, 0.1f), glm::vec2(-0.3f, 0.045f), "SFX Volume:", glm::vec4(1.0f), 0.07f
 	);
 
-	resolution_text = Engine::UI::UI_ObjectManager::get_instance().get(
+	resolution_text = Engine::UI::UI_ObjectManager::Instance().get(
 		button_resolution->transform.children[1])->get_component<Engine::UI::SDF_Text>();
-	fullscreen_text = Engine::UI::UI_ObjectManager::get_instance().get(
+	fullscreen_text = Engine::UI::UI_ObjectManager::Instance().get(
 		button_fullscreen->transform.children[1])->get_component<Engine::UI::SDF_Text>();
-	vsync_text = Engine::UI::UI_ObjectManager::get_instance().get(
+	vsync_text = Engine::UI::UI_ObjectManager::Instance().get(
 		button_vsync->transform.children[1])->get_component<Engine::UI::SDF_Text>();
 
 	auto master_volume_slider = scroll_master_volume->get_component<Engine::UI::ScrollBar>();

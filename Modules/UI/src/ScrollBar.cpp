@@ -25,8 +25,8 @@ void Engine::UI::ScrollBar::set_thumb_size_ratio(float ratio) {
 	// clamp so size is always between 5% and 100% of track_size
 	const float thumb_size_ratio = std::clamp(ratio, 0.05f, 1.0f);
 	
-	UI_Object* track_obj = UI_ObjectManager::get_instance().get(track_img.get_id());
-	UI_Object* thumb_obj = UI_ObjectManager::get_instance().get(thumb_img.get_id());
+	UI_Object* track_obj = UI_ObjectManager::Instance().get(track_img.get_id());
+	UI_Object* thumb_obj = UI_ObjectManager::Instance().get(thumb_img.get_id());
 	if (!track_obj || !thumb_obj) return;
 
 	if (direction == ScrollDirection::SCROLLBAR_HORIZONTAL) {
@@ -49,8 +49,8 @@ void Engine::UI::ScrollBar::bind_components(UI_Component_Ptr<Image>& track_img, 
 	this->track_img = track_img;
 	this->thumb_img = thumb_img;
 
-	UI_Object* track_obj = UI_ObjectManager::get_instance().get(track_img.get_id());
-	UI_Object* thumb_obj = UI_ObjectManager::get_instance().get(thumb_img.get_id());
+	UI_Object* track_obj = UI_ObjectManager::Instance().get(track_img.get_id());
+	UI_Object* thumb_obj = UI_ObjectManager::Instance().get(thumb_img.get_id());
 	if (!track_obj || !thumb_obj) return;
 
 	if (direction == ScrollDirection::SCROLLBAR_HORIZONTAL) {
@@ -66,7 +66,7 @@ void Engine::UI::ScrollBar::bind_components(UI_Component_Ptr<Image>& track_img, 
 }
 
 void Engine::UI::ScrollBar::_update_thumb_pos() {
-	UI_Object* thumb_obj = UI_ObjectManager::get_instance().get(thumb_img.get_id());
+	UI_Object* thumb_obj = UI_ObjectManager::Instance().get(thumb_img.get_id());
 	if (!thumb_obj) return;
 
 	if (direction == ScrollDirection::SCROLLBAR_HORIZONTAL) {
@@ -80,7 +80,7 @@ void Engine::UI::ScrollBar::_update_thumb_pos() {
 }
 
 void Engine::UI::ScrollBar::_on_track_held() {
-	UI_Object* track_obj = UI_ObjectManager::get_instance().get(track_img.get_id());
+	UI_Object* track_obj = UI_ObjectManager::Instance().get(track_img.get_id());
 	if (!track_obj || !max_thumb_range) return;
 
 	float current_scroll_value = 0.0f;
@@ -103,7 +103,7 @@ void Engine::UI::ScrollBar::_on_track_held() {
 }
 
 void Engine::UI::ScrollBar::_on_thumb_drag(glm::vec2& scroll_thumb_cursor_delta) {
-	UI_Object* track_obj = UI_ObjectManager::get_instance().get(track_img.get_id());
+	UI_Object* track_obj = UI_ObjectManager::Instance().get(track_img.get_id());
 	if (!track_obj || !max_thumb_range) return;
 
 	float current_scroll_value = 0.0f;

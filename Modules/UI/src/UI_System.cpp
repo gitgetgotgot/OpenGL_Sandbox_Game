@@ -103,11 +103,14 @@ void Engine::UI::UI_System::update() {
 	render_context.content_offsets.clear();
 
 	// update hit queue for interactable components
-	uint32_t components_size = UI_ComponentManager::get_instance().size();
+	uint32_t components_size = UI_ComponentManager::Instance().size();
 	if (render_context.hit_queue.capacity() < components_size) {
 		render_context.hit_queue.resize(components_size);
 	}
 	render_context.hit_queue.clear();
+
+	// remove all destroyed UI objects and their components
+	UI_ObjectManager::Instance().remove_destroyed_objects();
 
 	// place default clip rect and content offset
 	render_context.clip_rects.emplace_back(
@@ -117,7 +120,7 @@ void Engine::UI::UI_System::update() {
 	render_context.content_offsets.emplace_back(0.0f, 0.0f);
 
 	// update all dirty UI objects
-	UI_ObjectManager::get_instance().update_dirty_objects();
+	UI_ObjectManager::Instance().update_dirty_objects();
 
 	// update all UI object buffers, build render queue and hit queue
 	UI_RenderState state;

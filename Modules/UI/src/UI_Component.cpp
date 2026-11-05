@@ -15,5 +15,5 @@ void Engine::UI::UI_ComponentBase::update_render_queue(UI_RenderContext& c, UI_R
 void Engine::UI::UI_ComponentBase::mark_dirty() {
 	if (is_dirty) return;
 	is_dirty = true;
-	UI_ObjectManager::get_instance().mark_dirty_component(object_id);
+	UI_ObjectManager::Instance().mark_dirty_component(object_id);
 }
