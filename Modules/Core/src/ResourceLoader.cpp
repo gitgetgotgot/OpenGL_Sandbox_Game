@@ -252,8 +252,8 @@ bool ResourceLoader::Load_mods() {
 		if (Engine::Mods::ModsManager::Instance().add_mod(mod_folder_path, parser.node_root) == false) {
 			return false;
 		}
-		return true;
 	}
+	return true;
 }
 
 bool ResourceLoader::Load_libraries() {
@@ -306,6 +306,7 @@ bool ResourceLoader::Load_libraries() {
 			}
 		}
 	}
+	return true;
 }
 
 bool ResourceLoader::Load_textures() {
