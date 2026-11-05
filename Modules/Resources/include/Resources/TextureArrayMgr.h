@@ -16,7 +16,7 @@ namespace Engine::Resource {
 		struct TextureResourceData {
 			TextureResourceData() = default;
 			TextureResourceData(unsigned char* image_bytes, int imgWidth, int imgHeight, int numOfColorChannels,
-				std::filesystem::path& file_path, std::string& UID
+				std::filesystem::path& file_path, const std::string& UID
 			) : image_bytes{ image_bytes }, imgWidth{ imgWidth }, imgHeight{ imgHeight },
 				numOfColorChannels{ numOfColorChannels }, file_path{ file_path }, UID{ UID } {}
 			TextureResourceData(const TextureResourceData&) = delete;
@@ -38,17 +38,18 @@ namespace Engine::Resource {
 		void uninit();
 		void bind_texture_arrays();
 		// may have errors while loading data, so return bool
-		bool add_texture_to_queue(std::filesystem::path& file_path, std::string& UID);
+		bool add_texture_to_queue(std::filesystem::path& file_path, const std::string& UID);
 		// returns true if all textures are loaded
 		bool load_textures_from_queue();
 		void mark_queue_ready();
 		// may have errors while loading data, so return bool
-		bool load_texture(std::filesystem::path file_path, std::string UID);
+		bool load_texture(std::filesystem::path file_path, const std::string& UID);
 		void load_texture(TextureResourceData& data);
-		void load_font_texture(unsigned char* data, int width, int height, int channels, std::string UID);
-		std::optional<TextureID> get_texture_id(std::string& UID);
-		std::optional<uint16_t> get_font_texture_id(std::string& UID);
+		void load_font_texture(unsigned char* data, int width, int height, int channels, const std::string& UID);
+		std::optional<TextureID> get_texture_id(const std::string& UID);
+		std::optional<uint16_t> get_font_texture_id(const std::string& UID);
 		uint32_t get_texture_array_res(uint16_t tex_array_id);
+		void register_texture_as_regular_sprite(const std::string& UID);
 	private:
 		int get_array_index(uint32_t tex_width, uint32_t tex_height);
 		TextureArrayManager() = default;

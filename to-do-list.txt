@@ -1,8 +1,5 @@
 * change exceptions with try/catch on std::error_code and turn off exceptions?
 * add .pack conversion for multiple .png textures
-* add "load_mode" option for mods in mod.json:
-	"simple" - load .json or .png from Resources
-	"packed" - load .data or .pack from Resources
 * save options in .json
 * game UI
 * player

@@ -61,7 +61,7 @@ void ResourceLoader::start_resources_loading() {
 	load_status = LoadStatus::LOAD_NOT_READY;
 	can_load_next_batch = false;
 	should_load_textures = true;
-	resource_loader = std::make_unique<std::thread>(&ResourceLoader::Load_Resources, this);
+	resource_loader = std::make_unique<std::thread>(&ResourceLoader::ResourcesLoader, this);
 	std::cout << "[" << DeviceContext::get_current_system_time() << "] ResourceLoader: Game resources loading started\n";
 }
 
@@ -93,30 +93,31 @@ void ResourceLoader::unlock_resources_mutex() {
 	resources_lock.unlock();
 }
 
-void ResourceLoader::Load_Resources() {
+void ResourceLoader::ResourcesLoader() {
 	// if any loader returns failure --> explain Error with Logger and give a choice to exit, hot-reload or turn off broken mod
 	bool ok = true;
 
-	ok = find_mods();
-	//if (success) success = load_libraries();
+	ok = Load_mods();
+	//if (ok) ok = Load_libraries();
 
 	// LOAD ORDER IS IMPORTANT (each category is loaded from base files first and then from all mods)
 	// textures are loaded in queue and through main thread, sprites and audio are loaded using resources mutex
-	// all other resources are loaded straight in loader thread
-	if (ok) ok = load_textures();
-	if (ok) ok = load_resources(LoadResType::R_SPRITE, "Resources/data/sprites_data", true);
-	if (ok) ok = load_resources(LoadResType::R_AUDIO, "Resources/data/audio_data", true);
-	if (ok) ok = load_resources(LoadResType::R_LIGHT, "Resources/data/lights_data", true);
-	if (ok) ok = load_resources(LoadResType::R_PARTICLE, "Resources/data/particles_data", true);
-	if (ok) ok = load_resources(LoadResType::R_EFFECT, "Resources/data/effects_data", true);
-	if (ok) ok = load_resources(LoadResType::R_OBJECT, "Resources/data/objects_data", true);
-	if (ok) ok = load_resources(LoadResType::R_CRAFT, "Resources/data/crafts_data", true);
-	if (ok) ok = load_resources(LoadResType::R_ANIM_CLIP, "Resources/data/anim_data/clips", true);
-	if (ok) ok = load_resources(LoadResType::R_ANIMATOR, "Resources/data/anim_data/animators", true);
-	if (ok) ok = load_resources(LoadResType::R_ENTITY, "Resources/data/entity_data", true);
+	// all other resources are loaded as usual
+	if (ok) ok = Load_textures();
+	Register_textures_as_sprites();
+	if (ok) ok = Load_resources(ResourceType::R_SPRITE, "Resources/data/sprites_data", true);
+	if (ok) ok = Load_resources(ResourceType::R_AUDIO, "Resources/data/audio_data", true);
+	if (ok) ok = Load_resources(ResourceType::R_LIGHT, "Resources/data/lights_data", true);
+	if (ok) ok = Load_resources(ResourceType::R_PARTICLE, "Resources/data/particles_data", true);
+	if (ok) ok = Load_resources(ResourceType::R_EFFECT, "Resources/data/effects_data", true);
+	if (ok) ok = Load_resources(ResourceType::R_OBJECT, "Resources/data/objects_data", true);
+	if (ok) ok = Load_resources(ResourceType::R_CRAFT, "Resources/data/crafts_data", true);
+	if (ok) ok = Load_resources(ResourceType::R_ANIM_CLIP, "Resources/data/anim_data/clips", true);
+	if (ok) ok = Load_resources(ResourceType::R_ANIMATOR, "Resources/data/anim_data/animators", true);
+	if (ok) ok = Load_resources(ResourceType::R_ENTITY, "Resources/data/entity_data", true);
 	
-	if (ok) ok = resolve_items_dependencies();
-	if (ok) ok = resolve_entities_dependencies();
+	if (ok) ok = Resolve_objects_dependencies();
+	if (ok) ok = Resolve_entities_dependencies();
 
 	if (ok) {
 		load_status = LoadStatus::LOAD_READY;
@@ -149,7 +150,7 @@ void ResourceLoader::Hot_Reload() {
 	Engine::Entity::EntityInfoManager::Instance().ClearData();
 	Engine::Resource::Tag::TagRegistry::Instance().ClearData();
 	Engine::Core::Craft::CraftManager::Instance().ClearData();
-	Load_Resources();
+	ResourcesLoader();
 }
 
 bool ResourceLoader::load_base_fonts() {
@@ -188,7 +189,7 @@ bool ResourceLoader::load_base_sprites() {
 		Engine::Util::Logger::Log("Fatal Error: Couldn't find base sprites meta");
 		return false;
 	}
-	if (load_resources(LoadResType::R_SPRITE, "Resources/base_data/sprites_data", false) == false) {
+	if (Load_resources(ResourceType::R_SPRITE, "Resources/base_data/sprites_data", false) == false) {
 		Engine::Util::Logger::Log("Fatal Error: Couldn't load base sprites");
 		return false;
 	}
@@ -201,7 +202,7 @@ bool ResourceLoader::load_base_audio() {
 		Engine::Util::Logger::Log("Fatal Error: Couldn't find base audio meta");
 		return false;
 	}
-	if (load_resources(LoadResType::R_AUDIO, "Resources/base_data/audio_data", false) == false) {
+	if (Load_resources(ResourceType::R_AUDIO, "Resources/base_data/audio_data", false) == false) {
 		Engine::Util::Logger::Log("Fatal Error: Couldn't load base audio");
 		return false;
 	}
@@ -209,7 +210,7 @@ bool ResourceLoader::load_base_audio() {
 	return true;
 }
 
-bool ResourceLoader::find_mods() const {
+bool ResourceLoader::Load_mods() {
 	std::filesystem::path info_file = "mod.json";
 	std::filesystem::path description_file = "description.txt";
 	std::filesystem::path icon_file = "mod_icon.png";
@@ -237,9 +238,12 @@ bool ResourceLoader::find_mods() const {
 			return false;
 		}
 		std::string texture_UID = mod_folder_path.filename().string() + ":mod_icon";
+		// add mod icon texture right here while loading mod info
 		if (Engine::Resource::TextureArrayManager::Instance().add_texture_to_queue(icon_path, texture_UID) == false) {
 			return false;
 		}
+		// also register this texture as regular sprite later
+		tex_to_sprite_queue.emplace_back(texture_UID);
 
 		Engine::Util::DataParser parser;
 		if (parser.parse_JSON_format(info_path) == false) {
@@ -252,7 +256,7 @@ bool ResourceLoader::find_mods() const {
 	}
 }
 
-bool ResourceLoader::load_libraries() {
+bool ResourceLoader::Load_libraries() {
 	std::filesystem::path lib_path;
 	std::string lib_ext;
 	typedef void(*REGISTER_OBJECT_FACTORIES)(Engine::Object::ObjectFactoryRegistry * obj_registry);
@@ -304,7 +308,7 @@ bool ResourceLoader::load_libraries() {
 	}
 }
 
-bool ResourceLoader::load_textures() {
+bool ResourceLoader::Load_textures() {
 	auto _load_textures = [](std::filesystem::path& textures_path, std::string& source_name) {
 		for (const auto& entry : std::filesystem::recursive_directory_iterator(textures_path)) {
 			if (!entry.is_regular_file()) continue;
@@ -326,6 +330,7 @@ bool ResourceLoader::load_textures() {
 		return false;
 	}
 	for (const auto& mod_info : Engine::Mods::ModsManager::Instance().get_mods()) {
+		if (!mod_info.enabled) continue;
 		source_name = mod_info.mod_folder_path.filename().string();
 		// find mod textures
 		textures_path = mod_info.mod_folder_path / "Resources/textures";
@@ -341,69 +346,83 @@ bool ResourceLoader::load_textures() {
 	return true;
 }
 
-bool ResourceLoader::load_resources(LoadResType res_type, std::string resources_path, bool load_from_mods) {
-	std::vector<std::filesystem::path> paths;
+void ResourceLoader::Register_textures_as_sprites() {
+	for (const auto& uid : tex_to_sprite_queue) {
+		std::lock_guard lock(resources_mutex);
+		Engine::Resource::TextureArrayManager::Instance().register_texture_as_regular_sprite(uid);
+	}
+	tex_to_sprite_queue = {};
+}
+
+bool ResourceLoader::Load_resources(ResourceType res_type, const std::string& resources_path, bool load_from_mods) {
+	std::vector<ResourceLoadRequest> load_requests;
 	std::filesystem::path path;
 	auto& mods = Engine::Mods::ModsManager::Instance().get_mods();
-	paths.reserve(mods.size() + 1);
+	load_requests.reserve(mods.size() + 1);
 
 	path = resources_path;
-	paths.emplace_back(path);
+	// load game resources as simple if DEBUG mode or packed if RELEASE mode
+	load_requests.emplace_back(ResourceLoadRequest{ path, DEBUG ? ResourceLoadRequest::SIMPLE : ResourceLoadRequest::PACKED });
+
 	if (load_from_mods) {
 		for (const auto& mod_info : mods) {
+			if (!mod_info.enabled) continue;
 			path = mod_info.mod_folder_path / resources_path;
-			if (std::filesystem::exists(path)) paths.emplace_back(path);
+			if (std::filesystem::exists(path)) {
+				// load mod resources as simple/packed based on mod.json meta
+				const bool load_simple = mod_info.load_mode == Engine::Mods::ModInfo::LOAD_SIMPLE;
+				load_requests.emplace_back(ResourceLoadRequest{ path, load_simple ? ResourceLoadRequest::SIMPLE : ResourceLoadRequest::PACKED });
+			}
 		}
 	}
 
 	bool ok = true;
-
-	for (const auto& path : paths) {
-		for (const auto& entry : std::filesystem::recursive_directory_iterator(path)) {
+	for (const auto& r : load_requests) {
+		for (const auto& entry : std::filesystem::recursive_directory_iterator(r.data_file_path)) {
 			if (!entry.is_regular_file()) continue;
 			std::filesystem::path data_file_path = entry.path();
 			if (data_file_path.extension() != data_extension) continue;
 
 			Engine::Util::DataParser parser;
-			if (parser.parse_data(data_file_path, DEBUG) == false) {
+			if (parser.parse_data(data_file_path, r.load_type == ResourceLoadRequest::SIMPLE) == false) {
 				return false;
 			}
 			switch (res_type) {
-			case LoadResType::R_TEXTURE:
+			case ResourceType::R_TEXTURE:
 				//
 				break;
-			case LoadResType::R_SPRITE:
+			case ResourceType::R_SPRITE:
 				ok &= Engine::Resource::SpriteManager::Instance().load_sprites_from_data(data_file_path, parser, resources_mutex);
 				break;
-			case LoadResType::R_AUDIO: {
+			case ResourceType::R_AUDIO: {
 				// audio_data -> data -> Resources -> Resources/audio
 				std::filesystem::path audio_folder_path = path.parent_path().parent_path() / "audio";
 				ok &= Engine::Audio::AudioSystem::Instance().load_audio_from_data(audio_folder_path, data_file_path, parser, resources_mutex);
 				break;
 			}
-			case LoadResType::R_LIGHT:
+			case ResourceType::R_LIGHT:
 				ok &= Engine::Resource::LightSourceManager::Instance().load_lights_from_data(data_file_path, parser);
 				break;
-			case LoadResType::R_PARTICLE:
+			case ResourceType::R_PARTICLE:
 				ok &= Engine::Resource::ParticleManager::Instance().load_particles_from_data(data_file_path, parser);
 				break;
-			case LoadResType::R_EFFECT:
+			case ResourceType::R_EFFECT:
 				ok &= Engine::Resource::EffectsManager::Instance().load_effects_from_data(data_file_path, parser);
 				break;
-			case LoadResType::R_OBJECT:
+			case ResourceType::R_OBJECT:
 				object_data_parsers.emplace_back(std::move(parser));
 				ok &= Engine::Object::ObjectManager::Instance().load_objects_from_data(data_file_path, object_data_parsers.back());
 				break;
-			case LoadResType::R_CRAFT:
+			case ResourceType::R_CRAFT:
 				ok &= Engine::Core::Craft::CraftManager::Instance().load_crafts_from_data(data_file_path, parser);
 				break;
-			case LoadResType::R_ANIM_CLIP:
+			case ResourceType::R_ANIM_CLIP:
 				ok &= Engine::Resource::AnimationClipManager::Instance().load_clips_from_data(data_file_path, parser);
 				break;
-			case LoadResType::R_ANIMATOR:
+			case ResourceType::R_ANIMATOR:
 				ok &= Engine::Resource::AnimatorManager::Instance().load_animators_from_data(data_file_path, parser);
 				break;
-			case LoadResType::R_ENTITY:
+			case ResourceType::R_ENTITY:
 				entity_data_parsers.emplace_back(std::move(parser));
 				ok &= Engine::Entity::EntityInfoManager::Instance().load_entities_from_data(data_file_path, entity_data_parsers.back());
 				break;
@@ -416,11 +435,11 @@ bool ResourceLoader::load_resources(LoadResType res_type, std::string resources_
 	return true;
 }
 
-bool ResourceLoader::resolve_items_dependencies() {
+bool ResourceLoader::Resolve_objects_dependencies() {
 	uint16_t object_ID = 2;
 	for (const auto& parser : object_data_parsers) {
-		for (const auto& data_node : parser.node_root) {
-			Engine::Object::ObjectManager::Instance().get_object_info(object_ID)->fill_dependent_data(data_node);
+		for (const auto& j : parser.node_root) {
+			Engine::Object::ObjectManager::Instance().get_object_info(object_ID)->fill_dependent_data(j);
 			object_ID++;
 		}
 	}
@@ -428,11 +447,11 @@ bool ResourceLoader::resolve_items_dependencies() {
 	return true;
 }
 
-bool ResourceLoader::resolve_entities_dependencies() {
+bool ResourceLoader::Resolve_entities_dependencies() {
 	uint16_t entity_ID = 0;
 	for (const auto& parser : entity_data_parsers) {
-		for (const auto& data_node : parser.node_root) {
-			Engine::Entity::EntityInfoManager::Instance().get_entity_info(entity_ID)->fill_dependent_data(data_node);
+		for (const auto& j : parser.node_root) {
+			Engine::Entity::EntityInfoManager::Instance().get_entity_info(entity_ID)->fill_dependent_data(j);
 			entity_ID++;
 		}
 	}

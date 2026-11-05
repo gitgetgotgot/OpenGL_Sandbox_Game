@@ -6,6 +6,11 @@ namespace Engine::UI {
 	class UI_Transform {
 		friend class UI_ObjectManager;
 	public:
+		enum Anchor : uint8_t {
+			BottomLeft, BottomCenter, BottomRight,
+			MiddleLeft, MiddleCenter, MiddleRight,
+			TopLeft,	TopCenter,    TopRight
+		};
 		UI_Transform() {}
 		void set_local_pos(float x, float y);
 		void set_local_pos(glm::vec2 pos);
@@ -26,7 +31,13 @@ namespace Engine::UI {
 		std::vector<uint32_t> children;
 		uint32_t parent_id = 0; //0 means empty
 		uint32_t object_id = 0;
+		Anchor anchor = Anchor::MiddleCenter;
 	private:
+		static constexpr glm::vec2 ANCHOR_MULTIPLIERS[] = {
+			{-0.5f, -0.5f}, {0.0f, -0.5f}, {0.5f, -0.5f},
+			{-0.5f, 0.0f},  {0.0f, 0.0f},  {0.5f, 0.0f},
+			{-0.5f, 0.5f},  {0.0f, 0.5f},  {0.5f, 0.5f}
+		};
 		inline static uint8_t COMPONENT_TRANSFORM = 1 << 0;
 		bool is_dirty = false;
 		void update_transform();

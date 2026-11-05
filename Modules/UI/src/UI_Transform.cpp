@@ -66,8 +66,13 @@ void Engine::UI::UI_Transform::force_update() {
 }
 
 void Engine::UI::UI_Transform::update_transform() {
-	if (parent_id != 0) global_pos = UI_ObjectManager::get_instance().get(parent_id)->transform.global_pos + local_pos;
-	else global_pos = local_pos;
+	if (parent_id != 0) {
+		UI_Transform& parent_tr = UI_ObjectManager::get_instance().get(parent_id)->transform;
+		global_pos = parent_tr.global_pos + local_pos + parent_tr.size * ANCHOR_MULTIPLIERS[static_cast<size_t>(anchor)];
+	}
+	else {
+		global_pos = local_pos;
+}
 	is_dirty = false;
 }
 

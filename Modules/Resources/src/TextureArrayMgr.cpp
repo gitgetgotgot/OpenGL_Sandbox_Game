@@ -1,4 +1,5 @@
 #include "Resources/TextureArrayMgr.h"
+#include "Resources/Sprite.h"
 #include <Utility/Logger.h>
 #include <stb_image.h>
 #include <glad/gl.h>
@@ -85,7 +86,7 @@ void Engine::Resource::TextureArrayManager::bind_texture_arrays() {
 	fonts_texture_array->bind(10);
 }
 
-bool Engine::Resource::TextureArrayManager::add_texture_to_queue(std::filesystem::path& file_path, std::string& UID) {
+bool Engine::Resource::TextureArrayManager::add_texture_to_queue(std::filesystem::path& file_path, const std::string& UID) {
 	int imgWidth, imgHeight, numOfColorChannels;
 	unsigned char* image_bytes = stbi_load(file_path.string().c_str(), &imgWidth, &imgHeight, &numOfColorChannels, 0);
 
@@ -123,7 +124,7 @@ void Engine::Resource::TextureArrayManager::mark_queue_ready() {
 	queue_ready = true;
 }
 
-bool Engine::Resource::TextureArrayManager::load_texture(std::filesystem::path file_path, std::string UID) {
+bool Engine::Resource::TextureArrayManager::load_texture(std::filesystem::path file_path, const std::string& UID) {
 	int imgWidth, imgHeight, numOfColorChannels;
 	unsigned char* image_bytes = stbi_load(file_path.string().c_str(), &imgWidth, &imgHeight, &numOfColorChannels, 0);
 
@@ -158,20 +159,20 @@ void Engine::Resource::TextureArrayManager::load_texture(TextureResourceData& da
 	texture_arrays[texture_array_index]->add_2D_texture(data.image_bytes, data.imgWidth, data.imgHeight, data.numOfColorChannels);
 }
 
-void Engine::Resource::TextureArrayManager::load_font_texture(unsigned char* data, int width, int height, int channels, std::string UID) {
+void Engine::Resource::TextureArrayManager::load_font_texture(unsigned char* data, int width, int height, int channels, const std::string& UID) {
 	font_UID_to_ID[UID] = fonts_texture_array->get_current_size();
 	fonts_texture_array->add_2D_texture(data, width, height, channels);
 }
 
 std::optional<Engine::Resource::TextureArrayManager::TextureID>
-Engine::Resource::TextureArrayManager::get_texture_id(std::string& UID) {
+Engine::Resource::TextureArrayManager::get_texture_id(const std::string& UID) {
 	if (auto it = UID_to_ID.find(UID); it != UID_to_ID.end()) {
 		return it->second;
 	}
 	else return std::nullopt;
 }
 
-std::optional<uint16_t> Engine::Resource::TextureArrayManager::get_font_texture_id(std::string& UID) {
+std::optional<uint16_t> Engine::Resource::TextureArrayManager::get_font_texture_id(const std::string& UID) {
 	if (auto it = font_UID_to_ID.find(UID); it != font_UID_to_ID.end()) {
 		return it->second;
 	}
@@ -190,6 +191,12 @@ uint32_t Engine::Resource::TextureArrayManager::get_texture_array_res(uint16_t t
 	case 7: return 4096;
 	default: return 0;
 	}
+}
+
+void Engine::Resource::TextureArrayManager::register_texture_as_regular_sprite(const std::string& UID) {
+	auto tex_id_opt = get_texture_id(UID);
+	uint32_t tex_res = get_texture_array_res(tex_id_opt.value().array_id);
+	Resource::SpriteManager::Instance().add_sprite(UID, 0, 0, tex_res, tex_res, 1.0, tex_id_opt.value().array_id, tex_id_opt.value().index);
 }
 
 int Engine::Resource::TextureArrayManager::get_array_index(uint32_t tex_width, uint32_t tex_height) {

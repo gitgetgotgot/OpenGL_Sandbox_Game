@@ -1,8 +1,5 @@
 #pragma once
 #include <unordered_map>
-#include <filesystem>
-#include <string>
-#include <cstdint>
 #include <memory>
 #include <thread>
 #include <mutex>
@@ -16,11 +13,14 @@ constexpr bool DEBUG = false;
 #endif
 
 class ResourceLoader {
-	enum LoadResType : uint8_t {
+public:
+	enum ResourceType : uint8_t {
 		R_TEXTURE, R_SPRITE, R_AUDIO, R_LIGHT, R_PARTICLE, R_EFFECT, R_OBJECT, R_CRAFT, R_ANIM_CLIP, R_ANIMATOR, R_ENTITY
 	};
+	enum LoadStatus : uint8_t {
+		LOAD_NOT_READY, LOAD_READY, LOAD_FAILED, LOAD_FATAL_ERROR
+	};
 public:
-	enum LoadStatus : uint8_t { LOAD_NOT_READY, LOAD_READY, LOAD_FAILED, LOAD_FATAL_ERROR };
 	static ResourceLoader& Instance() {
 		static ResourceLoader loader;
 		return loader;
@@ -39,25 +39,39 @@ private:
 	bool load_base_sprites();
 	bool load_base_audio();
 
-	void Load_Resources();
+	void ResourcesLoader();
 	void notify_loader();
-	bool find_mods() const;
-	bool load_libraries();
-
-	bool load_textures();
-	bool load_resources(LoadResType res_type, std::string resources_path, bool load_from_mods);
-	bool resolve_items_dependencies();
-	bool resolve_entities_dependencies();
+	bool Load_mods();
+	bool Load_libraries();
+	bool Load_textures(); // textures are loaded in their own method, using load queue in main thread (OpenGL specific)
+	void Register_textures_as_sprites(); // mod icons should be registered as regular sprites after all textures are loaded
+	bool Load_resources(
+		ResourceType res_type,
+		const std::string& resources_path,
+		bool load_from_mods
+	);
+	bool Resolve_objects_dependencies();
+	bool Resolve_entities_dependencies();
 private:
 	ResourceLoader() {}
 	~ResourceLoader();
-
+private:
+	// BATCH_LOAD_SIMPLE --> load standard files (.json | .png | etc.)
+	// BATCH_LOAD_PACKED --> load packed files (.data | .pack | etc.)
+	struct ResourceLoadRequest {
+		enum RequestLoadType : uint8_t { SIMPLE, PACKED };
+		std::filesystem::path data_file_path;
+		RequestLoadType load_type;
+	};
+private:
 	// items and entities data is cached when loading
 	std::vector<Engine::Util::DataParser> object_data_parsers;
 	std::vector<Engine::Util::DataParser> entity_data_parsers;
 
 	std::vector<Engine::Util::LibraryHandle> library_handles;
 	std::filesystem::path data_extension;
+
+	std::vector<std::string> tex_to_sprite_queue;
 
 	std::unique_ptr<std::thread> resource_loader;
 	std::mutex resources_mutex;
