@@ -50,7 +50,7 @@ void World::init_render_buffers() {
 		buf->vao->link_Attribute(0, 2, Engine::Graphics::VAO::TYPE_FLOAT, sizeof(Vertex2f), offsetof(Vertex2f, pos));
 		buf->vao->link_Attribute(1, 2, Engine::Graphics::VAO::TYPE_FLOAT, sizeof(Vertex2f), offsetof(Vertex2f, UV));
 		buf->vao->link_Attribute(2, 1, Engine::Graphics::VAO::TYPE_UNSIGNED_INT, sizeof(Vertex2f), offsetof(Vertex2f, tex_array_id));
-		buf->vao->link_Attribute(3, 1, Engine::Graphics::VAO::TYPE_UNSIGNED_INT, sizeof(Vertex2f), offsetof(Vertex2f, Vertex2f::tex_id));
+		buf->vao->link_Attribute(3, 1, Engine::Graphics::VAO::TYPE_UNSIGNED_INT, sizeof(Vertex2f), offsetof(Vertex2f, tex_id));
 		buf->vao->unbind_VAO();
 		buf->vbo->unbind_VBO();
 		ebo->unbind_EBO();
