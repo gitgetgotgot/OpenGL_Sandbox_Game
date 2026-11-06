@@ -123,6 +123,11 @@ void GameEngine::init_MainWindow() {
 
 	glfwMakeContextCurrent(window);
 	glfwSetWindowAspectRatio(window, 16, 9);
+
+	//int fb_width, fb_height;
+	//glfwGetFramebufferSize(window, &fb_width, &fb_height);
+	//glViewport(0, 0, fb_width, fb_height);
+	//DeviceContext::display.update_resolution(fb_width, fb_height);
 }
 
 void GameEngine::init_OpenGL() {

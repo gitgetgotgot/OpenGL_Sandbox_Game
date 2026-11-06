@@ -17,15 +17,13 @@ class InputHandler {
 public:
 	static void setGLFWwindowCallbacks(GLFWwindow* window);
 private:
-	//window resize
+	static void glfwFrameBufferSizeCallback(GLFWwindow* window, int width, int height);
 	static void glfwWindowSizeCallback(GLFWwindow* window, int width, int height);
-	//keyboard
+
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void char_callback(GLFWwindow* window, unsigned int codepoint);
-	//mouse cursor
+	
 	static void cursor_position_callback(GLFWwindow* window, double mX, double mY);
-	//mouse buttons
 	static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
-	//mouse wheel scroll
 	static void mouse_wheel_callback(GLFWwindow* window, double xOffset, double yOffset);
 };

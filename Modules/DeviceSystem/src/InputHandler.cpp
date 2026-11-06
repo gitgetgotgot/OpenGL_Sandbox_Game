@@ -1,15 +1,25 @@
 #include "DeviceSystem/InputHandler.h"
 
 void InputHandler::setGLFWwindowCallbacks(GLFWwindow* window) {
-	glfwSetWindowSizeCallback(window, glfwWindowSizeCallback);
+	glfwSetFramebufferSizeCallback(window, glfwFrameBufferSizeCallback);
+	//glfwSetWindowSizeCallback(window, glfwWindowSizeCallback);
+
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetCharCallback(window, char_callback);
+
 	glfwSetCursorPosCallback(window, cursor_position_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
 	glfwSetScrollCallback(window, mouse_wheel_callback);
 }
 
+void InputHandler::glfwFrameBufferSizeCallback(GLFWwindow* window, int width, int height) {
+	// here width and height are physical pixels of framebuffer
+	DeviceContext::display.update_resolution(width, height);
+	glViewport(0, 0, width, height);
+}
+
 void InputHandler::glfwWindowSizeCallback(GLFWwindow* window, int width, int height) {
+	// here width and height are logical pixels of window
 	DeviceContext::display.update_resolution(width, height);
 	glViewport(0, 0, width, height);
 }
