@@ -1,5 +1,5 @@
 #pragma once
-#include <cstdint>
+#include <Base/Types.h>
 
 namespace Engine::Graphics {
 	class SSBO {
@@ -8,9 +8,9 @@ namespace Engine::Graphics {
 		uint32_t id = 0;
 		SSBO();
 		~SSBO();
-		void set_data(void* data, size_t size, SSBO_USAGE usage) const;
-		void update_data(void* data, size_t size, size_t offset = 0) const;
-		void set_persistent_storage_data(void* data, size_t size) const;
+		void set_data(const void* data, size_t size, SSBO_USAGE usage) const;
+		void update_data(const void* data, size_t size, size_t offset = 0) const;
+		void set_persistent_storage_data(const void* data, size_t size) const;
 		void bind_SSBO(uint32_t slot = 0) const;
 		void unbind_SSBO() const;
 		void delete_SSBO() const;

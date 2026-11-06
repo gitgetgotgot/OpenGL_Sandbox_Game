@@ -20,6 +20,7 @@
 #include <Entities/EntityFactory.h>
 #include <DeviceSystem/DeviceContext.h>
 #include <Utility/Logger.h>
+#include <Base/Config.h>
 #include <iostream>
 
 ResourceLoader::~ResourceLoader() {

@@ -6,12 +6,6 @@
 #include <Utility/DataParser.h>
 #include <Utility/DynamicLib.h>
 
-#ifdef DEBUG_MODE
-constexpr bool DEBUG = true;
-#else
-constexpr bool DEBUG = false;
-#endif
-
 class ResourceLoader {
 public:
 	enum ResourceType : uint8_t {

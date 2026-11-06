@@ -5,7 +5,7 @@ Engine::Graphics::VBO::VBO() {
 	glGenBuffers(1, &id);
 }
 
-Engine::Graphics::VBO::VBO(void* data, size_t size) {
+Engine::Graphics::VBO::VBO(const void* data, size_t size) {
 	glGenBuffers(1, &id);
 	glBindBuffer(GL_ARRAY_BUFFER, id);
 	glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
@@ -15,12 +15,12 @@ Engine::Graphics::VBO::~VBO() {
 	delete_VBO();
 }
 
-void Engine::Graphics::VBO::set_data(void* data, size_t size, VBO_USAGE usage) const {
+void Engine::Graphics::VBO::set_data(const void* data, size_t size, VBO_USAGE usage) const {
 	glBindBuffer(GL_ARRAY_BUFFER, id);
 	glBufferData(GL_ARRAY_BUFFER, size, data, usage == VBO_USAGE::USAGE_DYNAMIC ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 }
 
-void Engine::Graphics::VBO::update_data(void* data, size_t size, size_t offset) const {
+void Engine::Graphics::VBO::update_data(const void* data, size_t size, size_t offset) const {
 	glBindBuffer(GL_ARRAY_BUFFER, id);
 	glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
 }

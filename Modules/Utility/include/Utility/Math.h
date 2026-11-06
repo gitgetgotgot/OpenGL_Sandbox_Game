@@ -1,14 +1,15 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <Base/Config.h>
 
 namespace Engine::Util::Math {
-	inline bool mouse_overlaps_ortho_square(
+	ENGINE_FORCEINLINE bool mouse_overlaps_ortho_square(
 		const glm::vec2& square_ortho_pos, const glm::vec2& square_ortho_size,
 		const float mouse_ortho_x, const float mouse_ortho_y
 	) {
-		float left_x = square_ortho_pos.x - square_ortho_size.x * 0.5f;
-		float bottom_y = square_ortho_pos.y - square_ortho_size.y * 0.5f;
+		const float left_x = square_ortho_pos.x - square_ortho_size.x * 0.5f;
+		const float bottom_y = square_ortho_pos.y - square_ortho_size.y * 0.5f;
 		return
 			mouse_ortho_x > left_x &&
 			mouse_ortho_x < left_x + square_ortho_size.x &&

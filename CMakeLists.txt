@@ -1,22 +1,26 @@
 cmake_minimum_required(VERSION 3.30)
 project(OpenGL_2D_Sandbox VERSION 1.0)
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Supported configurations" FORCE)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-include(cmake/GameModule.cmake)
+include(cmake/EngineModule.cmake)
+include(cmake/EngineInterfaceModule.cmake)
 
-add_game_module(Audio)
-add_game_module(Core)
-add_game_module(Entities)
-add_game_module(Objects)
-add_game_module(Physics)
-add_game_module(Rendering)
-add_game_module(Resources)
-add_game_module(UI)
-add_game_module(DeviceSystem)
-add_game_module(Utility)
-add_game_module(EngineAPI)
+add_engine_interface_module(Base)
+add_engine_module(Audio)
+add_engine_module(Core)
+add_engine_module(Entities)
+add_engine_module(Objects)
+add_engine_module(Physics)
+add_engine_module(Rendering)
+add_engine_module(Resources)
+add_engine_module(UI)
+add_engine_module(DeviceSystem)
+add_engine_module(Utility)
+add_engine_module(EngineAPI)
 
 find_package(glfw3 REQUIRED)
 find_package(glm REQUIRED)
@@ -32,12 +36,14 @@ target_link_libraries(Rendering
         glad::glad
         glfw glm::glm
         stb::stb
+        Base
 )
 
 target_link_libraries(Utility
     PUBLIC
         glm::glm
         nlohmann_json::nlohmann_json
+        Base
     PRIVATE
         stb::stb
 )
@@ -45,12 +51,15 @@ target_link_libraries(Utility
 target_link_libraries(Resources
     PUBLIC
         Utility
+        Base
     PRIVATE
         stb::stb
         Rendering
 )
 
 target_link_libraries(DeviceSystem
+    PUBLIC
+        Base
     PRIVATE
         glad::glad
         glfw
@@ -79,10 +88,17 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Core)
 target_link_libraries(EngineAPI PUBLIC Entities)
 
 
-target_compile_definitions(Core PRIVATE
-    $<$<CONFIG:Debug>:DEBUG_MODE=1>
-    $<$<CONFIG:Release>:DEBUG_MODE=0>
+target_compile_definitions(Utility PUBLIC
+    $<$<CONFIG:Debug>:CMAKE_DEBUG_MACRO=1>
 )
+if(MSVC)
+    target_compile_options(Rendering PRIVATE
+        /W4                 # (Max Warning Level 4)
+        /permissive-        # turn off incompatible Microsoft extensions (strict C++ standard)
+        /Zc:__cplusplus     # correct macros __cplusplus (C++23)
+        /Zc:preprocessor    # modern preprocessing
+    )
+endif()
 
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD

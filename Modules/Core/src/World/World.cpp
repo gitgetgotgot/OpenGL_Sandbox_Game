@@ -29,14 +29,14 @@ void World::init_render_buffers() {
 	shader = std::make_unique<Engine::Graphics::ShaderProgram>(vertex_shader_path, fragment_shader_path);
 
 	ebo = std::make_unique<Engine::Graphics::EBO>();
-	GLuint* sprite_index_buffer = new GLuint[MAX_INDEX_AMOUNT];
+	ET::uint32* sprite_index_buffer = new ET::uint32[MAX_INDEX_AMOUNT];
 	for (int i = 0; i < MAX_SQUARES; i++) {
 		sprite_index_buffer[i * 6] = sprite_index_buffer[i * 6 + 3] = i * 4;
 		sprite_index_buffer[i * 6 + 2] = sprite_index_buffer[i * 6 + 4] = sprite_index_buffer[i * 6] + 2;
 		sprite_index_buffer[i * 6 + 1] = sprite_index_buffer[i * 6 + 2] - 1;
 		sprite_index_buffer[i * 6 + 5] = sprite_index_buffer[i * 6 + 2] + 1;
 	}
-	ebo->set_data(sprite_index_buffer, MAX_INDEX_AMOUNT * sizeof(GLuint), Engine::Graphics::EBO::EBO_USAGE::USAGE_STATIC);
+	ebo->set_data(sprite_index_buffer, MAX_INDEX_AMOUNT * sizeof(ET::uint32), Engine::Graphics::EBO::EBO_USAGE::USAGE_STATIC);
 	delete[] sprite_index_buffer;
 
 	for (auto& buf : render_buffers) {
@@ -47,9 +47,9 @@ void World::init_render_buffers() {
 		buf->vbo = std::make_unique<Engine::Graphics::VBO>();
 		buf->vbo->set_data(nullptr, MAX_VERTEX_AMOUNT * sizeof(Vertex2f), Engine::Graphics::VBO::VBO_USAGE::USAGE_DYNAMIC);
 		ebo->bind_EBO();
-		buf->vao->link_Attribute(0, 2, Engine::Graphics::VAO::TYPE_FLOAT, sizeof(Vertex2f), offsetof(Vertex2f, Vertex2f::pos));
-		buf->vao->link_Attribute(1, 2, Engine::Graphics::VAO::TYPE_FLOAT, sizeof(Vertex2f), offsetof(Vertex2f, Vertex2f::UV));
-		buf->vao->link_Attribute(2, 1, Engine::Graphics::VAO::TYPE_UNSIGNED_INT, sizeof(Vertex2f), offsetof(Vertex2f, Vertex2f::tex_array_id));
+		buf->vao->link_Attribute(0, 2, Engine::Graphics::VAO::TYPE_FLOAT, sizeof(Vertex2f), offsetof(Vertex2f, pos));
+		buf->vao->link_Attribute(1, 2, Engine::Graphics::VAO::TYPE_FLOAT, sizeof(Vertex2f), offsetof(Vertex2f, UV));
+		buf->vao->link_Attribute(2, 1, Engine::Graphics::VAO::TYPE_UNSIGNED_INT, sizeof(Vertex2f), offsetof(Vertex2f, tex_array_id));
 		buf->vao->link_Attribute(3, 1, Engine::Graphics::VAO::TYPE_UNSIGNED_INT, sizeof(Vertex2f), offsetof(Vertex2f, Vertex2f::tex_id));
 		buf->vao->unbind_VAO();
 		buf->vbo->unbind_VBO();

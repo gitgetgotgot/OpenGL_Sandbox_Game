@@ -1,5 +1,5 @@
 #pragma once
-#include <cstdint>
+#include <Base/Types.h>
 
 namespace Engine::Graphics {
 	class UBO {
@@ -8,8 +8,8 @@ namespace Engine::Graphics {
 		uint32_t id = 0;
 		UBO();
 		~UBO();
-		void set_data(void* data, size_t size, UBO_USAGE usage) const;
-		void update_data(void* data, size_t size, size_t offset = 0) const;
+		void set_data(const void* data, size_t size, UBO_USAGE usage) const;
+		void update_data(const void* data, size_t size, size_t offset = 0) const;
 		void bind_UBO(uint32_t slot = 0) const;
 		void unbind_UBO() const;
 		void delete_UBO() const;

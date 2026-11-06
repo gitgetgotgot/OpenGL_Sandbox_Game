@@ -63,9 +63,9 @@ void Engine::UI::UI_System::init() {
 	sdf_text_vbo->set_data(nullptr, MAX_SDF_TEXT_VERTEX_SIZE * sizeof(UI_Text_Vertex2f), EG::VBO::VBO_USAGE::USAGE_DYNAMIC);
 	ebo->bind_EBO();
 
-	sdf_text_vao->link_Attribute(0, 2, EG::VAO::TYPE_FLOAT, sizeof(UI_Text_Vertex2f), offsetof(UI_Text_Vertex2f, UI_Text_Vertex2f::pos));
-	sdf_text_vao->link_Attribute(1, 2, EG::VAO::TYPE_FLOAT, sizeof(UI_Text_Vertex2f), offsetof(UI_Text_Vertex2f, UI_Text_Vertex2f::UV));
-	sdf_text_vao->link_Attribute(2, 4, EG::VAO::TYPE_FLOAT, sizeof(UI_Text_Vertex2f), offsetof(UI_Text_Vertex2f, UI_Text_Vertex2f::color));
+	sdf_text_vao->link_Attribute(0, 2, EG::VAO::TYPE_FLOAT, sizeof(UI_Text_Vertex2f), offsetof(UI_Text_Vertex2f, pos));
+	sdf_text_vao->link_Attribute(1, 2, EG::VAO::TYPE_FLOAT, sizeof(UI_Text_Vertex2f), offsetof(UI_Text_Vertex2f, UV));
+	sdf_text_vao->link_Attribute(2, 4, EG::VAO::TYPE_FLOAT, sizeof(UI_Text_Vertex2f), offsetof(UI_Text_Vertex2f, color));
 
 	sdf_text_vao->unbind_VAO();
 	sdf_text_vbo->unbind_VBO();

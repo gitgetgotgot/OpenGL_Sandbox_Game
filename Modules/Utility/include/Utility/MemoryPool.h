@@ -25,8 +25,6 @@ namespace Engine::Util {
 		bool AllocateBucket(uint32_t slot_count, uint32_t slot_size);
 		void Deallocate();
 	private:
-		MemoryPool() = default;
-		~MemoryPool() = default;
 		std::deque<PoolBucket> buckets;
 	};
 

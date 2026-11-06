@@ -5,7 +5,7 @@ bool Engine::Util::MemoryPool::PoolBucket::Allocate(uint32_t slot_count, uint32_
 	this->slot_size = slot_size;
 	free_slots.resize(slot_count);
 	for (uint32_t i = 0; i < slot_count; i++) free_slots[i] = i;
-	memory = malloc(static_cast<size_t>(slot_count) * slot_size);
+	memory = ::operator new(static_cast<size_t>(slot_count) * slot_size);
 	return memory != nullptr;
 }
 
@@ -25,7 +25,7 @@ void Engine::Util::MemoryPool::PoolBucket::Free_Memory(void* ptr) {
 }
 
 void Engine::Util::MemoryPool::PoolBucket::Deallocate() {
-	free(memory);
+	::operator delete(memory);
 }
 
 

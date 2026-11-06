@@ -138,8 +138,8 @@ public:
 class Mouse {
 public:
     void get_mouse_ortho_coords(DisplayController& screen) {
-        ortho_x_pos = ((x_pos / screen.width) * 2.f - 1.f) * screen.ratio;
-        ortho_y_pos = (y_pos / screen.height) * 2.f - 1.f;
+        ortho_x_pos = ((float(x_pos) / screen.width) * 2.f - 1.f) * screen.ratio;
+        ortho_y_pos = (float(y_pos) / screen.height) * 2.f - 1.f;
     }
     bool lb_is_pressed() const { return !lb_prev && lb_curr; }
     bool lb_is_released() const { return lb_prev && !lb_curr; }
