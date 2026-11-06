@@ -2,5 +2,5 @@
 #include <Objects/ObjectTypes/ArmorInfo.h>
 
 namespace EngineAPI {
-	using BASE_ARMOR_INFO = CoreObject::ArmorInfo;
+	using BASE_ARMOR_INFO = Engine::Object::ArmorInfo;
 }

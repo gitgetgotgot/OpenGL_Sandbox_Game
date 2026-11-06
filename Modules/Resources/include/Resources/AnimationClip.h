@@ -1,7 +1,10 @@
 #pragma once
-#include "Resources/Sprite.h"
+#include <Utility/DataParser.h>
+#include <Base/Types.h>
 #include <unordered_map>
 #include <string>
+#include <vector>
+#include <optional>
 
 namespace Engine::Resource {
 	class AnimationClip {

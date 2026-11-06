@@ -1,5 +1,6 @@
 #pragma once
 #include "Objects/ObjectInfo.h"
+#include <optional>
 
 namespace Engine::Object {
 	class _ObjectFactoryI {

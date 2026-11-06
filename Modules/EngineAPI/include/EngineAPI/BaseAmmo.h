@@ -2,5 +2,5 @@
 #include <Objects/ObjectTypes/AmmoInfo.h>
 
 namespace EngineAPI {
-	using BASE_AMMO_INFO = CoreObject::AmmoInfo;
+	using BASE_AMMO_INFO = Engine::Object::AmmoInfo;
 }

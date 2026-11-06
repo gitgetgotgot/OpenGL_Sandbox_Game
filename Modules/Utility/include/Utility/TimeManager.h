@@ -1,8 +1,9 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <chrono>
+
 namespace Engine::Util {
-	constexpr double PI = 3.14159265358979323846264338327950288;
+	constexpr float PI = 3.1415926;
 	constexpr float rainbow_speed = 2.f;
 	constexpr float rainbow_period = 2.f * PI;
 

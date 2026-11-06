@@ -1,4 +1,5 @@
 #include "Resources/AnimationClip.h"
+#include "Resources/Sprite.h"
 #include <Utility/TimeManager.h>
 #include <Utility/Logger.h>
 

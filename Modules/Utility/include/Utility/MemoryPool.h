@@ -1,7 +1,7 @@
 #pragma once
+#include <Base/Types.h>
 #include <vector>
 #include <deque>
-#include <cstdint>
 
 namespace Engine::Util {
 	class MemoryPool {

@@ -1,4 +1,5 @@
 #pragma once
+#include <Base/Types.h>
 #include <vector>
 
 namespace Engine::Util {

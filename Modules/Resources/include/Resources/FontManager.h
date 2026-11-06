@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <optional>
-#include <cstdint>
+#include <Base/Types.h>
 
 namespace Engine::Resource {
 	struct Font {

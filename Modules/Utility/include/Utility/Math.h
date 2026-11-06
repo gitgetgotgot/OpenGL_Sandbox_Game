@@ -1,7 +1,7 @@
 #pragma once
-
-#include <glm/glm.hpp>
+#include <Base/Types.h>
 #include <Base/Config.h>
+#include <glm/glm.hpp>
 
 namespace Engine::Util::Math {
 	ENGINE_FORCEINLINE bool mouse_overlaps_ortho_square(

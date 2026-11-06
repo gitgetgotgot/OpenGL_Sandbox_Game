@@ -1,6 +1,7 @@
 #pragma once
 #include <Resources/Animator.h>
 #include <Resources/AnimationClip.h>
+#include <Resources/Sprite.h>
 
 namespace Engine::Entity {
 	class AnimatorComponent {

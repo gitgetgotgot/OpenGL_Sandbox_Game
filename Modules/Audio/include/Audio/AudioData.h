@@ -1,3 +1,5 @@
+#pragma once
+#include <Base/Types.h>
 #include <vector>
 #include <filesystem>
 #include <miniaudio.h>

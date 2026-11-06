@@ -70,6 +70,7 @@ target_link_libraries(Audio PUBLIC miniaudio::miniaudio)
 target_link_libraries(Audio PRIVATE Utility)
 
 target_link_libraries(Physics PUBLIC glm::glm)
+target_link_libraries(Physics PUBLIC Base)
 
 target_link_libraries(UI PUBLIC Rendering)
 target_link_libraries(UI PUBLIC Resources)

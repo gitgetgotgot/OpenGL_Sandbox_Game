@@ -1,5 +1,5 @@
 #pragma once
-#include <cstdint>
+#include <Base/Types.h>
 #include <glm/ext/matrix_float4x4.hpp>
 
 constexpr uint32_t CHUNK_SIZE = 64;

@@ -1,4 +1,5 @@
 #include <Utility/TextBufferBuilder.h>
+#include <charconv>
 
 Engine::Util::TextBufferBuilder::TextBufferBuilder() {
 	buffer_ptr = buffer_data;

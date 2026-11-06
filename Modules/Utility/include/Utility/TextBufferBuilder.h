@@ -1,5 +1,5 @@
 #pragma once
-#include <charconv>
+#include <Base/Types.h>
 
 namespace Engine::Util {
 	class TextBufferBuilder {

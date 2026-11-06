@@ -1,5 +1,5 @@
 #pragma once
-#include <cstdint>
+#include <Base/Types.h>
 #include <vector>
 #include <unordered_set>
 #include <Resources/ResourceData.h>

@@ -2,7 +2,6 @@
 #include <Utility/DataParser.h>
 #include <glm/glm.hpp>
 #include <unordered_map>
-#include <cstdint>
 #include <optional>
 #include <mutex>
 

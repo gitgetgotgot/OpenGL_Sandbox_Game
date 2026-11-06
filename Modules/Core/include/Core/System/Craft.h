@@ -1,5 +1,5 @@
 #pragma once
-#include <cstdint>
+#include <Base/Types.h>
 #include <unordered_set>
 #include <unordered_map>
 #include <vector>

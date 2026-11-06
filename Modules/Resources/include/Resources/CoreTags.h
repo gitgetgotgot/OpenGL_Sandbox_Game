@@ -1,5 +1,5 @@
 #pragma once
-#include <cstdint>
+#include <Base/Types.h>
 
 namespace Engine::Resource::Tag {
 	inline uint16_t IS_NONE;

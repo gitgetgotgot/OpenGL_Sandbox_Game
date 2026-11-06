@@ -1,4 +1,5 @@
 #pragma once
+#include <Base/Types.h>
 #include <glm/ext/vector_float2.hpp>
 
 class Transform {

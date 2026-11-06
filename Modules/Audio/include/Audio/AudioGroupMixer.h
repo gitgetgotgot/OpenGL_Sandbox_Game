@@ -1,5 +1,5 @@
 #pragma once
-#include <cstdint>
+#include <Base/Types.h>
 #include <string>
 
 namespace Engine::Audio {

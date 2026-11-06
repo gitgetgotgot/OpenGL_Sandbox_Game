@@ -3,13 +3,13 @@
 #include <Entities/EntityInfoFactory.h>
 
 namespace EngineAPI {
-	using BASE_ENTITY_INFO = CoreEntity::EntityInfo;
-	using ENTITY_TYPE = CoreEntity::EntityMainType;
-	using BASE_ENTITY_CLASS = CoreEntity::EntityBase;
+	using BASE_ENTITY_INFO = Engine::Entity::EntityInfo;
+	using ENTITY_TYPE = Engine::Entity::EntityMainType;
+	using BASE_ENTITY_CLASS = Engine::Entity::EntityBase;
 	template<typename T, ENTITY_TYPE MAIN_TYPE>
-	using BASE_ENTITY_INFO_FACTORY = CoreEntity::EntityInfoFactory<T, MAIN_TYPE>;
+	using BASE_ENTITY_INFO_FACTORY = Engine::Entity::EntityInfoFactory<T, MAIN_TYPE>;
 	template<typename T>
-	using BASE_ENTITY_CLASS_FACTORY = CoreEntity::EntityFactory<T>;
-	using ENTITY_CLASS_FACTORY_REGISTRY = CoreEntity::EntityFactoryRegistry;
-	using ENTITY_INFO_FACTORY_REGISTRY = CoreEntity::EntityInfoFactoryRegistry;
+	using BASE_ENTITY_CLASS_FACTORY = Engine::Entity::EntityFactory<T>;
+	using ENTITY_CLASS_FACTORY_REGISTRY = Engine::Entity::EntityFactoryRegistry;
+	using ENTITY_INFO_FACTORY_REGISTRY = Engine::Entity::EntityInfoFactoryRegistry;
 }

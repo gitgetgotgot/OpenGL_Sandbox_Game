@@ -2,6 +2,7 @@
 #include "Core/World/World.h"
 #include <filesystem>
 #include <thread>
+#include <atomic>
 
 class WorldManager {
 public:

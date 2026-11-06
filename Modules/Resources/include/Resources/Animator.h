@@ -1,4 +1,5 @@
 #pragma once
+#include <Base/Types.h>
 #include <vector>
 #include <optional>
 #include <unordered_map>
