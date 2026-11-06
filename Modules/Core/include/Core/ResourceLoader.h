@@ -3,6 +3,7 @@
 #include <memory>
 #include <thread>
 #include <mutex>
+#include <condition_variable>
 #include <Utility/DataParser.h>
 #include <Utility/DynamicLib.h>
 
