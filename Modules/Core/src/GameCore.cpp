@@ -12,6 +12,10 @@
 #include <Utility/Logger.h>
 #include <iostream>
 
+static void GLFWErrorCallback(int error_code, const char* description) {
+	std::cerr << "GLFW Error [" << error_code << "]: " << description << std::endl;
+}
+
 GameEngine::~GameEngine() {
 	uninit();
 }
@@ -96,7 +100,10 @@ void GameEngine::switch_update_state(Game_State state) {
 }
 
 void GameEngine::init_MainWindow() {
-	glfwInit();
+	glfwSetErrorCallback(GLFWErrorCallback);
+	if (!glfwInit()) {
+		throw std::runtime_error("Failed to initialize GLFW");
+	}
 
 	// OpenGL Core 4.6
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -109,6 +116,10 @@ void GameEngine::init_MainWindow() {
 	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
 	window = glfwCreateWindow(1920, 1080, "2D Sandbox", NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		throw std::runtime_error("Failed to create GLFW window");
+	}
 
 	glfwMakeContextCurrent(window);
 	glfwSetWindowAspectRatio(window, 16, 9);
