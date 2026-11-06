@@ -88,7 +88,8 @@ void Engine::UI::UI_Transform::force_update() {
 void Engine::UI::UI_Transform::update_transform() {
 	if (parent_id != 0) {
 		UI_Transform& parent_tr = UI_ObjectManager::Instance().get(parent_id)->transform;
-		global_pos = parent_tr.global_pos + local_pos + parent_tr.size * ANCHOR_MULTIPLIERS[static_cast<size_t>(anchor)];
+		//global_pos = parent_tr.global_pos + local_pos + parent_tr.size * ANCHOR_MULTIPLIERS[static_cast<size_t>(anchor)];
+		global_pos = parent_tr.global_pos + local_pos;
 	}
 	else {
 		global_pos = local_pos;
