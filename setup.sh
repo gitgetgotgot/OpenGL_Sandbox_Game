@@ -4,10 +4,10 @@
 set -e
 
 echo "=== Install Conan dependencies (Debug) ==="
-conan install . --build=missing -s build_type=Debug
+conan install . --build=missing -s build_type=Debug -c tools.system.package_manager:mode=install
 
 echo "=== Install Conan dependencies (Release) ==="
-conan install . --build=missing -s build_type=Release
+conan install . --build=missing -s build_type=Release -c tools.system.package_manager:mode=install
 
 echo "=== CMake configuration (conan-debug) ==="
 cmake --preset conan-debug
