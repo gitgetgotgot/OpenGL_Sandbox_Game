@@ -6,6 +6,7 @@
 #include <optional>
 #include <unordered_map>
 #include <queue>
+#include <atomic>
 
 namespace Engine::Resource {
 	class TextureArrayManager {
