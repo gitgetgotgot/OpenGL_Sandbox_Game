@@ -10,8 +10,10 @@ void Engine::UI::SDF_Text::_update_buffer_data(UI_RenderContext& c, UI_RenderSta
 }
 
 void Engine::UI::SDF_Text::_update_data() {
+	if (!is_dirty) return;
 	is_dirty = false;
 	if (text.empty()) return;
+	
 	UI_Object* obj = UI_ObjectManager::Instance().get(object_id);
 
 	if (dirty_mask & TextMask::TEXT_TRANSFORM) {
@@ -181,11 +183,9 @@ void Engine::UI::SDF_Text::set_alignment(TextHorizAlign horiz, TextVertAlign ver
 }
 
 void Engine::UI::SDF_Text::force_update() {
-	if (is_dirty) {
-		_update_data();
-		UI_ObjectManager::Instance().unmark_dirty_component(object_id);
-		UI_ObjectManager::Instance().get(object_id)->transform.force_update();
-	}
+	// each is updated only if they are dirty
+	_update_data();
+	UI_ObjectManager::Instance().get(object_id)->transform.force_update();
 }
 
 void Engine::UI::SDF_Text::add_char_to_text(const char c, uint32_t pos) {

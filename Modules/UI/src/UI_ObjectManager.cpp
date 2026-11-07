@@ -36,48 +36,27 @@ Engine::UI::UI_Object* Engine::UI::UI_ObjectManager::get(uint32_t ui_object_id) 
 }
 
 void Engine::UI::UI_ObjectManager::mark_dirty_transform(uint32_t ui_object_id) {
-	dirty_objects[ui_object_id].dirty_transform = true;
+	dirty_transforms.push_back(ui_object_id);
 }
 
 void Engine::UI::UI_ObjectManager::mark_dirty_component(uint32_t ui_object_id) {
-	dirty_objects[ui_object_id].dirty_component = true;
-}
-
-void Engine::UI::UI_ObjectManager::unmark_dirty_transform(uint32_t ui_object_id) {
-	dirty_objects[ui_object_id].dirty_transform = false;
-}
-
-void Engine::UI::UI_ObjectManager::unmark_dirty_component(uint32_t ui_object_id) {
-	dirty_objects[ui_object_id].dirty_component = false;
+	dirty_components.push_back(ui_object_id);
 }
 
 void Engine::UI::UI_ObjectManager::update_dirty_objects() {
-	if (dirty_objects.empty()) return;
-
-	std::println("Updating dirty UI objects");
-
-	for (auto& it : dirty_objects) {
-
-		std::println("---Updating UI_Object (ID = {})", it.first);
-
-		if (it.second.dirty_transform) {
-			std::println("------updating transform and component");
-			//update transform and component
-			get(it.first)->transform.update_transform();
-			UI_ComponentEntry* entry = UI_ComponentManager::Instance().get(it.first);
-			if(entry && static_cast<UI_ComponentBase*>(entry->component)->render_type != UI_Render_Type::UI_NONE)
-				entry->vt->update_data(entry->component);
-		}
-		else if (it.second.dirty_component) {
-			std::println("------updating only component");
-			//update only component
-			UI_ComponentEntry* entry = UI_ComponentManager::Instance().get(it.first);
-			entry->vt->update_data(entry->component);
-		}
+	for (auto& obj_id : dirty_transforms) {
+		//std::println("Update UI_Transform ID: {}", obj_id);
+		// transform won't be updated if it's not dirty
+		objects.get(obj_id)->transform.update_transform();
 	}
-	dirty_objects.clear();
-
-	std::println("Updating dirty UI objects completed");
+	for (auto& obj_id : dirty_components) {
+		//std::println("Update UI_Component ID: {}", obj_id);
+		// component won't be updated if it's not dirty
+		UI_ComponentEntry* entry = UI_ComponentManager::Instance().get(obj_id);
+		entry->vt->update_data(entry->component);
+	}
+	dirty_transforms.clear();
+	dirty_components.clear();
 }
 
 void Engine::UI::UI_ObjectManager::remove_destroyed_objects() {
@@ -88,6 +67,7 @@ void Engine::UI::UI_ObjectManager::remove_destroyed_objects() {
 		UI_ComponentManager::Instance().remove(obj_id);
 		objects.remove(obj_id);
 		// check if parent is not marked as destroyed and remove this obj from its children
+
 	}
 	destroyed_objects.clear();
 }

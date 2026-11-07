@@ -16,6 +16,7 @@ namespace Engine::UI {
 	};
 
 	class UI_ComponentBase {
+		friend class UI_Transform;
 	public:
 		UI_ComponentBase() = default;
 		UI_ComponentBase(uint32_t object_id, UI_Component_Type type, UI_Render_Type render_type) :

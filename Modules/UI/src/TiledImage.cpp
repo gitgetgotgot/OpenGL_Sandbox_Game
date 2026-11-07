@@ -9,6 +9,8 @@ void Engine::UI::TiledImage::_update_buffer_data(UI_RenderContext& c, UI_RenderS
 }
 
 void Engine::UI::TiledImage::_update_data() {
+	// return if has no sprite or if not dirty
+	if (!is_dirty) return;
 	is_dirty = false;
 	if (sprite_ID == 0) return;
 
