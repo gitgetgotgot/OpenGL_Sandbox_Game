@@ -1,19 +1,54 @@
-#pragma once
-#include <cstdint>
-#include <cstddef>
+UI_Object* obj = UI_ObjectManager::Instance().get(img.object_id);
+UI_Vertex2f* v_buf = nullptr;
 
-namespace Engine::Graphics {
-	class EBO {
-	public:
-		enum EBO_USAGE : uint8_t { USAGE_STATIC, USAGE_DYNAMIC };
-		uint32_t id = 0;
-		EBO();
-		EBO(void* indices, size_t size);
-		~EBO();
-		void set_data(void* indices, size_t size, EBO_USAGE usage) const;
-		void update_data(void* indices, size_t size, size_t offset = 0) const;
-		void bind_EBO() const;
-		void unbind_EBO() const;
-		void delete_EBO() const;
+if (img.dirty_mask & ImageMask::IMAGE_TRANSFORM || img.dirty_mask & ImageMask::IMAGE_BORDER) {
+	Engine::Resource::Sprite9Sliced& sprite = Engine::Resource::SpriteManager::Instance().get_sprite9sliced(img.sprite_ID);
+	float margin_left	= sprite.ratio_left * img.border_normalized_size;
+	float margin_right	= sprite.ratio_right * img.border_normalized_size;
+	float margin_top	= sprite.ratio_top * img.border_normalized_size;
+	float margin_bottom	= sprite.ratio_bottom * img.border_normalized_size;
+
+	UI_Transform& tr = obj->transform;
+	float
+		X_0 = tr.global_pos.x - tr.size.x * tr.pivot.x, X_1 = X_0 + tr.size.x,
+		Y_0 = tr.global_pos.y - tr.size.y * tr.pivot.y, Y_1 = Y_0 + tr.size.y;
+	float
+		x0 = X_0, x1 = X_0 + margin_left,
+		y0 = Y_0, y1 = Y_0 + margin_bottom;
+	v_buf = img.image_vertices.data;
+
+	auto update_buffer_transform_part = [&]() {
+		v_buf++->pos = { x0, y0 };
+		v_buf++->pos = { x0, y1 };
+		v_buf++->pos = { x1, y1 };
+		v_buf++->pos = { x1, y0 };
 	};
+
+	update_buffer_transform_part(); //LB
+
+	y0 = y1, y1 = Y_1 - margin_top,
+	update_buffer_transform_part(); //LC
+
+	y0 = y1, y1 = Y_1,
+	update_buffer_transform_part(); //LT
+
+	x0 = x1, x1 = X_1 - margin_right,
+	y0 = Y_0, y1 = Y_0 + margin_bottom,
+	update_buffer_transform_part(); //CB
+
+	y0 = y1, y1 = Y_1 - margin_top,
+	update_buffer_transform_part(); //C
+
+	y0 = y1, y1 = Y_1,
+	update_buffer_transform_part(); //CT
+
+	x0 = x1, x1 = X_1,
+	y0 = Y_0, y1 = Y_0 + margin_bottom,
+	update_buffer_transform_part(); //RB
+
+	y0 = y1, y1 = Y_1 - margin_top,
+	update_buffer_transform_part(); //RC
+
+	y0 = y1, y1 = Y_1,
+	update_buffer_transform_part(); //RT
 }

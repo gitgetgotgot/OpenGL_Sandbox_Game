@@ -1,6 +1,7 @@
 #include "UI/Image.h"
 #include "UI/UI_ObjectManager.h"
 #include <Resources/Sprite.h>
+#include <print>
 
 void Engine::UI::Image::_update_buffer_data(UI_RenderContext& c, UI_RenderState& s) {
 	if (sprite_ID == 0) return;
@@ -101,12 +102,13 @@ void Engine::UI::Image::update_as_nine_sliced(Image& img) {
 		float margin_bottom	= sprite.ratio_bottom * img.border_normalized_size;
 
 		UI_Transform& tr = obj->transform;
-		float
-			X_0 = tr.global_pos.x - tr.size.x * tr.pivot.x, X_1 = X_0 + tr.size.x,
-			Y_0 = tr.global_pos.y - tr.size.y * tr.pivot.y, Y_1 = Y_0 + tr.size.y;
-		float
-			x0 = X_0, x1 = X_0 + margin_left,
-			y0 = Y_0, y1 = Y_0 + margin_bottom;
+		std::println("Transform: pos({:.2f}, {:.2f}), pivot({:.2f}, {:.2f}), size({:.2f}, {:.2f})",
+			tr.global_pos.x, tr.global_pos.y, tr.pivot.x, tr.pivot.y, tr.size.x, tr.size.y);
+		float X_0 = tr.global_pos.x - tr.size.x * tr.pivot.x, X_1 = X_0 + tr.size.x;
+		float Y_0 = tr.global_pos.y - tr.size.y * tr.pivot.y, Y_1 = Y_0 + tr.size.y;
+		float x0 = X_0, x1 = X_0 + margin_left;
+		float y0 = Y_0, y1 = Y_0 + margin_bottom;
+		std::println("Vertex: pos(X_0: {:.2f}, Y_0: {:.2f}), UV(x0: {:.2f}, x0: {:.2f})", X_0, Y_0, x0, y0);
 		v_buf = img.image_vertices.data;
 
 		auto update_buffer_transform_part = [&]() {
