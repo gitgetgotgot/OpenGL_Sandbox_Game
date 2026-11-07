@@ -1,5 +1,6 @@
 #include "UI/UI_ObjectManager.h"
 #include "UI/UI_CompManager.h"
+#include <print>
 
 void Engine::UI::UI_ObjectManager::ClearData() {
 	objects = {};
@@ -52,9 +53,15 @@ void Engine::UI::UI_ObjectManager::unmark_dirty_component(uint32_t ui_object_id)
 
 void Engine::UI::UI_ObjectManager::update_dirty_objects() {
 	if (dirty_objects.empty()) return;
-	
+
+	std::println("Updating dirty UI objects");
+
 	for (auto& it : dirty_objects) {
+
+		std::println("---Updating UI_Object (ID = {})", it.first);
+
 		if (it.second.dirty_transform) {
+			std::println("------updating transform and component");
 			//update transform and component
 			get(it.first)->transform.update_transform();
 			UI_ComponentEntry* entry = UI_ComponentManager::Instance().get(it.first);
@@ -62,12 +69,15 @@ void Engine::UI::UI_ObjectManager::update_dirty_objects() {
 				entry->vt->update_data(entry->component);
 		}
 		else if (it.second.dirty_component) {
+			std::println("------updating only component");
 			//update only component
 			UI_ComponentEntry* entry = UI_ComponentManager::Instance().get(it.first);
 			entry->vt->update_data(entry->component);
 		}
 	}
 	dirty_objects.clear();
+
+	std::println("Updating dirty UI objects completed");
 }
 
 void Engine::UI::UI_ObjectManager::remove_destroyed_objects() {

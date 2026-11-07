@@ -54,9 +54,9 @@ void MainPage::TooltipGenWorld::update() {
 }
 
 void MainPage::update() {
-	text_builder.add_int(Engine::Util::TimeManager::Instance().get_current_FPS());
-	FPS_text->set_text(text_builder.data());
-	text_builder.reset();
+	//text_builder.add_int(Engine::Util::TimeManager::Instance().get_current_FPS());
+	//FPS_text->set_text(text_builder.data());
+	//text_builder.reset();
 
 	switch (current_tooltip) {
 	case MenuTooltip::TOOLTIP_LOAD_RESOURCES:
