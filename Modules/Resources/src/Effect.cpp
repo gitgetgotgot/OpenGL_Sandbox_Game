@@ -1,6 +1,7 @@
 #include "Resources/Effect.h"
 #include <Resources/Sprite.h>
 #include <Utility/Logger.h>
+#include <Utility/DataParser.h>
 
 bool Engine::Resource::Effect::updateEffect(float deltaTime) {
 	duration -= deltaTime;
@@ -12,18 +13,18 @@ bool Engine::Resource::Effect::updateEffect(float deltaTime) {
 void Engine::Resource::EffectsManager::setup() {
 	// add empty effect with global_ID = 0
 	effects.emplace_back();
-	effect_UID_to_ID["Core:Empty"] = 0;
+	UID_to_ID["Core:Empty"] = 0;
 }
 
 void Engine::Resource::EffectsManager::ClearData() {
 	UID_storage = {};
-	effect_UID_to_ID = {};
+	UID_to_ID = {};
 	effects = {};
 }
 
 bool Engine::Resource::EffectsManager::load_effects_from_data(
-	std::filesystem::path& data_file_path,
-	Engine::Util::DataParser& parser
+	const std::filesystem::path& data_file_path,
+	const Engine::Util::DataParser& parser
 ) {
 	using DP = Engine::Util::DataParser;
 	for (const auto& j : parser.node_root) {
@@ -72,13 +73,13 @@ void Engine::Resource::EffectsManager::add_effect_info(Effect::EffectType type, 
 	float particleSpawnInterval, float inflict_dmg_cd_time
 ) {
 	std::string_view uid_view = UID_storage.emplace_back(uid);
-	effect_UID_to_ID.emplace(uid_view, effects.size());
+	UID_to_ID.emplace(uid_view, effects.size());
 	effects.emplace_back(type, uid_view, stat, ui_sprite_id, effect_value, particle_id, particleSpawnInterval, inflict_dmg_cd_time);
 }
 
-std::optional<uint32_t> Engine::Resource::EffectsManager::get_effect_id(std::string_view uid) {
-	auto it = effect_UID_to_ID.find(uid);
-	if (it != effect_UID_to_ID.end())
+std::optional<uint32_t> Engine::Resource::EffectsManager::get_effect_id(const std::string& uid) {
+	auto it = UID_to_ID.find(uid);
+	if (it != UID_to_ID.end())
 		return it->second;
 	else
 		return std::nullopt;

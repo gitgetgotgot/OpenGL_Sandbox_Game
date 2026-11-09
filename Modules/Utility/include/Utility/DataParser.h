@@ -1,5 +1,6 @@
 #pragma once
-#include <Base/Types.h>
+#include <cstdint>
+#include <cstddef>
 #include <filesystem>
 #include <vector>
 #include <string>
@@ -13,11 +14,11 @@ namespace Engine::Util {
 	public:
 		enum JsonValue : uint8_t { V_INT, V_UINT, V_FLOAT, V_BOOL, V_STRING, V_OBJECT };
 	public:
-		bool parse_data(std::filesystem::path& path, bool parse_json_file);
-		bool parse_binary_format(std::filesystem::path& path);
-		bool parse_JSON_format(std::filesystem::path& path);
+		bool parse_data(const std::filesystem::path& path, bool parse_json_file);
+		bool parse_binary_format(const std::filesystem::path& path);
+		bool parse_JSON_format(const std::filesystem::path& path);
 
-		bool parse_JSON_to_binary(std::filesystem::path& path);
+		bool parse_JSON_to_binary(const std::filesystem::path& path);
 		void write_JSON_to_binary(std::vector<uint8_t>& out_data, const nlohmann::json& j);
 
 		void write_from_binary(std::vector<uint8_t>& in, nlohmann::json& j, uint64_t& pointer_offset);

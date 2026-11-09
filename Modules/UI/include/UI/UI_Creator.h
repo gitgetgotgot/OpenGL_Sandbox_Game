@@ -20,7 +20,7 @@ namespace Engine::UI {
 		static UI_Obj_Ptr create_tiled_image(uint32_t sprite_id, glm::vec2 size, glm::vec2 local_pos, glm::vec2 tiles_count, glm::vec4 color);
 
 		static UI_Obj_Ptr create_SDF_text();
-		static UI_Obj_Ptr create_SDF_text(glm::vec2 size, glm::vec2 local_pos, std::string text, glm::vec4 text_color, float text_height);
+		static UI_Obj_Ptr create_SDF_text(glm::vec2 size, glm::vec2 local_pos, const std::string& text, glm::vec4 text_color, float text_height);
 
 		static UI_Obj_Ptr create_panel();
 		static UI_Obj_Ptr create_panel(glm::vec2 size, glm::vec2 local_pos, uint32_t sprite_id, glm::vec4 color);
@@ -28,7 +28,7 @@ namespace Engine::UI {
 		static UI_Obj_Ptr create_button();
 		static UI_Obj_Ptr create_button_image(
 			glm::vec2 size, glm::vec2 local_pos, bool image_is_9_sliced, uint32_t sprite_id, bool has_text = false,
-			std::string txt = "Button", glm::vec4 text_color = glm::vec4(1.0f), float text_height = 0.05f
+			const std::string& txt = "Button", glm::vec4 text_color = glm::vec4(1.0f), float text_height = 0.05f
 		);
 
 		static UI_Obj_Ptr create_input_field();

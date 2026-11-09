@@ -1,10 +1,14 @@
 #pragma once
-#include <Utility/DataParser.h>
-#include <Base/Types.h>
+#include <cstdint>
 #include <unordered_map>
 #include <string>
 #include <vector>
 #include <optional>
+#include <filesystem>
+
+namespace Engine::Util {
+	class DataParser;
+}
 
 namespace Engine::Resource {
 	class AnimationClip {
@@ -26,14 +30,14 @@ namespace Engine::Resource {
 		}
 		void ClearData();
 		bool load_clips_from_data(
-			std::filesystem::path& data_file_path,
-			Engine::Util::DataParser& parser
+			const std::filesystem::path& data_file_path,
+			const Engine::Util::DataParser& parser
 		);
 		AnimationClip* get_clip(uint32_t id);
-		std::optional<uint32_t> get_clip_id(const std::string& clip_uid);
+		std::optional<uint32_t> get_clip_id(const std::string& uid);
 		AnimationClip& add_clip(const std::string& uid);
 	private:
-		std::unordered_map<std::string, uint32_t> clip_UID_to_ID;
+		std::unordered_map<std::string, uint32_t> UID_to_ID;
 		std::vector<AnimationClip> clips;
 	};
 }

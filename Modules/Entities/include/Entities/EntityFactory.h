@@ -28,9 +28,9 @@ namespace Engine::Entity {
 			return registry;
 		}
 		void ClearData();
-		void register_factory(std::string class_name, std::unique_ptr<EntityFactoryI> factory);
+		void register_factory(const std::string& class_name, std::unique_ptr<EntityFactoryI> factory);
 		EntityFactoryI* get_factory(uint16_t factory_id);
-		std::optional<uint16_t> get_factory_id(std::string entity_class);
+		std::optional<uint16_t> get_factory_id(const std::string& entity_class);
 	private:
 		std::unordered_map<std::string, uint16_t> class_UID_to_factory_ID;
 		std::vector<std::unique_ptr<EntityFactoryI>> factories;

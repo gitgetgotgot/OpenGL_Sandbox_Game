@@ -31,12 +31,15 @@ find_package(glad REQUIRED)
 
 add_executable(${PROJECT_NAME} "${PROJECT_SOURCE_DIR}/src/main.cpp")
 
-target_link_libraries(Rendering
+target_link_libraries(DeviceSystem
     PUBLIC
-        glad::glad
-        glfw glm::glm
-        stb::stb
         Base
+        glfw
+        glm::glm
+    PRIVATE
+        Utility
+        glad::glad
+        Rendering
 )
 
 target_link_libraries(Utility
@@ -48,6 +51,16 @@ target_link_libraries(Utility
         stb::stb
 )
 
+target_link_libraries(Rendering
+    PUBLIC
+        glm::glm
+        stb::stb
+    PRIVATE
+        glad::glad
+        Utility
+        DeviceSystem
+)
+
 target_link_libraries(Resources
     PUBLIC
         Utility
@@ -56,15 +69,6 @@ target_link_libraries(Resources
         stb::stb
         Rendering
 )
-
-target_link_libraries(DeviceSystem
-    PUBLIC
-        Base
-    PRIVATE
-        glad::glad
-        glfw
-)
-target_link_libraries(DeviceSystem PUBLIC Utility)
 
 target_link_libraries(Audio PUBLIC miniaudio::miniaudio)
 target_link_libraries(Audio PRIVATE Utility)
@@ -91,6 +95,7 @@ target_link_libraries(EngineAPI PUBLIC Entities)
 
 target_compile_definitions(Utility PUBLIC
     $<$<CONFIG:Debug>:CMAKE_DEBUG_MACRO=1>
+    $<$<CONFIG:Release>:CMAKE_DEBUG_MACRO=1>
 )
 if(MSVC)
     target_compile_options(Rendering PRIVATE

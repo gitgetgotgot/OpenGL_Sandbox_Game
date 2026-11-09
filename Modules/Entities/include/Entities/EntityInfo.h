@@ -1,6 +1,6 @@
 #pragma once
 #include <Resources/ResourceData.h>
-#include <Utility/DynamicArray.h>
+#include <Utility/SimpleArray.h>
 #include <Utility/DataParser.h>
 
 namespace Engine::Entity {
@@ -21,8 +21,8 @@ namespace Engine::Entity {
 		EntityMainType main_type = EntityMainType::isMob;
 		std::string_view uid, name;
 		uint16_t factory_ID = 0;
-		Engine::Util::DynamicArray<uint16_t> tags;
-		Engine::Util::DynamicArray<uint16_t> lights;
+		Engine::Util::SimpleArray<uint16_t> tags;
+		Engine::Util::SimpleArray<uint16_t> lights;
 	};
 
 	/*

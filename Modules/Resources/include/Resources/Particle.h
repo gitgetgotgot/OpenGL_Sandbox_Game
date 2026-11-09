@@ -3,7 +3,12 @@
 #include <optional>
 #include <vector>
 #include <string>
-#include <Utility/DataParser.h>
+#include <filesystem>
+#include <cstdint>
+
+namespace Engine::Util {
+	class DataParser;
+}
 
 namespace Engine::Resource {
 	struct ParticleInfo {
@@ -19,8 +24,8 @@ namespace Engine::Resource {
 		}
 		void setup();
 		bool load_particles_from_data(
-			std::filesystem::path& data_file_path,
-			Engine::Util::DataParser& parser
+			const std::filesystem::path& data_file_path,
+			const Engine::Util::DataParser& parser
 		);
 		void add_particle_info(const std::string& UID, uint16_t sprite_id, uint16_t light_id);
 		ParticleInfo& get_particle_info(uint32_t id);

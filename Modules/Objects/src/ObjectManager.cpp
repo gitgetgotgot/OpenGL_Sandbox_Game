@@ -25,8 +25,8 @@ void Engine::Object::ObjectManager::ClearData() {
 }
 
 bool Engine::Object::ObjectManager::load_objects_from_data(
-	std::filesystem::path& data_file_path,
-	Engine::Util::DataParser& parser
+	const std::filesystem::path& data_file_path,
+	const Engine::Util::DataParser& parser
 ) {
 	using DP = Engine::Util::DataParser;
 	for (const auto& j : parser.node_root) {
@@ -52,7 +52,7 @@ Engine::Object::ObjectInfo* Engine::Object::ObjectManager::get_object_info(uint1
 	return objects[ID].get();
 }
 
-std::optional<uint16_t> Engine::Object::ObjectManager::get_object_id(std::string_view UID) {
+std::optional<uint16_t> Engine::Object::ObjectManager::get_object_id(const std::string& UID) {
 	auto it = UID_to_ID.find(UID);
 	if (it == UID_to_ID.end()) return std::nullopt;
 	else return it->second;

@@ -5,10 +5,15 @@
 #include <memory>
 #include <mutex>
 #include "Audio/AudioData.h"
-#include <Utility/DataParser.h>
+
+namespace Engine::Util {
+    class DataParser;
+}
 
 namespace Engine::Audio {
     class AudioSystem {
+        static constexpr uint32_t MAX_SOUNDS_POOL_SIZE = 64;
+        static constexpr uint32_t MAX_STREAM_SOUNDS_POOL_SIZE = 8;
     public:
         static AudioSystem& Instance() {
             static AudioSystem sys;
@@ -19,9 +24,9 @@ namespace Engine::Audio {
         void update();
 
         bool load_audio_from_data(
-            std::filesystem::path& audio_folder_path,
-            std::filesystem::path& data_file_path,
-            Engine::Util::DataParser& parser,
+            const std::filesystem::path& audio_folder_path,
+            const std::filesystem::path& data_file_path,
+            const Engine::Util::DataParser& parser,
             std::mutex& resources_mutex
         );
         bool load_audio_as_pcm(
@@ -36,31 +41,31 @@ namespace Engine::Audio {
             const std::string& group_UID,
             uint8_t MAX_INSTANCE
         );
-        void add_sound_group(const std::string UID);
+        void add_sound_group(const std::string& UID);
 
         void play_audio_directly(const std::filesystem::path& path);
         Sound_Instance_ID play_audio_pcm(
-            const uint16_t& sound_ID, bool loop, bool positioned = false,
+            uint16_t sound_ID, bool loop, bool positioned = false,
             float x = 0.0f, float y = 0.0f, float z = 0.0f
         );
         Sound_Instance_ID play_audio_stream(
-            const uint16_t& sound_ID, bool loop, bool positioned = false,
+            uint16_t sound_ID, bool loop, bool positioned = false,
             float x = 0.0f, float y = 0.0f, float z = 0.0f
         );
         Sound_Instance_ID play_sound(
-            const uint16_t& sound_ID, bool loop, bool positioned = false,
+            uint16_t sound_ID, bool loop, bool positioned = false,
             float x = 0.0f, float y = 0.0f, float z = 0.0f
         );
-        void stop_sound(const uint16_t& sound_id, const uint8_t& instance, const uint8_t& gen);
-        bool sound_is_playing(const uint16_t& sound_id, const uint8_t& instance, const uint8_t& gen);
+        void stop_sound(uint16_t sound_id, uint8_t instance, uint8_t gen);
+        bool sound_is_playing(uint16_t sound_id, uint8_t instance, uint8_t gen);
 
-        bool pcm_sound_is_playing(const uint8_t& instance, const uint8_t& gen);
-        void stop_pcm_sound(const uint8_t& instance, const uint8_t& gen);
-        void free_pcm_sound(const uint8_t& instance);
+        bool pcm_sound_is_playing(uint8_t instance, uint8_t gen);
+        void stop_pcm_sound(uint8_t instance, uint8_t gen);
+        void free_pcm_sound(uint8_t instance);
 
-        bool stream_sound_is_playing(const uint8_t& instance, const uint8_t& gen);
-        void stop_stream_sound(const uint8_t& instance, const uint8_t& gen);
-        void free_stream_sound(const uint8_t& instance);
+        bool stream_sound_is_playing(uint8_t instance, uint8_t gen);
+        void stop_stream_sound(uint8_t instance, uint8_t gen);
+        void free_stream_sound(uint8_t instance);
 
         void set_listener_pos(float x, float y, float z);
         void set_listener_direction(float x, float y, float z);
@@ -71,7 +76,7 @@ namespace Engine::Audio {
         void set_group_volume(uint32_t ID, float volume);
         float get_group_volume(uint32_t ID);
 
-        std::optional<uint32_t> get_id_with_uid(std::string_view UID) const;
+        std::optional<uint32_t> get_id_with_uid(const std::string& UID) const;
     private:
         AudioSystem() = default;
         ~AudioSystem() = default;

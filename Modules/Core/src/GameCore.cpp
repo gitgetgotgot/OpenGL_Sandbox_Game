@@ -8,13 +8,10 @@
 #include <UI/UI_System.h>
 #include <Audio/AudioSystem.h>
 #include <Resources/TextureArrayMgr.h>
+#include <DeviceSystem/DeviceContext.h>
 #include <Utility/TimeManager.h>
 #include <Utility/Logger.h>
-#include <iostream>
-
-static void GLFWErrorCallback(int error_code, const char* description) {
-	std::cerr << "GLFW Error [" << error_code << "]: " << description << std::endl;
-}
+#include <print>
 
 GameEngine::~GameEngine() {
 	uninit();
@@ -43,43 +40,29 @@ void GameEngine::render() {
 
 	Engine::UI::UI_System::Instance().render(renderer);
 
-	renderer->present();
+	renderer->end_frame();
+	DeviceContext::present_end_frame();
 }
 
-void GameEngine::input_end_frame() {
-	DeviceContext::mouse.lb_prev = DeviceContext::mouse.lb_curr;
-	DeviceContext::mouse.rb_prev = DeviceContext::mouse.rb_curr;
-	DeviceContext::mouse.wheel_offset = 0;
-	DeviceContext::mouse.delta_x = 0;
-	DeviceContext::mouse.delta_y = 0;
-	DeviceContext::mouse.blocked_by_UI = false;
-
-	for (int i = 0; i <= GLFW_KEY_LAST; i++) {
-		DeviceContext::keyBoard.keyStatesPrev[i] = DeviceContext::keyBoard.keyStatesCurr[i];
-	}
-
-	DeviceContext::keyBoard.currentPressedChars.clear();
-}
-
-void GameEngine::init() {
+bool GameEngine::init() {
 	srand(time(NULL));
-
-	init_MainWindow();
-	init_OpenGL();
-	init_input();
-	init_main_resources();
+	bool ok = true;
+	if (ok) ok = init_MainWindow();
+	if (ok) ok = init_GraphicsAPI();
+	if (ok) ok = init_input();
+	if (ok) ok = init_main_resources();
+	return ok;
 }
 
 void GameEngine::main_loop() {
-	while (!glfwWindowShouldClose(window)) {
-		glfwPollEvents();
+	while (!DeviceContext::main_window_should_close()) {
+		DeviceContext::poll_events();
 
-		if (!update())
-			glfwSetWindowShouldClose(window, true);
+		if (!update()) DeviceContext::close_main_window();
 
 		render();
 
-		input_end_frame();
+		DeviceContext::process_end_input();
 	}
 }
 
@@ -91,67 +74,31 @@ void GameEngine::uninit() {
 
 	WorldManager::Instance().clear();
 
-	glfwDestroyWindow(window);
-	glfwTerminate();
+	DeviceContext::destroy_main_window();
 }
 
 void GameEngine::switch_update_state(Game_State state) {
 	game_update_state = state;
 }
 
-void GameEngine::init_MainWindow() {
-	glfwSetErrorCallback(GLFWErrorCallback);
-	if (!glfwInit()) {
-		throw std::runtime_error("Failed to initialize GLFW");
-	}
-
-	// OpenGL Core 4.6
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-
-	// using the core profile for only modern functions
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	// create main window and hide before minimum game data is loaded
-	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-
-	window = glfwCreateWindow(1920, 1080, "2D Sandbox", NULL, NULL);
-	if (!window) {
-		glfwTerminate();
-		throw std::runtime_error("Failed to create GLFW window");
-	}
-
-	glfwMakeContextCurrent(window);
-	glfwSetWindowAspectRatio(window, 16, 9);
-
-	//int fb_width, fb_height;
-	//glfwGetFramebufferSize(window, &fb_width, &fb_height);
-	//glViewport(0, 0, fb_width, fb_height);
-	//DeviceContext::display.update_resolution(fb_width, fb_height);
+bool GameEngine::init_MainWindow() {
+	return DeviceContext::init_main_window();
 }
 
-void GameEngine::init_OpenGL() {
-	int version = gladLoadGL((GLADloadfunc)glfwGetProcAddress);
-	if (!version)
-		throw std::runtime_error("Failed to initialize GLAD for OpenGL!");
-	std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
-	std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
-
-	// setup main renderer with OpenGL
-	renderer = std::make_unique<Engine::Graphics::OpenGL_Renderer>(window);
-
-	// OpenGL base settings
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+bool GameEngine::init_GraphicsAPI() {
+	renderer = std::make_unique<Engine::Graphics::OpenGL_Renderer>();
+	Engine::Graphics::OpenGL_Renderer::renderer_ptr = renderer.get();
+	return renderer->init();
 }
 
-void GameEngine::init_input() {
-	InputHandler::setGLFWwindowCallbacks(window);
-	DeviceContext::display.window = window;
-	DeviceContext::display.setup_monitor_video_modes();
+bool GameEngine::init_input() {
+	bool ok = true;
+	DeviceContext::setup_GLFW_callbacks();
+	ok = DeviceContext::display.setup_monitor_video_modes();
+	return ok;
 }
 
-void GameEngine::init_main_resources() {
+bool GameEngine::init_main_resources() {
 	Engine::Resource::TextureArrayManager::Instance().init();
 
 	Engine::Audio::AudioSystem::Instance().init();
@@ -159,33 +106,28 @@ void GameEngine::init_main_resources() {
 	Engine::Audio::AudioSystem::Instance().add_sound_group("Core:Music");
 	Engine::Audio::AudioSystem::Instance().add_sound_group("Core:SFX");
 
+	SettingsManager::Instance().load_settings();
+
 	Engine::UI::UI_System::Instance().init();
 
 	Engine::Core::EntitySystem::Instance().init();
 
 	if (ResourceLoader::Instance().load_minimal_core_resources() == false) {
 		DeviceContext::exit_application();
-		std::cout << Engine::Util::Logger::Get_Last_Log() << std::endl;
+		std::println("{}", Engine::Util::Logger::Get_Last_Log_Ref());
+		return false;
 	}
-	SettingsManager::Instance().load_settings();
+
 	MenuUIController::Instance().init();
 	GameUIController::Instance().init();
 
-	glfwShowWindow(window);
+	DeviceContext::toggle_main_window(true);
 
 	update_proc = &GameEngine::loading_update;
 	ResourceLoader::Instance().start_resources_loading();
 	MenuUIController::Instance().start_loading_resources();
 
-	/*
-	player.inventory.init();
-	for (int i = 2; i < 52; i++) {
-		uint16_t amount = rand() % 10000;
-		player.inventory.place_item(i, amount);
-	}
-	player.inventory.update_crafts();
-	player.inventory.update_dynamic_craft_slots_items();
-	*/
+	return true;
 }
 
 void GameEngine::loading_update() {
@@ -209,7 +151,7 @@ void GameEngine::loading_update() {
 		update_proc = &GameEngine::gameplay_update;
 		if (ResourceLoader::Instance().get_loading_status() == ResourceLoader::LOAD_FAILED) {
 			DeviceContext::exit_application();
-			std::cout << Engine::Util::Logger::Get_Last_Log() << std::endl;
+			std::println("{}", Engine::Util::Logger::Get_Last_Log_Ref());
 		}
 	}
 }

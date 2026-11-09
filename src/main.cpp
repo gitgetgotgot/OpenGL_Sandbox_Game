@@ -1,13 +1,15 @@
 #include <Core/GameCore.h>
-#include <iostream>
+#include <print>
 
 int main() {
 	GameEngine game;
 	try {
-		game.init();
+		if (game.init() == false) {
+			return EXIT_FAILURE;
+		}
 	}
 	catch (const std::exception& e) {
-		std::cerr << "[INIT]: " << e.what() << std::endl;
+		std::println("{}", e.what());
 		return EXIT_FAILURE;
 	}
 	game.main_loop();

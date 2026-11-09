@@ -12,8 +12,8 @@ namespace Engine::Entity {
 		}
 	public:
 		float HP = 0.0f, DMG = 0.0f, DEF = 0.0f;
-		Engine::Util::DynamicArray<Engine::Resource::EntityDropEntry> drops;
-		Engine::Util::DynamicArray<Engine::Resource::EffectEntry> effects;
+		Engine::Util::SimpleArray<Engine::Resource::EntityDropEntry> drops;
+		Engine::Util::SimpleArray<Engine::Resource::EffectEntry> effects;
 		float speed_x = 0.0f, speed_y = 0.0f;
 		uint32_t animator_id = 0;
 		glm::vec2 hitboxSize{ 1.0f };

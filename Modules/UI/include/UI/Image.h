@@ -1,6 +1,6 @@
 #pragma once
 #include "UI/UI_Comp_Ptr.h"
-#include <Utility/DynamicArray.h>
+#include <Utility/SimpleArray.h>
 
 namespace Engine::UI {
 	class Image : public UI_Component<Image> {
@@ -36,7 +36,7 @@ namespace Engine::UI {
 		bool flip_x = false, flip_y = false;
 	private:
 		void (*data_updater)(Image& img);
-		Engine::Util::DynamicArray<UI_Vertex2f> image_vertices;
+		Engine::Util::SimpleArray<UI_Vertex2f> image_vertices;
 		static void update_as_regular(Image& img);
 		static void update_as_nine_sliced(Image& img);
 	};

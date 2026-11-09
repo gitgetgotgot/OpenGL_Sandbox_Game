@@ -88,11 +88,11 @@ void Engine::UI::UI_Transform::update_transform() {
 
 	if (parent_id != 0) {
 		UI_Transform& parent_tr = UI_ObjectManager::Instance().get(parent_id)->transform;
-		global_pos = parent_tr.global_pos + local_pos + parent_tr.size * ANCHOR_MULTIPLIERS[static_cast<ET::usize>(anchor)];
+		global_pos = parent_tr.global_pos + local_pos + parent_tr.size * ANCHOR_MULTIPLIERS[static_cast<size_t>(anchor)];
 		//global_pos = parent_tr.global_pos + local_pos;
 	}
 	else {
-		global_pos = local_pos + glm::vec2(DeviceContext::display.ratio * 2.0f, 2.0f) * ANCHOR_MULTIPLIERS[static_cast<ET::usize>(anchor)];
+		global_pos = local_pos + glm::vec2(DeviceContext::display.ratio * 2.0f, 2.0f) * ANCHOR_MULTIPLIERS[static_cast<size_t>(anchor)];
 	}
 
 	is_dirty = false;

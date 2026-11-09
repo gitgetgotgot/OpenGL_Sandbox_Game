@@ -1,20 +1,21 @@
 #include "Resources/Light.h"
 #include <Utility/Logger.h>
+#include <Utility/DataParser.h>
 
 void Engine::Resource::LightSourceManager::setup() {
 	//add empty light with global_ID = 0
 	lights.emplace_back();
-	light_UID_to_ID["Core:Empty"] = 0;
+	UID_to_ID["Core:Empty"] = 0;
 }
 
 void Engine::Resource::LightSourceManager::ClearData() {
 	lights = {};
-	light_UID_to_ID = {};
+	UID_to_ID = {};
 }
 
 bool Engine::Resource::LightSourceManager::load_lights_from_data(
-	std::filesystem::path& data_file_path,
-	Engine::Util::DataParser& parser
+	const std::filesystem::path& data_file_path,
+	const Engine::Util::DataParser& parser
 ) {
 	using DP = Engine::Util::DataParser;
 	for (const auto& j : parser.node_root) {
@@ -39,14 +40,14 @@ bool Engine::Resource::LightSourceManager::load_lights_from_data(
 	return true;
 }
 
-void Engine::Resource::LightSourceManager::add_light(std::string uid, float radius, glm::vec3 color) {
-	light_UID_to_ID.emplace(uid, lights.size());
+void Engine::Resource::LightSourceManager::add_light(const std::string& uid, float radius, glm::vec3 color) {
+	UID_to_ID.emplace(uid, lights.size());
 	lights.emplace_back(radius, color);
 }
 
-std::optional<uint32_t> Engine::Resource::LightSourceManager::get_light_id(std::string light_UID) {
-	auto it = light_UID_to_ID.find(light_UID);
-	if (it != light_UID_to_ID.end())
+std::optional<uint32_t> Engine::Resource::LightSourceManager::get_light_id(const std::string& uid) {
+	auto it = UID_to_ID.find(uid);
+	if (it != UID_to_ID.end())
 		return it->second;
 	else
 		return std::nullopt;

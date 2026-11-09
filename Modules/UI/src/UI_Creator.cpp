@@ -84,7 +84,7 @@ Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_SDF_text() {
 }
 
 Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_SDF_text(
-	glm::vec2 size, glm::vec2 local_pos, std::string text, glm::vec4 text_color, float text_height
+	glm::vec2 size, glm::vec2 local_pos, const std::string& text, glm::vec4 text_color, float text_height
 ) {
 	UI_Obj_Ptr obj = UI_ObjectManager::Instance().add();
 	obj->transform.set_local_pos(local_pos);
@@ -122,7 +122,7 @@ Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_button() {
 
 Engine::UI::UI_Obj_Ptr Engine::UI::UI_Creator::create_button_image(
 	glm::vec2 size, glm::vec2 local_pos, bool image_is_9_sliced, uint32_t sprite_id, bool has_text,
-	std::string txt, glm::vec4 text_color, float text_height
+	const std::string& txt, glm::vec4 text_color, float text_height
 ) {
 	UI_Obj_Ptr obj = UI_ObjectManager::Instance().add();
 	obj->transform.set_local_pos(local_pos);

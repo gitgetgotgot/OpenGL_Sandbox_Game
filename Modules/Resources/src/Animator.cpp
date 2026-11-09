@@ -1,15 +1,16 @@
 #include "Resources/Animator.h"
 #include "Resources/AnimationClip.h"
 #include <Utility/Logger.h>
+#include <Utility/DataParser.h>
 
 void Engine::Resource::AnimatorManager::ClearData() {
 	animators = {};
-	animator_UID_to_ID = {};
+	UID_to_ID = {};
 }
 
 bool Engine::Resource::AnimatorManager::load_animators_from_data(
-	std::filesystem::path& data_file_path,
-	Engine::Util::DataParser& parser
+	const std::filesystem::path& data_file_path,
+	const Engine::Util::DataParser& parser
 ) {
 	using DP = Engine::Util::DataParser;
 	for (const auto& j : parser.node_root) {
@@ -43,13 +44,13 @@ Engine::Resource::Animator* Engine::Resource::AnimatorManager::get_animator(uint
 	return &animators[id];
 }
 
-std::optional<uint32_t> Engine::Resource::AnimatorManager::get_animator_id(const std::string& clip_uid) {
-	auto it = animator_UID_to_ID.find(clip_uid);
-	if (it == animator_UID_to_ID.end()) return std::nullopt;
+std::optional<uint32_t> Engine::Resource::AnimatorManager::get_animator_id(const std::string& uid) {
+	auto it = UID_to_ID.find(uid);
+	if (it == UID_to_ID.end()) return std::nullopt;
 	else return it->second;
 }
 
 Engine::Resource::Animator& Engine::Resource::AnimatorManager::add_animator(const std::string& uid) {
-	animator_UID_to_ID.emplace(uid, animators.size());
+	UID_to_ID.emplace(uid, animators.size());
 	return animators.emplace_back();
 }

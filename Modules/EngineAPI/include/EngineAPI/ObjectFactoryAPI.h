@@ -1,5 +1,4 @@
 #pragma once
-#include <Objects/ObjectFactory.h>
 #include <Objects/ObjectTypes/ArmorInfo.h>
 
 namespace EngineAPI {

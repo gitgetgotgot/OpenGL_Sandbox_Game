@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <optional>
-#include <Base/Types.h>
+#include <cstdint>
 
 namespace Engine::Resource {
 	struct Font {
@@ -30,8 +30,8 @@ namespace Engine::Resource {
 			static FontManager mgr;
 			return mgr;
 		}
-		bool load_font(std::filesystem::path font_folder_path, std::string source);
-		std::optional<uint32_t> get_font_id(std::string font_UID);
+		bool load_font(const std::filesystem::path& font_folder_path, const std::string& source);
+		std::optional<uint32_t> get_font_id(const std::string& uid);
 		Font& get_font(uint32_t font_id);
 	private:
 		FontManager() {}

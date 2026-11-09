@@ -39,7 +39,7 @@ void Engine::Audio::AudioSource::setup_source(uint16_t sound_ID) {
 	this->sound_ID = sound_ID;
 }
 
-void Engine::Audio::AudioSource::setup_source(std::string_view sound_UID) {
+void Engine::Audio::AudioSource::setup_source(const std::string& sound_UID) {
 	auto result = AudioSystem::Instance().get_id_with_uid(sound_UID);
 	if (result.has_value())
 		this->sound_ID = result.value();

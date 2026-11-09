@@ -1,9 +1,8 @@
 #pragma once
-#include <Base/Types.h>
-#include <unordered_set>
+#include <cstdint>
 #include <unordered_map>
 #include <vector>
-#include <Utility/DynamicArray.h>
+#include <Utility/SimpleArray.h>
 #include <Utility/DataParser.h>
 
 namespace Engine::Core::Craft {
@@ -19,17 +18,17 @@ namespace Engine::Core::Craft {
 		enum CraftTagsUsage : uint8_t { USAGE_ANY, USAGE_ALL };
 		CraftableItem() {}
 		CraftableItem(
-			uint16_t item_id, uint16_t amount, Engine::Util::DynamicArray<uint16_t> craft_tags,
-			CraftTagsUsage tags_usage, Engine::Util::DynamicArray<CraftingPair> items_needed
+			uint16_t item_id, uint16_t amount, Engine::Util::SimpleArray<uint16_t> craft_tags,
+			CraftTagsUsage tags_usage, Engine::Util::SimpleArray<CraftingPair> items_needed
 		) : item_id(item_id), item_amount(amount), craft_tags(std::move(craft_tags)),
 			tags_usage{ tags_usage }, items_needed(std::move(items_needed)) {
 		}
 		uint16_t item_id = 0;
 		uint16_t item_amount = 0; //amount per one craft
-		Engine::Util::DynamicArray<uint16_t> craft_tags;
+		Engine::Util::SimpleArray<uint16_t> craft_tags;
 		CraftTagsUsage tags_usage = CraftTagsUsage::USAGE_ANY;
 		// dynamic array max size is 256, which is more than enough for any craft realistically
-		Engine::Util::DynamicArray<CraftingPair> items_needed;
+		Engine::Util::SimpleArray<CraftingPair> items_needed;
 	};
 
 	struct ItemRelatedCrafts {
@@ -44,12 +43,12 @@ namespace Engine::Core::Craft {
 		}
 		void ClearData();
 		bool load_crafts_from_data(
-			std::filesystem::path& data_file_path,
-			Engine::Util::DataParser& parser
+			const std::filesystem::path& data_file_path,
+			const Engine::Util::DataParser& parser
 		);
 		void add_craft(
-			uint16_t item_id, uint16_t amount, Engine::Util::DynamicArray<uint16_t> craft_tags,
-			CraftableItem::CraftTagsUsage tags_usage, Engine::Util::DynamicArray<CraftingPair> items_needed
+			uint16_t item_id, uint16_t amount, Engine::Util::SimpleArray<uint16_t> craft_tags,
+			CraftableItem::CraftTagsUsage tags_usage, Engine::Util::SimpleArray<CraftingPair> items_needed
 		);
 		CraftableItem& get_craft(uint16_t craft_id);
 		ItemRelatedCrafts* get_item_related_crafts(uint16_t item_id);

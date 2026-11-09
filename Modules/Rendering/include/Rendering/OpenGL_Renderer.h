@@ -3,28 +3,28 @@
 #include "Rendering/VAO.h"
 #include "Rendering/VBO.h"
 #include "Rendering/EBO.h"
-#include "Rendering/Texture.h"
-#include "Rendering/TextureArray.h"
 #include "Rendering/UBO.h"
 #include "Rendering/SSBO.h"
-#include <glad/gl.h>
-#include <GLFW/glfw3.h>
+#include "Rendering/Texture.h"
+#include "Rendering/TextureArray.h"
 #include <memory>
 
 namespace Engine::Graphics {
 	class OpenGL_Renderer {
 	public:
-		OpenGL_Renderer(GLFWwindow* window);
+		inline static OpenGL_Renderer* renderer_ptr = nullptr;
+		enum class DepthFunc : uint8_t {
+			qwerty
+		};
+		bool init();
 		void clear(float r, float g, float b);
-		void present();
+		void end_frame();
 		void setViewport(float x, float y, float width, float height);
-		void setViewport(glm::vec2 start_pos, glm::vec2 size);
 		void useDepthTest(bool use);
 		void useDepthWrite(bool use);
-		void useDepthFunc(GLenum func);
+		void useDepthFunc(DepthFunc func);
 		void useScissorTest(bool use);
 		void setScissorRect(float x, float y, float width, float height);
-		void setScissorRect(glm::vec2 start_pos, glm::vec2 size);
 		void renderData(
 			std::unique_ptr<ShaderProgram>& shader,
 			std::unique_ptr<VAO>& va,
@@ -59,7 +59,5 @@ namespace Engine::Graphics {
 			uint32_t instanceCount,
 			uint32_t baseInstance
 		);
-	private:
-		GLFWwindow* window;
 	};
 }

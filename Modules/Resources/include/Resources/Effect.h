@@ -1,9 +1,14 @@
 #pragma once
+#include <cstdint>
 #include <string>
 #include <deque>
 #include <unordered_map>
 #include <optional>
-#include <Utility/DataParser.h>
+#include <filesystem>
+
+namespace Engine::Util {
+	class DataParser;
+}
 
 namespace Engine::Resource {
 	struct Effect {
@@ -65,20 +70,20 @@ namespace Engine::Resource {
 		void setup();
 		void ClearData();
 		bool load_effects_from_data(
-			std::filesystem::path& data_file_path,
-			Engine::Util::DataParser& parser
+			const std::filesystem::path& data_file_path,
+			const Engine::Util::DataParser& parser
 		);
 		void add_effect_info(Effect::EffectType type, std::string uid, Effect::EffectStatType stat,
 			float effect_value, uint32_t ui_sprite_id, uint32_t particle_id = 0,
 			float particleSpawnInterval = 0.0f, float inflict_dmg_cd_time = 0.0f
 		);
-		std::optional<uint32_t> get_effect_id(std::string_view uid);
+		std::optional<uint32_t> get_effect_id(const std::string& uid);
 		EffectData& get_effect_info(uint32_t id);
 	private:
 		EffectsManager() {}
 		~EffectsManager() {}
 		std::deque<std::string> UID_storage;
-		std::unordered_map<std::string_view, uint32_t> effect_UID_to_ID;
+		std::unordered_map<std::string_view, uint32_t> UID_to_ID;
 		std::vector<EffectData> effects;
 	};
 }

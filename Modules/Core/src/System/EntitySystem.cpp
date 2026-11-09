@@ -21,13 +21,13 @@ void Engine::Core::EntitySystem::init() {
 	entity_ssbo->bind_SSBO(0);
 	entity_ssbo->set_data(nullptr, sizeof(EntityRenderData) * MAX_ENTITIES_RENDER, Engine::Graphics::SSBO::SSBO_USAGE::USAGE_DYNAMIC);
 	
-	GLfloat pos[] = {
-		0.f, 0.f,
-		0.f, 1.f,
-		1.f, 1.f,
-		1.f, 0.f
+	float pos[] = {
+		0.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		1.0f, 0.0f
 	};
-	GLuint indices[] = {
+	uint32_t indices[] = {
 		0, 1, 2,
 		0, 2, 3
 	};

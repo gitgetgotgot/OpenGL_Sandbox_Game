@@ -1,4 +1,6 @@
 #pragma once
+#include <cstdint>
+#include <cstddef>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <vector>
 

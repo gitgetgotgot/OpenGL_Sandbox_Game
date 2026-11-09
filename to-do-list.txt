@@ -1,4 +1,4 @@
-* change exceptions with try/catch on std::error_code and turn off exceptions?
+* turn off exceptions?
 * add .pack conversion for multiple .png textures
 * save options in .json
 * game UI
@@ -7,4 +7,3 @@
 * engine API for modding and tools for data parcing?
 * think about mutex lock in sprites and audio loaders?
 * remake json load for objects and entities in their classes and factory interface
-* probably remake usage of animator components and update them as components of entities in AnimationSystem

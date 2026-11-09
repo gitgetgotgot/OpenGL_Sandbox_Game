@@ -18,8 +18,8 @@ void Engine::Entity::EntityInfoManager::ClearData() {
 }
 
 bool Engine::Entity::EntityInfoManager::load_entities_from_data(
-	std::filesystem::path& data_file_path,
-	Engine::Util::DataParser& parser
+	const std::filesystem::path& data_file_path,
+	const Engine::Util::DataParser& parser
 ) {
 	using DP = Engine::Util::DataParser;
 	for (const auto& j : parser.node_root) {
@@ -45,7 +45,7 @@ Engine::Entity::EntityInfo* Engine::Entity::EntityInfoManager::get_entity_info(u
 	return entities[ID].get();
 }
 
-std::optional<uint16_t> Engine::Entity::EntityInfoManager::get_entity_id(std::string_view UID) {
+std::optional<uint16_t> Engine::Entity::EntityInfoManager::get_entity_id(const std::string& UID) {
 	auto it = UID_to_ID.find(UID);
 	if (it == UID_to_ID.end()) return std::nullopt;
 	else return it->second;

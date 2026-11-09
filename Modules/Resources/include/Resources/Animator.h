@@ -1,10 +1,14 @@
 #pragma once
-#include <Base/Types.h>
+#include <cstdint>
 #include <vector>
 #include <optional>
 #include <unordered_map>
 #include <string>
-#include <Utility/DataParser.h>
+#include <filesystem>
+
+namespace Engine::Util {
+	class DataParser;
+}
 
 namespace Engine::Resource {
 	class Animator {
@@ -20,14 +24,14 @@ namespace Engine::Resource {
 		}
 		void ClearData();
 		bool load_animators_from_data(
-			std::filesystem::path& data_file_path,
-			Engine::Util::DataParser& parser
+			const std::filesystem::path& data_file_path,
+			const Engine::Util::DataParser& parser
 		);
 		Animator* get_animator(uint32_t id);
-		std::optional<uint32_t> get_animator_id(const std::string& clip_uid);
+		std::optional<uint32_t> get_animator_id(const std::string& uid);
 		Animator& add_animator(const std::string& uid);
 	private:
-		std::unordered_map<std::string, uint32_t> animator_UID_to_ID;
+		std::unordered_map<std::string, uint32_t> UID_to_ID;
 		std::vector<Animator> animators;
 	};
 }

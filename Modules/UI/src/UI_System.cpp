@@ -3,7 +3,6 @@
 #include "UI/CanvasManager.h"
 #include "UI/UI_BehaviourSystem.h"
 #include <DeviceSystem/DeviceContext.h>
-#include <print>
 
 void Engine::UI::UI_System::init() {
 	namespace EG = Engine::Graphics;
@@ -27,14 +26,14 @@ void Engine::UI::UI_System::init() {
 
 	//common EBO
 	ebo = std::make_unique<EG::EBO>();
-	GLuint* sprite_index_buffer = new GLuint[MAX_SPRITES_INDEX_SIZE];
+	uint32_t* sprite_index_buffer = new uint32_t[MAX_SPRITES_INDEX_SIZE];
 	for (int i = 0; i < MAX_SPRITES_PER_DRAW; i++) {
 		sprite_index_buffer[i * 6] = sprite_index_buffer[i * 6 + 3] = i * 4;
 		sprite_index_buffer[i * 6 + 2] = sprite_index_buffer[i * 6 + 4] = sprite_index_buffer[i * 6] + 2;
 		sprite_index_buffer[i * 6 + 1] = sprite_index_buffer[i * 6 + 2] - 1;
 		sprite_index_buffer[i * 6 + 5] = sprite_index_buffer[i * 6 + 2] + 1;
 	}
-	ebo->set_data(sprite_index_buffer, MAX_SPRITES_INDEX_SIZE * sizeof(GLuint), EG::EBO::EBO_USAGE::USAGE_STATIC);
+	ebo->set_data(sprite_index_buffer, MAX_SPRITES_INDEX_SIZE * sizeof(uint32_t), EG::EBO::EBO_USAGE::USAGE_STATIC);
 	delete[] sprite_index_buffer;
 
 	sprites_vao = std::make_unique<EG::VAO>();
@@ -132,20 +131,6 @@ void Engine::UI::UI_System::update() {
 
 	sprites_vbo->update_data(render_context.sprites_buffer.data(), render_context.sprites_buffer.size() * sizeof(UI_Vertex2f));
 	sdf_text_vbo->update_data(render_context.sdf_text_buffer.data(), render_context.sdf_text_buffer.size() * sizeof(UI_Text_Vertex2f));
-
-	// PRINT CURRENT UI_VERTEX BUFFERS
-	if (DeviceContext::keyBoard.key_is_pressed(Key::KeyV)) {
-		std::println("SPRITE VERTICES:");
-		ET::uint32 i = 0;
-		ET::uint32 size = render_context.sprites_buffer.size();
-		const auto& vec = render_context.sprites_buffer;
-		// print 4 vertices for 1 quad
-		for (; i < size; ++i) {
-			const auto& vertex = vec[i];
-			std::println("	Vertex[{}]: Pos({:.2f}, {:.2f}), UV({:.2f}, {:.2f}), TAID({}), TID({})",
-				i, vertex.pos.x, vertex.pos.y, vertex.UV.x, vertex.UV.y, vertex.tex_array_id, vertex.tex_id);
-		}
-	}
 }
 
 void Engine::UI::UI_System::render(std::unique_ptr<Engine::Graphics::OpenGL_Renderer>& renderer) {

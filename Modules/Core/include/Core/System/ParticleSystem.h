@@ -1,5 +1,6 @@
 #pragma once
 #include <Rendering/OpenGL_Renderer.h>
+#include <glm/ext/matrix_float4x4.hpp>
 
 class ParticleEntity {
 public:

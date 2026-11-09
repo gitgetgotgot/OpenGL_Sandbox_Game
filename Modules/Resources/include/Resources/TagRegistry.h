@@ -1,5 +1,5 @@
 #pragma once
-#include <Base/Types.h>
+#include <cstdint>
 #include <unordered_map>
 #include <string>
 #include <optional>
@@ -12,8 +12,8 @@ namespace Engine::Resource::Tag {
 			return registry;
 		}
 		void ClearData();
-		uint16_t add_tag(std::string_view tag_name);
-		std::optional<uint16_t> get_tag(std::string tag_name);
+		uint16_t add_tag(const std::string& tag_name);
+		std::optional<uint16_t> get_tag(const std::string& tag_name);
 	private:
 		TagRegistry() {}
 		~TagRegistry() {}

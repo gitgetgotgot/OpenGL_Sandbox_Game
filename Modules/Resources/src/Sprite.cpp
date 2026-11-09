@@ -1,6 +1,7 @@
 #include "Resources/Sprite.h"
 #include "Resources/TextureArrayMgr.h"
 #include <Utility/Logger.h>
+#include <Utility/DataParser.h>
 
 Engine::Resource::Sprite::Sprite(
 	float U0, float V0, float width, float height,
@@ -60,8 +61,8 @@ void Engine::Resource::SpriteManager::ClearData() {
 }
 
 bool Engine::Resource::SpriteManager::load_sprites_from_data(
-	std::filesystem::path& data_file_path,
-	Engine::Util::DataParser& parser,
+	const std::filesystem::path& data_file_path,
+	const Engine::Util::DataParser& parser,
 	std::mutex& resources_mutex
 ) {
 	using DP = Engine::Util::DataParser;
@@ -125,7 +126,7 @@ bool Engine::Resource::SpriteManager::load_sprites_from_data(
 }
 
 void Engine::Resource::SpriteManager::add_sprite(
-	std::string UID, uint32_t U0, uint32_t V0, uint32_t width, uint32_t height,
+	const std::string& UID, uint32_t U0, uint32_t V0, uint32_t width, uint32_t height,
 	float base_world_size, uint32_t tex_array_id, uint32_t tex_id
 ) {
 	const float pixel_UV_size = 1.0f / float(Engine::Resource::TextureArrayManager::Instance().get_texture_array_res(tex_array_id));
@@ -141,7 +142,7 @@ Engine::Resource::Sprite& Engine::Resource::SpriteManager::get_sprite(uint32_t i
 	return sprites[id];
 }
 
-std::optional<uint32_t> Engine::Resource::SpriteManager::get_sprite_id(std::string uid) {
+std::optional<uint32_t> Engine::Resource::SpriteManager::get_sprite_id(const std::string& uid) {
 	auto it = UID_to_ID.find(uid);
 	if (it != UID_to_ID.end()) {
 		return it->second;
@@ -152,7 +153,7 @@ std::optional<uint32_t> Engine::Resource::SpriteManager::get_sprite_id(std::stri
 }
 
 void Engine::Resource::SpriteManager::add_sprite9sliced(
-	std::string UID, uint32_t U0, uint32_t V0, uint32_t width, uint32_t height,
+	const std::string& UID, uint32_t U0, uint32_t V0, uint32_t width, uint32_t height,
 	uint32_t b_left, uint32_t uv_margin_right, uint32_t uv_margin_top, uint32_t b_bottom,
 	uint32_t tex_array_id, uint32_t tex_id
 ) {
@@ -173,7 +174,7 @@ Engine::Resource::Sprite9Sliced& Engine::Resource::SpriteManager::get_sprite9sli
 	return sprites9sliced[id];
 }
 
-std::optional<uint32_t> Engine::Resource::SpriteManager::get_sprite9sliced_id(std::string uid) {
+std::optional<uint32_t> Engine::Resource::SpriteManager::get_sprite9sliced_id(const std::string& uid) {
 	auto it = UID_to_ID.find(uid);
 	if (it != UID_to_ID.end()) {
 		return it->second;

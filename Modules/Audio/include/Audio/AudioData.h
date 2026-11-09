@@ -1,13 +1,11 @@
 #pragma once
-#include <Base/Types.h>
+#include <cstdint>
+#include <cstddef>
 #include <vector>
 #include <filesystem>
 #include <miniaudio.h>
 
 namespace Engine::Audio {
-    constexpr uint32_t AUDIO_MAX_SOUNDS = 64;
-    constexpr uint32_t AUDIO_STREAM_MAX_SOUNDS = 8;
-
     struct SoundGroup {
         ma_sound_group group;
     };

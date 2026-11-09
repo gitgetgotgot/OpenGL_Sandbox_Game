@@ -1,7 +1,7 @@
 #pragma once
 #include <Resources/ResourceData.h>
 #include <Utility/DataParser.h>
-#include <Utility/DynamicArray.h>
+#include <Utility/SimpleArray.h>
 
 /*constexpr float TEXT_DAMAGE_LIFETIME = 1.0f;
 struct DamageText {
@@ -45,11 +45,11 @@ namespace Engine::Object {
 	public:
 		ObjectType objectType = ObjectType::None;
 		std::string_view uid, name;
-		Engine::Util::DynamicArray<uint16_t> tags;
-		Engine::Util::DynamicArray<uint32_t> sprites;
-		Engine::Util::DynamicArray<Engine::Resource::DropEntry> drops;
-		Engine::Util::DynamicArray<Engine::Resource::EffectEntry> effects;
-		Engine::Util::DynamicArray<uint16_t> lights;
+		Engine::Util::SimpleArray<uint16_t> tags;
+		Engine::Util::SimpleArray<uint32_t> sprites;
+		Engine::Util::SimpleArray<Engine::Resource::DropEntry> drops;
+		Engine::Util::SimpleArray<Engine::Resource::EffectEntry> effects;
+		Engine::Util::SimpleArray<uint16_t> lights;
 	};
 }
 

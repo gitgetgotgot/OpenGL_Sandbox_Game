@@ -22,14 +22,14 @@ void Engine::UI::Image::_update_data() {
 void Engine::UI::Image::Setup_As_Regular() {
 	image_type = ImageType::RegularImage;
 	INDEX_SIZE = 6;
-	image_vertices = Engine::Util::DynamicArray<UI_Vertex2f>(4);
+	image_vertices = Engine::Util::SimpleArray<UI_Vertex2f>(4);
 	data_updater = &Image::update_as_regular;
 }
 
 void Engine::UI::Image::Setup_As_Nine_Sliced() {
 	image_type = ImageType::NineSlicedImage;
 	INDEX_SIZE = 54;
-	image_vertices = Engine::Util::DynamicArray<UI_Vertex2f>(36);
+	image_vertices = Engine::Util::SimpleArray<UI_Vertex2f>(36);
 	data_updater = &Image::update_as_nine_sliced;
 }
 

@@ -5,7 +5,7 @@ Engine::Graphics::EBO::EBO() {
 	glGenBuffers(1, &id);
 }
 
-Engine::Graphics::EBO::EBO(const void* data, ET::usize size) {
+Engine::Graphics::EBO::EBO(const void* data, size_t size) {
 	glGenBuffers(1, &id);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
@@ -15,12 +15,12 @@ Engine::Graphics::EBO::~EBO() {
 	delete_EBO();
 }
 
-void Engine::Graphics::EBO::set_data(const void* data, ET::usize size, EBO_USAGE usage) const {
+void Engine::Graphics::EBO::set_data(const void* data, size_t size, EBO_USAGE usage) const {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, usage == EBO_USAGE::USAGE_DYNAMIC ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 }
 
-void Engine::Graphics::EBO::update_data(const void* data, ET::usize size, ET::usize offset) const {
+void Engine::Graphics::EBO::update_data(const void* data, size_t size, size_t offset) const {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
 	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, size, data);
 }

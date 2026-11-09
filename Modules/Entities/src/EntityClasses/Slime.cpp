@@ -1,6 +1,5 @@
 #include <Entities/EntityClasses/Slime.h>
 #include <Utility/TimeManager.h>
-#include <Utility/GameContext.h>
 
 void Engine::Entity::Slime::on_create() {
 	anim_idle = anim_comp.get_clip_id(0);
@@ -21,10 +20,10 @@ void Engine::Entity::Slime::update() {
 		current_state = SLIME_ANIM_STATE::SLIME_IDLE;
 	}
 	else if (physics.linear_velocity.x == 0.0f) {
-		if (GameContext::PLAYER_LAST_POS.x - hitbox.center.x > 0.f)
+		/*if (GameContext::PLAYER_LAST_POS.x - hitbox.center.x > 0.f)
 			physics.linear_velocity.x = 4.0f;
 		else
-			physics.linear_velocity.x = -4.0f;
+			physics.linear_velocity.x = -4.0f;*/
 	}
 
 	if (physics.time_falling > 0.0f)

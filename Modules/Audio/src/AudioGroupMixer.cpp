@@ -5,7 +5,7 @@ void Engine::Audio::AudioGroupMixer::setup_mixer(uint32_t group_ID) {
 	this->group_ID = group_ID;
 }
 
-void Engine::Audio::AudioGroupMixer::setup_mixer(std::string_view group_UID) {
+void Engine::Audio::AudioGroupMixer::setup_mixer(const std::string& group_UID) {
 	auto result = AudioSystem::Instance().get_id_with_uid(group_UID);
 	if (result.has_value())
 		this->group_ID = result.value();

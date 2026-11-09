@@ -1,9 +1,12 @@
 #pragma once
-#include <Base/Types.h>
+#include <cstdint>
+#include <cstddef>
 #include <Base/Config.h>
 #include <glm/glm.hpp>
 
 namespace Engine::Util::Math {
+	constexpr float PI = 3.1415926;
+
 	ENGINE_FORCEINLINE bool mouse_overlaps_ortho_square(
 		const glm::vec2& square_ortho_pos, const glm::vec2& square_ortho_size,
 		const float mouse_ortho_x, const float mouse_ortho_y

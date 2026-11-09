@@ -1,5 +1,6 @@
 #pragma once
-#include <Base/Types.h>
+#include <cstdint>
+#include <cstddef>
 #include <vector>
 #include <string>
 

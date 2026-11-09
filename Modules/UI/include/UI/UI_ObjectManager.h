@@ -1,8 +1,6 @@
 #pragma once
 #include "UI/UI_Object.h"
 #include <Utility/SparseSet.h>
-#include <unordered_map>
-#include <unordered_set>
 
 namespace Engine::UI {
 	class UI_ObjectManager {

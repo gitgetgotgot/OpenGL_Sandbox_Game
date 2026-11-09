@@ -1,5 +1,5 @@
 #pragma once
-#include "Utility/DynamicArray.h"
+#include "Utility/SimpleArray.h"
 #include "Utility/DataParser.h"
 #include <deque>
 
@@ -16,7 +16,7 @@ namespace Engine::Mods {
 		std::string version;
 		std::string description;
 		std::filesystem::path mod_folder_path;
-		Engine::Util::DynamicArray<DependentMod> dependent_mods;
+		Engine::Util::SimpleArray<DependentMod> dependent_mods;
 		ModLoadMode load_mode;
 		bool has_dll;
 		bool enabled;

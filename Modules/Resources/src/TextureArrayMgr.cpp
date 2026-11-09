@@ -2,7 +2,6 @@
 #include "Resources/Sprite.h"
 #include <Utility/Logger.h>
 #include <stb_image.h>
-#include <glad/gl.h>
 
 Engine::Resource::TextureArrayManager::TextureResourceData::TextureResourceData(TextureResourceData&& other) {
 	image_bytes = other.image_bytes; other.image_bytes = nullptr;
@@ -31,9 +30,6 @@ Engine::Resource::TextureArrayManager::TextureResourceData::~TextureResourceData
 }
 
 void Engine::Resource::TextureArrayManager::init() {
-	// read texture bytes without alignment or padding (correctly load textures of different formats and sizes)
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
 	stbi_set_flip_vertically_on_load(true);
 
 	const uint32_t array_size[8] = {
@@ -86,7 +82,7 @@ void Engine::Resource::TextureArrayManager::bind_texture_arrays() {
 	fonts_texture_array->bind(10);
 }
 
-bool Engine::Resource::TextureArrayManager::add_texture_to_queue(std::filesystem::path& file_path, const std::string& UID) {
+bool Engine::Resource::TextureArrayManager::add_texture_to_queue(const std::filesystem::path& file_path, const std::string& UID) {
 	int imgWidth, imgHeight, numOfColorChannels;
 	unsigned char* image_bytes = stbi_load(file_path.string().c_str(), &imgWidth, &imgHeight, &numOfColorChannels, 0);
 

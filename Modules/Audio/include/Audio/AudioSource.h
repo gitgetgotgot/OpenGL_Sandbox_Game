@@ -1,5 +1,6 @@
 #pragma once
-#include <Base/Types.h>
+#include <cstdint>
+#include <cstddef>
 #include <string>
 
 namespace Engine::Audio {
@@ -12,7 +13,7 @@ namespace Engine::Audio {
 		AudioSource& operator=(AudioSource&&);
 
 		void setup_source(uint16_t sound_ID);
-		void setup_source(std::string_view sound_UID);
+		void setup_source(const std::string& sound_UID);
 		void play(
 			bool loop = false, bool positioned = false,
 			float x = 0.0f, float y = 0.0f, float z = 0.0f

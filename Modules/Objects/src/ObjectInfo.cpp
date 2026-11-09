@@ -24,7 +24,7 @@ void Engine::Object::ObjectInfo::_sort_tags() const {
 void Engine::Object::ObjectInfo::fill_data(const nlohmann::json& data) {
 	const auto& sprites_v = data["sprites"].get<std::vector<nlohmann::json>>();
 	uint32_t size = sprites_v.size();
-	this->sprites = Engine::Util::DynamicArray<uint32_t>(size);
+	this->sprites = Engine::Util::SimpleArray<uint32_t>(size);
 
 	for (uint32_t i = 0; i < size; i++) {
 		std::string sprite_UID = sprites_v[i].get<std::string>();
@@ -39,7 +39,7 @@ void Engine::Object::ObjectInfo::fill_data(const nlohmann::json& data) {
 	if (data.contains("effects")) {
 		const auto& effects_v = data["effects"].get<std::vector<nlohmann::json>>();
 		uint32_t effects_size = effects_v.size();
-		this->effects = Engine::Util::DynamicArray<Engine::Resource::EffectEntry>(effects_size);
+		this->effects = Engine::Util::SimpleArray<Engine::Resource::EffectEntry>(effects_size);
 
 		for (uint32_t i = 0; i < effects_size; i++) {
 			std::string effect_UID = effects_v[i]["effect_UID"].get<std::string>();
@@ -56,7 +56,7 @@ void Engine::Object::ObjectInfo::fill_data(const nlohmann::json& data) {
 	if (data.contains("lights")) {
 		const auto& lights_v = data["lights"].get<std::vector<nlohmann::json>>();
 		uint32_t lights_size = lights_v.size();
-		this->lights = Engine::Util::DynamicArray<uint16_t>(lights_size);
+		this->lights = Engine::Util::SimpleArray<uint16_t>(lights_size);
 
 		for (uint32_t i = 0; i < lights_size; i++) {
 			std::string light_UID = lights_v[i].get<std::string>();
@@ -72,7 +72,7 @@ void Engine::Object::ObjectInfo::fill_data(const nlohmann::json& data) {
 	if (data.contains("tags")) {
 		const auto& tags_v = data["tags"].get<std::vector<nlohmann::json>>();
 		uint32_t tags_size = tags_v.size();
-		this->tags = Engine::Util::DynamicArray<uint16_t>(tags_size);
+		this->tags = Engine::Util::SimpleArray<uint16_t>(tags_size);
 
 		for (uint32_t i = 0; i < tags_size; i++) {
 			std::string tag_UID = tags_v[i].get<std::string>();
@@ -92,7 +92,7 @@ void Engine::Object::ObjectInfo::fill_dependent_data(const nlohmann::json& data)
 	if (data.contains("drops")) {
 		const auto& drops_v = data["drops"].get<std::vector<nlohmann::json>>();
 		uint32_t size = drops_v.size();
-		this->drops = Engine::Util::DynamicArray<Engine::Resource::DropEntry>(size);
+		this->drops = Engine::Util::SimpleArray<Engine::Resource::DropEntry>(size);
 
 		for (uint32_t i = 0; i < size; i++) {
 			std::string drop_UID = drops_v[i]["UID"].get<std::string>();

@@ -1,36 +1,38 @@
 #pragma once
-#include <Base/Types.h>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glad/gl.h>
-#include <GLFW/glfw3.h>
+#include <cstdint>
+#include <cstddef>
 #include <vector>
 #include <chrono>
 #include <string>
+#include <glm/gtc/matrix_transform.hpp>
+#include "DeviceSystem/GLFW_Core.h"
 
 class DisplayController {
+    friend class DeviceContext;
 public:
     struct DisplayVideoMode {
         int width = 0, height = 0, max_refresh_rate = 0, video_mode_index = 0;
     };
 public:
+    bool setup_monitor_video_modes();
     void update_resolution(int width, int height);
-    void setup_monitor_video_modes();
     void toggle_fullscreen(bool state);
     void toggle_VSYNC(bool state);
     void change_resolution(bool next);
     void change_resolution(uint32_t width, uint32_t height);
     DisplayVideoMode& get_current_video_mode();
 public:
-    float width = 1920, height = 1080;
-    float ratio = 1920.f / 1080.f;
-    float double_x_ratio = 1 / (2 * (1920.f / 1080.f));
+    uint32_t width = 0, height = 0;
+    float ratio = 0;
+    float double_x_ratio = 0;
     bool is_fullscreen = false;
     bool vsync_on = true;
-    GLFWwindow* window;
+private:
+    GLFWwindow* window = nullptr;
     GLFWmonitor* primary_monitor = nullptr;
     const GLFWvidmode* modes = nullptr;
     int modes_count = 0;
-    std::vector<DisplayVideoMode> video_modes;
+    std::vector<DisplayVideoMode> video_modes{};
     int current_video_mode = 0;
 };
 
@@ -126,14 +128,15 @@ enum Key : uint16_t {
 
 class Keyboard {
 public:
-    std::vector<uint32_t> currentPressedChars;
-    bool keyStatesCurr[349]{};
-    bool keyStatesPrev[349]{};
-
     bool key_is_pressed(int key) const { return !keyStatesPrev[key] && keyStatesCurr[key]; }
     bool key_is_released(int key) const { return keyStatesPrev[key] && !keyStatesCurr[key]; }
     bool key_is_held(int key) const { return keyStatesPrev[key] && keyStatesCurr[key]; }
     bool key_is_idle(int key) const { return !keyStatesPrev[key] && !keyStatesCurr[key]; }
+    std::vector<uint32_t> currentPressedChars;
+    bool keyStatesCurr[349]{};
+    bool keyStatesPrev[349]{};
+    inline static constexpr uint32_t SHIFT_KEY_SIZE = 97;
+    inline static char shift_key_map[SHIFT_KEY_SIZE]; //keymap for special keys with shift (last GLFW_ID is 96)
 };
 
 class Mouse {
@@ -182,12 +185,37 @@ public:
 
 class DeviceContext {
 public:
+    enum GraphicsAPI : uint8_t {
+        OPEN_GL, VULKAN, DIRECTX
+    };
+    inline static GraphicsAPI graphics_API = GraphicsAPI::OPEN_GL;
     inline static DisplayController display;
     inline static Keyboard keyBoard;
     inline static Mouse mouse;
-    static void exit_application() { should_exit_application = true; }
-    static bool should_exit() { return should_exit_application; }
+    static void setup_GLFW_callbacks();
+
+    static void exit_application();
+    static bool should_exit();
+
+    static bool init_main_window();
+    static void toggle_main_window(bool state);
+    static void destroy_main_window();
+    static bool main_window_should_close();
+    static void close_main_window();
+
+    static void poll_events();
+    static void process_end_input();
+    static void present_end_frame();
+
     static std::string& get_current_system_time();
+private:
+    static void glfwFrameBufferSizeCallback(GLFWwindow* window, int width, int height);
+    static void glfwWindowSizeCallback(GLFWwindow* window, int width, int height);
+    static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+    static void char_callback(GLFWwindow* window, unsigned int codepoint);
+    static void cursor_position_callback(GLFWwindow* window, double mX, double mY);
+    static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+    static void mouse_wheel_callback(GLFWwindow* window, double xOffset, double yOffset);
 private:
     DeviceContext() = default;
     ~DeviceContext() = default;

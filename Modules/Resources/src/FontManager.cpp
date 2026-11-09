@@ -3,7 +3,7 @@
 #include <Utility/Logger.h>
 #include <fstream>
 
-bool Engine::Resource::FontManager::load_font(std::filesystem::path font_folder_path, std::string source) {
+bool Engine::Resource::FontManager::load_font(const std::filesystem::path& font_folder_path, const std::string& source) {
 	std::filesystem::path file_path;
 	std::string file_name;
 	std::string font_name = font_folder_path.filename().string();
@@ -53,8 +53,8 @@ bool Engine::Resource::FontManager::load_font(std::filesystem::path font_folder_
 	return true;
 }
 
-std::optional<uint32_t> Engine::Resource::FontManager::get_font_id(std::string font_UID) {
-	if (auto it = UID_to_ID.find(font_UID); it != UID_to_ID.end()) {
+std::optional<uint32_t> Engine::Resource::FontManager::get_font_id(const std::string& uid) {
+	if (auto it = UID_to_ID.find(uid); it != UID_to_ID.end()) {
 		return it->second;
 	}
 	else {

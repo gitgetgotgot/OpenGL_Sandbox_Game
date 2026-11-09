@@ -24,8 +24,6 @@ void Engine::Util::TimeManager::update() {
 	}
 
 	deltaTime *= deltaTimeScale;
-	//rainbow color time
-	rainbow_color_time = std::fmod(rainbow_color_time + rainbow_speed * deltaTime, rainbow_period);
 }
 
 void Engine::Util::TimeManager::update_world_time() {
@@ -82,13 +80,6 @@ int Engine::Util::TimeManager::get_current_FPS() {
 
 glm::vec3& Engine::Util::TimeManager::get_sky_color() {
 	return skyColor;
-}
-
-glm::vec4 Engine::Util::TimeManager::getRainbowColor() {
-	float r = std::sin(rainbow_color_time + 0.0f) * 0.5f + 0.5f;
-	float g = std::sin(rainbow_color_time + 2.094f) * 0.5f + 0.5f; // 120° = 2π/3
-	float b = std::sin(rainbow_color_time + 4.188f) * 0.5f + 0.5f; // 240° = 4π/3
-	return glm::vec4(r, g, b, 1.f);
 }
 
 void Engine::Util::TimeManager::toggle_dayTime() {

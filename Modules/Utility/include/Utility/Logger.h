@@ -1,5 +1,6 @@
 #pragma once
-#include <Base/Types.h>
+#include <cstdint>
+#include <cstddef>
 #include <string>
 #include <deque>
 
@@ -16,6 +17,12 @@ namespace Engine::Util {
 			logs.emplace_back(message);
 		}
 		inline static std::string_view Get_Last_Log() {
+			if (logs.empty())
+				return "";
+			else
+				return logs.back();
+		}
+		inline static const std::string& Get_Last_Log_Ref() {
 			if (logs.empty())
 				return "";
 			else

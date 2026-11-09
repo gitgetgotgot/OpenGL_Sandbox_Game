@@ -1,4 +1,5 @@
 #include "Resources/Particle.h"
+#include <Utility/DataParser.h>
 
 void Engine::Resource::ParticleManager::setup() {
 	particles.emplace_back();
@@ -6,8 +7,8 @@ void Engine::Resource::ParticleManager::setup() {
 }
 
 bool Engine::Resource::ParticleManager::load_particles_from_data(
-	std::filesystem::path& data_file_path,
-	Engine::Util::DataParser& parser
+	const std::filesystem::path& data_file_path,
+	const Engine::Util::DataParser& parser
 ) {
 	return true;
 }

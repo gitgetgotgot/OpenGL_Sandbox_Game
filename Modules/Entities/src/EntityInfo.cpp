@@ -23,7 +23,7 @@ void Engine::Entity::EntityInfo::fill_data(const nlohmann::json& data) {
 	if (data.contains("lights")) {
 		const auto& lights_v = data["lights"].get<std::vector<nlohmann::json>>();
 		uint32_t lights_size = lights_v.size();
-		this->lights = Engine::Util::DynamicArray<uint16_t>(lights_size);
+		this->lights = Engine::Util::SimpleArray<uint16_t>(lights_size);
 
 		for (uint32_t i = 0; i < lights_size; i++) {
 			std::string light_UID = lights_v[i].get<std::string>();
@@ -39,7 +39,7 @@ void Engine::Entity::EntityInfo::fill_data(const nlohmann::json& data) {
 	if (data.contains("tags")) {
 		const auto& tags_v = data["tags"].get<std::vector<nlohmann::json>>();
 		uint32_t tags_size = tags_v.size();
-		this->tags = Engine::Util::DynamicArray<uint16_t>(tags_size);
+		this->tags = Engine::Util::SimpleArray<uint16_t>(tags_size);
 
 		for (uint32_t i = 0; i < tags_size; i++) {
 			std::string tag_UID = tags_v[i].get<std::string>();

@@ -10,7 +10,7 @@ void Engine::Object::ObjectFactoryRegistry::ClearData() {
 	std::vector<std::unique_ptr<_ObjectFactoryI>>().swap(factories);
 }
 
-void Engine::Object::ObjectFactoryRegistry::register_factory(std::string class_uid, std::unique_ptr<_ObjectFactoryI> factory) {
+void Engine::Object::ObjectFactoryRegistry::register_factory(const std::string& class_uid, std::unique_ptr<_ObjectFactoryI> factory) {
 	object_class_to_factory_id.emplace(class_uid, factories.size());
 	factories.emplace_back(std::move(factory));
 }
@@ -19,7 +19,7 @@ Engine::Object::_ObjectFactoryI* Engine::Object::ObjectFactoryRegistry::get_fact
 	return factories[factory_id].get();
 }
 
-std::optional<uint32_t> Engine::Object::ObjectFactoryRegistry::get_factory_id(std::string class_uid) {
+std::optional<uint32_t> Engine::Object::ObjectFactoryRegistry::get_factory_id(const std::string& class_uid) {
 	auto it = object_class_to_factory_id.find(class_uid);
 	if (it == object_class_to_factory_id.end()) return std::nullopt;
 	else return it->second;

@@ -4,8 +4,8 @@
 #include <iostream>
 
 Engine::Graphics::ShaderProgram::ShaderProgram(
-	std::filesystem::path& vertex_shader_path,
-	std::filesystem::path& fragment_shader_path
+	const std::filesystem::path& vertex_shader_path,
+	const std::filesystem::path& fragment_shader_path
 ) {
 	std::string vertexContents = get_shader_file_contents(vertex_shader_path);
 	std::string fragmentContetns = get_shader_file_contents(fragment_shader_path);
@@ -71,7 +71,7 @@ void Engine::Graphics::ShaderProgram::delete_shader() const {
 	glDeleteProgram(id);
 }
 
-std::string Engine::Graphics::ShaderProgram::get_shader_file_contents(std::filesystem::path& shader_path) {
+std::string Engine::Graphics::ShaderProgram::get_shader_file_contents(const std::filesystem::path& shader_path) {
 	std::ifstream in(shader_path, std::ios::binary);
 	if (in) {
 		std::string contents;

@@ -3,10 +3,6 @@
 #include <chrono>
 
 namespace Engine::Util {
-	constexpr float PI = 3.1415926;
-	constexpr float rainbow_speed = 2.f;
-	constexpr float rainbow_period = 2.f * PI;
-
 	class TimeManager {
 	public:
 		static TimeManager& Instance() {
@@ -19,7 +15,6 @@ namespace Engine::Util {
 		float get_global_light_value();
 		int get_current_FPS();
 		glm::vec3& get_sky_color();
-		glm::vec4 getRainbowColor();
 		void toggle_dayTime();
 		inline static float deltaTime = 0.0f;
 		inline static float deltaTimeScale = 1.0f;

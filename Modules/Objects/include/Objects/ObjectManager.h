@@ -10,7 +10,7 @@ namespace Engine::Object {
 			return mgr;
 		}
 		template<typename ClassInfoT, ObjectType MAIN_TYPE>
-		void create_object_info(std::string UID) {
+		void create_object_info(const std::string& UID) {
 			static_assert(std::is_base_of_v<ObjectInfo, ClassInfoT>, "ClassInfoT must inherit from ObjectInfo");
 			std::string_view uid_view = UID_storage.emplace_back(UID);
 			UID_to_ID.emplace(uid_view, objects.size());
@@ -20,11 +20,11 @@ namespace Engine::Object {
 		void setup();
 		void ClearData();
 		bool load_objects_from_data(
-			std::filesystem::path& data_file_path,
-			Engine::Util::DataParser& parser
+			const std::filesystem::path& data_file_path,
+			const Engine::Util::DataParser& parser
 		);
 		ObjectInfo* get_object_info(uint16_t ID);
-		std::optional<uint16_t> get_object_id(std::string_view UID);
+		std::optional<uint16_t> get_object_id(const std::string& UID);
 		void build_ID_to_UID_table(std::vector<std::string_view>& table);
 	private:
 		std::deque<std::string> UID_storage;

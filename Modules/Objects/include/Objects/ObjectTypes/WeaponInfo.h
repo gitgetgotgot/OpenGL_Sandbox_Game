@@ -17,8 +17,8 @@ namespace Engine::Object {
 		bool stackable = false;
 		float size_x = 1.0f;
 		float size_y = 1.0f;
-		Engine::Util::DynamicArray<uint16_t> sounds;
-		Engine::Util::DynamicArray<ProjectileEntry> projectiles;
+		Engine::Util::SimpleArray<uint16_t> sounds;
+		Engine::Util::SimpleArray<ProjectileEntry> projectiles;
 		//for instrumental weapons
 		float power = 1.0f;
 		float range = 1.0f;

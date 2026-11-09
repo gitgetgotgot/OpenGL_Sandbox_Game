@@ -3,12 +3,12 @@
 #include <Utility/Hash.h>
 #include <fstream>
 
-bool Engine::Util::DataParser::parse_data(std::filesystem::path& path, bool parse_json_file) {
+bool Engine::Util::DataParser::parse_data(const std::filesystem::path& path, bool parse_json_file) {
 	if (parse_json_file) return parse_JSON_format(path);
 	else return parse_binary_format(path);
 }
 
-bool Engine::Util::DataParser::parse_binary_format(std::filesystem::path& path) {
+bool Engine::Util::DataParser::parse_binary_format(const std::filesystem::path& path) {
 	std::ifstream file(path, std::ios::binary);
 	if (!file.is_open()) {
 		Engine::Util::Logger::Log("Data Parser: Cannot open file: " + path.string());
@@ -39,7 +39,7 @@ bool Engine::Util::DataParser::parse_binary_format(std::filesystem::path& path) 
 	return true;
 }
 
-bool Engine::Util::DataParser::parse_JSON_format(std::filesystem::path& path) {
+bool Engine::Util::DataParser::parse_JSON_format(const std::filesystem::path& path) {
 	std::ifstream file(path);
 	if (!file.is_open()) {
 		Engine::Util::Logger::Log("Data Parser: Cannot open file: " + path.string());
@@ -53,7 +53,7 @@ bool Engine::Util::DataParser::parse_JSON_format(std::filesystem::path& path) {
 	return true;
 }
 
-bool Engine::Util::DataParser::parse_JSON_to_binary(std::filesystem::path& path) {
+bool Engine::Util::DataParser::parse_JSON_to_binary(const std::filesystem::path& path) {
 	std::ifstream file(path);
 	if (!file.is_open()) {
 		Engine::Util::Logger::Log("Data Parser: Cannot open file: " + path.string());

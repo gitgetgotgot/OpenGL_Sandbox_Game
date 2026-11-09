@@ -1,9 +1,14 @@
 #pragma once
-#include <Utility/DataParser.h>
 #include <glm/glm.hpp>
+#include <filesystem>
 #include <unordered_map>
 #include <optional>
 #include <mutex>
+#include <cstdint>
+
+namespace Engine::Util {
+	class DataParser;
+}
 
 namespace Engine::Resource {
 	class Sprite {
@@ -51,24 +56,24 @@ namespace Engine::Resource {
 		void RememberBaseData();
 		void ClearData();
 		bool load_sprites_from_data(
-			std::filesystem::path& data_file_path,
-			Engine::Util::DataParser& parser,
+			const std::filesystem::path& data_file_path,
+			const Engine::Util::DataParser& parser,
 			std::mutex& resources_mutex
 		);
 		void add_sprite(
-			std::string UID, uint32_t U0, uint32_t V0, uint32_t width, uint32_t height,
+			const std::string& UID, uint32_t U0, uint32_t V0, uint32_t width, uint32_t height,
 			float base_world_size, uint32_t tex_array_id, uint32_t tex_id
 		);
 		Sprite& get_sprite(uint32_t id);
-		std::optional<uint32_t> get_sprite_id(std::string uid);
+		std::optional<uint32_t> get_sprite_id(const std::string& uid);
 
 		void add_sprite9sliced(
-			std::string UID, uint32_t U0, uint32_t V0, uint32_t width, uint32_t height,
+			const std::string& UID, uint32_t U0, uint32_t V0, uint32_t width, uint32_t height,
 			uint32_t b_left, uint32_t uv_margin_right, uint32_t uv_margin_top, uint32_t uv_margin_bottom,
 			uint32_t tex_array_id, uint32_t tex_id
 		);
 		Sprite9Sliced& get_sprite9sliced(uint32_t id);
-		std::optional<uint32_t> get_sprite9sliced_id(std::string uid);
+		std::optional<uint32_t> get_sprite9sliced_id(const std::string& uid);
 	private:
 		SpriteManager() {}
 		~SpriteManager() {}

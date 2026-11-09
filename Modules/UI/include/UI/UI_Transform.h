@@ -1,4 +1,6 @@
 #pragma once
+#include <cstdint>
+#include <cstddef>
 #include <vector>
 #include <glm/ext/vector_float2.hpp>
 

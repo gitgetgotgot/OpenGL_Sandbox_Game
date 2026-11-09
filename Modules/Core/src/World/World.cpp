@@ -1,5 +1,4 @@
 #include "Core/World/World.h"
-#include <Utility/GameContext.h>
 #include <Utility/TimeManager.h>
 #include <Resources/CoreTags.h>
 #include <Objects/ObjectTypes/MultiBlockInfo.h>
@@ -29,14 +28,14 @@ void World::init_render_buffers() {
 	shader = std::make_unique<Engine::Graphics::ShaderProgram>(vertex_shader_path, fragment_shader_path);
 
 	ebo = std::make_unique<Engine::Graphics::EBO>();
-	ET::uint32* sprite_index_buffer = new ET::uint32[MAX_INDEX_AMOUNT];
+	uint32_t* sprite_index_buffer = new uint32_t[MAX_INDEX_AMOUNT];
 	for (int i = 0; i < MAX_SQUARES; i++) {
 		sprite_index_buffer[i * 6] = sprite_index_buffer[i * 6 + 3] = i * 4;
 		sprite_index_buffer[i * 6 + 2] = sprite_index_buffer[i * 6 + 4] = sprite_index_buffer[i * 6] + 2;
 		sprite_index_buffer[i * 6 + 1] = sprite_index_buffer[i * 6 + 2] - 1;
 		sprite_index_buffer[i * 6 + 5] = sprite_index_buffer[i * 6 + 2] + 1;
 	}
-	ebo->set_data(sprite_index_buffer, MAX_INDEX_AMOUNT * sizeof(ET::uint32), Engine::Graphics::EBO::EBO_USAGE::USAGE_STATIC);
+	ebo->set_data(sprite_index_buffer, MAX_INDEX_AMOUNT * sizeof(uint32_t), Engine::Graphics::EBO::EBO_USAGE::USAGE_STATIC);
 	delete[] sprite_index_buffer;
 
 	for (auto& buf : render_buffers) {
@@ -162,7 +161,6 @@ void World::update() {
 	if (main_camera.pos.y > float(height)) main_camera.pos.y = float(height);
 
 	main_camera.update_camera();
-	GameContext::PLAYER_LAST_POS = main_camera.pos;
 
 	//update sprites ubo
 	sprites_ubo_data.viewMatrix = main_camera.viewMatrix;

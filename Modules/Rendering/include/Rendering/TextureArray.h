@@ -1,5 +1,5 @@
 #pragma once
-#include <Base/Types.h>
+#include <cstdint>
 
 namespace Engine::Graphics {
 	class TextureArray {

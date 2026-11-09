@@ -1,11 +1,15 @@
 #include "Rendering/OpenGL_Renderer.h"
+#include <glad/gl.h>
 #include <glm/ext/vector_float2.hpp>
+#include <Utility/Logger.h>
 
-Engine::Graphics::OpenGL_Renderer::OpenGL_Renderer(GLFWwindow* window) {
-	this->window = window;
+bool Engine::Graphics::OpenGL_Renderer::init() {
 	//openGL settings
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	// read texture bytes without alignment or padding (correctly load textures of different formats and sizes)
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	return true;
 }
 
 void Engine::Graphics::OpenGL_Renderer::clear(float r, float g, float b) {
@@ -13,16 +17,12 @@ void Engine::Graphics::OpenGL_Renderer::clear(float r, float g, float b) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Engine::Graphics::OpenGL_Renderer::present() {
-	glfwSwapBuffers(window);
+void Engine::Graphics::OpenGL_Renderer::end_frame() {
+	// empty here, but can be used for Vulkan, DirectX
 }
 
 void Engine::Graphics::OpenGL_Renderer::setViewport(float x, float y, float width, float height) {
 	glViewport(x, y, width, height);
-}
-
-void Engine::Graphics::OpenGL_Renderer::setViewport(glm::vec2 start_pos, glm::vec2 size) {
-	glViewport(start_pos.x, start_pos.y, size.x, size.y);
 }
 
 void Engine::Graphics::OpenGL_Renderer::useDepthTest(bool use) {
@@ -34,8 +34,9 @@ void Engine::Graphics::OpenGL_Renderer::useDepthWrite(bool use) {
 	glDepthMask(use);
 }
 
-void Engine::Graphics::OpenGL_Renderer::useDepthFunc(GLenum func) {
-	glDepthFunc(func);
+void Engine::Graphics::OpenGL_Renderer::useDepthFunc(DepthFunc func) {
+	GLenum fun{};
+	glDepthFunc(fun);
 }
 
 void Engine::Graphics::OpenGL_Renderer::useScissorTest(bool use) {
@@ -45,10 +46,6 @@ void Engine::Graphics::OpenGL_Renderer::useScissorTest(bool use) {
 
 void Engine::Graphics::OpenGL_Renderer::setScissorRect(float x, float y, float width, float height) {
 	glScissor(x, y, width, height);
-}
-
-void Engine::Graphics::OpenGL_Renderer::setScissorRect(glm::vec2 start_pos, glm::vec2 size) {
-	glScissor(start_pos.x, start_pos.y, size.x, size.y);
 }
 
 void Engine::Graphics::OpenGL_Renderer::renderData(

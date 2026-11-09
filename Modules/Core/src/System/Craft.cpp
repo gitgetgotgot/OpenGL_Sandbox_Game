@@ -8,8 +8,8 @@ void Engine::Core::Craft::CraftManager::ClearData() {
 }
 
 bool Engine::Core::Craft::CraftManager::load_crafts_from_data(
-	std::filesystem::path& data_file_path,
-	Engine::Util::DataParser& parser
+	const std::filesystem::path& data_file_path,
+	const Engine::Util::DataParser& parser
 ) {
 	using DP = Engine::Util::DataParser;
 	for (const auto& j : parser.node_root) {
@@ -24,11 +24,11 @@ bool Engine::Core::Craft::CraftManager::load_crafts_from_data(
 			uint16_t item_id = item_info_id.value();
 			uint16_t amount = j["amount"].get<uint16_t>();
 
-			Engine::Util::DynamicArray<uint16_t> craft_tags;
+			Engine::Util::SimpleArray<uint16_t> craft_tags;
 			CraftableItem::CraftTagsUsage tags_usage;
 			if (j.contains("craft_tags")) {
 				const auto& craft_tags_v = j["craft_tags"].get<std::vector<std::string>>();
-				craft_tags = Engine::Util::DynamicArray<uint16_t>(craft_tags_v.size());
+				craft_tags = Engine::Util::SimpleArray<uint16_t>(craft_tags_v.size());
 				uint8_t index = 0;
 				for (auto& tag_name : craft_tags_v) {
 					auto tag_id_opt = Engine::Resource::Tag::TagRegistry::Instance().get_tag(tag_name);
@@ -46,13 +46,13 @@ bool Engine::Core::Craft::CraftManager::load_crafts_from_data(
 				}
 			}
 			else {
-				craft_tags = Engine::Util::DynamicArray<uint16_t>(1);
+				craft_tags = Engine::Util::SimpleArray<uint16_t>(1);
 				craft_tags[0] = 0; // Tag Core:None
 				tags_usage = CraftableItem::CraftTagsUsage::USAGE_ANY;
 			}
 
 			const auto& items = j["items"].get<std::vector<nlohmann::json>>();
-			Engine::Util::DynamicArray<CraftingPair> craft_pairs(items.size());
+			Engine::Util::SimpleArray<CraftingPair> craft_pairs(items.size());
 			uint8_t index = 0;
 			for (const auto& i : items) {
 				std::string item_UID = i["item_UID"].get<std::string>();
@@ -74,8 +74,8 @@ bool Engine::Core::Craft::CraftManager::load_crafts_from_data(
 }
 
 void Engine::Core::Craft::CraftManager::add_craft(
-	uint16_t item_id, uint16_t amount, Engine::Util::DynamicArray<uint16_t> craft_tags,
-	CraftableItem::CraftTagsUsage tags_usage, Engine::Util::DynamicArray<CraftingPair> items_needed
+	uint16_t item_id, uint16_t amount, Engine::Util::SimpleArray<uint16_t> craft_tags,
+	CraftableItem::CraftTagsUsage tags_usage, Engine::Util::SimpleArray<CraftingPair> items_needed
 ) {
 	crafts.emplace_back(item_id, amount, std::move(craft_tags), tags_usage, std::move(items_needed));
 	uint16_t craft_id = uint16_t(crafts.size() - 1);
