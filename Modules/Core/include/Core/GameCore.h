@@ -1,5 +1,5 @@
 #pragma once
-#include <Rendering/OpenGL_Renderer.h>
+#include <Rendering/Interfaces/Renderer.h>
 
 class GameEngine {
 public:
@@ -23,7 +23,7 @@ private:
 private:
 	void(GameEngine::* update_proc)() = nullptr;
 
-	std::unique_ptr<Engine::Graphics::OpenGL_Renderer> renderer;
+	std::unique_ptr<Engine::Graphics::Renderer> renderer;
 
 	inline static Game_State game_update_state = LoadingResources;
 	inline static Game_State game_render_state = inMainMenu;

@@ -2,15 +2,19 @@
 #include "Core/ResourceLoader.h"
 #include "Core/SettingsManager.h"
 #include "Core/World/WorldManager.h"
+#include "Core/System/EntitySystem.h"
 #include "Core/MainMenuUI/MenuUIController.h"
 #include "Core/GameUI/GameUIController.h"
 
+#include <Rendering/OpenGL/gl_Renderer.h>
+#include <Rendering/Vulkan/vulkan_Renderer.h>
 #include <UI/UI_System.h>
 #include <Audio/AudioSystem.h>
 #include <Resources/TextureArrayMgr.h>
 #include <DeviceSystem/DeviceContext.h>
 #include <Utility/TimeManager.h>
 #include <Utility/Logger.h>
+
 #include <print>
 
 GameEngine::~GameEngine() {
@@ -86,9 +90,22 @@ bool GameEngine::init_MainWindow() {
 }
 
 bool GameEngine::init_GraphicsAPI() {
-	renderer = std::make_unique<Engine::Graphics::OpenGL_Renderer>();
-	Engine::Graphics::OpenGL_Renderer::renderer_ptr = renderer.get();
-	return renderer->init();
+	std::error_code ec;
+	if (DeviceContext::graphics_API == DeviceContext::GraphicsAPI::OPEN_GL) {
+		renderer = std::make_unique<Engine::Graphics::OpenGL_Renderer>(ec);
+	}
+	else if (DeviceContext::graphics_API == DeviceContext::GraphicsAPI::VULKAN) {
+		glfwCreateWindowSurface()
+		renderer = std::make_unique<Engine::Graphics::Vulkan_Renderer>(VK_NULL_HANDLE, ec);
+	}
+	else if (DeviceContext::graphics_API == DeviceContext::GraphicsAPI::DIRECTX) {
+
+	}
+	if (ec) {
+		Engine::Util::Logger::Log("Failed to initialize Graphics API: " + ec.message());
+		return false;
+	}
+	return true;
 }
 
 bool GameEngine::init_input() {

@@ -1,29 +1,29 @@
-#include "Rendering/TextureArray.h"
+#include "Rendering/OpenGL/gl_TextureArray.h"
 #include <glad/gl.h>
 #include <stb_image.h>
 
-Engine::Graphics::TextureArray::TextureArray() {
+Engine::Graphics::gl_TextureArray::gl_TextureArray() {
 	glGenTextures(1, &id);
 }
 
-Engine::Graphics::TextureArray::~TextureArray() {
+Engine::Graphics::gl_TextureArray::~gl_TextureArray() {
     if (id) glDeleteTextures(1, &id);
 }
 
-void Engine::Graphics::TextureArray::bind(uint32_t slot) const {
+void Engine::Graphics::gl_TextureArray::bind(uint32_t slot) const {
     glActiveTexture(GL_TEXTURE0 + slot);
     glBindTexture(GL_TEXTURE_2D_ARRAY, id);
 }
 
-void Engine::Graphics::TextureArray::unbind() const {
+void Engine::Graphics::gl_TextureArray::unbind() const {
     glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 }
 
-uint32_t Engine::Graphics::TextureArray::get_current_size() const {
+uint32_t Engine::Graphics::gl_TextureArray::get_current_size() const {
     return current_size;
 }
 
-void Engine::Graphics::TextureArray::setup_texture_array(uint32_t width, uint32_t height, uint32_t depth, bool linear_filter, uint8_t channels, ResizeStrategy resize_str) {
+void Engine::Graphics::gl_TextureArray::setup_texture_array(uint32_t width, uint32_t height, uint32_t depth, bool linear_filter, uint8_t channels, ResizeStrategy resize_str) {
     this->array_width = width;
     this->array_height = height;
     this->array_depth = depth;
@@ -33,7 +33,7 @@ void Engine::Graphics::TextureArray::setup_texture_array(uint32_t width, uint32_
     create_tex_array(id);
 }
 
-bool Engine::Graphics::TextureArray::add_2D_texture(const char* fileName) {
+bool Engine::Graphics::gl_TextureArray::add_2D_texture(const char* fileName) {
     if (current_size == array_depth) resize_array();
 
 	int imgWidth, imgHeight, numOfColorChannels;
@@ -70,7 +70,7 @@ bool Engine::Graphics::TextureArray::add_2D_texture(const char* fileName) {
     return true;
 }
 
-void Engine::Graphics::TextureArray::add_2D_texture(const unsigned char* img_buf, int& width, int& height, int& numOfChannels) {
+void Engine::Graphics::gl_TextureArray::add_2D_texture(const unsigned char* img_buf, int& width, int& height, int& numOfChannels) {
     if (width != array_width || height != array_height) return;
 
     if (current_size == array_depth) resize_array();
@@ -95,7 +95,7 @@ void Engine::Graphics::TextureArray::add_2D_texture(const unsigned char* img_buf
     ++current_size;
 }
 
-void Engine::Graphics::TextureArray::resize_array() {
+void Engine::Graphics::gl_TextureArray::resize_array() {
     uint32_t new_tex_array_id;
     glGenTextures(1, &new_tex_array_id);
 
@@ -142,7 +142,7 @@ void Engine::Graphics::TextureArray::resize_array() {
     id = new_tex_array_id;
 }
 
-void Engine::Graphics::TextureArray::create_tex_array(uint32_t tex_ID) const {
+void Engine::Graphics::gl_TextureArray::create_tex_array(uint32_t tex_ID) const {
     glBindTexture(GL_TEXTURE_2D_ARRAY, tex_ID);
 
     // filtering is linear or nearest

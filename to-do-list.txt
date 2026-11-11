@@ -7,3 +7,5 @@
 * engine API for modding and tools for data parcing?
 * think about mutex lock in sprites and audio loaders?
 * remake json load for objects and entities in their classes and factory interface
+* add vulkan?
+* make new lighting system

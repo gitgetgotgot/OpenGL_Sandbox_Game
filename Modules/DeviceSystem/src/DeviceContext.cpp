@@ -1,118 +1,71 @@
 #include "DeviceSystem/DeviceContext.h"
+#include "DeviceSystem/Display.h"
+#include "DeviceSystem/Keyboard.h"
+#include "DeviceSystem/Mouse.h"
+
+#include <Rendering/Interfaces/Renderer.h>
 #include <Utility/Logger.h>
-#include <format>
+#include "DeviceSystem/GLFW_Core.h"
+#include <vulkan/vulkan.h>
 #include <glad/gl.h>
-#include <Rendering/OpenGL_Renderer.h>
 
-bool DisplayController::setup_monitor_video_modes() {
-    primary_monitor = glfwGetPrimaryMonitor();
-    modes = glfwGetVideoModes(primary_monitor, &modes_count);
-    if (!modes) {
-        Engine::Util::Logger::Log("Can't load monitor video modes");
-        return false;
+#include <format>
+
+namespace Engine::GLFWCallbacks {
+    static void glfwFrameBufferSizeCallback(GLFWwindow* window, int width, int height) {
+        // here width and height are physical pixels of framebuffer
+        DeviceContext::display.update_resolution(width, height);
+        Engine::Graphics::Renderer::instance->setViewport(0, 0, width, height);
     }
 
-    video_modes.emplace_back();
-    for (int i = 0; i < modes_count; i++) {
-        const GLFWvidmode& mode = modes[i];
-        if (mode.redBits < 8 || mode.greenBits < 8 || mode.blueBits < 8) {
-            continue;
+    static void glfwWindowSizeCallback(GLFWwindow* window, int width, int height) {
+        // here width and height are logical pixels of window
+        DeviceContext::display.update_resolution(width, height);
+        Engine::Graphics::Renderer::instance->setViewport(0, 0, width, height);
+    }
+
+    static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+        if ((mods & GLFW_MOD_SHIFT) && key >= 0 && key < DeviceContext::keyBoard.SHIFT_KEY_SIZE && DeviceContext::keyBoard.shift_key_map[key] != '\0') {
+            DeviceContext::keyBoard.keyStatesCurr[int(DeviceContext::keyBoard.shift_key_map[key])] = action == GLFW_PRESS || action == GLFW_REPEAT;
         }
-        DisplayVideoMode& last_mode = video_modes.back();
-        if (last_mode.width == mode.width && last_mode.height == mode.height && last_mode.max_refresh_rate < mode.refreshRate) {
-            last_mode.max_refresh_rate = mode.refreshRate;
-            last_mode.video_mode_index = i;
-        }
-        else {
-            video_modes.emplace_back(DisplayVideoMode{ mode.width, mode.height, mode.refreshRate, i });
-        }
-    }
-    video_modes.erase(video_modes.begin());
-
-    return true;
-}
-
-void DisplayController::update_resolution(int width, int height) {
-    this->height = height;
-    this->width = width;
-    ratio = (float)width / (float)height;
-    double_x_ratio = 1 / (2 * ratio);
-}
-
-void DisplayController::toggle_fullscreen(bool state) {
-    if (is_fullscreen == state) return;
-    is_fullscreen = state;
-    const GLFWvidmode& mode = modes[video_modes[current_video_mode].video_mode_index];
-
-    if (is_fullscreen) {
-        // Switch to full screen
-        glfwSetWindowMonitor(window, primary_monitor, 0, 0, mode.width, mode.height, mode.refreshRate);
-    }
-    else {
-        // Switch to windowed mode
-        glfwSetWindowMonitor(window, nullptr, 100, 100, mode.width, mode.height, mode.refreshRate);
-    }
-}
-
-void DisplayController::toggle_VSYNC(bool state) {
-    if (vsync_on == state) return;
-    vsync_on = state;
-    glfwSwapInterval(vsync_on ? 1 : 0);
-}
-
-void DisplayController::change_resolution(bool next) {
-    if (next) {
-        current_video_mode++;
-        if (current_video_mode == video_modes.size()) {
-            current_video_mode = 0;
-        }
-    }
-    else {
-        current_video_mode--;
-        if (current_video_mode < 0) {
-            current_video_mode = video_modes.size() - 1;
-        }
+        else
+            DeviceContext::keyBoard.keyStatesCurr[key] = glfwGetKey(window, key) == GLFW_PRESS;
     }
 
-    const GLFWvidmode& mode = modes[video_modes[current_video_mode].video_mode_index];
-    if (is_fullscreen)
-        glfwSetWindowMonitor(window, primary_monitor, 0, 0, mode.width, mode.height, mode.refreshRate);
-    else
-        glfwSetWindowMonitor(window, nullptr, 100, 100, mode.width, mode.height, mode.refreshRate);
-}
+    static void char_callback(GLFWwindow* window, unsigned int codepoint) {
+        DeviceContext::keyBoard.currentPressedChars.emplace_back((uint32_t)codepoint);
+    }
 
-void DisplayController::change_resolution(uint32_t width, uint32_t height) {
-    uint32_t index = 0;
-    uint32_t size = video_modes.size();
-    for (; index < size; ++index) {
-        DisplayVideoMode& res = video_modes[index];
-        if (res.width == width && res.height == height) {
-            current_video_mode = index;
-            const GLFWvidmode& mode = modes[video_modes[current_video_mode].video_mode_index];
-            if (is_fullscreen)
-                glfwSetWindowMonitor(window, primary_monitor, 0, 0, mode.width, mode.height, mode.refreshRate);
-            else
-                glfwSetWindowMonitor(window, nullptr, 100, 100, mode.width, mode.height, mode.refreshRate);
-            break;
-        }
+    static void cursor_position_callback(GLFWwindow* window, double mX, double mY) {
+        DeviceContext::mouse.x_pos = (float)mX;
+        DeviceContext::mouse.y_pos = DeviceContext::display.height - (float)mY;
+
+        DeviceContext::mouse.delta_x = mX - DeviceContext::mouse.last_x_pos;
+        DeviceContext::mouse.delta_y = mY - DeviceContext::mouse.last_y_pos;
+        DeviceContext::mouse.last_x_pos = mX;
+        DeviceContext::mouse.last_y_pos = mY;
+    }
+
+    static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+        DeviceContext::mouse.lb_curr = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+        DeviceContext::mouse.rb_curr = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
+    }
+
+    static void mouse_wheel_callback(GLFWwindow* window, double xOffset, double yOffset) {
+        DeviceContext::mouse.wheel_offset = (float)yOffset;
     }
 }
-
-DisplayController::DisplayVideoMode& DisplayController::get_current_video_mode() {
-    return video_modes[current_video_mode];
-}
-
 
 void DeviceContext::setup_GLFW_callbacks() {
-    glfwSetFramebufferSizeCallback(display.window, glfwFrameBufferSizeCallback);
-    //glfwSetWindowSizeCallback(window, glfwWindowSizeCallback);
+    glfwSetFramebufferSizeCallback(display.window, Engine::GLFWCallbacks::glfwFrameBufferSizeCallback);
+    //glfwSetWindowSizeCallback(window, Engine::GLFWCallbacks::glfwWindowSizeCallback);
 
-    glfwSetKeyCallback(display.window, key_callback);
-    glfwSetCharCallback(display.window, char_callback);
+    glfwSetKeyCallback(display.window, Engine::GLFWCallbacks::key_callback);
+    glfwSetCharCallback(display.window, Engine::GLFWCallbacks::char_callback);
 
-    glfwSetCursorPosCallback(display.window, cursor_position_callback);
-    glfwSetMouseButtonCallback(display.window, mouse_button_callback);
-    glfwSetScrollCallback(display.window, mouse_wheel_callback);
+    glfwSetCursorPosCallback(display.window, Engine::GLFWCallbacks::cursor_position_callback);
+    glfwSetMouseButtonCallback(display.window, Engine::GLFWCallbacks::mouse_button_callback);
+    glfwSetScrollCallback(display.window, Engine::GLFWCallbacks::mouse_wheel_callback);
 
     std::fill(keyBoard.shift_key_map, keyBoard.shift_key_map + 97, '\0');
     keyBoard.shift_key_map[GLFW_KEY_1] = '!';
@@ -237,45 +190,23 @@ std::string& DeviceContext::get_current_system_time() {
     return time_str;
 }
 
-void DeviceContext::glfwFrameBufferSizeCallback(GLFWwindow* window, int width, int height) {
-    // here width and height are physical pixels of framebuffer
-    display.update_resolution(width, height);
-    Engine::Graphics::OpenGL_Renderer::renderer_ptr->setViewport(0, 0, width, height);
-}
+DeviceContext::GraphicsAPI DeviceContext::graphics_API = DeviceContext::GraphicsAPI::OPEN_GL;
+DisplayController DeviceContext::display{};
+Keyboard DeviceContext::keyBoard{};
+Mouse DeviceContext::mouse{};
 
-void DeviceContext::glfwWindowSizeCallback(GLFWwindow* window, int width, int height) {
-    // here width and height are logical pixels of window
-    display.update_resolution(width, height);
-    Engine::Graphics::OpenGL_Renderer::renderer_ptr->setViewport(0, 0, width, height);
-}
+bool DeviceContext::should_exit_application = false;
+std::chrono::system_clock DeviceContext::sys_clock{};
+std::string DeviceContext::time_str{};
 
-void DeviceContext::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if ((mods & GLFW_MOD_SHIFT) && key >= 0 && key < keyBoard.SHIFT_KEY_SIZE && keyBoard.shift_key_map[key] != '\0') {
-        keyBoard.keyStatesCurr[int(keyBoard.shift_key_map[key])] = action == GLFW_PRESS || action == GLFW_REPEAT;
-    }
-    else
-        keyBoard.keyStatesCurr[key] = glfwGetKey(window, key) == GLFW_PRESS;
-}
+struct DeviceContext::VulkanInitData {
+    VkInstance instance{ VK_NULL_HANDLE };
+    VkSurfaceKHR surface{ VK_NULL_HANDLE };
+};
 
-void DeviceContext::char_callback(GLFWwindow* window, unsigned int codepoint) {
-    keyBoard.currentPressedChars.emplace_back((uint32_t)codepoint);
-}
+struct DeviceContext::DirectXInitData {
+    //HWND
+};
 
-void DeviceContext::cursor_position_callback(GLFWwindow* window, double mX, double mY) {
-    mouse.x_pos = (float)mX;
-    mouse.y_pos = display.height - (float)mY;
-
-    mouse.delta_x = mX - mouse.last_x_pos;
-    mouse.delta_y = mY - mouse.last_y_pos;
-    mouse.last_x_pos = mX;
-    mouse.last_y_pos = mY;
-}
-
-void DeviceContext::mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
-    mouse.lb_curr = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
-    mouse.rb_curr = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
-}
-
-void DeviceContext::mouse_wheel_callback(GLFWwindow* window, double xOffset, double yOffset) {
-    mouse.wheel_offset = (float)yOffset;
-}
+DeviceContext::VulkanInitData DeviceContext::vulkan_init_data{};
+DeviceContext::DirectXInitData DeviceContext::directX_init_data{};

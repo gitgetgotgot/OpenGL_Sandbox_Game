@@ -45,7 +45,7 @@ void WorldManager::update() {
 	if (active_world) active_world->update();
 }
 
-void WorldManager::render(std::unique_ptr<Engine::Graphics::OpenGL_Renderer>& renderer) {
+void WorldManager::render(std::unique_ptr<Engine::Graphics::Renderer>& renderer) {
 	if (active_world) active_world->render(renderer);
 }
 

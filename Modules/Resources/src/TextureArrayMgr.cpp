@@ -1,5 +1,6 @@
 #include "Resources/TextureArrayMgr.h"
 #include "Resources/Sprite.h"
+#include <Rendering/Interfaces/Renderer.h>
 #include <Utility/Logger.h>
 #include <stb_image.h>
 
@@ -54,11 +55,11 @@ void Engine::Resource::TextureArrayManager::init() {
 	};
 	uint32_t tex_res = 32;
 	for (uint32_t i = 0; i < 8; ++i) {
-		texture_arrays[i] = std::make_unique<Engine::Graphics::TextureArray>();
+		texture_arrays[i] = Engine::Graphics::Renderer::instance->create_TextureArray();
 		texture_arrays[i]->setup_texture_array(tex_res, tex_res, array_size[i], false, 4, array_resize_str[i]);
 		tex_res *= 2;
 	}
-	fonts_texture_array = std::make_unique<Engine::Graphics::TextureArray>();
+	fonts_texture_array = Engine::Graphics::Renderer::instance->create_TextureArray();
 	fonts_texture_array->setup_texture_array(1024, 1024, 1, true, 1, Engine::Graphics::TextureArray::ResizeStrategy::Resize_by_1);
 
 	for (uint32_t i = 0; i < 8; ++i) {
@@ -68,7 +69,6 @@ void Engine::Resource::TextureArrayManager::init() {
 }
 
 void Engine::Resource::TextureArrayManager::uninit() {
-
 	for (uint32_t i = 0; i < 8; ++i) {
 		texture_arrays[i].reset();
 	}

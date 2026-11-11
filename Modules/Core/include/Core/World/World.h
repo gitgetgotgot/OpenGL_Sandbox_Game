@@ -1,15 +1,14 @@
 #pragma once
 #include "Core/World/WorldData.h"
 #include "Core/World/WorldRenderData.h"
-#include "Core/System/EntitySystem.h" //hmm
+#include <Rendering/Interfaces/Renderer.h>
 #include <Objects/ObjectComponents.h>
 #include <Utility/SparseSet.h>
-#include <DeviceSystem/DeviceContext.h>
 
 struct ChunkRenderBuffer {
 	uint32_t x = 0, y = 0;
-	std::unique_ptr<Engine::Graphics::VAO> vao;
-	std::unique_ptr<Engine::Graphics::VBO> vbo;
+	std::unique_ptr<Engine::Graphics::VertexArray> va;
+	std::unique_ptr<Engine::Graphics::VertexBuffer> vb;
 	Engine::Util::sparse_set<Vertex2f> vertices;
 	uint32_t index_count = 0;
 };
@@ -19,6 +18,22 @@ struct ChunkRenderBuffer {
 //		2	6	10	14
 //		1	5	9	13
 //		0	4	8	12
+
+class Camera {
+public:
+	float zoom = 1.0f;
+	glm::vec2 pos{ 0.f };
+	glm::mat4 viewMatrix{ 1.0f };
+	glm::mat4 projectionMatrix{ 1.0f };
+	void set_ortho_projection(float left, float right, float bottom, float top) {
+		projectionMatrix = glm::ortho(left * zoom, right * zoom, bottom * zoom, top * zoom);
+	}
+	void update_camera() {
+		viewMatrix = glm::mat4(1.0f);
+		viewMatrix[3][0] = -pos.x; //translate
+		viewMatrix[3][1] = -pos.y;
+	}
+};
 
 class World {
 	static constexpr uint8_t RENDERABLE_CHUNKS_SIZE = 16U;
@@ -35,7 +50,7 @@ public:
 	void init_chunk_buffers();
 	void uninit();
 	void update();
-	void render(std::unique_ptr<Engine::Graphics::OpenGL_Renderer>& renderer);
+	void render(std::unique_ptr<Engine::Graphics::Renderer>& renderer);
 
 	void update_chunks(uint32_t& camera_chunk_x, uint32_t& camera_chunk_y);
 	void load_chunk_buffer(uint32_t chunk_world_x, uint32_t chunk_world_y, uint32_t chunk_buffer_index);
@@ -64,9 +79,9 @@ private:
 	int MAX_CHUNK_X = 0, MAX_CHUNK_Y = 0;
 
 	std::unique_ptr<Engine::Graphics::ShaderProgram> shader;
-	std::unique_ptr<Engine::Graphics::UBO> sprites_ubo;
-	Universal_UBO_Data sprites_ubo_data;
-	std::unique_ptr<Engine::Graphics::EBO> ebo;
+	std::unique_ptr<Engine::Graphics::UniformBuffer> sprites_ub;
+	Universal_UBO_Data sprites_ub_data;
+	std::unique_ptr<Engine::Graphics::IndexBuffer> ib;
 	//std::unique_ptr<SSBO> spriteLightMapSSBO;
 	//ShaderLightingInfo* lightMap_data = nullptr;
 

@@ -1,9 +1,11 @@
 #include "Core/World/World.h"
+#include <DeviceSystem/DeviceContext.h>
 #include <Utility/TimeManager.h>
 #include <Resources/CoreTags.h>
 #include <Objects/ObjectTypes/MultiBlockInfo.h>
 #include <Objects/ObjectTypes/WeaponInfo.h>
 #include <Objects/ObjectManager.h>
+#include <Resources/Sprite.h>
 #include <iostream>
 
 World::~World() {
@@ -25,9 +27,9 @@ void World::init_render_buffers() {
 
 	std::filesystem::path vertex_shader_path = "Resources/shaders/world_sprites.vert";
 	std::filesystem::path fragment_shader_path = "Resources/shaders/world_sprites.frag";
-	shader = std::make_unique<Engine::Graphics::ShaderProgram>(vertex_shader_path, fragment_shader_path);
+	shader = Engine::Graphics::Renderer::instance->create_ShaderPr(vertex_shader_path, fragment_shader_path);
 
-	ebo = std::make_unique<Engine::Graphics::EBO>();
+	ib = Engine::Graphics::Renderer::instance->create_IndexBuffer();
 	uint32_t* sprite_index_buffer = new uint32_t[MAX_INDEX_AMOUNT];
 	for (int i = 0; i < MAX_SQUARES; i++) {
 		sprite_index_buffer[i * 6] = sprite_index_buffer[i * 6 + 3] = i * 4;
@@ -35,38 +37,38 @@ void World::init_render_buffers() {
 		sprite_index_buffer[i * 6 + 1] = sprite_index_buffer[i * 6 + 2] - 1;
 		sprite_index_buffer[i * 6 + 5] = sprite_index_buffer[i * 6 + 2] + 1;
 	}
-	ebo->set_data(sprite_index_buffer, MAX_INDEX_AMOUNT * sizeof(uint32_t), Engine::Graphics::EBO::EBO_USAGE::USAGE_STATIC);
+	ib->set_data(sprite_index_buffer, MAX_INDEX_AMOUNT * sizeof(uint32_t), Engine::Graphics::IndexBuffer::USAGE_STATIC);
 	delete[] sprite_index_buffer;
 
 	for (auto& buf : render_buffers) {
 		buf = new ChunkRenderBuffer;
 		buf->vertices.reserve(MAX_VERTEX_AMOUNT);
-		buf->vao = std::make_unique<Engine::Graphics::VAO>();
-		buf->vao->bind_VAO();
-		buf->vbo = std::make_unique<Engine::Graphics::VBO>();
-		buf->vbo->set_data(nullptr, MAX_VERTEX_AMOUNT * sizeof(Vertex2f), Engine::Graphics::VBO::VBO_USAGE::USAGE_DYNAMIC);
-		ebo->bind_EBO();
-		buf->vao->link_Attribute(0, 2, Engine::Graphics::VAO::TYPE_FLOAT, sizeof(Vertex2f), offsetof(Vertex2f, pos));
-		buf->vao->link_Attribute(1, 2, Engine::Graphics::VAO::TYPE_FLOAT, sizeof(Vertex2f), offsetof(Vertex2f, UV));
-		buf->vao->link_Attribute(2, 1, Engine::Graphics::VAO::TYPE_UNSIGNED_INT, sizeof(Vertex2f), offsetof(Vertex2f, tex_array_id));
-		buf->vao->link_Attribute(3, 1, Engine::Graphics::VAO::TYPE_UNSIGNED_INT, sizeof(Vertex2f), offsetof(Vertex2f, tex_id));
-		buf->vao->unbind_VAO();
-		buf->vbo->unbind_VBO();
-		ebo->unbind_EBO();
+		buf->va = Engine::Graphics::Renderer::instance->create_VertexArray();
+		buf->va->bind();
+		buf->vb = Engine::Graphics::Renderer::instance->create_VertexBuffer();
+		buf->vb->set_data(nullptr, MAX_VERTEX_AMOUNT * sizeof(Vertex2f), Engine::Graphics::VertexBuffer::USAGE_DYNAMIC);
+		ib->bind();
+		buf->va->link_Attribute(0, 2, Engine::Graphics::VertexArray::TYPE_FLOAT, sizeof(Vertex2f), offsetof(Vertex2f, pos));
+		buf->va->link_Attribute(1, 2, Engine::Graphics::VertexArray::TYPE_FLOAT, sizeof(Vertex2f), offsetof(Vertex2f, UV));
+		buf->va->link_Attribute(2, 1, Engine::Graphics::VertexArray::TYPE_UNSIGNED_INT, sizeof(Vertex2f), offsetof(Vertex2f, tex_array_id));
+		buf->va->link_Attribute(3, 1, Engine::Graphics::VertexArray::TYPE_UNSIGNED_INT, sizeof(Vertex2f), offsetof(Vertex2f, tex_id));
+		buf->va->unbind();
+		buf->vb->unbind();
+		ib->unbind();
 	}
 
-	sprites_ubo = std::make_unique<Engine::Graphics::UBO>();
-	sprites_ubo->bind_UBO(0);
-	sprites_ubo->set_data(nullptr, sizeof(Universal_UBO_Data), Engine::Graphics::UBO::UBO_USAGE::USAGE_DYNAMIC);
+	sprites_ub = Engine::Graphics::Renderer::instance->create_UniformBuffer();
+	sprites_ub->bind(0);
+	sprites_ub->set_data(nullptr, sizeof(Universal_UBO_Data), Engine::Graphics::UniformBuffer::USAGE_DYNAMIC);
 
 	//camera base options
 	main_camera.zoom = MIN_ZOOM;
 	main_camera.set_ortho_projection(-DeviceContext::display.ratio, DeviceContext::display.ratio, -1.0f, 1.0f);
 
-	sprites_ubo_data.day_ratio = 1.0f; //1 for now;
-	sprites_ubo_data.world_size = { width, height };
-	sprites_ubo_data.viewMatrix = main_camera.viewMatrix;
-	sprites_ubo_data.projectionMatrix = main_camera.projectionMatrix;
+	sprites_ub_data.day_ratio = 1.0f; //1 for now;
+	sprites_ub_data.world_size = { width, height };
+	sprites_ub_data.viewMatrix = main_camera.viewMatrix;
+	sprites_ub_data.projectionMatrix = main_camera.projectionMatrix;
 
 	//spriteLightMapSSBO = std::make_unique<SSBO>();
 	/*
@@ -105,8 +107,8 @@ void World::init_chunk_buffers() {
 
 void World::uninit() {
 	shader.reset();
-	sprites_ubo.reset();
-	ebo.reset();
+	sprites_ub.reset();
+	ib.reset();
 
 	/*
 	spriteLightMapSSBO->bind_SSBO();
@@ -117,8 +119,8 @@ void World::uninit() {
 	*/
 
 	for (uint32_t i = 0; i < RENDERABLE_CHUNKS_SIZE; ++i) {
-		render_buffers[i]->vao.reset();
-		render_buffers[i]->vbo.reset();
+		render_buffers[i]->va.reset();
+		render_buffers[i]->vb.reset();
 	}
 }
 
@@ -144,14 +146,14 @@ void World::update() {
 		main_camera.zoom += 0.2f;
 		if (main_camera.zoom > MAX_ZOOM) main_camera.zoom = MAX_ZOOM;
 		main_camera.set_ortho_projection(-DeviceContext::display.ratio, DeviceContext::display.ratio, -1.0f, 1.0f);
-		sprites_ubo_data.projectionMatrix = main_camera.projectionMatrix;
+		sprites_ub_data.projectionMatrix = main_camera.projectionMatrix;
 		std::cout << "camera zoom = " << main_camera.zoom << std::endl;
 	}
 	else if (DeviceContext::keyBoard.key_is_pressed(Key::KeyPageDown)) {
 		main_camera.zoom -= 0.2f;
 		if (main_camera.zoom < MIN_ZOOM) main_camera.zoom = MIN_ZOOM;
 		main_camera.set_ortho_projection(-DeviceContext::display.ratio, DeviceContext::display.ratio, -1.0f, 1.0f);
-		sprites_ubo_data.projectionMatrix = main_camera.projectionMatrix;
+		sprites_ub_data.projectionMatrix = main_camera.projectionMatrix;
 		std::cout << "camera zoom = " << main_camera.zoom << std::endl;
 	}
 
@@ -163,8 +165,8 @@ void World::update() {
 	main_camera.update_camera();
 
 	//update sprites ubo
-	sprites_ubo_data.viewMatrix = main_camera.viewMatrix;
-	sprites_ubo->update_data(&sprites_ubo_data, sizeof(Universal_UBO_Data));
+	sprites_ub_data.viewMatrix = main_camera.viewMatrix;
+	sprites_ub->update_data(&sprites_ub_data, sizeof(Universal_UBO_Data));
 
 	DeviceContext::mouse.world_x_pos = int(DeviceContext::mouse.ortho_x_pos * main_camera.zoom + main_camera.pos.x);
 	DeviceContext::mouse.world_y_pos = int(DeviceContext::mouse.ortho_y_pos * main_camera.zoom + main_camera.pos.y);
@@ -193,7 +195,7 @@ void World::update() {
 	}
 }
 
-void World::render(std::unique_ptr<Engine::Graphics::OpenGL_Renderer>& renderer) {
+void World::render(std::unique_ptr<Engine::Graphics::Renderer>& renderer) {
 	int central_chunk_buf_x = last_chunk_x - current_buffer_x_min;
 	int central_chunk_buf_y = last_chunk_y - current_buffer_y_min;
 	int render_min_x = central_chunk_buf_x - 1;
@@ -208,7 +210,7 @@ void World::render(std::unique_ptr<Engine::Graphics::OpenGL_Renderer>& renderer)
 	for (int x = render_min_x; x <= render_max_x; x++) {
 		for (int y = render_min_y; y <= render_max_y; y++) {
 			ChunkRenderBuffer& buf = *render_buffers[x * 4 + y];
-			renderer->renderIndexedDataVAOSpecific(buf.vao, buf.index_count);
+			renderer->renderIndexedDataVAOSpecific(buf.va, buf.index_count);
 		}
 	}
 
@@ -318,7 +320,7 @@ void World::load_chunk_buffer(uint32_t chunk_world_x, uint32_t chunk_world_y, ui
 			base_index += 4;
 		}
 	}
-	buffer.vbo->update_data(vertices.data(), sizeof(Vertex2f) * vertices.size());
+	buffer.vb->update_data(vertices.data(), sizeof(Vertex2f) * vertices.size());
 	buffer.index_count = (vertices.size() / 4) * 6;
 }
 
@@ -525,7 +527,7 @@ bool World::place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id) {
 			vertices.add(Vertex2f(world_x + x_size, world_y + y_size,	sprite.U0 + sprite.W, sprite.V0 + sprite.H, sprite.tex_array_id, sprite.tex_id),	tile_index + 2);
 			vertices.add(Vertex2f(world_x + x_size, world_y,			sprite.U0 + sprite.W, sprite.V0,			sprite.tex_array_id, sprite.tex_id),	tile_index + 3);
 		}
-		buffer.vbo->update_data(vertices.data(), sizeof(Vertex2f) * vertices.size());
+		buffer.vb->update_data(vertices.data(), sizeof(Vertex2f) * vertices.size());
 		buffer.index_count += 6;
 	}
 
@@ -584,7 +586,7 @@ bool World::destroy_tile(uint32_t world_x, uint32_t world_y) {
 		vertices.remove(tile_index + 1);
 		vertices.remove(tile_index + 2);
 		vertices.remove(tile_index + 3);
-		buffer.vbo->update_data(vertices.data(), sizeof(Vertex2f) * vertices.size());
+		buffer.vb->update_data(vertices.data(), sizeof(Vertex2f) * vertices.size());
 		buffer.index_count -= 6;
 	}
 	return true;

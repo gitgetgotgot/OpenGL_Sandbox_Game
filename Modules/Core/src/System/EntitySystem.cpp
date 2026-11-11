@@ -15,11 +15,11 @@ void Engine::Core::EntitySystem::init() {
 
 	std::filesystem::path vertex_shader_path = "Resources/shaders/entity_sprites.vert";
 	std::filesystem::path fragment_shader_path = "Resources/shaders/world_sprites.frag";
-	entity_shader = std::make_unique<Engine::Graphics::ShaderProgram>(vertex_shader_path, fragment_shader_path);
+	entity_shader = Engine::Graphics::Renderer::instance->create_ShaderPr(vertex_shader_path, fragment_shader_path);
 
-	entity_ssbo = std::make_unique<Engine::Graphics::SSBO>();
-	entity_ssbo->bind_SSBO(0);
-	entity_ssbo->set_data(nullptr, sizeof(EntityRenderData) * MAX_ENTITIES_RENDER, Engine::Graphics::SSBO::SSBO_USAGE::USAGE_DYNAMIC);
+	entity_sb = Engine::Graphics::Renderer::instance->create_StorageBuffer();
+	entity_sb->bind(0);
+	entity_sb->set_data(nullptr, sizeof(EntityRenderData) * MAX_ENTITIES_RENDER, Engine::Graphics::StorageBuffer::USAGE_DYNAMIC);
 	
 	float pos[] = {
 		0.0f, 0.0f,
@@ -31,22 +31,24 @@ void Engine::Core::EntitySystem::init() {
 		0, 1, 2,
 		0, 2, 3
 	};
-	instance_vao = std::make_unique<Engine::Graphics::VAO>();
-	instance_vao->bind_VAO();
-	instance_vbo = std::make_unique<Engine::Graphics::VBO>(pos, sizeof(pos));
-	instance_ebo = std::make_unique<Engine::Graphics::EBO>(indices, sizeof(indices));
-	instance_vao->link_Attribute(0, 2, Engine::Graphics::VAO::TYPE_FLOAT, 2 * sizeof(float), 0);
-	instance_vao->unbind_VAO();
-	instance_vbo->unbind_VBO();
-	instance_ebo->unbind_EBO();
+	instance_va = Engine::Graphics::Renderer::instance->create_VertexArray();
+	instance_va->bind();
+	instance_vb = Engine::Graphics::Renderer::instance->create_VertexBuffer();
+	instance_vb->set_data(pos, sizeof(pos), Engine::Graphics::VertexBuffer::USAGE_STATIC);
+	instance_ib = Engine::Graphics::Renderer::instance->create_IndexBuffer();
+	instance_ib->set_data(indices, sizeof(indices), Engine::Graphics::IndexBuffer::USAGE_STATIC);
+	instance_va->link_Attribute(0, 2, Engine::Graphics::VertexArray::TYPE_FLOAT, 2 * sizeof(float), 0);
+	instance_va->unbind();
+	instance_vb->unbind();
+	instance_ib->unbind();
 }
 
 void Engine::Core::EntitySystem::uninit() {
 	entity_shader.reset();
-	entity_ssbo.reset();
-	instance_ebo.reset();
-	instance_vao.reset();
-	instance_vbo.reset();
+	entity_sb.reset();
+	instance_ib.reset();
+	instance_va.reset();
+	instance_vb.reset();
 }
 
 void Engine::Core::EntitySystem::update() {
@@ -192,11 +194,11 @@ void Engine::Core::EntitySystem::update() {
 		render_data.UV.w = sprite.H;
 	}
 
-	entity_ssbo->update_data(entity_render_buf.data(), entities.size() * sizeof(EntityRenderData));
+	entity_sb->update_data(entity_render_buf.data(), entities.size() * sizeof(EntityRenderData));
 }
 
-void Engine::Core::EntitySystem::render(std::unique_ptr<Engine::Graphics::OpenGL_Renderer>& renderer) {
-	renderer->renderInstancedData(entity_shader, instance_vao, instance_vbo, instance_ebo, 6U, entities.size());
+void Engine::Core::EntitySystem::render(std::unique_ptr<Engine::Graphics::Renderer>& renderer) {
+	renderer->renderInstancedData(entity_shader, instance_va, instance_vb, instance_ib, 6U, entities.size());
 }
 
 void Engine::Core::EntitySystem::connect_world_data(

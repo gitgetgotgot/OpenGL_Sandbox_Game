@@ -10,7 +10,7 @@ echo === Install Conan dependencies (Release) ===
 conan install . --build=missing -s build_type=Release
 if %errorlevel% neq 0 goto error
 
-echo === CMake configuration (conan-default) using Clang-cl ===
+echo === CMake configuration (conan-default) ===
 cmake --preset conan-default
 if %errorlevel% neq 0 goto error
 

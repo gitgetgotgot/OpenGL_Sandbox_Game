@@ -1,5 +1,5 @@
 #pragma once
-#include <Rendering/OpenGL_Renderer.h>
+#include <Rendering/Interfaces/Renderer.h>
 #include "UI/UI_Data.h"
 #include <vector>
 
@@ -12,26 +12,26 @@ namespace Engine::UI {
 			static UI_System ui;
 			return ui;
 		}
-		void init();
+		bool init();
 		void uninit();
 		void update();
-		void render(std::unique_ptr<Engine::Graphics::OpenGL_Renderer>& renderer);
+		void render(std::unique_ptr<Engine::Graphics::Renderer>& renderer);
 	private:
 		UI_System() = default;
 		~UI_System() = default;
 
-		std::unique_ptr<Engine::Graphics::UBO> ubo;
+		std::unique_ptr<Engine::Graphics::UniformBuffer> ub;
 		UI_UBO ubo_data{};
-		std::unique_ptr<Engine::Graphics::EBO> ebo;
+		std::unique_ptr<Engine::Graphics::IndexBuffer> ib;
 
 		std::unique_ptr<Engine::Graphics::ShaderProgram> sprites_shader;
 		std::unique_ptr<Engine::Graphics::ShaderProgram> tiled_sprites_shader;
-		std::unique_ptr<Engine::Graphics::VAO> sprites_vao;
-		std::unique_ptr<Engine::Graphics::VBO> sprites_vbo;
+		std::unique_ptr<Engine::Graphics::VertexArray> sprites_va;
+		std::unique_ptr<Engine::Graphics::VertexBuffer> sprites_vb;
 
 		std::unique_ptr<Engine::Graphics::ShaderProgram> sdf_text_shader;
-		std::unique_ptr<Engine::Graphics::VAO> sdf_text_vao;
-		std::unique_ptr<Engine::Graphics::VBO> sdf_text_vbo;
+		std::unique_ptr<Engine::Graphics::VertexArray> sdf_text_va;
+		std::unique_ptr<Engine::Graphics::VertexBuffer> sdf_text_vb;
 
 		UI_RenderContext render_context;
 		uint32_t sprites_INDEX_OFFSET = 0;

@@ -1,5 +1,5 @@
 #pragma once
-#include <Rendering/OpenGL_Renderer.h>
+#include <Rendering/Interfaces/Renderer.h>
 #include <glm/ext/matrix_float4x4.hpp>
 
 class ParticleEntity {
@@ -26,7 +26,7 @@ public:
 	void init();
 	void emit_particle(uint32_t particle_id, glm::vec2 emitter_center, glm::vec2 emitter_size);
 	void update();
-	void render(std::unique_ptr<Engine::Graphics::OpenGL_Renderer>& renderer);
+	void render(std::unique_ptr<Engine::Graphics::Renderer>& renderer);
 private:
 	ParticleSystem() {}
 	~ParticleSystem() {}

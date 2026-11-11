@@ -51,6 +51,6 @@ void ParticleSystem::update() {
 	}
 }
 
-void ParticleSystem::render(std::unique_ptr<Engine::Graphics::OpenGL_Renderer>& renderer) {
+void ParticleSystem::render(std::unique_ptr<Engine::Graphics::Renderer>& renderer) {
 
 }

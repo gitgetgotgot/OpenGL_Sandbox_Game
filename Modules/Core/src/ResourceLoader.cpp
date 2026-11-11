@@ -21,7 +21,7 @@
 #include <DeviceSystem/DeviceContext.h>
 #include <Utility/Logger.h>
 #include <Base/Config.h>
-#include <iostream>
+#include <print>
 
 ResourceLoader::~ResourceLoader() {
 	Engine::Util::DynamicLibLoader lib_loader;
@@ -31,11 +31,6 @@ ResourceLoader::~ResourceLoader() {
 }
 
 bool ResourceLoader::load_minimal_core_resources() {
-	if (DEBUG)
-		data_extension = ".json";
-	else
-		data_extension = ".data";
-
 	Engine::Object::register_core_object_factories();
 	Engine::Entity::register_core_entity_info_factories();
 	Engine::Entity::register_core_entity_factories();
@@ -47,14 +42,13 @@ bool ResourceLoader::load_minimal_core_resources() {
 	Engine::Resource::EffectsManager::Instance().setup();
 	Engine::Object::ObjectManager::Instance().setup();
 
-	std::cout << "[" << DeviceContext::get_current_system_time() << "] ResourceLoader: Base Resources loading started\n";
+	std::print("{}", "[" + DeviceContext::get_current_system_time() + "] ResourceLoader: Base Resources loading started\n");
 	bool ok = true;
 	if (ok) ok = load_base_fonts();
 	if (ok) ok = load_base_textures();
 	if (ok) ok = load_base_sprites();
 	if (ok) ok = load_base_audio();
-
-	std::cout << "[" << DeviceContext::get_current_system_time() << "] ResourceLoader: Base Resources loading finished\n\n";
+	std::print("{}", "[" + DeviceContext::get_current_system_time() + "] ResourceLoader: Base Resources loading finished\n\n");
 	return ok;
 }
 
@@ -63,7 +57,7 @@ void ResourceLoader::start_resources_loading() {
 	can_load_next_batch = false;
 	should_load_textures = true;
 	resource_loader = std::make_unique<std::thread>(&ResourceLoader::ResourcesLoader, this);
-	std::cout << "[" << DeviceContext::get_current_system_time() << "] ResourceLoader: Game resources loading started\n";
+	std::print("{}", "[" + DeviceContext::get_current_system_time() + "] ResourceLoader: Game Resources loading started\n");
 }
 
 void ResourceLoader::load_resources_from_queue() {
@@ -79,7 +73,7 @@ void ResourceLoader::load_resources_from_queue() {
 void ResourceLoader::stop_resources_loading() {
 	resource_loader->join();
 	resource_loader.reset();
-	std::cout << "[" << DeviceContext::get_current_system_time() << "] ResourceLoader: Game resources loading finished\n\n";
+	std::print("{}", "[" + DeviceContext::get_current_system_time() + "] ResourceLoader: Game resources loading finished\n\n");
 }
 
 ResourceLoader::LoadStatus ResourceLoader::get_loading_status() {
@@ -159,7 +153,7 @@ bool ResourceLoader::load_base_fonts() {
 		Engine::Util::Logger::Log("Fatal Error: Couldn't load base font");
 		return false;
 	}
-	std::cout << "[" << DeviceContext::get_current_system_time() << "] ResourceLoader: Base font loaded\n";
+	std::print("{}", "[" + DeviceContext::get_current_system_time() + "] ResourceLoader: Base font loaded\n");
 	return true;
 }
 bool ResourceLoader::load_base_textures() {
@@ -180,7 +174,7 @@ bool ResourceLoader::load_base_textures() {
 			return false;
 		}
 	}
-	std::cout << "[" << DeviceContext::get_current_system_time() << "] ResourceLoader: Base textures loaded\n";
+	std::print("{}", "[" + DeviceContext::get_current_system_time() + "] ResourceLoader: Base textures loaded\n");
 	return true;
 }
 bool ResourceLoader::load_base_sprites() {
@@ -194,7 +188,7 @@ bool ResourceLoader::load_base_sprites() {
 		Engine::Util::Logger::Log("Fatal Error: Couldn't load base sprites");
 		return false;
 	}
-	std::cout << "[" << DeviceContext::get_current_system_time() << "] ResourceLoader: Base sprites loaded\n";
+	std::print("{}", "[" + DeviceContext::get_current_system_time() + "] ResourceLoader: Base sprites loaded\n");
 	return true;
 }
 bool ResourceLoader::load_base_audio() {
@@ -207,7 +201,7 @@ bool ResourceLoader::load_base_audio() {
 		Engine::Util::Logger::Log("Fatal Error: Couldn't load base audio");
 		return false;
 	}
-	std::cout << "[" << DeviceContext::get_current_system_time() << "] ResourceLoader: Base audio loaded\n";
+	std::print("{}", "[" + DeviceContext::get_current_system_time() + "] ResourceLoader: Base audio loaded\n");
 	return true;
 }
 
@@ -380,10 +374,11 @@ bool ResourceLoader::Load_resources(ResourceType res_type, const std::string& re
 
 	bool ok = true;
 	for (const auto& r : load_requests) {
+		const std::filesystem::path data_ext = (r.load_type == ResourceLoadRequest::SIMPLE ? ".json" : ".data");
 		for (const auto& entry : std::filesystem::recursive_directory_iterator(r.data_file_path)) {
 			if (!entry.is_regular_file()) continue;
 			std::filesystem::path data_file_path = entry.path();
-			if (data_file_path.extension() != data_extension) continue;
+			if (data_file_path.extension() != data_ext) continue;
 
 			Engine::Util::DataParser parser;
 			if (parser.parse_data(data_file_path, r.load_type == ResourceLoadRequest::SIMPLE) == false) {

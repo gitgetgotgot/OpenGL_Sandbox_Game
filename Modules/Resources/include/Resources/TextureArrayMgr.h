@@ -1,5 +1,5 @@
 #pragma once
-#include <Rendering/TextureArray.h>
+#include <Rendering/Interfaces/TextureArray.h>
 #include <filesystem>
 #include <memory>
 #include <mutex>

@@ -28,6 +28,9 @@ find_package(nlohmann_json REQUIRED)
 find_package(stb REQUIRED)
 find_package(miniaudio REQUIRED)
 find_package(glad REQUIRED)
+find_package(VulkanLoader REQUIRED)
+find_package(VulkanHeaders REQUIRED)
+find_package(VulkanMemoryAllocator REQUIRED)
 
 add_executable(${PROJECT_NAME} "${PROJECT_SOURCE_DIR}/src/main.cpp")
 
@@ -55,6 +58,9 @@ target_link_libraries(Rendering
     PUBLIC
         glm::glm
         stb::stb
+        Vulkan::Loader
+        vulkan-headers::vulkan-headers
+        GPUOpen::VulkanMemoryAllocator
     PRIVATE
         glad::glad
         Utility

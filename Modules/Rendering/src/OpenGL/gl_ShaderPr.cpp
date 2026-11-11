@@ -1,9 +1,8 @@
-#include "Rendering/ShaderClass.h"
+#include "Rendering/OpenGL/gl_ShaderPr.h"
 #include <glad/gl.h>
-#include <fstream>
 #include <iostream>
 
-Engine::Graphics::ShaderProgram::ShaderProgram(
+Engine::Graphics::gl_ShaderPr::gl_ShaderPr(
 	const std::filesystem::path& vertex_shader_path,
 	const std::filesystem::path& fragment_shader_path
 ) {
@@ -59,28 +58,14 @@ Engine::Graphics::ShaderProgram::ShaderProgram(
 	glDeleteShader(fragmentShader);
 }
 
-Engine::Graphics::ShaderProgram::~ShaderProgram() {
+Engine::Graphics::gl_ShaderPr::~gl_ShaderPr() {
 	delete_shader();
 }
 
-void Engine::Graphics::ShaderProgram::use_shader() const {
+void Engine::Graphics::gl_ShaderPr::use_shader() const {
 	glUseProgram(id);
 }
 
-void Engine::Graphics::ShaderProgram::delete_shader() const {
+void Engine::Graphics::gl_ShaderPr::delete_shader() const {
 	glDeleteProgram(id);
-}
-
-std::string Engine::Graphics::ShaderProgram::get_shader_file_contents(const std::filesystem::path& shader_path) {
-	std::ifstream in(shader_path, std::ios::binary);
-	if (in) {
-		std::string contents;
-		in.seekg(0, std::ios::end);
-		contents.resize(in.tellg());
-		in.seekg(0, std::ios::beg);
-		in.read(&contents[0], contents.size());
-		in.close();
-		return contents;
-	}
-	throw std::runtime_error("Can't load shader <" + shader_path.string() + "> !!!");
 }
