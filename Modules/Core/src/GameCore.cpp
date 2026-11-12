@@ -6,8 +6,7 @@
 #include "Core/MainMenuUI/MenuUIController.h"
 #include "Core/GameUI/GameUIController.h"
 
-#include <Rendering/OpenGL/gl_Renderer.h>
-#include <Rendering/Vulkan/vulkan_Renderer.h>
+#include <Rendering/Interfaces/Renderer.h>
 #include <UI/UI_System.h>
 #include <Audio/AudioSystem.h>
 #include <Resources/TextureArrayMgr.h>
@@ -24,7 +23,9 @@ GameEngine::~GameEngine() {
 bool GameEngine::update() {
 	Engine::Util::TimeManager::Instance().update();
 
-	DeviceContext::mouse.get_mouse_ortho_coords(DeviceContext::display);
+	DeviceContext::mouse.get_mouse_ortho_coords(
+		DeviceContext::display.width, DeviceContext::display.height, DeviceContext::display.ratio
+	);
 
 	if (DeviceContext::should_exit()) return 0;
 
@@ -34,18 +35,26 @@ bool GameEngine::update() {
 }
 
 void GameEngine::render() {
-	renderer->clear(0.0, 0.0, 0.0);
+	std::error_code ec;
+	Engine::Graphics::Renderer::instance->start_frame(ec);
+	if (ec) {
+		// process error and don't render new frame (should probably exit application if fatal error occurs)
+		return;
+	}
+	Engine::Graphics::Renderer::instance->clear(0.0, 0.0, 0.0);
 
 	Engine::Resource::TextureArrayManager::Instance().bind_texture_arrays();
 
 	if (game_render_state == Game_State::inGame) {
-		WorldManager::Instance().render(renderer);
+		WorldManager::Instance().render(Engine::Graphics::Renderer::instance);
 	}
 
-	Engine::UI::UI_System::Instance().render(renderer);
+	Engine::UI::UI_System::Instance().render(Engine::Graphics::Renderer::instance);
 
-	renderer->end_frame();
-	DeviceContext::present_end_frame();
+	DeviceContext::present_frame(ec);
+	if (ec) {
+		// process error (should probably exit application if fatal error occurs)
+	}
 }
 
 bool GameEngine::init() {
@@ -90,22 +99,7 @@ bool GameEngine::init_MainWindow() {
 }
 
 bool GameEngine::init_GraphicsAPI() {
-	std::error_code ec;
-	if (DeviceContext::graphics_API == DeviceContext::GraphicsAPI::OPEN_GL) {
-		renderer = std::make_unique<Engine::Graphics::OpenGL_Renderer>(ec);
-	}
-	else if (DeviceContext::graphics_API == DeviceContext::GraphicsAPI::VULKAN) {
-		glfwCreateWindowSurface()
-		renderer = std::make_unique<Engine::Graphics::Vulkan_Renderer>(VK_NULL_HANDLE, ec);
-	}
-	else if (DeviceContext::graphics_API == DeviceContext::GraphicsAPI::DIRECTX) {
-
-	}
-	if (ec) {
-		Engine::Util::Logger::Log("Failed to initialize Graphics API: " + ec.message());
-		return false;
-	}
-	return true;
+	return DeviceContext::init_renderer();
 }
 
 bool GameEngine::init_input() {

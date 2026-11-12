@@ -44,7 +44,7 @@ namespace Engine::Core {
 
 		std::unique_ptr<Engine::Graphics::ShaderProgram> entity_shader;
 		std::unique_ptr<Engine::Graphics::StorageBuffer> entity_sb;
-		std::unique_ptr<Engine::Graphics::VertexArray> instance_va;
+		std::unique_ptr<Engine::Graphics::VertexLayout> instance_va;
 		std::unique_ptr<Engine::Graphics::VertexBuffer> instance_vb;
 		std::unique_ptr<Engine::Graphics::IndexBuffer> instance_ib;
 

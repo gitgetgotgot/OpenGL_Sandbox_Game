@@ -6,9 +6,26 @@
 namespace Engine::Errors {
     enum class EngineError : uint8_t {
         Success = 0,
-        RendererInitFailed,
+        // Vulkan errors
         VulkanDeviceNotFound,
-        OutOfMemory
+        VulkanNotSupported,
+        VulkanOutOfMemory,
+        VulkanLogicalDeviceInitError,
+        VulkanSwapChainInitError,
+        VulkanImageViewInitError,
+        VulkanRenderPassInitError,
+        VulkanFramebufferInitError,
+        VulkanCommandPoolInitError,
+        VulkanCommandBufferAllocError,
+        VulkanSyncObjectsInitError,
+
+        VulkanFenceWaitError,
+        VulkanAcquireImageError,
+        VulkanFenceResetError,
+        VulkanCommandBufferBeginError,
+        VulkanCommandBufferEndError,
+        VulkanQueueSubmitError,
+        VulkanPresentError
     };
 
     class EngineErrorCategory : public std::error_category {
@@ -20,12 +37,28 @@ namespace Engine::Errors {
             switch (static_cast<EngineError>(ev)) {
             case EngineError::Success:
                 return "Operation completed successfully";
-            case EngineError::RendererInitFailed:
-                return "Failed to initialize graphics renderer";
             case EngineError::VulkanDeviceNotFound:
                 return "No suitable Vulkan physical device found";
-            case EngineError::OutOfMemory:
+            case EngineError::VulkanNotSupported:
+                return "Vulkan is not supported";
+            case EngineError::VulkanOutOfMemory:
                 return "Failed to allocate memory via VMA";
+            case EngineError::VulkanLogicalDeviceInitError:
+                return "Failed to initialize Vulkan Logical Device";
+            case EngineError::VulkanSwapChainInitError:
+                return "Failed to initialize Vulkan Swap Chain";
+            case EngineError::VulkanImageViewInitError:
+                return "Failed to initialize Vulkan Image Views";
+            case EngineError::VulkanRenderPassInitError:
+                return "Failed to initialize Vulkan Render Pass";
+            case EngineError::VulkanFramebufferInitError:
+                return "Failed to initialize Vulkan Frame Buffers";
+            case EngineError::VulkanCommandPoolInitError:
+                return "Failed to initialize Vulkan Command Pool";
+            case EngineError::VulkanCommandBufferAllocError:
+                return "Failed to allocate Vulkan Command Buffers";
+            case EngineError::VulkanSyncObjectsInitError:
+                return "Failed to initialize Vulkan synchronization objects";
             default:
                 return "Unknown engine error";
             }

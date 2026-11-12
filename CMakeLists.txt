@@ -64,7 +64,6 @@ target_link_libraries(Rendering
     PRIVATE
         glad::glad
         Utility
-        DeviceSystem
 )
 
 target_link_libraries(Resources

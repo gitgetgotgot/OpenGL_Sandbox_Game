@@ -1,5 +1,6 @@
 #include "DeviceSystem/Display.h"
-#include "DeviceSystem/GLFW_Core.h"
+#define GLFW_INCLUDE_NONE //don't use old OpenGL headers
+#include <GLFW/glfw3.h>
 #include <Utility/Logger.h>
 
 bool DisplayController::setup_monitor_video_modes() {

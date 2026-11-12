@@ -1,5 +1,5 @@
 #pragma once
-#include <Rendering/Interfaces/Renderer.h>
+#include <cstdint>
 
 class GameEngine {
 public:
@@ -22,8 +22,6 @@ private:
 	void gameplay_update();
 private:
 	void(GameEngine::* update_proc)() = nullptr;
-
-	std::unique_ptr<Engine::Graphics::Renderer> renderer;
 
 	inline static Game_State game_update_state = LoadingResources;
 	inline static Game_State game_render_state = inMainMenu;

@@ -15,7 +15,7 @@ namespace Engine::UI {
 		bool init();
 		void uninit();
 		void update();
-		void render(std::unique_ptr<Engine::Graphics::Renderer>& renderer);
+		void render(Engine::Graphics::Renderer* renderer);
 	private:
 		UI_System() = default;
 		~UI_System() = default;
@@ -26,11 +26,11 @@ namespace Engine::UI {
 
 		std::unique_ptr<Engine::Graphics::ShaderProgram> sprites_shader;
 		std::unique_ptr<Engine::Graphics::ShaderProgram> tiled_sprites_shader;
-		std::unique_ptr<Engine::Graphics::VertexArray> sprites_va;
+		std::unique_ptr<Engine::Graphics::VertexLayout> sprites_va;
 		std::unique_ptr<Engine::Graphics::VertexBuffer> sprites_vb;
 
 		std::unique_ptr<Engine::Graphics::ShaderProgram> sdf_text_shader;
-		std::unique_ptr<Engine::Graphics::VertexArray> sdf_text_va;
+		std::unique_ptr<Engine::Graphics::VertexLayout> sdf_text_va;
 		std::unique_ptr<Engine::Graphics::VertexBuffer> sdf_text_vb;
 
 		UI_RenderContext render_context;

@@ -1,94 +1,87 @@
 #include "DeviceSystem/DeviceContext.h"
-#include "DeviceSystem/Display.h"
-#include "DeviceSystem/Keyboard.h"
-#include "DeviceSystem/Mouse.h"
+#include <Base/Config.h>
 
-#include <Rendering/Interfaces/Renderer.h>
+// define GLFW macros based on OS
+#define GLFW_INCLUDE_NONE   // don't use old OpenGL headers
+#define GLFW_INCLUDE_VULKAN // use vulkan macro for vulkan instance & surface
+#if defined(ENGINE_PLATFORM_WINDOWS)
+#define GLFW_EXPOSE_NATIVE_WIN32 // use native macro to get win32 window handle
+#endif
+
+// include base GLFW header
+#include <GLFW/glfw3.h>
+
+// include add-on windows GLFW header
+#if defined(ENGINE_PLATFORM_WINDOWS)
+#include <GLFW/glfw3native.h>
+#endif
+
+// include renderers based on OS
+#include <Rendering/OpenGL/gl_Renderer.h>
+#include <Rendering/Vulkan/vulkan_Renderer.h>
+#if defined(ENGINE_PLATFORM_WINDOWS)
+#include <Rendering/DirectX12/d3d12_Renderer.h>
+#endif
+
 #include <Utility/Logger.h>
-#include "DeviceSystem/GLFW_Core.h"
-#include <vulkan/vulkan.h>
 #include <glad/gl.h>
-
 #include <format>
 
-namespace Engine::GLFWCallbacks {
-    static void glfwFrameBufferSizeCallback(GLFWwindow* window, int width, int height) {
-        // here width and height are physical pixels of framebuffer
-        DeviceContext::display.update_resolution(width, height);
-        Engine::Graphics::Renderer::instance->setViewport(0, 0, width, height);
-    }
+void DeviceContext::glfwFrameBufferSizeCallback(GLFWwindow* window, int width, int height) {
+    // here width and height are physical pixels of framebuffer
+    display.update_resolution(width, height);
+    Engine::Graphics::Renderer::instance->setViewport(0, 0, width, height);
+}
 
-    static void glfwWindowSizeCallback(GLFWwindow* window, int width, int height) {
-        // here width and height are logical pixels of window
-        DeviceContext::display.update_resolution(width, height);
-        Engine::Graphics::Renderer::instance->setViewport(0, 0, width, height);
-    }
+void DeviceContext::glfwWindowSizeCallback(GLFWwindow* window, int width, int height) {
+    // here width and height are logical pixels of window
+    display.update_resolution(width, height);
+    Engine::Graphics::Renderer::instance->setViewport(0, 0, width, height);
+}
 
-    static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-        if ((mods & GLFW_MOD_SHIFT) && key >= 0 && key < DeviceContext::keyBoard.SHIFT_KEY_SIZE && DeviceContext::keyBoard.shift_key_map[key] != '\0') {
-            DeviceContext::keyBoard.keyStatesCurr[int(DeviceContext::keyBoard.shift_key_map[key])] = action == GLFW_PRESS || action == GLFW_REPEAT;
-        }
-        else
-            DeviceContext::keyBoard.keyStatesCurr[key] = glfwGetKey(window, key) == GLFW_PRESS;
+void DeviceContext::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if ((mods & GLFW_MOD_SHIFT) && key >= 0 && key < keyBoard.SHIFT_KEY_SIZE && keyBoard.shift_key_map[key] != '\0') {
+        keyBoard.keyStatesCurr[int(keyBoard.shift_key_map[key])] = action == GLFW_PRESS || action == GLFW_REPEAT;
     }
+    else
+        keyBoard.keyStatesCurr[key] = glfwGetKey(window, key) == GLFW_PRESS;
+}
 
-    static void char_callback(GLFWwindow* window, unsigned int codepoint) {
-        DeviceContext::keyBoard.currentPressedChars.emplace_back((uint32_t)codepoint);
-    }
+void DeviceContext::char_callback(GLFWwindow* window, unsigned int codepoint) {
+    keyBoard.currentPressedChars.emplace_back((uint32_t)codepoint);
+}
 
-    static void cursor_position_callback(GLFWwindow* window, double mX, double mY) {
-        DeviceContext::mouse.x_pos = (float)mX;
-        DeviceContext::mouse.y_pos = DeviceContext::display.height - (float)mY;
+void DeviceContext::cursor_position_callback(GLFWwindow* window, double mX, double mY) {
+    mouse.x_pos = (float)mX;
+    mouse.y_pos = display.height - (float)mY;
 
-        DeviceContext::mouse.delta_x = mX - DeviceContext::mouse.last_x_pos;
-        DeviceContext::mouse.delta_y = mY - DeviceContext::mouse.last_y_pos;
-        DeviceContext::mouse.last_x_pos = mX;
-        DeviceContext::mouse.last_y_pos = mY;
-    }
+    mouse.delta_x = mX - mouse.last_x_pos;
+    mouse.delta_y = mY - mouse.last_y_pos;
+    mouse.last_x_pos = mX;
+    mouse.last_y_pos = mY;
+}
 
-    static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
-        DeviceContext::mouse.lb_curr = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
-        DeviceContext::mouse.rb_curr = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
-    }
+void DeviceContext::mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+    mouse.lb_curr = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+    mouse.rb_curr = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
+}
 
-    static void mouse_wheel_callback(GLFWwindow* window, double xOffset, double yOffset) {
-        DeviceContext::mouse.wheel_offset = (float)yOffset;
-    }
+void DeviceContext::mouse_wheel_callback(GLFWwindow* window, double xOffset, double yOffset) {
+    mouse.wheel_offset = (float)yOffset;
 }
 
 void DeviceContext::setup_GLFW_callbacks() {
-    glfwSetFramebufferSizeCallback(display.window, Engine::GLFWCallbacks::glfwFrameBufferSizeCallback);
-    //glfwSetWindowSizeCallback(window, Engine::GLFWCallbacks::glfwWindowSizeCallback);
+    glfwSetFramebufferSizeCallback(display.window, glfwFrameBufferSizeCallback);
+    //glfwSetWindowSizeCallback(window, glfwWindowSizeCallback);
 
-    glfwSetKeyCallback(display.window, Engine::GLFWCallbacks::key_callback);
-    glfwSetCharCallback(display.window, Engine::GLFWCallbacks::char_callback);
+    glfwSetKeyCallback(display.window, key_callback);
+    glfwSetCharCallback(display.window, char_callback);
 
-    glfwSetCursorPosCallback(display.window, Engine::GLFWCallbacks::cursor_position_callback);
-    glfwSetMouseButtonCallback(display.window, Engine::GLFWCallbacks::mouse_button_callback);
-    glfwSetScrollCallback(display.window, Engine::GLFWCallbacks::mouse_wheel_callback);
+    glfwSetCursorPosCallback(display.window, cursor_position_callback);
+    glfwSetMouseButtonCallback(display.window, mouse_button_callback);
+    glfwSetScrollCallback(display.window, mouse_wheel_callback);
 
-    std::fill(keyBoard.shift_key_map, keyBoard.shift_key_map + 97, '\0');
-    keyBoard.shift_key_map[GLFW_KEY_1] = '!';
-    keyBoard.shift_key_map[GLFW_KEY_2] = '@';
-    keyBoard.shift_key_map[GLFW_KEY_3] = '#';
-    keyBoard.shift_key_map[GLFW_KEY_4] = '$';
-    keyBoard.shift_key_map[GLFW_KEY_5] = '%';
-    keyBoard.shift_key_map[GLFW_KEY_6] = '^';
-    keyBoard.shift_key_map[GLFW_KEY_7] = '&';
-    keyBoard.shift_key_map[GLFW_KEY_8] = '*';
-    keyBoard.shift_key_map[GLFW_KEY_9] = '(';
-    keyBoard.shift_key_map[GLFW_KEY_0] = ')';
-    keyBoard.shift_key_map[GLFW_KEY_MINUS] = '_';
-    keyBoard.shift_key_map[GLFW_KEY_EQUAL] = '+';
-    keyBoard.shift_key_map[GLFW_KEY_LEFT_BRACKET] = '{';
-    keyBoard.shift_key_map[GLFW_KEY_RIGHT_BRACKET] = '}';
-    keyBoard.shift_key_map[GLFW_KEY_BACKSLASH] = '|';
-    keyBoard.shift_key_map[GLFW_KEY_SEMICOLON] = ':';
-    keyBoard.shift_key_map[GLFW_KEY_APOSTROPHE] = '"';
-    keyBoard.shift_key_map[GLFW_KEY_GRAVE_ACCENT] = '~';
-    keyBoard.shift_key_map[GLFW_KEY_COMMA] = '<';
-    keyBoard.shift_key_map[GLFW_KEY_PERIOD] = '>';
-    keyBoard.shift_key_map[GLFW_KEY_SLASH] = '?';
+    keyBoard.map_shift_keys();
 }
 
 bool DeviceContext::init_main_window() {
@@ -97,19 +90,23 @@ bool DeviceContext::init_main_window() {
         return false;
     }
 
+    // hide main window before base game data is loaded
+    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+
     if (graphics_API == GraphicsAPI::OPEN_GL) {
-        // OpenGL Core 4.6
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-        // using the core profile for only modern functions
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     }
     else {
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+        if (graphics_API == GraphicsAPI::VULKAN) {
+            if (create_vulkan_instance() == false) {
+                Engine::Util::Logger::Log("Failed to create Vulkan Instance!");
+                return false;
+            }
+        }
     }
-
-    // create main window and hide before minimum game data is loaded
-    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
     display.window = glfwCreateWindow(1920, 1080, "2D Sandbox", NULL, NULL);
     if (!display.window) {
@@ -117,20 +114,53 @@ bool DeviceContext::init_main_window() {
         return false;
     }
 
-    glfwMakeContextCurrent(display.window);
-    glfwSetWindowAspectRatio(display.window, 16, 9);
-
-    display.update_resolution(1920, 1080);
-
     if (graphics_API == GraphicsAPI::OPEN_GL) {
-        // initialize GLAD for OpenGL
+        glfwMakeContextCurrent(display.window);
         int version = gladLoadGL((GLADloadfunc)glfwGetProcAddress);
         if (!version) {
             Engine::Util::Logger::Log("Failed to initialize GLAD for OpenGL!");
             return false;
         }
     }
+    else if (graphics_API == GraphicsAPI::VULKAN) {
+        VkResult result = glfwCreateWindowSurface(vulkan_init_data.instance, display.window, nullptr, &vulkan_init_data.surface);
+        if (result != VK_SUCCESS) {
+            Engine::Util::Logger::Log("Failed to create Vulkan Window Surface!");
+            return false;
+        }
+    }
+    else if (graphics_API == GraphicsAPI::DIRECTX) {
+#if defined(ENGINE_PLATFORM_WINDOWS)
+        directX_init_data.window_handle = glfwGetWin32Window(display.window);
+        if (!directX_init_data.window_handle) {
+            Engine::Util::Logger::Log("Failed to get Win32 HWND for DirectX!");
+            return false;
+        }
+#endif
+    }
 
+    glfwSetWindowAspectRatio(display.window, 16, 9);
+    display.update_resolution(1920, 1080);
+    return true;
+}
+
+bool DeviceContext::init_renderer() {
+    std::error_code ec;
+    if (DeviceContext::graphics_API == DeviceContext::GraphicsAPI::OPEN_GL) {
+        renderer = std::make_unique<Engine::Graphics::OpenGL_Renderer>(ec);
+    }
+    else if (DeviceContext::graphics_API == DeviceContext::GraphicsAPI::VULKAN) {
+        renderer = std::make_unique<Engine::Graphics::Vulkan_Renderer>(vulkan_init_data.instance, vulkan_init_data.surface, ec);
+    }
+    else if (DeviceContext::graphics_API == DeviceContext::GraphicsAPI::DIRECTX) {
+#if defined(ENGINE_PLATFORM_WINDOWS)
+        renderer = std::make_unique<Engine::Graphics::DirectX12_Renderer>(directX_init_data.window_handle, ec);
+#endif
+    }
+    if (ec) {
+        Engine::Util::Logger::Log("Failed to initialize Graphics API: " + ec.message());
+        return false;
+    }
     return true;
 }
 
@@ -144,6 +174,7 @@ void DeviceContext::toggle_main_window(bool state) {
 }
 
 void DeviceContext::destroy_main_window() {
+    if (renderer) renderer.reset();
     glfwDestroyWindow(display.window);
     glfwTerminate();
 }
@@ -160,14 +191,6 @@ void DeviceContext::poll_events() {
     glfwPollEvents();
 }
 
-void DeviceContext::exit_application() {
-    should_exit_application = true;
-}
-
-bool DeviceContext::should_exit() {
-    return should_exit_application;
-}
-
 void DeviceContext::process_end_input() {
     mouse.lb_prev = mouse.lb_curr;
     mouse.rb_prev = mouse.rb_curr;
@@ -181,8 +204,15 @@ void DeviceContext::process_end_input() {
     keyBoard.currentPressedChars.clear();
 }
 
-void DeviceContext::present_end_frame() {
-    glfwSwapBuffers(display.window);
+void DeviceContext::present_frame(std::error_code& ec) {
+    // for OpenGL use method from GLFW to swap buffers
+    if (graphics_API == GraphicsAPI::OPEN_GL) {
+        glfwSwapBuffers(display.window);
+    }
+    // for Vulkan or other use their own swap chain methods
+    else {
+        Engine::Graphics::Renderer::instance->present_frame(ec);
+    }
 }
 
 std::string& DeviceContext::get_current_system_time() {
@@ -190,10 +220,41 @@ std::string& DeviceContext::get_current_system_time() {
     return time_str;
 }
 
+void DeviceContext::exit_application() {
+    should_exit_application = true;
+}
+
+bool DeviceContext::should_exit() {
+    return should_exit_application;
+}
+
+bool DeviceContext::create_vulkan_instance() {
+    // GLFW extensions
+    uint32_t glfw_extension_count = 0;
+    const char** glfw_extensions = glfwGetRequiredInstanceExtensions(&glfw_extension_count);
+
+    // VkInstance creation
+    VkApplicationInfo app_info{};
+    app_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+    app_info.pApplicationName = "2D Sandbox";
+    app_info.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+    app_info.pEngineName = "Custom 2D Engine";
+    app_info.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+    app_info.apiVersion = VK_API_VERSION_1_2; // или 1.3 в зависимости от ваших потребностей
+
+    VkInstanceCreateInfo create_info{};
+    create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    create_info.pApplicationInfo = &app_info;
+    create_info.enabledExtensionCount = glfw_extension_count;
+    create_info.ppEnabledExtensionNames = glfw_extensions;
+
+    // Validation Layers can be applied here for Debug (but i don't use them)
+
+    VkResult result = vkCreateInstance(&create_info, nullptr, &vulkan_init_data.instance);
+    return result == VK_SUCCESS;
+}
+
 DeviceContext::GraphicsAPI DeviceContext::graphics_API = DeviceContext::GraphicsAPI::OPEN_GL;
-DisplayController DeviceContext::display{};
-Keyboard DeviceContext::keyBoard{};
-Mouse DeviceContext::mouse{};
 
 bool DeviceContext::should_exit_application = false;
 std::chrono::system_clock DeviceContext::sys_clock{};
@@ -205,7 +266,9 @@ struct DeviceContext::VulkanInitData {
 };
 
 struct DeviceContext::DirectXInitData {
-    //HWND
+#if defined(ENGINE_PLATFORM_WINDOWS)
+    HWND window_handle;
+#endif
 };
 
 DeviceContext::VulkanInitData DeviceContext::vulkan_init_data{};

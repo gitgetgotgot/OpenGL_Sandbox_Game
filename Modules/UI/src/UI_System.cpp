@@ -135,7 +135,7 @@ void Engine::UI::UI_System::update() {
 	sdf_text_vb->update_data(render_context.sdf_text_buffer.data(), render_context.sdf_text_buffer.size() * sizeof(UI_Text_Vertex2f));
 }
 
-void Engine::UI::UI_System::render(std::unique_ptr<Engine::Graphics::Renderer>& renderer) {
+void Engine::UI::UI_System::render(Engine::Graphics::Renderer* renderer) {
 	sprites_INDEX_OFFSET = 0;
 	sdf_text_INDEX_OFFSET = 0;
 
@@ -158,17 +158,17 @@ void Engine::UI::UI_System::render(std::unique_ptr<Engine::Graphics::Renderer>& 
 		}
 		// render sprites
 		if (render_entry.render_type == UI_Render_Type::UI_SPRITE) {
-			renderer->renderIndexedData(sprites_shader, sprites_va, sprites_vb, ib, render_entry.index_count, sprites_INDEX_OFFSET);
+			renderer->renderIndexedData(*sprites_shader, *sprites_va, *sprites_vb, *ib, render_entry.index_count, sprites_INDEX_OFFSET);
 			sprites_INDEX_OFFSET += render_entry.index_count;
 		}
 		// render tiled sprites
 		else if (render_entry.render_type == UI_Render_Type::UI_TILED_SPRITE) {
-			renderer->renderIndexedData(tiled_sprites_shader, sprites_va, sprites_vb, ib, render_entry.index_count, sprites_INDEX_OFFSET);
+			renderer->renderIndexedData(*tiled_sprites_shader, *sprites_va, *sprites_vb, *ib, render_entry.index_count, sprites_INDEX_OFFSET);
 			sprites_INDEX_OFFSET += render_entry.index_count;
 		}
 		// render sdf text
 		else if (render_entry.render_type == UI_Render_Type::UI_TEXT) {
-			renderer->renderIndexedData(sdf_text_shader, sdf_text_va, sdf_text_vb, ib, render_entry.index_count, sdf_text_INDEX_OFFSET);
+			renderer->renderIndexedData(*sdf_text_shader, *sdf_text_va, *sdf_text_vb, *ib, render_entry.index_count, sdf_text_INDEX_OFFSET);
 			sdf_text_INDEX_OFFSET += render_entry.index_count;
 		}
 	}

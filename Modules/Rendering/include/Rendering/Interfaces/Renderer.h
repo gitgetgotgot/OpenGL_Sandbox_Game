@@ -13,23 +13,29 @@
 namespace Engine::Graphics {
 	class Renderer {
 	public:
-		// instance, used in DeviceContext to update viewport
+		// global single instance ptr to Renderer interface
 		inline static Renderer* instance = nullptr;
 
 		enum class DepthFunc : uint8_t { Less, LessOrEqual, Greater, GreaterOrEqual };
+		enum class PresentMode : uint8_t {
+			Immediate,	// no Vsync, no limits
+			Double,		// classic Vsync, double buffer
+			Triple		// triple buffer, low latency
+		};
 
 		Renderer() { instance = this; }
 		virtual ~Renderer() { instance = nullptr; }
 
+		virtual void start_frame(std::error_code& ec) = 0;
 		virtual void clear(float r, float g, float b) = 0;
-		virtual void end_frame() = 0;
-
-		virtual void setViewport(float x, float y, float width, float height) = 0;
-		virtual void useDepthTest(bool use) = 0;
-		virtual void useDepthWrite(bool use) = 0;
-		virtual void useDepthFunc(DepthFunc func) = 0;
-		virtual void useScissorTest(bool use) = 0;
-		virtual void setScissorRect(float x, float y, float width, float height) = 0;
+		virtual void present_frame(std::error_code& ec) = 0;
+		virtual void on_window_resize(uint32_t window_width, uint32_t window_height, PresentMode mode) = 0;
+		virtual void set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
+		virtual void use_depth_test(bool use) = 0;
+		virtual void use_depth_write(bool use) = 0;
+		virtual void use_depth_func(DepthFunc func) = 0;
+		virtual void use_scissor_test(bool use) = 0;
+		virtual void set_scissor_rect(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
 
 		virtual std::unique_ptr<ShaderProgram> create_ShaderPr(
 			const std::filesystem::path& vertex_shader_path,

@@ -18,7 +18,7 @@ public:
     void switch_active_world(const std::string& name);
     void update_active_world_buffers();
     void update();
-    void render(std::unique_ptr<Engine::Graphics::Renderer>& renderer);
+    void render(Engine::Graphics::Renderer* renderer);
     void clear();
 
     bool world_is_created();

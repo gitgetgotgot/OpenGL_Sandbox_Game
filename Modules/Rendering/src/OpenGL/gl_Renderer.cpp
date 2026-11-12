@@ -8,7 +8,6 @@
 #include "Rendering/OpenGL/gl_Texture.h"
 #include "Rendering/OpenGL/gl_TextureArray.h"
 #include <glad/gl.h>
-#include <glm/ext/vector_float2.hpp>
 #include <Utility/Logger.h>
 
 Engine::Graphics::OpenGL_Renderer::OpenGL_Renderer(std::error_code& ec) {

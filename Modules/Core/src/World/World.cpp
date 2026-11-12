@@ -195,7 +195,7 @@ void World::update() {
 	}
 }
 
-void World::render(std::unique_ptr<Engine::Graphics::Renderer>& renderer) {
+void World::render(Engine::Graphics::Renderer* renderer) {
 	int central_chunk_buf_x = last_chunk_x - current_buffer_x_min;
 	int central_chunk_buf_y = last_chunk_y - current_buffer_y_min;
 	int render_min_x = central_chunk_buf_x - 1;
@@ -210,7 +210,7 @@ void World::render(std::unique_ptr<Engine::Graphics::Renderer>& renderer) {
 	for (int x = render_min_x; x <= render_max_x; x++) {
 		for (int y = render_min_y; y <= render_max_y; y++) {
 			ChunkRenderBuffer& buf = *render_buffers[x * 4 + y];
-			renderer->renderIndexedDataVAOSpecific(buf.va, buf.index_count);
+			renderer->renderIndexedDataVAOSpecific(*buf.va, buf.index_count);
 		}
 	}
 

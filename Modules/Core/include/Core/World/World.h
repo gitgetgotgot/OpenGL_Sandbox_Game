@@ -7,7 +7,7 @@
 
 struct ChunkRenderBuffer {
 	uint32_t x = 0, y = 0;
-	std::unique_ptr<Engine::Graphics::VertexArray> va;
+	std::unique_ptr<Engine::Graphics::VertexLayout> va;
 	std::unique_ptr<Engine::Graphics::VertexBuffer> vb;
 	Engine::Util::sparse_set<Vertex2f> vertices;
 	uint32_t index_count = 0;
@@ -50,7 +50,7 @@ public:
 	void init_chunk_buffers();
 	void uninit();
 	void update();
-	void render(std::unique_ptr<Engine::Graphics::Renderer>& renderer);
+	void render(Engine::Graphics::Renderer* renderer);
 
 	void update_chunks(uint32_t& camera_chunk_x, uint32_t& camera_chunk_y);
 	void load_chunk_buffer(uint32_t chunk_world_x, uint32_t chunk_world_y, uint32_t chunk_buffer_index);
