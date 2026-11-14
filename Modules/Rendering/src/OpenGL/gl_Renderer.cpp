@@ -1,12 +1,12 @@
-#include "Rendering/OpenGL/gl_Renderer.h"
-#include "Rendering/OpenGL/gl_ShaderPr.h"
-#include "Rendering/OpenGL/gl_VL.h"
-#include "Rendering/OpenGL/gl_VB.h"
-#include "Rendering/OpenGL/gl_IB.h"
-#include "Rendering/OpenGL/gl_UB.h"
-#include "Rendering/OpenGL/gl_SB.h"
-#include "Rendering/OpenGL/gl_Texture.h"
-#include "Rendering/OpenGL/gl_TextureArray.h"
+#include "Rendering/OpenGL/GL_Renderer.h"
+#include "Rendering/OpenGL/GL_Shader.h"
+#include "Rendering/OpenGL/GL_VL.h"
+#include "Rendering/OpenGL/GL_VB.h"
+#include "Rendering/OpenGL/GL_IB.h"
+#include "Rendering/OpenGL/GL_UB.h"
+#include "Rendering/OpenGL/GL_SB.h"
+#include "Rendering/OpenGL/GL_Texture.h"
+#include "Rendering/OpenGL/GL_TextureArray.h"
 #include <glad/gl.h>
 #include <Utility/Logger.h>
 
@@ -18,98 +18,106 @@ Engine::Graphics::OpenGL_Renderer::OpenGL_Renderer(std::error_code& ec) {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
+void Engine::Graphics::OpenGL_Renderer::start_frame(std::error_code& ec) {
+	// no need to prepare frame for rendering in OpenGL
+}
+
 void Engine::Graphics::OpenGL_Renderer::clear(float r, float g, float b) {
 	glClearColor(r, g, b, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Engine::Graphics::OpenGL_Renderer::end_frame() {
-	// empty here, but can be used for Vulkan, DirectX
+void Engine::Graphics::OpenGL_Renderer::present_frame(std::error_code& ec) {
+	// OpenGL swap buffers is controlled by GLFW
 }
 
-void Engine::Graphics::OpenGL_Renderer::setViewport(float x, float y, float width, float height) {
+void Engine::Graphics::OpenGL_Renderer::on_window_resize(uint32_t window_width, uint32_t window_height, PresentMode mode) {
+	glViewport(0, 0, window_width, window_height);
+}
+
+void Engine::Graphics::OpenGL_Renderer::set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
 	glViewport(x, y, width, height);
 }
 
-void Engine::Graphics::OpenGL_Renderer::useDepthTest(bool use) {
+void Engine::Graphics::OpenGL_Renderer::use_depth_test(bool use) {
 	if (use) glEnable(GL_DEPTH_TEST);
 	else glDisable(GL_DEPTH_TEST);
 }
 
-void Engine::Graphics::OpenGL_Renderer::useDepthWrite(bool use) {
+void Engine::Graphics::OpenGL_Renderer::use_depth_write(bool use) {
 	glDepthMask(use);
 }
 
-void Engine::Graphics::OpenGL_Renderer::useDepthFunc(DepthFunc func) {
+void Engine::Graphics::OpenGL_Renderer::use_depth_func(DepthFunc func) {
 	GLenum fun{};
 	glDepthFunc(fun);
 }
 
-void Engine::Graphics::OpenGL_Renderer::useScissorTest(bool use) {
+void Engine::Graphics::OpenGL_Renderer::use_scissor_test(bool use) {
 	if (use) glEnable(GL_SCISSOR_TEST);
 	else glDisable(GL_SCISSOR_TEST);
 }
 
-void Engine::Graphics::OpenGL_Renderer::setScissorRect(float x, float y, float width, float height) {
+void Engine::Graphics::OpenGL_Renderer::set_scissor_rect(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
 	glScissor(x, y, width, height);
 }
 
-std::unique_ptr<Engine::Graphics::ShaderProgram> Engine::Graphics::OpenGL_Renderer::create_ShaderPr(
+void Engine::Graphics::OpenGL_Renderer::bind_pipeline(const Pipeline& p) {
+	// blank, OpenGL doesn't need to use prepared pipelines to use shaders and vertex layouts
+}
+
+
+std::unique_ptr<Engine::Graphics::ShaderHandle> Engine::Graphics::OpenGL_Renderer::create_ShaderPr(
 	const std::filesystem::path& vertex_shader_path,
 	const std::filesystem::path& fragment_shader_path,
 	std::error_code& ec
 ) const {
-	return std::make_unique<gl_ShaderPr>(vertex_shader_path, fragment_shader_path);
+	return std::make_unique<GL_Shader>(vertex_shader_path, fragment_shader_path);
 }
 
 std::unique_ptr<Engine::Graphics::VertexLayout> Engine::Graphics::OpenGL_Renderer::create_VertexLayout(std::error_code& ec) const {
-	return std::make_unique<gl_VL>();
+	return std::make_unique<GL_VL>();
 }
 
 std::unique_ptr<Engine::Graphics::VertexBuffer> Engine::Graphics::OpenGL_Renderer::create_VertexBuffer(std::error_code& ec) const {
-	return std::make_unique<gl_VB>();
+	return std::make_unique<GL_VB>();
 }
 
 std::unique_ptr<Engine::Graphics::IndexBuffer> Engine::Graphics::OpenGL_Renderer::create_IndexBuffer(std::error_code& ec) const {
-	return std::make_unique<gl_IB>();
+	return std::make_unique<GL_IB>();
 }
 
 std::unique_ptr<Engine::Graphics::UniformBuffer> Engine::Graphics::OpenGL_Renderer::create_UniformBuffer(std::error_code& ec) const {
-	return std::make_unique<gl_UB>();
+	return std::make_unique<GL_UB>();
 }
 
 std::unique_ptr<Engine::Graphics::StorageBuffer> Engine::Graphics::OpenGL_Renderer::create_StorageBuffer(std::error_code& ec) const {
-	return std::make_unique<gl_SB>();
+	return std::make_unique<GL_SB>();
 }
 
 std::unique_ptr<Engine::Graphics::Texture> Engine::Graphics::OpenGL_Renderer::create_Texture(std::error_code& ec) const {
-	return std::make_unique<gl_Texture>();
+	return std::make_unique<GL_Texture>();
 }
 
 std::unique_ptr<Engine::Graphics::TextureArray> Engine::Graphics::OpenGL_Renderer::create_TextureArray(std::error_code& ec) const {
-	return std::make_unique<gl_TextureArray>();
+	return std::make_unique<GL_TextureArray>();
 }
 
-void Engine::Graphics::OpenGL_Renderer::renderData(
-	const ShaderProgram& shader,
-	const VertexLayout& va,
-	const VertexBuffer& vb
-) {
-	shader.use_shader();
-	va.bind();
-	glDrawArrays(GL_TRIANGLES, 0, 0); //not used
-}
 
 void Engine::Graphics::OpenGL_Renderer::renderIndexedData(
-	const ShaderProgram& shader,
-	const VertexLayout& va,
+	const ShaderHandle& shader,
+	const VertexLayout& vl,
 	const VertexBuffer& vb,
 	const IndexBuffer& ib,
 	uint32_t indexCount,
-	uint32_t baseIndex
+	uint32_t baseIndex = 0,
+	const UniformBuffer* ub = nullptr,
+	const StorageBuffer* sb = nullptr
 ) {
-	shader.use_shader();
-	va.bind();
+	const auto& gl_shader = static_cast<const GL_Shader&>(shader);
+	const auto& gl_vl = static_cast<const GL_VL&>(vl);
+	gl_shader.use_shader();
+	gl_vl.bind();
 	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, (void*)(baseIndex * sizeof(uint32_t)));
 }
 
@@ -122,20 +130,22 @@ void Engine::Graphics::OpenGL_Renderer::renderIndexedDataVAOSpecific(
 }
 
 void Engine::Graphics::OpenGL_Renderer::renderInstancedData(
-	const ShaderProgram& shader,
-	const VertexLayout& va,
+	const ShaderHandle& shader,
+	const VertexLayout& vl,
 	const VertexBuffer& vb,
 	const IndexBuffer& ib,
 	uint32_t indexCount,
 	uint32_t instanceCount
 ) {
-	shader.use_shader();
-	va.bind();
+	const auto& gl_shader = static_cast<const GL_Shader&>(shader);
+	const auto& gl_vl = static_cast<const GL_VL&>(vl);
+	gl_shader.use_shader();
+	gl_vl.bind();
 	glDrawElementsInstanced(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr, instanceCount);
 }
 
 void Engine::Graphics::OpenGL_Renderer::renderBasedInstancedData(
-	const ShaderProgram& shader,
+	const ShaderHandle& shader,
 	const VertexLayout& va,
 	const VertexBuffer& vb,
 	const IndexBuffer& ib,

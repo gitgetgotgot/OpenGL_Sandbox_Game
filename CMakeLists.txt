@@ -27,10 +27,14 @@ find_package(glm REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(stb REQUIRED)
 find_package(miniaudio REQUIRED)
+
 find_package(glad REQUIRED)
+
 find_package(VulkanLoader REQUIRED)
 find_package(VulkanHeaders REQUIRED)
 find_package(VulkanMemoryAllocator REQUIRED)
+find_package(SPIRV-Headers REQUIRED)
+find_package(spirv-reflect-static REQUIRED)
 
 add_executable(${PROJECT_NAME} "${PROJECT_SOURCE_DIR}/src/main.cpp")
 
@@ -62,6 +66,8 @@ target_link_libraries(Rendering
         vulkan-headers::vulkan-headers
         GPUOpen::VulkanMemoryAllocator
     PRIVATE
+	SPIRV-Headers::SPIRV-Headers
+        spirv-reflect-static
         glad::glad
         Utility
 )

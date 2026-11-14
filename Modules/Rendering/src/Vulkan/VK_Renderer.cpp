@@ -1,12 +1,13 @@
-#include "Rendering/Vulkan/vulkan_Renderer.h"
-#include "Rendering/OpenGL/gl_ShaderPr.h"
-#include "Rendering/OpenGL/gl_VL.h"
-#include "Rendering/OpenGL/gl_VB.h"
-#include "Rendering/OpenGL/gl_IB.h"
-#include "Rendering/OpenGL/gl_UB.h"
-#include "Rendering/OpenGL/gl_SB.h"
-#include "Rendering/OpenGL/gl_Texture.h"
-#include "Rendering/OpenGL/gl_TextureArray.h"
+#include "Rendering/Vulkan/VK_Renderer.h"
+#include "Rendering/Vulkan/VK_Shader.h"
+#include "Rendering/Vulkan/VK_VL.h"
+#include "Rendering/Vulkan/VK_VB.h"
+#include "Rendering/Vulkan/VK_IB.h"
+#include "Rendering/Vulkan/VK_UB.h"
+#include "Rendering/Vulkan/VK_SB.h"
+#include "Rendering/Vulkan/VK_Texture.h"
+#include "Rendering/Vulkan/VK_TextureArray.h"
+#include "Rendering/Vulkan/VK_Pipeline.h"
 #include <Utility/Logger.h>
 #include <Base/EngineError.h>
 
@@ -665,32 +666,37 @@ void Engine::Graphics::Vulkan_Renderer::set_scissor_rect(uint32_t x, uint32_t y,
 	
 }
 
-std::unique_ptr<Engine::Graphics::ShaderProgram> Engine::Graphics::Vulkan_Renderer::create_ShaderPr(
+void Engine::Graphics::Vulkan_Renderer::bind_pipeline(const Pipeline& p) {
+	const auto& vk_pipeline = static_cast<const VK_Pipeline&>(p);
+	vkCmdBindPipeline(command_buffers[current_frame_index], VK_PIPELINE_BIND_POINT_GRAPHICS, vk_pipeline.get_handle());
+}
+
+std::unique_ptr<Engine::Graphics::ShaderHandle> Engine::Graphics::Vulkan_Renderer::create_ShaderPr(
 	const std::filesystem::path& vertex_shader_path,
 	const std::filesystem::path& fragment_shader_path,
 	std::error_code& ec
 ) const {
-	return std::make_unique<gl_ShaderPr>(vertex_shader_path, fragment_shader_path);
+	return std::make_unique<VK_Shader>(vertex_shader_path, fragment_shader_path, ec);
 }
 
 std::unique_ptr<Engine::Graphics::VertexLayout> Engine::Graphics::Vulkan_Renderer::create_VertexLayout(std::error_code& ec) const {
-	return std::make_unique<gl_VL>();
+	return std::make_unique<VK_VL>();
 }
 
 std::unique_ptr<Engine::Graphics::VertexBuffer> Engine::Graphics::Vulkan_Renderer::create_VertexBuffer(std::error_code& ec) const {
-	return std::make_unique<gl_VB>();
+	return std::make_unique<VK_VB>(device, allocator, command_pool, graphics_queue);
 }
 
 std::unique_ptr<Engine::Graphics::IndexBuffer> Engine::Graphics::Vulkan_Renderer::create_IndexBuffer(std::error_code& ec) const {
-	return std::make_unique<gl_IB>();
+	return std::make_unique<VK_IB>(device, allocator, command_pool, graphics_queue);
 }
 
 std::unique_ptr<Engine::Graphics::UniformBuffer> Engine::Graphics::Vulkan_Renderer::create_UniformBuffer(std::error_code& ec) const {
-	return std::make_unique<gl_UB>();
+	return std::make_unique<VK_UB>(device, allocator, command_pool, graphics_queue);
 }
 
 std::unique_ptr<Engine::Graphics::StorageBuffer> Engine::Graphics::Vulkan_Renderer::create_StorageBuffer(std::error_code& ec) const {
-	return std::make_unique<gl_SB>();
+	return std::make_unique<VK_SB>(device, allocator, command_pool, graphics_queue);
 }
 
 std::unique_ptr<Engine::Graphics::Texture> Engine::Graphics::Vulkan_Renderer::create_Texture(std::error_code& ec) const {
@@ -701,23 +707,61 @@ std::unique_ptr<Engine::Graphics::TextureArray> Engine::Graphics::Vulkan_Rendere
 	return std::make_unique<gl_TextureArray>();
 }
 
-void Engine::Graphics::Vulkan_Renderer::renderData(
-	const ShaderProgram& shader,
-	const VertexLayout& va,
-	const VertexBuffer& vb
-) {
-	
+std::unique_ptr<Engine::Graphics::Pipeline> Engine::Graphics::Vulkan_Renderer::create_Pipeline(std::error_code& ec) const {
+	return std::make_unique<VK_Pipeline>(device, render_pass);
 }
 
+
 void Engine::Graphics::Vulkan_Renderer::renderIndexedData(
-	const ShaderProgram& shader,
-	const VertexLayout& va,
+	const ShaderHandle& shader,
+	const VertexLayout& vl,
 	const VertexBuffer& vb,
 	const IndexBuffer& ib,
 	uint32_t indexCount,
-	uint32_t baseIndex
+	uint32_t baseIndex = 0,
+	const UniformBuffer* ub = nullptr,
+	const StorageBuffer* sb = nullptr
 ) {
+	const auto& vk_shader = static_cast<const VK_Shader&>(shader);
+	const auto& vk_vl = static_cast<const VK_VL&>(vl);
+	const auto& vk_vb = static_cast<const VK_VB&>(vb);
+	const auto& vk_ib = static_cast<const VK_IB&>(ib);
+
+	// 1. Any Pipeline should be binded before calling this method!
 	
+	// 2. Bind vertex buffer
+	VkBuffer vertex_buffers[] = { vk_vb.get_buffer() };
+	VkDeviceSize offsets[] = { 0 };
+	vkCmdBindVertexBuffers(command_buffers[current_frame_index], 0, 1, vertex_buffers, offsets);
+
+	// 3. Bind index buffer
+	vkCmdBindIndexBuffer(command_buffers[current_frame_index], vk_ib.get_buffer(), 0, VK_INDEX_TYPE_UINT32);
+
+	// 4. Bind descriptor sets of Uniform & Storage buffers if they are used
+	std::vector<VkDescriptorSet> active_descriptor_sets(2);
+	if (ub) {
+		const auto vk_ub = static_cast<const VK_UB*>(ub);
+		vk_ub->get_descriptor_info();
+	}
+	if (sb) {
+		const auto vk_sb = static_cast<const VK_SB*>(sb);
+		vk_sb->get_descriptor_info();
+	}
+
+	if (!active_descriptor_sets.empty()) {
+		vkCmdBindDescriptorSets(
+			command_buffers[current_frame_index],
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			vk_shader.get_pipeline_layout(),
+			0,
+			static_cast<uint32_t>(active_descriptor_sets.size()),
+			active_descriptor_sets.data(),
+			0, nullptr
+		);
+	}
+
+	// 5. call draw command
+	vkCmdDrawIndexed(command_buffers[current_frame_index], indexCount, 1, baseIndex, 0, 0);
 }
 
 void Engine::Graphics::Vulkan_Renderer::renderIndexedDataVAOSpecific(
@@ -728,7 +772,7 @@ void Engine::Graphics::Vulkan_Renderer::renderIndexedDataVAOSpecific(
 }
 
 void Engine::Graphics::Vulkan_Renderer::renderInstancedData(
-	const ShaderProgram& shader,
+	const ShaderHandle& shader,
 	const VertexLayout& va,
 	const VertexBuffer& vb,
 	const IndexBuffer& ib,
@@ -739,7 +783,7 @@ void Engine::Graphics::Vulkan_Renderer::renderInstancedData(
 }
 
 void Engine::Graphics::Vulkan_Renderer::renderBasedInstancedData(
-	const ShaderProgram& shader,
+	const ShaderHandle& shader,
 	const VertexLayout& va,
 	const VertexBuffer& vb,
 	const IndexBuffer& ib,

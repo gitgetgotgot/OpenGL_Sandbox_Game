@@ -8,6 +8,8 @@ glad/2.0.8
 vulkan-headers/1.4.357.0
 vulkan-loader/1.4.357.0
 vulkan-memory-allocator/3.3.0
+spirv-headers/1.4.357.0
+spirv-reflect/1.4.357.0
 
 [options]
 glad/*:gl_profile=core

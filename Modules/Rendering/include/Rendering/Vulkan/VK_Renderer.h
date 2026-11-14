@@ -34,8 +34,9 @@ namespace Engine::Graphics {
 		void use_depth_func(DepthFunc func) override;
 		void use_scissor_test(bool use) override;
 		void set_scissor_rect(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
+		void bind_pipeline(const Pipeline& p) override;
 
-		std::unique_ptr<ShaderProgram> create_ShaderPr(
+		std::unique_ptr<ShaderHandle> create_ShaderPr(
 			const std::filesystem::path& vertex_shader_path,
 			const std::filesystem::path& fragment_shader_path,
 			std::error_code& ec
@@ -47,26 +48,24 @@ namespace Engine::Graphics {
 		std::unique_ptr<StorageBuffer> create_StorageBuffer(std::error_code& ec) const override;
 		std::unique_ptr<Texture> create_Texture(std::error_code& ec) const override;
 		std::unique_ptr<TextureArray> create_TextureArray(std::error_code& ec) const override;
+		std::unique_ptr<Pipeline> create_Pipeline(std::error_code& ec) const override;
 
-		void renderData(
-			const ShaderProgram& shader,
-			const VertexLayout& va,
-			const VertexBuffer& vb
-		) override;
 		void renderIndexedData(
-			const ShaderProgram& shader,
-			const VertexLayout& va,
+			const ShaderHandle& shader,
+			const VertexLayout& vl,
 			const VertexBuffer& vb,
 			const IndexBuffer& ib,
 			uint32_t indexCount,
-			uint32_t baseIndex = 0
+			uint32_t baseIndex = 0,
+			const UniformBuffer* ub = nullptr,
+			const StorageBuffer* sb = nullptr
 		) override;
 		void renderIndexedDataVAOSpecific(
 			const VertexLayout& va,
 			uint32_t indexCount
 		) override;
 		void renderInstancedData(
-			const ShaderProgram& shader,
+			const ShaderHandle& shader,
 			const VertexLayout& va,
 			const VertexBuffer& vb,
 			const IndexBuffer& ib,
@@ -74,7 +73,7 @@ namespace Engine::Graphics {
 			uint32_t instanceCount
 		) override;
 		void renderBasedInstancedData(
-			const ShaderProgram& shader,
+			const ShaderHandle& shader,
 			const VertexLayout& va,
 			const VertexBuffer& vb,
 			const IndexBuffer& ib,

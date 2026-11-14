@@ -6,17 +6,20 @@ namespace Engine::Graphics {
 	public:
 		OpenGL_Renderer(std::error_code& ec);
 		~OpenGL_Renderer() = default;
+
+		void start_frame(std::error_code& ec) override;
 		void clear(float r, float g, float b) override;
-		void end_frame() override;
+		void present_frame(std::error_code& ec) override;
+		void on_window_resize(uint32_t window_width, uint32_t window_height, PresentMode mode) override;
+		void set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
+		void use_depth_test(bool use) override;
+		void use_depth_write(bool use) override;
+		void use_depth_func(DepthFunc func) override;
+		void use_scissor_test(bool use) override;
+		void set_scissor_rect(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
+		void bind_pipeline(const Pipeline& p) override;
 
-		void setViewport(float x, float y, float width, float height) override;
-		void useDepthTest(bool use) override;
-		void useDepthWrite(bool use) override;
-		void useDepthFunc(DepthFunc func) override;
-		void useScissorTest(bool use) override;
-		void setScissorRect(float x, float y, float width, float height) override;
-
-		std::unique_ptr<ShaderProgram> create_ShaderPr(
+		std::unique_ptr<ShaderHandle> create_ShaderPr(
 			const std::filesystem::path& vertex_shader_path,
 			const std::filesystem::path& fragment_shader_path,
 			std::error_code& ec
@@ -29,34 +32,31 @@ namespace Engine::Graphics {
 		std::unique_ptr<Texture> create_Texture(std::error_code& ec) const override;
 		std::unique_ptr<TextureArray> create_TextureArray(std::error_code& ec) const override;
 
-		void renderData(
-			const ShaderProgram& shader,
-			const VertexLayout& va,
-			const VertexBuffer& vb
-		) override;
 		void renderIndexedData(
-			const ShaderProgram& shader,
-			const VertexLayout& va,
+			const ShaderHandle& shader,
+			const VertexLayout& vl,
 			const VertexBuffer& vb,
 			const IndexBuffer& ib,
 			uint32_t indexCount,
-			uint32_t baseIndex = 0
+			uint32_t baseIndex = 0,
+			const UniformBuffer* ub = nullptr,
+			const StorageBuffer* sb = nullptr
 		) override;
 		void renderIndexedDataVAOSpecific(
-			const VertexLayout& va,
+			const VertexLayout& vl,
 			uint32_t indexCount
 		) override;
 		void renderInstancedData(
-			const ShaderProgram& shader,
-			const VertexLayout& va,
+			const ShaderHandle& shader,
+			const VertexLayout& vl,
 			const VertexBuffer& vb,
 			const IndexBuffer& ib,
 			uint32_t indexCount,
 			uint32_t instanceCount
 		) override;
 		void renderBasedInstancedData(
-			const ShaderProgram& shader,
-			const VertexLayout& va,
+			const ShaderHandle& shader,
+			const VertexLayout& vl,
 			const VertexBuffer& vb,
 			const IndexBuffer& ib,
 			uint32_t indexCount,

@@ -6,6 +6,11 @@
 namespace Engine::Errors {
     enum class EngineError : uint8_t {
         Success = 0,
+
+        // Shader file
+        ShaderFileLoadError,
+        ShaderSpirvReflectError,
+
         // Vulkan errors
         VulkanDeviceNotFound,
         VulkanNotSupported,
@@ -25,7 +30,12 @@ namespace Engine::Errors {
         VulkanCommandBufferBeginError,
         VulkanCommandBufferEndError,
         VulkanQueueSubmitError,
-        VulkanPresentError
+        VulkanPresentError,
+
+        VulkanShaderCreateError,
+        VulkanPipelineCreateError,
+        VulkanDescriptorSetLayoutError,
+        VulkanPipelineLayoutError
     };
 
     class EngineErrorCategory : public std::error_category {
@@ -37,6 +47,10 @@ namespace Engine::Errors {
             switch (static_cast<EngineError>(ev)) {
             case EngineError::Success:
                 return "Operation completed successfully";
+            case EngineError::ShaderFileLoadError:
+                return "Couldn't load shader file";
+            case EngineError::ShaderSpirvReflectError:
+                return "Couldn't get shader data from SPIR-V code";
             case EngineError::VulkanDeviceNotFound:
                 return "No suitable Vulkan physical device found";
             case EngineError::VulkanNotSupported:
@@ -59,6 +73,15 @@ namespace Engine::Errors {
                 return "Failed to allocate Vulkan Command Buffers";
             case EngineError::VulkanSyncObjectsInitError:
                 return "Failed to initialize Vulkan synchronization objects";
+
+            case EngineError::VulkanShaderCreateError:
+                return "Failed to initialize Vulkan synchronization objects";
+            case EngineError::VulkanPipelineCreateError:
+                return "Failed to create Vulkan Pipeline";
+            case EngineError::VulkanDescriptorSetLayoutError:
+                return "Failed to create Vulkan DescriptorSetLayout";
+            case EngineError::VulkanPipelineLayoutError:
+                return "Failed to create Vulkan PipelineLayout";
             default:
                 return "Unknown engine error";
             }

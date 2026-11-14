@@ -2,10 +2,10 @@
 #include "Rendering/Interfaces/TextureArray.h"
 
 namespace Engine::Graphics {
-	class gl_TextureArray : public TextureArray {
+	class GL_TextureArray : public TextureArray {
 	public:
-		gl_TextureArray();
-		~gl_TextureArray();
+		GL_TextureArray();
+		~GL_TextureArray();
 		void bind(uint32_t slot = 0) const override;
 		void unbind() const override;
 		uint32_t get_current_size() const override;

@@ -1,13 +1,13 @@
-#include "Rendering/OpenGL/gl_ShaderPr.h"
+#include "Rendering/OpenGL/GL_Shader.h"
 #include <glad/gl.h>
 #include <iostream>
 
-Engine::Graphics::gl_ShaderPr::gl_ShaderPr(
+Engine::Graphics::GL_Shader::GL_Shader(
 	const std::filesystem::path& vertex_shader_path,
 	const std::filesystem::path& fragment_shader_path
 ) {
-	std::string vertexContents = get_shader_file_contents(vertex_shader_path);
-	std::string fragmentContetns = get_shader_file_contents(fragment_shader_path);
+	std::string vertexContents = read_file_string(vertex_shader_path);
+	std::string fragmentContetns = read_file_string(fragment_shader_path);
 	const char* vertexSource = vertexContents.c_str();
 	const char* fragmentSource = fragmentContetns.c_str();
 
@@ -58,14 +58,14 @@ Engine::Graphics::gl_ShaderPr::gl_ShaderPr(
 	glDeleteShader(fragmentShader);
 }
 
-Engine::Graphics::gl_ShaderPr::~gl_ShaderPr() {
-	delete_shader();
+Engine::Graphics::GL_Shader::~GL_Shader() {
+	uninit();
 }
 
-void Engine::Graphics::gl_ShaderPr::use_shader() const {
-	glUseProgram(id);
-}
-
-void Engine::Graphics::gl_ShaderPr::delete_shader() const {
+void Engine::Graphics::GL_Shader::uninit() {
 	glDeleteProgram(id);
+}
+
+void Engine::Graphics::GL_Shader::use_shader() const {
+	glUseProgram(id);
 }

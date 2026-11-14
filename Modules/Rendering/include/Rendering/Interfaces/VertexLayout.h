@@ -3,12 +3,32 @@
 #include <cstddef>
 
 namespace Engine::Graphics {
+	enum class VertexAttributeType : uint8_t {
+		FLOAT,
+		FLOAT_VEC2,
+		FLOAT_VEC3,
+		FLOAT_VEC4,
+		UINT,
+		UINT_VEC2,
+		UINT_VEC3,
+		UINT_VEC4,
+		INT,
+		INT_VEC2,
+		INT_VEC3,
+		INT_VEC4
+	};
+	struct VertexAttributeElement {
+		uint32_t location;
+		VertexAttributeType type;
+		size_t stride;
+		size_t offset;
+	};
 	class VertexLayout {
 	public:
-		enum ATTRIBUTE_TYPE : uint8_t { TYPE_FLOAT, TYPE_UNSIGNED_INT };
-		virtual void link_Attribute(uint32_t layout, uint32_t comps, ATTRIBUTE_TYPE type, size_t stride, size_t offset) const = 0;
+		virtual ~VertexLayout() = default;
+		virtual void add_attribute(uint32_t location, VertexAttributeType type, size_t stride, size_t offset) const = 0;
+		virtual void uninit() = 0;
 		virtual void bind() const = 0;
 		virtual void unbind() const = 0;
-		virtual void uninit() const = 0;
 	};
 }

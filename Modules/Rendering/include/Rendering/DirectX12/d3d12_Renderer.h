@@ -23,7 +23,7 @@ namespace Engine::Graphics {
 		void useScissorTest(bool use) override;
 		void setScissorRect(float x, float y, float width, float height) override;
 
-		std::unique_ptr<ShaderProgram> create_ShaderPr(
+		std::unique_ptr<ShaderHandle> create_ShaderPr(
 			const std::filesystem::path& vertex_shader_path,
 			const std::filesystem::path& fragment_shader_path,
 			std::error_code& ec
@@ -37,12 +37,12 @@ namespace Engine::Graphics {
 		std::unique_ptr<TextureArray> create_TextureArray(std::error_code& ec) const override;
 
 		void renderData(
-			const ShaderProgram& shader,
+			const ShaderHandle& shader,
 			const VertexLayout& va,
 			const VertexBuffer& vb
 		) override;
 		void renderIndexedData(
-			const ShaderProgram& shader,
+			const ShaderHandle& shader,
 			const VertexLayout& va,
 			const VertexBuffer& vb,
 			const IndexBuffer& ib,
@@ -54,7 +54,7 @@ namespace Engine::Graphics {
 			uint32_t indexCount
 		) override;
 		void renderInstancedData(
-			const ShaderProgram& shader,
+			const ShaderHandle& shader,
 			const VertexLayout& va,
 			const VertexBuffer& vb,
 			const IndexBuffer& ib,
@@ -62,7 +62,7 @@ namespace Engine::Graphics {
 			uint32_t instanceCount
 		) override;
 		void renderBasedInstancedData(
-			const ShaderProgram& shader,
+			const ShaderHandle& shader,
 			const VertexLayout& va,
 			const VertexBuffer& vb,
 			const IndexBuffer& ib,
