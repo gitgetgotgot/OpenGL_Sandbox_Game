@@ -35,7 +35,9 @@ namespace Engine::Errors {
         VulkanShaderCreateError,
         VulkanPipelineCreateError,
         VulkanDescriptorSetLayoutError,
-        VulkanPipelineLayoutError
+        VulkanPipelineLayoutError,
+        VulkanDescriptorPoolError,
+        VulkanDescriptorSetsAllocError
     };
 
     class EngineErrorCategory : public std::error_category {
@@ -82,6 +84,10 @@ namespace Engine::Errors {
                 return "Failed to create Vulkan DescriptorSetLayout";
             case EngineError::VulkanPipelineLayoutError:
                 return "Failed to create Vulkan PipelineLayout";
+            case EngineError::VulkanDescriptorPoolError:
+                return "Failed to create Vulkan Descriptor Pool";
+            case EngineError::VulkanDescriptorSetsAllocError:
+                return "Failed to allocate Vulkan Descriptor Sets";
             default:
                 return "Unknown engine error";
             }

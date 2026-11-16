@@ -1,8 +1,13 @@
 #include "Rendering/Vulkan/VK_VL.h"
 
-void Engine::Graphics::VK_VL::add_attribute(uint32_t layout, VertexAttributeType type, size_t stride, size_t offset) const {
+void Engine::Graphics::VK_VL::add_attribute(uint32_t layout, VertexAttributeType type, size_t stride, size_t offset) {
 	elements.emplace_back(VertexAttributeElement{ layout, type, stride, offset });
 	cached_stride = stride;
+}
+
+void Engine::Graphics::VK_VL::uninit() {
+	elements.clear();
+	cached_stride = 0;
 }
 
 VkVertexInputBindingDescription Engine::Graphics::VK_VL::get_binding_description() const {

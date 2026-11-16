@@ -26,7 +26,7 @@ namespace Engine::Graphics {
 	class VertexLayout {
 	public:
 		virtual ~VertexLayout() = default;
-		virtual void add_attribute(uint32_t location, VertexAttributeType type, size_t stride, size_t offset) const = 0;
+		virtual void add_attribute(uint32_t location, VertexAttributeType type, size_t stride, size_t offset) = 0;
 		virtual void uninit() = 0;
 		virtual void bind() const = 0;
 		virtual void unbind() const = 0;

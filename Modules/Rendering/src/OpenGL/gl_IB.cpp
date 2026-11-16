@@ -9,7 +9,7 @@ Engine::Graphics::GL_IB::~GL_IB() {
 	uninit();
 }
 
-void Engine::Graphics::GL_IB::set_data(const void* data, size_t size, IndexBufUsage usage) const {
+void Engine::Graphics::GL_IB::set_data(const void* data, size_t size, IndexBufUsage usage) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, usage == IndexBufUsage::USAGE_DYNAMIC ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 }

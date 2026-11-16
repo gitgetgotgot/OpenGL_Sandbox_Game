@@ -10,7 +10,7 @@ Engine::Graphics::VK_IB::~VK_IB() {
     uninit();
 }
 
-void Engine::Graphics::VK_IB::set_data(const void* data, size_t size, IndexBufUsage usage) const {
+void Engine::Graphics::VK_IB::set_data(const void* data, size_t size, IndexBufUsage usage) {
     uninit();
     buffer_size = size;
     buffer_usage = usage;

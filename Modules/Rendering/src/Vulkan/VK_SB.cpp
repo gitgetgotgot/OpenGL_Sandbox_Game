@@ -10,7 +10,7 @@ Engine::Graphics::VK_SB::~VK_SB() {
     uninit();
 }
 
-void Engine::Graphics::VK_SB::set_data(const void* data, size_t size, StorageBufUsage usage) const {
+void Engine::Graphics::VK_SB::set_data(const void* data, size_t size, StorageBufUsage usage) {
     uninit();
     buffer_size = size;
     buffer_usage = usage;
@@ -62,7 +62,7 @@ void Engine::Graphics::VK_SB::update_data(const void* data, size_t size, size_t 
     }
 }
 
-void Engine::Graphics::VK_SB::uninit() const {
+void Engine::Graphics::VK_SB::uninit() {
     if (buffer != VK_NULL_HANDLE && allocation != VK_NULL_HANDLE) {
         vmaDestroyBuffer(allocator, buffer, allocation);
         buffer = VK_NULL_HANDLE;
@@ -70,10 +70,6 @@ void Engine::Graphics::VK_SB::uninit() const {
         mapped_data = nullptr;
         buffer_size = 0;
     }
-}
-
-VkBuffer Engine::Graphics::VK_SB::get_buffer() const {
-    return buffer;
 }
 
 VkDescriptorBufferInfo Engine::Graphics::VK_SB::get_descriptor_info() const {

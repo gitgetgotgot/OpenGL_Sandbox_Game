@@ -19,7 +19,7 @@ Engine::Graphics::VK_Shader::VK_Shader(
     frag_shader_module = create_shader_module(frag_code, ec);
     if (ec) return;
 
-    // Automatic reflect with spirv-reflect
+    // Automatic reflect with spirv-reflect for both vert and frag
     SpvReflectShaderModule vert_reflect_module{};
     SpvReflectResult result = spvReflectCreateShaderModule(
         vert_code.size() * sizeof(uint32_t),
@@ -71,7 +71,7 @@ Engine::Graphics::VK_Shader::~VK_Shader() {
 }
 
 void Engine::Graphics::VK_Shader::uninit() {
-    free_shader_modules();
+    free_shader_temporary_data();
     if (pipeline_layout != VK_NULL_HANDLE) {
         vkDestroyPipelineLayout(device, pipeline_layout, nullptr);
         pipeline_layout = VK_NULL_HANDLE;
@@ -84,19 +84,7 @@ void Engine::Graphics::VK_Shader::uninit() {
     }
 }
 
-VkPipelineLayout Engine::Graphics::VK_Shader::get_pipeline_layout() const {
-    return pipeline_layout;
-}
-
-const std::vector<VkDescriptorSetLayout>& Engine::Graphics::VK_Shader::get_descriptor_set_layouts() const {
-    return descriptor_set_layouts;
-}
-
-const std::vector<VkPipelineShaderStageCreateInfo>& Engine::Graphics::VK_Shader::get_shader_stages() const {
-    return shader_stages;
-}
-
-void Engine::Graphics::VK_Shader::free_shader_modules() {
+void Engine::Graphics::VK_Shader::free_shader_temporary_data() {
     if (vert_shader_module != VK_NULL_HANDLE) {
         vkDestroyShaderModule(device, vert_shader_module, nullptr);
         vert_shader_module = VK_NULL_HANDLE;
@@ -105,6 +93,7 @@ void Engine::Graphics::VK_Shader::free_shader_modules() {
         vkDestroyShaderModule(device, frag_shader_module, nullptr);
         frag_shader_module = VK_NULL_HANDLE;
     }
+    descriptor_pool_sizes.clear();
 }
 
 VkShaderModule Engine::Graphics::VK_Shader::create_shader_module(const std::vector<uint32_t>& code, std::error_code& ec) const {
@@ -158,10 +147,15 @@ void Engine::Graphics::VK_Shader::create_pipeline_layout(
     add_shader_bindings(vert_module, VK_SHADER_STAGE_VERTEX_BIT);
     add_shader_bindings(frag_module, VK_SHADER_STAGE_FRAGMENT_BIT);
 
-    // sets map ---> VkDescriptorSetLayout
+    // translate sets map to VkDescriptorSetLayout
+    // also setup map for total count of all descriptor types
     std::vector<VkDescriptorSetLayout> descriptor_set_layouts;
+    std::map<VkDescriptorType, uint32_t> type_counts;
+
     for (const auto& [set_index, bindings_map] : sets_map) {
+        
         std::vector<VkDescriptorSetLayoutBinding> vk_bindings;
+
         for (const auto& [binding_index, info] : bindings_map) {
             VkDescriptorSetLayoutBinding vk_binding{};
             vk_binding.binding = info.binding;
@@ -171,6 +165,8 @@ void Engine::Graphics::VK_Shader::create_pipeline_layout(
             vk_binding.pImmutableSamplers = nullptr;
 
             vk_bindings.push_back(vk_binding);
+
+            type_counts[info.descriptor_type] += info.count;
         }
 
         VkDescriptorSetLayoutCreateInfo layout_info{};
@@ -185,8 +181,15 @@ void Engine::Graphics::VK_Shader::create_pipeline_layout(
         }
         descriptor_set_layouts.push_back(set_layout);
     }
-
     this->descriptor_set_layouts = descriptor_set_layouts;
+
+    // setup vector for descriptor pool sizes
+    for (const auto& [type, count] : type_counts) {
+        VkDescriptorPoolSize pool_size{};
+        pool_size.type = type;
+        pool_size.descriptorCount = count;
+        descriptor_pool_sizes.push_back(pool_size);
+    }
 
     // ====== 2. Get Push Constants for shaders ======
     // map key: pair {offset, size}, value: stage flags

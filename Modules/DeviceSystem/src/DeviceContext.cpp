@@ -17,8 +17,8 @@
 #endif
 
 // include renderers based on OS
-#include <Rendering/OpenGL/gl_Renderer.h>
-#include <Rendering/Vulkan/vulkan_Renderer.h>
+#include <Rendering/OpenGL/GL_Renderer.h>
+#include <Rendering/Vulkan/VK_Renderer.h>
 #if defined(ENGINE_PLATFORM_WINDOWS)
 #include <Rendering/DirectX12/d3d12_Renderer.h>
 #endif
@@ -30,13 +30,13 @@
 void DeviceContext::glfwFrameBufferSizeCallback(GLFWwindow* window, int width, int height) {
     // here width and height are physical pixels of framebuffer
     display.update_resolution(width, height);
-    Engine::Graphics::Renderer::instance->setViewport(0, 0, width, height);
+    Engine::Graphics::Renderer::instance->on_window_resize(0, 0, width, height);
 }
 
 void DeviceContext::glfwWindowSizeCallback(GLFWwindow* window, int width, int height) {
     // here width and height are logical pixels of window
     display.update_resolution(width, height);
-    Engine::Graphics::Renderer::instance->setViewport(0, 0, width, height);
+    Engine::Graphics::Renderer::instance->on_window_resize(0, 0, width, height);
 }
 
 void DeviceContext::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {

@@ -1,14 +1,7 @@
 #pragma once
-#include <Rendering/Interfaces/ShaderHandle.h>
-#include <Rendering/Interfaces/VertexLayout.h>
 #include <Rendering/Interfaces/VertexBuffer.h>
 #include <Rendering/Interfaces/IndexBuffer.h>
-#include <Rendering/Interfaces/UniformBuffer.h>
-#include <Rendering/Interfaces/StorageBuffer.h>
-#include <Rendering/Interfaces/Texture.h>
-#include <Rendering/Interfaces/TextureArray.h>
 #include <Rendering/Interfaces/Pipeline.h>
-#include <system_error>
 #include <memory>
 
 namespace Engine::Graphics {
@@ -39,7 +32,7 @@ namespace Engine::Graphics {
 		virtual void set_scissor_rect(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
 		virtual void bind_pipeline(const Pipeline& p) = 0;
 
-		virtual std::unique_ptr<ShaderHandle> create_ShaderPr(
+		virtual std::unique_ptr<ShaderHandle> create_ShaderHandle(
 			const std::filesystem::path& vertex_shader_path,
 			const std::filesystem::path& fragment_shader_path,
 			std::error_code& ec
@@ -54,35 +47,19 @@ namespace Engine::Graphics {
 		virtual std::unique_ptr<Pipeline> create_Pipeline(std::error_code& ec) const = 0;
 
 		virtual void renderIndexedData(
-			const ShaderHandle& shader,
-			const VertexLayout& vl,
 			const VertexBuffer& vb,
 			const IndexBuffer& ib,
 			uint32_t indexCount,
-			uint32_t baseIndex = 0,
-			const UniformBuffer* ub = nullptr,
-			const StorageBuffer* sb = nullptr
-		) = 0;
-		virtual void renderIndexedDataVAOSpecific(
-			const VertexLayout& va,
-			uint32_t indexCount
+			uint32_t baseIndex = 0
 		) = 0;
 		virtual void renderInstancedData(
-			const ShaderHandle& shader,
-			const VertexLayout& vl,
-			const VertexBuffer& vb,
-			const IndexBuffer& ib,
-			uint32_t indexCount,
-			uint32_t instanceCount
-		) = 0;
-		virtual void renderBasedInstancedData(
-			const ShaderHandle& shader,
-			const VertexLayout& vl,
 			const VertexBuffer& vb,
 			const IndexBuffer& ib,
 			uint32_t indexCount,
 			uint32_t instanceCount,
-			uint32_t baseInstance
+			uint32_t baseInstance = 0
 		) = 0;
+	protected:
+		const Pipeline* current_pipeline = nullptr;
 	};
 }

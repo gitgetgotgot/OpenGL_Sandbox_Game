@@ -10,6 +10,7 @@ namespace Engine::Graphics {
 		);
 		~GL_Shader();
 		void uninit() override;
+
 		void use_shader() const;
 	private:
 		uint32_t id;

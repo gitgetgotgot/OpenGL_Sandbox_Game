@@ -36,7 +36,7 @@ namespace Engine::Graphics {
 		void set_scissor_rect(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
 		void bind_pipeline(const Pipeline& p) override;
 
-		std::unique_ptr<ShaderHandle> create_ShaderPr(
+		std::unique_ptr<ShaderHandle> create_ShaderHandle(
 			const std::filesystem::path& vertex_shader_path,
 			const std::filesystem::path& fragment_shader_path,
 			std::error_code& ec
@@ -51,35 +51,17 @@ namespace Engine::Graphics {
 		std::unique_ptr<Pipeline> create_Pipeline(std::error_code& ec) const override;
 
 		void renderIndexedData(
-			const ShaderHandle& shader,
-			const VertexLayout& vl,
 			const VertexBuffer& vb,
 			const IndexBuffer& ib,
 			uint32_t indexCount,
-			uint32_t baseIndex = 0,
-			const UniformBuffer* ub = nullptr,
-			const StorageBuffer* sb = nullptr
-		) override;
-		void renderIndexedDataVAOSpecific(
-			const VertexLayout& va,
-			uint32_t indexCount
+			uint32_t baseIndex = 0
 		) override;
 		void renderInstancedData(
-			const ShaderHandle& shader,
-			const VertexLayout& va,
-			const VertexBuffer& vb,
-			const IndexBuffer& ib,
-			uint32_t indexCount,
-			uint32_t instanceCount
-		) override;
-		void renderBasedInstancedData(
-			const ShaderHandle& shader,
-			const VertexLayout& va,
 			const VertexBuffer& vb,
 			const IndexBuffer& ib,
 			uint32_t indexCount,
 			uint32_t instanceCount,
-			uint32_t baseInstance
+			uint32_t baseInstance = 0
 		) override;
 	private:
 		struct VulkanSwapChain {
@@ -128,7 +110,7 @@ namespace Engine::Graphics {
 		uint32_t current_image_index;
 		uint32_t current_frame_index;
 
-		//current present mode
+		// current present mode
 		PresentMode current_present_mode;
 	};
 }

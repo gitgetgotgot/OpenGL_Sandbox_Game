@@ -9,7 +9,7 @@ Engine::Graphics::GL_VL::~GL_VL() {
 	uninit();
 }
 
-void Engine::Graphics::GL_VL::add_attribute(uint32_t layout, VertexAttributeType type, size_t stride, size_t offset) const {
+void Engine::Graphics::GL_VL::add_attribute(uint32_t layout, VertexAttributeType type, size_t stride, size_t offset) {
 	GLint size;
 	GLenum gl_type;
 

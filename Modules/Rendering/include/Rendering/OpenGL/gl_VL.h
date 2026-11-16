@@ -6,7 +6,7 @@ namespace Engine::Graphics {
 	public:
 		GL_VL();
 		~GL_VL();
-		void add_attribute(uint32_t layout, VertexAttributeType type, size_t stride, size_t offset) const override;
+		void add_attribute(uint32_t layout, VertexAttributeType type, size_t stride, size_t offset) override;
 		void bind() const override;
 		void unbind() const override;
 		void uninit() override;

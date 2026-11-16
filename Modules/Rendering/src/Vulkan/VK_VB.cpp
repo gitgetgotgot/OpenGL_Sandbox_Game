@@ -10,7 +10,7 @@ Engine::Graphics::VK_VB::~VK_VB() {
 	uninit();
 }
 
-void Engine::Graphics::VK_VB::set_data(const void* data, size_t size, VertexBufUsage usage) const {
+void Engine::Graphics::VK_VB::set_data(const void* data, size_t size, VertexBufUsage usage) {
     uninit();
     buffer_size = size;
     buffer_usage = usage;
@@ -67,7 +67,7 @@ void Engine::Graphics::VK_VB::update_data(const void* data, size_t size, size_t 
     }
 }
 
-void Engine::Graphics::VK_VB::uninit() const {
+void Engine::Graphics::VK_VB::uninit() {
     if (buffer != VK_NULL_HANDLE && allocation != VK_NULL_HANDLE) {
         vmaDestroyBuffer(allocator, buffer, allocation);
         buffer = VK_NULL_HANDLE;

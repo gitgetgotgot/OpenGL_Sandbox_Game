@@ -1,6 +1,8 @@
 #include "Rendering/Vulkan/VK_Pipeline.h"
 #include "Rendering/Vulkan/VK_Shader.h"
 #include "Rendering/Vulkan/VK_VL.h"
+#include "Rendering/Vulkan/VK_UB.h"
+#include "Rendering/Vulkan/VK_SB.h"
 #include <Base/EngineError.h>
 
 Engine::Graphics::VK_Pipeline::VK_Pipeline(VkDevice device, VkRenderPass render_pass) :
@@ -158,18 +160,97 @@ void Engine::Graphics::VK_Pipeline::init(
     pipeline_info.renderPass = render_pass;
     pipeline_info.subpass = 0;
 
-    if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipeline_info, nullptr, &pipeline) != VK_SUCCESS) {
+    // create pipeline
+    if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipeline_info, nullptr, &this->pipeline) != VK_SUCCESS) {
         ec = Engine::Errors::EngineError::VulkanPipelineCreateError;
+        return;
+    }
+    this->pipeline_layout = vulkan_shader.get_pipeline_layout(); // remember pipeline layout
+
+    // 10. Descriptor pool and descriptor sets
+    // create descriptor pool to use descriptors
+    const auto& pool_sizes = vulkan_shader.get_descriptor_pool_sizes();
+
+    VkDescriptorPoolCreateInfo pool_info{};
+    pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    pool_info.maxSets = static_cast<uint32_t>(vulkan_shader.get_descriptor_set_layouts().size());
+    pool_info.poolSizeCount = static_cast<uint32_t>(pool_sizes.size());
+    pool_info.pPoolSizes = pool_sizes.data();
+
+    if (vkCreateDescriptorPool(device, &pool_info, nullptr, &descriptor_pool) != VK_SUCCESS) {
+        ec = Engine::Errors::EngineError::VulkanDescriptorPoolError;
+        return;
+    }
+
+    // allocate descriptor sets
+    const auto& set_layouts = vulkan_shader.get_descriptor_set_layouts();
+    if (!set_layouts.empty()) {
+        VkDescriptorSetAllocateInfo alloc_info{};
+        alloc_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        alloc_info.descriptorPool = descriptor_pool;
+        alloc_info.descriptorSetCount = static_cast<uint32_t>(set_layouts.size());
+        alloc_info.pSetLayouts = set_layouts.data();
+
+        descriptor_sets.resize(set_layouts.size());
+        if (vkAllocateDescriptorSets(device, &alloc_info, descriptor_sets.data()) != VK_SUCCESS) {
+            ec = Engine::Errors::EngineError::VulkanDescriptorSetsAllocError;
+            return;
+        }
     }
 }
 
 void Engine::Graphics::VK_Pipeline::uninit() {
+    // destroy pipeline handle
 	if (pipeline != VK_NULL_HANDLE) {
 		vkDestroyPipeline(device, pipeline, nullptr);
 		pipeline = VK_NULL_HANDLE;
 	}
+    // destroy descriptor pool (descriptor sets are destroyed automatically)
+    if (descriptor_pool != VK_NULL_HANDLE) {
+        vkDestroyDescriptorPool(device, descriptor_pool, nullptr);
+        descriptor_pool = VK_NULL_HANDLE;
+        descriptor_sets.clear();
+    }
 }
 
-VkPipeline Engine::Graphics::VK_Pipeline::get_handle() const {
-	return pipeline;
+void Engine::Graphics::VK_Pipeline::bind_uniform_buffer(const UniformBuffer& ub, uint32_t binding, uint32_t set = 0) {
+    const auto& vk_ub = static_cast<const VK_UB&>(ub);
+
+    VkDescriptorBufferInfo buffer_info = vk_ub.get_descriptor_info();
+
+    VkWriteDescriptorSet descriptor_write{};
+    descriptor_write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    descriptor_write.dstSet = descriptor_sets[set];
+    descriptor_write.dstBinding = binding;
+    descriptor_write.dstArrayElement = 0;
+    descriptor_write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    descriptor_write.descriptorCount = 1;
+    descriptor_write.pBufferInfo = &buffer_info;
+
+    vkUpdateDescriptorSets(device, 1, &descriptor_write, 0, nullptr);
+}
+
+void Engine::Graphics::VK_Pipeline::bind_storage_buffer(const StorageBuffer& sb, uint32_t binding, uint32_t set = 0) {
+    const auto& vk_sb = static_cast<const VK_SB&>(sb);
+
+    VkDescriptorBufferInfo buffer_info = vk_sb.get_descriptor_info();
+
+    VkWriteDescriptorSet descriptor_write{};
+    descriptor_write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    descriptor_write.dstSet = descriptor_sets[set];
+    descriptor_write.dstBinding = binding;
+    descriptor_write.dstArrayElement = 0;
+    descriptor_write.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    descriptor_write.descriptorCount = 1;
+    descriptor_write.pBufferInfo = &buffer_info;
+
+    vkUpdateDescriptorSets(device, 1, &descriptor_write, 0, nullptr);
+}
+
+void Engine::Graphics::VK_Pipeline::bind_sampler_2D(const Texture& tex, uint32_t binding = 0, uint32_t set = 0) {
+
+}
+
+void Engine::Graphics::VK_Pipeline::bind_sampler_2D_array(const TextureArray& tex_arr, uint32_t binding = 0, uint32_t set = 0) {
+
 }

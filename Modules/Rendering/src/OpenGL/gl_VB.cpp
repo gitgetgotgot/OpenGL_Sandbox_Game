@@ -1,4 +1,4 @@
-#include "Rendering/OpenGL/gl_VB.h"
+#include "Rendering/OpenGL/GL_VB.h"
 #include <glad/gl.h>
 
 Engine::Graphics::GL_VB::GL_VB() {
@@ -9,7 +9,7 @@ Engine::Graphics::GL_VB::~GL_VB() {
 	uninit();
 }
 
-void Engine::Graphics::GL_VB::set_data(const void* data, size_t size, VertexBufUsage usage) const {
+void Engine::Graphics::GL_VB::set_data(const void* data, size_t size, VertexBufUsage usage) {
 	glBindBuffer(GL_ARRAY_BUFFER, id);
 	glBufferData(GL_ARRAY_BUFFER, size, data, usage == VertexBufUsage::USAGE_DYNAMIC ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 }

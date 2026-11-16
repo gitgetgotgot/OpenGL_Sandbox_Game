@@ -669,9 +669,10 @@ void Engine::Graphics::Vulkan_Renderer::set_scissor_rect(uint32_t x, uint32_t y,
 void Engine::Graphics::Vulkan_Renderer::bind_pipeline(const Pipeline& p) {
 	const auto& vk_pipeline = static_cast<const VK_Pipeline&>(p);
 	vkCmdBindPipeline(command_buffers[current_frame_index], VK_PIPELINE_BIND_POINT_GRAPHICS, vk_pipeline.get_handle());
+	current_pipeline = &p; // remember this pipeline as current pipeline
 }
 
-std::unique_ptr<Engine::Graphics::ShaderHandle> Engine::Graphics::Vulkan_Renderer::create_ShaderPr(
+std::unique_ptr<Engine::Graphics::ShaderHandle> Engine::Graphics::Vulkan_Renderer::create_ShaderHandle(
 	const std::filesystem::path& vertex_shader_path,
 	const std::filesystem::path& fragment_shader_path,
 	std::error_code& ec
@@ -713,21 +714,15 @@ std::unique_ptr<Engine::Graphics::Pipeline> Engine::Graphics::Vulkan_Renderer::c
 
 
 void Engine::Graphics::Vulkan_Renderer::renderIndexedData(
-	const ShaderHandle& shader,
-	const VertexLayout& vl,
 	const VertexBuffer& vb,
 	const IndexBuffer& ib,
 	uint32_t indexCount,
-	uint32_t baseIndex = 0,
-	const UniformBuffer* ub = nullptr,
-	const StorageBuffer* sb = nullptr
+	uint32_t baseIndex = 0
 ) {
-	const auto& vk_shader = static_cast<const VK_Shader&>(shader);
-	const auto& vk_vl = static_cast<const VK_VL&>(vl);
 	const auto& vk_vb = static_cast<const VK_VB&>(vb);
 	const auto& vk_ib = static_cast<const VK_IB&>(ib);
 
-	// 1. Any Pipeline should be binded before calling this method!
+	// 1. Any prepared Pipeline with all settings should be binded before calling this method!
 	
 	// 2. Bind vertex buffer
 	VkBuffer vertex_buffers[] = { vk_vb.get_buffer() };
@@ -737,59 +732,30 @@ void Engine::Graphics::Vulkan_Renderer::renderIndexedData(
 	// 3. Bind index buffer
 	vkCmdBindIndexBuffer(command_buffers[current_frame_index], vk_ib.get_buffer(), 0, VK_INDEX_TYPE_UINT32);
 
-	// 4. Bind descriptor sets of Uniform & Storage buffers if they are used
-	std::vector<VkDescriptorSet> active_descriptor_sets(2);
-	if (ub) {
-		const auto vk_ub = static_cast<const VK_UB*>(ub);
-		vk_ub->get_descriptor_info();
-	}
-	if (sb) {
-		const auto vk_sb = static_cast<const VK_SB*>(sb);
-		vk_sb->get_descriptor_info();
-	}
-
-	if (!active_descriptor_sets.empty()) {
-		vkCmdBindDescriptorSets(
-			command_buffers[current_frame_index],
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			vk_shader.get_pipeline_layout(),
-			0,
-			static_cast<uint32_t>(active_descriptor_sets.size()),
-			active_descriptor_sets.data(),
-			0, nullptr
-		);
-	}
-
-	// 5. call draw command
+	// 4. call draw command
 	vkCmdDrawIndexed(command_buffers[current_frame_index], indexCount, 1, baseIndex, 0, 0);
 }
 
-void Engine::Graphics::Vulkan_Renderer::renderIndexedDataVAOSpecific(
-	const VertexLayout& va,
-	uint32_t indexCount
-) {
-	
-}
-
 void Engine::Graphics::Vulkan_Renderer::renderInstancedData(
-	const ShaderHandle& shader,
-	const VertexLayout& va,
-	const VertexBuffer& vb,
-	const IndexBuffer& ib,
-	uint32_t indexCount,
-	uint32_t instanceCount
-) {
-	
-}
-
-void Engine::Graphics::Vulkan_Renderer::renderBasedInstancedData(
-	const ShaderHandle& shader,
-	const VertexLayout& va,
 	const VertexBuffer& vb,
 	const IndexBuffer& ib,
 	uint32_t indexCount,
 	uint32_t instanceCount,
-	uint32_t baseInstance
+	uint32_t baseInstance = 0
 ) {
+	const auto& vk_vb = static_cast<const VK_VB&>(vb);
+	const auto& vk_ib = static_cast<const VK_IB&>(ib);
+
+	// 1. Any prepared Pipeline with all settings should be binded before calling this method!
 	
+	// 2. Bind vertex buffer
+	VkBuffer vertex_buffers[] = { vk_vb.get_buffer() };
+	VkDeviceSize offsets[] = { 0 };
+	vkCmdBindVertexBuffers(command_buffers[current_frame_index], 0, 1, vertex_buffers, offsets);
+
+	// 3. Bind index buffer
+	vkCmdBindIndexBuffer(command_buffers[current_frame_index], vk_ib.get_buffer(), 0, VK_INDEX_TYPE_UINT32);
+
+	// 4. call draw command
+	vkCmdDrawIndexed(command_buffers[current_frame_index], indexCount, instanceCount, 0, 0, baseInstance);
 }

@@ -9,3 +9,10 @@
 * remake json load for objects and entities in their classes and factory interface
 * add vulkan?
 * make new lighting system
+
+* rework VAO for opengl with DSA, so VBO can be changed dynamically with one VAO active
+    -> bind VBO (and probably EBO) for OpenGL draw methods using current pipeline
+* compile shaders to SPIR-V for Vulkan
+* bind textures (simple/array) in pipelines
+* check renderer options for both realizations
+* remake managers and systems that use rendering (add pipeline, add error_code in init, rework creation process)

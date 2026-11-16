@@ -7,6 +7,7 @@
 #include "Rendering/OpenGL/GL_SB.h"
 #include "Rendering/OpenGL/GL_Texture.h"
 #include "Rendering/OpenGL/GL_TextureArray.h"
+#include "Rendering/OpenGL/GL_Pipeline.h"
 #include <glad/gl.h>
 #include <Utility/Logger.h>
 
@@ -63,11 +64,13 @@ void Engine::Graphics::OpenGL_Renderer::set_scissor_rect(uint32_t x, uint32_t y,
 }
 
 void Engine::Graphics::OpenGL_Renderer::bind_pipeline(const Pipeline& p) {
-	// blank, OpenGL doesn't need to use prepared pipelines to use shaders and vertex layouts
+	const auto& gl_pipeline = static_cast<const GL_Pipeline&>(p);
+	gl_pipeline.bind();
+	current_pipeline = &p; // remember this pipeline as current pipeline
 }
 
 
-std::unique_ptr<Engine::Graphics::ShaderHandle> Engine::Graphics::OpenGL_Renderer::create_ShaderPr(
+std::unique_ptr<Engine::Graphics::ShaderHandle> Engine::Graphics::OpenGL_Renderer::create_ShaderHandle(
 	const std::filesystem::path& vertex_shader_path,
 	const std::filesystem::path& fragment_shader_path,
 	std::error_code& ec
@@ -103,57 +106,30 @@ std::unique_ptr<Engine::Graphics::TextureArray> Engine::Graphics::OpenGL_Rendere
 	return std::make_unique<GL_TextureArray>();
 }
 
+std::unique_ptr<Engine::Graphics::Pipeline> Engine::Graphics::OpenGL_Renderer::create_Pipeline(std::error_code& ec) const {
+	return std::make_unique<GL_Pipeline>();
+}
+
 
 void Engine::Graphics::OpenGL_Renderer::renderIndexedData(
-	const ShaderHandle& shader,
-	const VertexLayout& vl,
 	const VertexBuffer& vb,
 	const IndexBuffer& ib,
 	uint32_t indexCount,
-	uint32_t baseIndex = 0,
-	const UniformBuffer* ub = nullptr,
-	const StorageBuffer* sb = nullptr
+	uint32_t baseIndex = 0
 ) {
-	const auto& gl_shader = static_cast<const GL_Shader&>(shader);
-	const auto& gl_vl = static_cast<const GL_VL&>(vl);
-	gl_shader.use_shader();
-	gl_vl.bind();
+	// GL_Pipeline with shader program and vao should be binded before drawing
+	// bind VBO & EBO here
 	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, (void*)(baseIndex * sizeof(uint32_t)));
 }
 
-void Engine::Graphics::OpenGL_Renderer::renderIndexedDataVAOSpecific(
-	const VertexLayout& va,
-	uint32_t indexCount
-) {
-	va.bind();
-	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
-}
-
 void Engine::Graphics::OpenGL_Renderer::renderInstancedData(
-	const ShaderHandle& shader,
-	const VertexLayout& vl,
-	const VertexBuffer& vb,
-	const IndexBuffer& ib,
-	uint32_t indexCount,
-	uint32_t instanceCount
-) {
-	const auto& gl_shader = static_cast<const GL_Shader&>(shader);
-	const auto& gl_vl = static_cast<const GL_VL&>(vl);
-	gl_shader.use_shader();
-	gl_vl.bind();
-	glDrawElementsInstanced(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr, instanceCount);
-}
-
-void Engine::Graphics::OpenGL_Renderer::renderBasedInstancedData(
-	const ShaderHandle& shader,
-	const VertexLayout& va,
 	const VertexBuffer& vb,
 	const IndexBuffer& ib,
 	uint32_t indexCount,
 	uint32_t instanceCount,
-	uint32_t baseInstance
+	uint32_t baseInstance = 0
 ) {
-	shader.use_shader();
-	va.bind();
+	// GL_Pipeline with shader program and vao should be binded before drawing
+	// bind VBO & EBO here
 	glDrawArraysInstancedBaseInstance(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, instanceCount, baseInstance);
 }

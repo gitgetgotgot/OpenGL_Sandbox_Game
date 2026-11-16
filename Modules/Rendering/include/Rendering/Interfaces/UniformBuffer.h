@@ -7,10 +7,8 @@ namespace Engine::Graphics {
 	public:
 		enum UniformBufUsage : uint8_t { USAGE_STATIC, USAGE_DYNAMIC };
 		virtual ~UniformBuffer() = default;
-		virtual void set_data(const void* data, size_t size, UniformBufUsage usage) const = 0;
+		virtual void set_data(const void* data, size_t size, UniformBufUsage usage) = 0;
 		virtual void update_data(const void* data, size_t size, size_t offset = 0) const = 0;
 		virtual void uninit() = 0;
-		virtual void bind(uint32_t slot = 0) const = 0;
-		virtual void unbind() const = 0;
 	};
 }

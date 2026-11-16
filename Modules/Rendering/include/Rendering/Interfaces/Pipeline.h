@@ -1,6 +1,10 @@
 #pragma once
 #include "Rendering/Interfaces/ShaderHandle.h"
 #include "Rendering/Interfaces/VertexLayout.h"
+#include "Rendering/Interfaces/UniformBuffer.h"
+#include "Rendering/Interfaces/StorageBuffer.h"
+#include <Rendering/Interfaces/Texture.h>
+#include <Rendering/Interfaces/TextureArray.h>
 #include <cstdint>
 #include <cstddef>
 #include <system_error>
@@ -28,5 +32,10 @@ namespace Engine::Graphics {
 			std::error_code& ec
 		) = 0;
 		virtual void uninit() = 0;
+		// sets are only available in Vulkan (but they are not used in project's shaders, so they are always 0 here)
+		virtual void bind_uniform_buffer(const UniformBuffer& ub, uint32_t binding = 0, uint32_t set = 0) = 0;
+		virtual void bind_storage_buffer(const StorageBuffer& sb, uint32_t binding = 0, uint32_t set = 0) = 0;
+		virtual void bind_sampler_2D(const Texture& tex, uint32_t binding = 0, uint32_t set = 0) = 0;
+		virtual void bind_sampler_2D_array(const TextureArray& tex_arr, uint32_t binding = 0, uint32_t set = 0) = 0;
 	};
 }
