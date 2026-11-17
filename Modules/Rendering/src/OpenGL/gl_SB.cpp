@@ -20,7 +20,10 @@ void Engine::Graphics::GL_SB::update_data(const void* data, size_t size, size_t 
 }
 
 void Engine::Graphics::GL_SB::uninit() {
-	if (id) glDeleteBuffers(1, &id);
+	if (id) {
+		glDeleteBuffers(1, &id);
+		id = 0;
+	}
 }
 
 void Engine::Graphics::GL_SB::bind(uint32_t slot) const {

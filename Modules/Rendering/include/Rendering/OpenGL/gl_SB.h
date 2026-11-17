@@ -1,5 +1,5 @@
 #pragma once
-#include "Rendering/Interfaces/StorageBuffer.h"
+#include "Rendering/RHI/StorageBuffer.h"
 
 namespace Engine::Graphics {
 	class GL_SB : public StorageBuffer {

@@ -1,5 +1,5 @@
 #pragma once
-#include "Rendering/Interfaces/ShaderHandle.h"
+#include "Rendering/RHI/ShaderHandle.h"
 #include <vulkan/vulkan.h>
 #include <spirv_reflect.h>
 

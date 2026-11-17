@@ -19,14 +19,17 @@ void Engine::Graphics::GL_IB::update_data(const void* data, size_t size, size_t 
 	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, size, data);
 }
 
+void Engine::Graphics::GL_IB::uninit() {
+	if (id) {
+		glDeleteBuffers(1, &id);
+		id = 0;
+	}
+}
+
 void Engine::Graphics::GL_IB::bind() const {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
 }
 
 void Engine::Graphics::GL_IB::unbind() const {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
-}
-
-void Engine::Graphics::GL_IB::uninit() {
-	if (id) glDeleteBuffers(1, &id);
 }

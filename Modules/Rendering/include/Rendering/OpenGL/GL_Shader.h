@@ -1,5 +1,5 @@
 #pragma once
-#include "Rendering/Interfaces/ShaderHandle.h"
+#include "Rendering/RHI/ShaderHandle.h"
 
 namespace Engine::Graphics {
 	class GL_Shader : public ShaderHandle {

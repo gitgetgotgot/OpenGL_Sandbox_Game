@@ -1,5 +1,5 @@
 #pragma once
-#include "Rendering/Interfaces/UniformBuffer.h"
+#include "Rendering/RHI/UniformBuffer.h"
 
 namespace Engine::Graphics {
 	class GL_UB : public UniformBuffer {

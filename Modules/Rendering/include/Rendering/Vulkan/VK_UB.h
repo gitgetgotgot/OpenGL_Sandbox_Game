@@ -1,5 +1,5 @@
 #pragma once
-#include "Rendering/Interfaces/UniformBuffer.h"
+#include "Rendering/RHI/UniformBuffer.h"
 #include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
 

@@ -1,7 +1,7 @@
 #pragma once
-#include <Rendering/Interfaces/VertexBuffer.h>
-#include <Rendering/Interfaces/IndexBuffer.h>
-#include <Rendering/Interfaces/Pipeline.h>
+#include <Rendering/RHI/VertexBuffer.h>
+#include <Rendering/RHI/IndexBuffer.h>
+#include <Rendering/RHI/Pipeline.h>
 #include <memory>
 
 namespace Engine::Graphics {

@@ -10,9 +10,9 @@
 * add vulkan?
 * make new lighting system
 
-* rework VAO for opengl with DSA, so VBO can be changed dynamically with one VAO active
-    -> bind VBO (and probably EBO) for OpenGL draw methods using current pipeline
-* compile shaders to SPIR-V for Vulkan
-* bind textures (simple/array) in pipelines
+** compile shaders to SPIR-V for Vulkan
+** bind textures (simple/array) in pipelines
+** change shaders bindings
 * check renderer options for both realizations
-* remake managers and systems that use rendering (add pipeline, add error_code in init, rework creation process)
+** remake managers and systems that use rendering (add pipeline, add error_code in init, rework creation process)
+* maybe check error_code for texture objects later

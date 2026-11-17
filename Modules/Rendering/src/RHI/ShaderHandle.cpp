@@ -1,4 +1,4 @@
-#include "Rendering/Interfaces/ShaderHandle.h"
+#include "Rendering/RHI/ShaderHandle.h"
 #include <Base/EngineError.h>
 #include <fstream>
 #include <iostream>

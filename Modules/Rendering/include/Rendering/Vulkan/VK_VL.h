@@ -1,5 +1,5 @@
 #pragma once
-#include "Rendering/Interfaces/VertexLayout.h"
+#include "Rendering/RHI/VertexLayout.h"
 #include <vulkan/vulkan.h>
 #include <vector>
 
@@ -10,8 +10,6 @@ namespace Engine::Graphics {
 		~VK_VL() = default;
 		void add_attribute(uint32_t layout, VertexAttributeType type, size_t stride, size_t offset) override;
 		void uninit() override;
-		void bind() const override {};
-		void unbind() const override {};
 
 		VkVertexInputBindingDescription get_binding_description() const;
 		std::vector<VkVertexInputAttributeDescription> get_attribute_descriptions() const;

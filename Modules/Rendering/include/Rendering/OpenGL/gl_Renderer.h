@@ -1,5 +1,5 @@
 #pragma once
-#include <Rendering/Interfaces/Renderer.h>
+#include <Rendering/RHI/Renderer.h>
 
 namespace Engine::Graphics {
 	class OpenGL_Renderer : public Renderer {

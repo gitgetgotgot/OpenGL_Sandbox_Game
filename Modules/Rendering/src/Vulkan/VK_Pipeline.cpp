@@ -3,6 +3,7 @@
 #include "Rendering/Vulkan/VK_VL.h"
 #include "Rendering/Vulkan/VK_UB.h"
 #include "Rendering/Vulkan/VK_SB.h"
+#include "Rendering/Vulkan/VK_TextureArray.h"
 #include <Base/EngineError.h>
 
 Engine::Graphics::VK_Pipeline::VK_Pipeline(VkDevice device, VkRenderPass render_pass) :
@@ -213,7 +214,7 @@ void Engine::Graphics::VK_Pipeline::uninit() {
     }
 }
 
-void Engine::Graphics::VK_Pipeline::bind_uniform_buffer(const UniformBuffer& ub, uint32_t binding, uint32_t set = 0) {
+void Engine::Graphics::VK_Pipeline::bind_uniform_buffer(const UniformBuffer& ub, uint32_t binding, uint32_t set) {
     const auto& vk_ub = static_cast<const VK_UB&>(ub);
 
     VkDescriptorBufferInfo buffer_info = vk_ub.get_descriptor_info();
@@ -230,7 +231,7 @@ void Engine::Graphics::VK_Pipeline::bind_uniform_buffer(const UniformBuffer& ub,
     vkUpdateDescriptorSets(device, 1, &descriptor_write, 0, nullptr);
 }
 
-void Engine::Graphics::VK_Pipeline::bind_storage_buffer(const StorageBuffer& sb, uint32_t binding, uint32_t set = 0) {
+void Engine::Graphics::VK_Pipeline::bind_storage_buffer(const StorageBuffer& sb, uint32_t binding, uint32_t set) {
     const auto& vk_sb = static_cast<const VK_SB&>(sb);
 
     VkDescriptorBufferInfo buffer_info = vk_sb.get_descriptor_info();
@@ -247,10 +248,25 @@ void Engine::Graphics::VK_Pipeline::bind_storage_buffer(const StorageBuffer& sb,
     vkUpdateDescriptorSets(device, 1, &descriptor_write, 0, nullptr);
 }
 
-void Engine::Graphics::VK_Pipeline::bind_sampler_2D(const Texture& tex, uint32_t binding = 0, uint32_t set = 0) {
-
+void Engine::Graphics::VK_Pipeline::bind_sampler_2D(const Texture& tex, uint32_t binding, uint32_t set) {
+    
 }
 
-void Engine::Graphics::VK_Pipeline::bind_sampler_2D_array(const TextureArray& tex_arr, uint32_t binding = 0, uint32_t set = 0) {
+void Engine::Graphics::VK_Pipeline::bind_sampler_2D_array(const TextureArray& tex_arr, uint32_t binding, uint32_t index, uint32_t set) {
+    // for Vulkan global samplers array binding also = 0, but it also contains inner array index [0, 7],
+    // so use binding = 0 and index = [0, 7]
+    const auto& vk_tex_arr = static_cast<const VK_TextureArray&>(tex_arr);
 
+    VkDescriptorImageInfo image_info = vk_tex_arr.get_descriptor_info();
+
+    VkWriteDescriptorSet descriptor_write{};
+    descriptor_write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    descriptor_write.dstSet = descriptor_sets[set];
+    descriptor_write.dstBinding = binding;
+    descriptor_write.dstArrayElement = index;
+    descriptor_write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    descriptor_write.descriptorCount = 1;
+    descriptor_write.pImageInfo = &image_info;
+
+    vkUpdateDescriptorSets(device, 1, &descriptor_write, 0, nullptr);
 }

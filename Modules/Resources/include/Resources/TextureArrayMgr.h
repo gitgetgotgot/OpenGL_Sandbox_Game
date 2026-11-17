@@ -1,5 +1,5 @@
 #pragma once
-#include <Rendering/Interfaces/TextureArray.h>
+#include <Rendering/RHI/TextureArray.h>
 #include <filesystem>
 #include <memory>
 #include <mutex>
@@ -10,10 +10,12 @@
 
 namespace Engine::Resource {
 	class TextureArrayManager {
+
 		struct TextureID {
 			uint16_t array_id = 0;
 			uint16_t index = 0;
 		};
+
 		struct TextureResourceData {
 			TextureResourceData() = default;
 			TextureResourceData(unsigned char* image_bytes, int imgWidth, int imgHeight, int numOfColorChannels,
@@ -30,12 +32,13 @@ namespace Engine::Resource {
 			std::filesystem::path file_path;
 			std::string UID;
 		};
+
 	public:
 		static TextureArrayManager& Instance() {
 			static TextureArrayManager mgr;
 			return mgr;
 		}
-		void init();
+		bool init();
 		void uninit();
 		void bind_texture_arrays();
 		// may have errors while loading data, so return bool

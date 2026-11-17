@@ -1,5 +1,5 @@
 #pragma once
-#include <Rendering/Interfaces/Renderer.h>
+#include <Rendering/RHI/Renderer.h>
 #include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
 #include <vector>

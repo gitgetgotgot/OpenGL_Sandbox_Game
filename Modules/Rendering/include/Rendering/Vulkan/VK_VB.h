@@ -1,5 +1,5 @@
 #pragma once
-#include "Rendering/Interfaces/VertexBuffer.h"
+#include "Rendering/RHI/VertexBuffer.h"
 #include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
 
@@ -11,8 +11,7 @@ namespace Engine::Graphics {
 		void set_data(const void* data, size_t size, VertexBufUsage usage) override;
 		void update_data(const void* data, size_t size, size_t offset = 0) const override;
 		void uninit() override;
-		void bind() const override {};
-		void unbind() const override {};
+
 		VkBuffer get_buffer() const;
 	private:
 		void send_data_to_static_buffer(const void* data, size_t size, size_t offset) const;

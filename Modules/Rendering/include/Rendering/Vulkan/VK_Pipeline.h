@@ -1,5 +1,5 @@
 #pragma once
-#include "Rendering/Interfaces/Pipeline.h"
+#include "Rendering/RHI/Pipeline.h"
 #include <vulkan/vulkan.h>
 #include <vector>
 
@@ -23,7 +23,7 @@ namespace Engine::Graphics {
 		void bind_uniform_buffer(const UniformBuffer& ub, uint32_t binding = 0, uint32_t set = 0) override;
 		void bind_storage_buffer(const StorageBuffer& sb, uint32_t binding = 0, uint32_t set = 0) override;
 		void bind_sampler_2D(const Texture& tex, uint32_t binding = 0, uint32_t set = 0) override;
-		void bind_sampler_2D_array(const TextureArray& tex_arr, uint32_t binding = 0, uint32_t set = 0) override;
+		void bind_sampler_2D_array(const TextureArray& tex_arr, uint32_t binding = 0, uint32_t index, uint32_t set = 0) override;
 
 		VkPipeline get_handle() const { return pipeline; }
 		VkPipelineLayout get_layout_handle() const { return pipeline_layout; }

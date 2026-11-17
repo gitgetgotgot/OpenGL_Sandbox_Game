@@ -28,5 +28,8 @@ void Engine::Graphics::GL_VB::unbind() const {
 }
 
 void Engine::Graphics::GL_VB::uninit() {
-	if (id) glDeleteBuffers(1, &id);
+	if (id) {
+		glDeleteBuffers(1, &id);
+		id = 0;
+	}
 }

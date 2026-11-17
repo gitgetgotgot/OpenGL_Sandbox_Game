@@ -117,8 +117,15 @@ void Engine::Graphics::OpenGL_Renderer::renderIndexedData(
 	uint32_t indexCount,
 	uint32_t baseIndex = 0
 ) {
+	const auto& gl_vb = static_cast<const GL_VB&>(vb);
+	const auto& gl_ib = static_cast<const GL_IB&>(ib);
+
 	// GL_Pipeline with shader program and vao should be binded before drawing
-	// bind VBO & EBO here
+	const auto gl_pipeline = static_cast<const GL_Pipeline*>(current_pipeline);
+	const auto gl_vl = static_cast<const GL_VL*>(gl_pipeline->vl);
+	gl_vl->bind_vertex_buffer(gl_vb.get_id());
+	gl_vl->bind_index_buffer(gl_ib.get_id());
+
 	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, (void*)(baseIndex * sizeof(uint32_t)));
 }
 
@@ -129,7 +136,14 @@ void Engine::Graphics::OpenGL_Renderer::renderInstancedData(
 	uint32_t instanceCount,
 	uint32_t baseInstance = 0
 ) {
+	const auto& gl_vb = static_cast<const GL_VB&>(vb);
+	const auto& gl_ib = static_cast<const GL_IB&>(ib);
+
 	// GL_Pipeline with shader program and vao should be binded before drawing
-	// bind VBO & EBO here
+	const auto gl_pipeline = static_cast<const GL_Pipeline*>(current_pipeline);
+	const auto gl_vl = static_cast<const GL_VL*>(gl_pipeline->vl);
+	gl_vl->bind_vertex_buffer(gl_vb.get_id());
+	gl_vl->bind_index_buffer(gl_ib.get_id());
+
 	glDrawArraysInstancedBaseInstance(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, instanceCount, baseInstance);
 }

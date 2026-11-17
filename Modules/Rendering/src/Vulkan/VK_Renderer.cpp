@@ -705,7 +705,7 @@ std::unique_ptr<Engine::Graphics::Texture> Engine::Graphics::Vulkan_Renderer::cr
 }
 
 std::unique_ptr<Engine::Graphics::TextureArray> Engine::Graphics::Vulkan_Renderer::create_TextureArray(std::error_code& ec) const {
-	return std::make_unique<gl_TextureArray>();
+	return std::make_unique<VK_TextureArray>(device, allocator, command_pool, graphics_queue);
 }
 
 std::unique_ptr<Engine::Graphics::Pipeline> Engine::Graphics::Vulkan_Renderer::create_Pipeline(std::error_code& ec) const {

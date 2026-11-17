@@ -1,10 +1,10 @@
 #pragma once
-#include "Rendering/Interfaces/ShaderHandle.h"
-#include "Rendering/Interfaces/VertexLayout.h"
-#include "Rendering/Interfaces/UniformBuffer.h"
-#include "Rendering/Interfaces/StorageBuffer.h"
-#include <Rendering/Interfaces/Texture.h>
-#include <Rendering/Interfaces/TextureArray.h>
+#include "Rendering/RHI/ShaderHandle.h"
+#include "Rendering/RHI/VertexLayout.h"
+#include "Rendering/RHI/UniformBuffer.h"
+#include "Rendering/RHI/StorageBuffer.h"
+#include <Rendering/RHI/Texture.h>
+#include <Rendering/RHI/TextureArray.h>
 #include <cstdint>
 #include <cstddef>
 #include <system_error>
@@ -36,6 +36,6 @@ namespace Engine::Graphics {
 		virtual void bind_uniform_buffer(const UniformBuffer& ub, uint32_t binding = 0, uint32_t set = 0) = 0;
 		virtual void bind_storage_buffer(const StorageBuffer& sb, uint32_t binding = 0, uint32_t set = 0) = 0;
 		virtual void bind_sampler_2D(const Texture& tex, uint32_t binding = 0, uint32_t set = 0) = 0;
-		virtual void bind_sampler_2D_array(const TextureArray& tex_arr, uint32_t binding = 0, uint32_t set = 0) = 0;
+		virtual void bind_sampler_2D_array(const TextureArray& tex_arr, uint32_t binding = 0, uint32_t index, uint32_t set = 0) = 0;
 	};
 }

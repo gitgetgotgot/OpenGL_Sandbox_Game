@@ -1,17 +1,20 @@
 #pragma once
-#include "Rendering/Interfaces/TextureArray.h"
+#include "Rendering/RHI/TextureArray.h"
 
 namespace Engine::Graphics {
 	class GL_TextureArray : public TextureArray {
 	public:
 		GL_TextureArray();
 		~GL_TextureArray();
-		void bind(uint32_t slot = 0) const override;
-		void unbind() const override;
-		uint32_t get_current_size() const override;
-		void setup_texture_array(uint32_t width, uint32_t height, uint32_t depth, bool linear_filter, uint8_t channels, ResizeStrategy resize_str) override;
-		bool add_2D_texture(const char* fileName) override;
-		void add_2D_texture(const unsigned char* img_buf, int& width, int& height, int& numOfChannels) override;
+		void setup_texture_array(
+			uint32_t width, uint32_t height, uint32_t depth, FilterMode filter, WrapMode wrap,
+			uint8_t channels, ResizeStrategy resize_str, std::error_code& ec
+		) override;
+		void add_2D_texture(const char* fileName, std::error_code& ec) override;
+		void add_2D_texture(const unsigned char* img_buf, int& width, int& height, int& numOfChannels, std::error_code& ec) override;
+
+		void bind(uint32_t slot = 0) const;
+		void unbind() const;
 	private:
 		void resize_array();
 		void create_tex_array(uint32_t tex_ID) const;

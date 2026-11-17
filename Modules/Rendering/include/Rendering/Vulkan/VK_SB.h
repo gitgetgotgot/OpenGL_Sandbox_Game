@@ -1,5 +1,5 @@
 #pragma once
-#include "Rendering/Interfaces/StorageBuffer.h"
+#include "Rendering/RHI/StorageBuffer.h"
 #include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
 
