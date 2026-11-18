@@ -1,8 +1,11 @@
 #include "Resources/TextureArrayMgr.h"
 #include "Resources/Sprite.h"
 #include <Rendering/RHI/Renderer.h>
+#include <Rendering/RHI/Pipeline.h>
 #include <Utility/Logger.h>
 #include <stb_image.h>
+
+#include <Rendering/OpenGL/GL_TextureArray.h>
 
 Engine::Resource::TextureArrayManager::TextureResourceData::TextureResourceData(TextureResourceData&& other) {
 	image_bytes = other.image_bytes; other.image_bytes = nullptr;
@@ -43,7 +46,7 @@ bool Engine::Resource::TextureArrayManager::init() {
 		10/*512*/,
 		0/*1024*/,
 		0/*2048*/,
-		0/*4096*/
+		0/*4096*/,
 	};
 	const EG::TextureArray::ResizeStrategy array_resize_str[8] = {
 		EG::TextureArray::ResizeStrategy::Resize_by_50_percent,
@@ -70,8 +73,9 @@ bool Engine::Resource::TextureArrayManager::init() {
 		tex_res *= 2;
 	}
 
-	fonts_texture_array = EG::Renderer::instance->create_TextureArray(ec);
-	fonts_texture_array->setup_texture_array(
+	// last is for SDF
+	texture_arrays[8] = EG::Renderer::instance->create_TextureArray(ec);
+	texture_arrays[8]->setup_texture_array(
 		1024, 1024, 1,
 		EG::TextureArray::FilterMode::Linear, EG::TextureArray::WrapMode::ClampToEdge,
 		1, EG::TextureArray::ResizeStrategy::Resize_by_1, ec
@@ -85,28 +89,27 @@ bool Engine::Resource::TextureArrayManager::init() {
 }
 
 void Engine::Resource::TextureArrayManager::uninit() {
-	for (uint32_t i = 0; i < 8; ++i) {
+	for (uint32_t i = 0; i < 9; ++i) {
 		texture_arrays[i].reset();
 	}
-	fonts_texture_array.reset();
 	stbi_set_flip_vertically_on_load(false);
 }
 
-void Engine::Resource::TextureArrayManager::bind_texture_arrays() {
-	for (uint32_t i = 0; i < 8; ++i) {
-		texture_arrays[i]->bind(i);
+void Engine::Resource::TextureArrayManager::bind_samplers_to_pipeline(const Engine::Graphics::Pipeline& p) {
+	// bind all samplers from [0, 8], where slot binding = 0, and index = [0, 8]
+	for (uint32_t i = 0; i < 9; ++i) {
+		p.bind_sampler_2D_array(*texture_arrays[i], 0, i);
 	}
-	fonts_texture_array->bind(10);
 }
 
 bool Engine::Resource::TextureArrayManager::add_texture_to_queue(const std::filesystem::path& file_path, const std::string& UID) {
-	int imgWidth, imgHeight, numOfColorChannels;
-	if (!stbi_info(file_path.string().c_str(), &imgWidth, &imgHeight, &numOfColorChannels)) {
+	int imgWidth, imgHeight, real_color_channels;
+	if (!stbi_info(file_path.string().c_str(), &imgWidth, &imgHeight, &real_color_channels)) {
 		Engine::Util::Logger::Log("Couldn't read Texture file <" + file_path.string() + ">!");
 		return false;
 	}
-	int desired_channels = (numOfColorChannels == 3) ? 4 : numOfColorChannels; //convert RGB to RGBA
-	unsigned char* image_bytes = stbi_load(file_path.string().c_str(), &imgWidth, &imgHeight, &numOfColorChannels, desired_channels);
+	int desired_color_channels = (real_color_channels == 3) ? 4 : real_color_channels; //convert RGB to RGBA
+	unsigned char* image_bytes = stbi_load(file_path.string().c_str(), &imgWidth, &imgHeight, &real_color_channels, desired_color_channels);
 
 	if (image_bytes == nullptr) {
 		Engine::Util::Logger::Log("Couldn't read Texture file <" + file_path.string() + ">!");
@@ -121,7 +124,7 @@ bool Engine::Resource::TextureArrayManager::add_texture_to_queue(const std::file
 	}
 
 	std::lock_guard lock(tex_queue_mutex);
-	textures_queue.emplace(image_bytes, imgHeight, imgWidth, numOfColorChannels, file_path, UID);
+	textures_queue.emplace(image_bytes, imgHeight, imgWidth, desired_color_channels, file_path, UID);
 	return true;
 }
 
@@ -143,13 +146,13 @@ void Engine::Resource::TextureArrayManager::mark_queue_ready() {
 }
 
 bool Engine::Resource::TextureArrayManager::load_texture(std::filesystem::path file_path, const std::string& UID) {
-	int imgWidth, imgHeight, numOfColorChannels;
-	if (!stbi_info(file_path.string().c_str(), &imgWidth, &imgHeight, &numOfColorChannels)) {
+	int imgWidth, imgHeight, real_color_channels;
+	if (!stbi_info(file_path.string().c_str(), &imgWidth, &imgHeight, &real_color_channels)) {
 		Engine::Util::Logger::Log("Couldn't read Texture file <" + file_path.string() + ">!");
 		return false;
 	}
-	int desired_channels = (numOfColorChannels == 3) ? 4 : numOfColorChannels; //convert RGB to RGBA
-	unsigned char* image_bytes = stbi_load(file_path.string().c_str(), &imgWidth, &imgHeight, &numOfColorChannels, desired_channels);
+	int desired_color_channels = (real_color_channels == 3) ? 4 : real_color_channels; //convert RGB to RGBA
+	unsigned char* image_bytes = stbi_load(file_path.string().c_str(), &imgWidth, &imgHeight, &real_color_channels, desired_color_channels);
 
 	if (image_bytes == nullptr) {
 		Engine::Util::Logger::Log("Couldn't read Texture file <" + file_path.string() + ">!");
@@ -167,7 +170,7 @@ bool Engine::Resource::TextureArrayManager::load_texture(std::filesystem::path f
 	UID_to_ID[UID] = TextureID{ static_cast<uint16_t>(texture_array_index), tex_index };
 
 	std::error_code ec;
-	texture_arrays[texture_array_index]->add_2D_texture(image_bytes, imgWidth, imgHeight, numOfColorChannels, ec);
+	texture_arrays[texture_array_index]->add_2D_texture(image_bytes, imgWidth, imgHeight, desired_color_channels, ec);
 	stbi_image_free(image_bytes);
 
 	if (ec) {
@@ -188,9 +191,9 @@ void Engine::Resource::TextureArrayManager::load_texture(TextureResourceData& da
 }
 
 void Engine::Resource::TextureArrayManager::load_font_texture(unsigned char* data, int width, int height, int channels, const std::string& UID) {
-	font_UID_to_ID[UID] = fonts_texture_array->get_current_size();
+	font_UID_to_ID[UID] = texture_arrays[8]->get_current_size();
 	std::error_code ec;
-	fonts_texture_array->add_2D_texture(data, width, height, channels, ec);
+	texture_arrays[8]->add_2D_texture(data, width, height, channels, ec);
 }
 
 std::optional<Engine::Resource::TextureArrayManager::TextureID>

@@ -152,7 +152,8 @@ void Engine::UI::UI_BehaviourSystem::process_INPUT_FIELD_event(UI_ComponentBase*
 
 	// process input character if has focus
 	if (focused_component_id == comp_base->object_id) {
-		for (uint32_t& code : DeviceContext::keyBoard.currentPressedChars) {
+		const auto& pressed_chars = DeviceContext::keyBoard.get_pressed_chars();
+		for (const auto& code : pressed_chars) {
 			field->_on_char_input(code);
 		}
 

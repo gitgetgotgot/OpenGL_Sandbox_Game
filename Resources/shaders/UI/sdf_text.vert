@@ -3,7 +3,7 @@ layout (location = 0) in vec2 a_Pos;
 layout (location = 1) in vec2 a_TexUV;
 layout (location = 2) in vec4 a_TextColor;
 
-layout(std140, binding = 1) uniform UI_UBO {
+layout(std140, binding = 1) uniform UI_UB {
 	mat4 u_ViewMatrix;
 	mat4 u_ProjectionMatrix;
 	vec2 u_ContentOffset;

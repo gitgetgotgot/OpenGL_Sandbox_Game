@@ -1,13 +1,12 @@
 #pragma once
 #include "Core/World/WorldData.h"
 #include "Core/World/WorldRenderData.h"
-#include <Rendering/Interfaces/Renderer.h>
+#include <Rendering/RHI/Renderer.h>
 #include <Objects/ObjectComponents.h>
 #include <Utility/SparseSet.h>
 
 struct ChunkRenderBuffer {
 	uint32_t x = 0, y = 0;
-	std::unique_ptr<Engine::Graphics::VertexLayout> va;
 	std::unique_ptr<Engine::Graphics::VertexBuffer> vb;
 	Engine::Util::sparse_set<Vertex2f> vertices;
 	uint32_t index_count = 0;
@@ -62,8 +61,6 @@ public:
 
 	bool place_tile(uint32_t world_x, uint32_t world_y, uint16_t tile_id);
 	bool destroy_tile(uint32_t world_x, uint32_t world_y);
-
-	void save_world_data_in_file(const char* filePath);
 private:
 	uint16_t width = 0, height = 0;
 	WorldSlot* world_slots = nullptr;
@@ -77,11 +74,14 @@ private:
 	int current_buffer_y_min = 0;
 	int current_buffer_y_max = 3;
 	int MAX_CHUNK_X = 0, MAX_CHUNK_Y = 0;
+	World_UB_Data ub_data;
 
-	std::unique_ptr<Engine::Graphics::ShaderProgram> shader;
-	std::unique_ptr<Engine::Graphics::UniformBuffer> sprites_ub;
-	Universal_UBO_Data sprites_ub_data;
+	std::unique_ptr<Engine::Graphics::Pipeline> pipeline;
+	std::unique_ptr<Engine::Graphics::ShaderHandle> shader;
+	std::unique_ptr<Engine::Graphics::VertexLayout> vl;
+	std::unique_ptr<Engine::Graphics::UniformBuffer> ub;
 	std::unique_ptr<Engine::Graphics::IndexBuffer> ib;
+
 	//std::unique_ptr<SSBO> spriteLightMapSSBO;
 	//ShaderLightingInfo* lightMap_data = nullptr;
 

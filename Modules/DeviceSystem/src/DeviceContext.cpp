@@ -20,35 +20,48 @@
 #include <Rendering/OpenGL/GL_Renderer.h>
 #include <Rendering/Vulkan/VK_Renderer.h>
 #if defined(ENGINE_PLATFORM_WINDOWS)
-#include <Rendering/DirectX12/d3d12_Renderer.h>
+#include <Rendering/D3D12/D3D12_Renderer.h>
 #endif
 
 #include <Utility/Logger.h>
 #include <glad/gl.h>
 #include <format>
+#include <chrono>
+#include <print>
+
+bool DeviceContext::should_exit_application = false;
+std::string DeviceContext::time_str{};
+
+struct DeviceContext::VulkanInitData {
+    VkInstance instance{ VK_NULL_HANDLE };
+    VkSurfaceKHR surface{ VK_NULL_HANDLE };
+};
+
+struct DeviceContext::DirectXInitData {
+#if defined(ENGINE_PLATFORM_WINDOWS)
+    HWND window_handle;
+#endif
+};
+
+DeviceContext::VulkanInitData DeviceContext::vulkan_init_data{};
+DeviceContext::DirectXInitData DeviceContext::directX_init_data{};
 
 void DeviceContext::glfwFrameBufferSizeCallback(GLFWwindow* window, int width, int height) {
     // here width and height are physical pixels of framebuffer
-    display.update_resolution(width, height);
-    Engine::Graphics::Renderer::instance->on_window_resize(0, 0, width, height);
-}
-
-void DeviceContext::glfwWindowSizeCallback(GLFWwindow* window, int width, int height) {
-    // here width and height are logical pixels of window
-    display.update_resolution(width, height);
-    Engine::Graphics::Renderer::instance->on_window_resize(0, 0, width, height);
+    display.update_resolution_callback(width, height);
+    Engine::Graphics::Renderer::instance->on_window_resize(width, height, static_cast<uint8_t>(display.present_mode));
 }
 
 void DeviceContext::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if ((mods & GLFW_MOD_SHIFT) && key >= 0 && key < keyBoard.SHIFT_KEY_SIZE && keyBoard.shift_key_map[key] != '\0') {
-        keyBoard.keyStatesCurr[int(keyBoard.shift_key_map[key])] = action == GLFW_PRESS || action == GLFW_REPEAT;
+        keyBoard.key_states_curr[int(keyBoard.shift_key_map[key])] = action == GLFW_PRESS || action == GLFW_REPEAT;
     }
     else
-        keyBoard.keyStatesCurr[key] = glfwGetKey(window, key) == GLFW_PRESS;
+        keyBoard.key_states_curr[key] = glfwGetKey(window, key) == GLFW_PRESS;
 }
 
 void DeviceContext::char_callback(GLFWwindow* window, unsigned int codepoint) {
-    keyBoard.currentPressedChars.emplace_back((uint32_t)codepoint);
+    keyBoard.pressed_chars.emplace_back((uint32_t)codepoint);
 }
 
 void DeviceContext::cursor_position_callback(GLFWwindow* window, double mX, double mY) {
@@ -72,7 +85,6 @@ void DeviceContext::mouse_wheel_callback(GLFWwindow* window, double xOffset, dou
 
 void DeviceContext::setup_GLFW_callbacks() {
     glfwSetFramebufferSizeCallback(display.window, glfwFrameBufferSizeCallback);
-    //glfwSetWindowSizeCallback(window, glfwWindowSizeCallback);
 
     glfwSetKeyCallback(display.window, key_callback);
     glfwSetCharCallback(display.window, char_callback);
@@ -140,7 +152,7 @@ bool DeviceContext::init_main_window() {
     }
 
     glfwSetWindowAspectRatio(display.window, 16, 9);
-    display.update_resolution(1920, 1080);
+    display.update_resolution_callback(1920, 1080);
     return true;
 }
 
@@ -148,13 +160,15 @@ bool DeviceContext::init_renderer() {
     std::error_code ec;
     if (DeviceContext::graphics_API == DeviceContext::GraphicsAPI::OPEN_GL) {
         renderer = std::make_unique<Engine::Graphics::OpenGL_Renderer>(ec);
+        std::print("Initialized OpenGL Renderer\n");
     }
     else if (DeviceContext::graphics_API == DeviceContext::GraphicsAPI::VULKAN) {
         renderer = std::make_unique<Engine::Graphics::Vulkan_Renderer>(vulkan_init_data.instance, vulkan_init_data.surface, ec);
+        std::print("Initialized Vulkan Renderer\n");
     }
     else if (DeviceContext::graphics_API == DeviceContext::GraphicsAPI::DIRECTX) {
 #if defined(ENGINE_PLATFORM_WINDOWS)
-        renderer = std::make_unique<Engine::Graphics::DirectX12_Renderer>(directX_init_data.window_handle, ec);
+        renderer = std::make_unique<Engine::Graphics::D3D12_Renderer>(directX_init_data.window_handle, ec);
 #endif
     }
     if (ec) {
@@ -199,9 +213,9 @@ void DeviceContext::process_end_input() {
     mouse.delta_y = 0;
     mouse.blocked_by_UI = false;
 
-    std::memcpy(keyBoard.keyStatesPrev, keyBoard.keyStatesCurr, 349);
+    std::memcpy(keyBoard.key_states_prev, keyBoard.key_states_curr, 349);
 
-    keyBoard.currentPressedChars.clear();
+    keyBoard.pressed_chars.clear();
 }
 
 void DeviceContext::present_frame(std::error_code& ec) {
@@ -215,9 +229,9 @@ void DeviceContext::present_frame(std::error_code& ec) {
     }
 }
 
-std::string& DeviceContext::get_current_system_time() {
-    time_str = std::format("{:%Y-%m-%d %H:%M:%S}", sys_clock.now());
-    return time_str;
+const std::string DeviceContext::get_current_system_time() {
+    std::chrono::system_clock sys_clock;
+    return std::format("{:%Y-%m-%d %H:%M:%S}", sys_clock.now());
 }
 
 void DeviceContext::exit_application() {
@@ -253,23 +267,3 @@ bool DeviceContext::create_vulkan_instance() {
     VkResult result = vkCreateInstance(&create_info, nullptr, &vulkan_init_data.instance);
     return result == VK_SUCCESS;
 }
-
-DeviceContext::GraphicsAPI DeviceContext::graphics_API = DeviceContext::GraphicsAPI::OPEN_GL;
-
-bool DeviceContext::should_exit_application = false;
-std::chrono::system_clock DeviceContext::sys_clock{};
-std::string DeviceContext::time_str{};
-
-struct DeviceContext::VulkanInitData {
-    VkInstance instance{ VK_NULL_HANDLE };
-    VkSurfaceKHR surface{ VK_NULL_HANDLE };
-};
-
-struct DeviceContext::DirectXInitData {
-#if defined(ENGINE_PLATFORM_WINDOWS)
-    HWND window_handle;
-#endif
-};
-
-DeviceContext::VulkanInitData DeviceContext::vulkan_init_data{};
-DeviceContext::DirectXInitData DeviceContext::directX_init_data{};

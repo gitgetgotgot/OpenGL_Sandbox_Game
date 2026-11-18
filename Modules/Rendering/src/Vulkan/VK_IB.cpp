@@ -1,4 +1,5 @@
 #include "Rendering/Vulkan/VK_IB.h"
+#include <cstring>
 
 Engine::Graphics::VK_IB::VK_IB(
     VkDevice device, VmaAllocator allocator, VkCommandPool command_pool, VkQueue graphics_queue

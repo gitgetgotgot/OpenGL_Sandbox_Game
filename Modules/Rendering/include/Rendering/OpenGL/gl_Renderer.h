@@ -10,7 +10,7 @@ namespace Engine::Graphics {
 		void start_frame(std::error_code& ec) override;
 		void clear(float r, float g, float b) override;
 		void present_frame(std::error_code& ec) override;
-		void on_window_resize(uint32_t window_width, uint32_t window_height, PresentMode mode) override;
+		void on_window_resize(uint32_t window_width, uint32_t window_height, uint8_t mode_code) override;
 		void set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
 		void use_depth_test(bool use) override;
 		void use_depth_write(bool use) override;
@@ -39,6 +39,7 @@ namespace Engine::Graphics {
 			uint32_t indexCount,
 			uint32_t baseIndex = 0
 		) override;
+
 		void renderInstancedData(
 			const VertexBuffer& vb,
 			const IndexBuffer& ib,

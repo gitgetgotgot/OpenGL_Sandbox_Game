@@ -11,13 +11,13 @@ namespace Engine::Graphics {
 			uint8_t channels, ResizeStrategy resize_str, std::error_code& ec
 		) override;
 		void add_2D_texture(const char* fileName, std::error_code& ec) override;
-		void add_2D_texture(const unsigned char* img_buf, int& width, int& height, int& numOfChannels, std::error_code& ec) override;
+		void add_2D_texture(const unsigned char* img_buf, int width, int height, int numOfChannels, std::error_code& ec) override;
 
-		void bind(uint32_t slot = 0) const;
-		void unbind() const;
+		void bind(uint32_t slot = 0);
 	private:
 		void resize_array();
 		void create_tex_array(uint32_t tex_ID) const;
 		uint32_t id = 0;
+		uint32_t bound_slot = 0;
 	};
 }

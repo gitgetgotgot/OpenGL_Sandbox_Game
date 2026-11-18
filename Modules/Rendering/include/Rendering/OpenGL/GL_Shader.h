@@ -6,7 +6,8 @@ namespace Engine::Graphics {
 	public:
 		GL_Shader(
 			const std::filesystem::path& vertex_shader_path,
-			const std::filesystem::path& fragment_shader_path
+			const std::filesystem::path& fragment_shader_path,
+			std::error_code& ec
 		);
 		~GL_Shader();
 		void uninit() override;

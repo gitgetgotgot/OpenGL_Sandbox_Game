@@ -20,7 +20,7 @@ void SettingsManager::load_settings() {
 	config = j.get<Config>();
 
 	DeviceContext::display.toggle_fullscreen(config.screen.fullscreen);
-	DeviceContext::display.toggle_VSYNC(config.screen.vsync);
+	//DeviceContext::display.toggle_VSYNC(config.screen.vsync);
 
 	DeviceContext::display.change_resolution(config.screen.width, config.screen.height);
 
@@ -40,7 +40,7 @@ void SettingsManager::toggle_fullscreen() {
 
 void SettingsManager::toggle_vsync() {
 	config.screen.vsync = !config.screen.vsync;
-	DeviceContext::display.toggle_VSYNC(config.screen.vsync);
+	//DeviceContext::display.toggle_VSYNC(config.screen.vsync);
 }
 
 void SettingsManager::set_master_volume(float volume) {

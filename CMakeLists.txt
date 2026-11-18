@@ -66,7 +66,7 @@ target_link_libraries(Rendering
         vulkan-headers::vulkan-headers
         GPUOpen::VulkanMemoryAllocator
     PRIVATE
-	SPIRV-Headers::SPIRV-Headers
+	    SPIRV-Headers::SPIRV-Headers
         spirv-reflect-static
         glad::glad
         Utility

@@ -1,4 +1,5 @@
 #include "Rendering/Vulkan/VK_VB.h"
+#include <cstring>
 
 Engine::Graphics::VK_VB::VK_VB(
     VkDevice device, VmaAllocator allocator, VkCommandPool command_pool, VkQueue graphics_queue

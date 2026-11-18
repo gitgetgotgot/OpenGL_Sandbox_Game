@@ -4,10 +4,11 @@
 
 Engine::Graphics::GL_Shader::GL_Shader(
 	const std::filesystem::path& vertex_shader_path,
-	const std::filesystem::path& fragment_shader_path
+	const std::filesystem::path& fragment_shader_path,
+	std::error_code& ec
 ) {
-	std::string vertexContents = read_file_string(vertex_shader_path);
-	std::string fragmentContetns = read_file_string(fragment_shader_path);
+	std::string vertexContents = read_file_string(vertex_shader_path, ec);
+	std::string fragmentContetns = read_file_string(fragment_shader_path, ec);
 	const char* vertexSource = vertexContents.c_str();
 	const char* fragmentSource = fragmentContetns.c_str();
 

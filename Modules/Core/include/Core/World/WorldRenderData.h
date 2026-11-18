@@ -3,7 +3,7 @@
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/gtc/type_precision.hpp>
 
-struct Universal_UBO_Data {
+struct World_UB_Data {
 	glm::mat4 viewMatrix;
 	glm::mat4 projectionMatrix;
 	glm::ivec2 world_size;

@@ -1,13 +1,10 @@
 #pragma once
-#include <cstdint>
-#include <chrono>
-#include <string>
-#include <system_error>
+#include <Rendering/RHI/Renderer.h>
 #include "DeviceSystem/Display.h"
 #include "DeviceSystem/Keyboard.h"
 #include "DeviceSystem/Mouse.h"
+#include <string>
 
-namespace Engine::Graphics { class Renderer; }
 struct GLFWwindow;
 
 class DeviceContext {
@@ -27,7 +24,7 @@ public:
     static void process_end_input();
     static void present_frame(std::error_code& ec);
 
-    static std::string& get_current_system_time();
+    static const std::string get_current_system_time();
     static void exit_application();
     static bool should_exit();
 private:
@@ -43,7 +40,7 @@ private:
     static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
     static void mouse_wheel_callback(GLFWwindow* window, double xOffset, double yOffset);
 public:
-    static GraphicsAPI graphics_API;
+    inline static GraphicsAPI graphics_API = GraphicsAPI::OPEN_GL;
     inline static DisplayController display{};
     inline static Keyboard keyBoard{};
     inline static Mouse mouse{};
@@ -51,7 +48,6 @@ private:
     inline static std::unique_ptr<Engine::Graphics::Renderer> renderer{};
 private:
     static bool should_exit_application;
-    static std::chrono::system_clock sys_clock;
     static std::string time_str;
 
     // Vulkan specific data struct

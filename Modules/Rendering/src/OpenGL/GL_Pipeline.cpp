@@ -30,23 +30,23 @@ void Engine::Graphics::GL_Pipeline::uninit() {
 	vl = nullptr;
 }
 
-void Engine::Graphics::GL_Pipeline::bind_uniform_buffer(const UniformBuffer& ub, uint32_t binding, uint32_t set) {
-    const auto& gl_ub = static_cast<const GL_UB&>(ub);
+void Engine::Graphics::GL_Pipeline::bind_uniform_buffer(UniformBuffer& ub, uint32_t binding, uint32_t set) const {
+    auto& gl_ub = static_cast<GL_UB&>(ub);
 	gl_ub.bind(binding);
 }
 
-void Engine::Graphics::GL_Pipeline::bind_storage_buffer(const StorageBuffer& sb, uint32_t binding, uint32_t set) {
-    const auto& gl_sb = static_cast<const GL_SB&>(sb);
+void Engine::Graphics::GL_Pipeline::bind_storage_buffer(StorageBuffer& sb, uint32_t binding, uint32_t set) const {
+    auto& gl_sb = static_cast<GL_SB&>(sb);
 	gl_sb.bind(binding);
 }
 
-void Engine::Graphics::GL_Pipeline::bind_sampler_2D(const Texture& tex, uint32_t binding, uint32_t set) {
-	const auto& gl_tex = static_cast<const GL_Texture&>(tex);
+void Engine::Graphics::GL_Pipeline::bind_sampler_2D(Texture& tex, uint32_t binding, uint32_t set) const {
+	auto& gl_tex = static_cast<GL_Texture&>(tex);
 	gl_tex.bind(binding);
 }
 
-void Engine::Graphics::GL_Pipeline::bind_sampler_2D_array(const TextureArray& tex_arr, uint32_t binding, uint32_t index, uint32_t set) {
-    const auto& gl_tex_arr = static_cast<const GL_TextureArray&>(tex_arr);
+void Engine::Graphics::GL_Pipeline::bind_sampler_2D_array(TextureArray& tex_arr, uint32_t binding, uint32_t index, uint32_t set) const {
+    auto& gl_tex_arr = static_cast<GL_TextureArray&>(tex_arr);
 	// for OpenGL global samplers array binding = [0, 7], so for slot just use index = [0, 7]
 	gl_tex_arr.bind(index);
 }

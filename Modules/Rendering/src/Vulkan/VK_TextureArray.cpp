@@ -114,7 +114,7 @@ void Engine::Graphics::VK_TextureArray::add_2D_texture(const char* fileName, std
     stbi_image_free(image_bytes);
 }
 
-void Engine::Graphics::VK_TextureArray::add_2D_texture(const unsigned char* img_buf, int& width, int& height, int& numOfChannels, std::error_code& ec) {
+void Engine::Graphics::VK_TextureArray::add_2D_texture(const unsigned char* img_buf, int width, int height, int numOfChannels, std::error_code& ec) {
     // img buf, width, height and numberOfChannels are checked in textures manager
     if (current_size == depth) resize_array(ec);
     if (ec) return;

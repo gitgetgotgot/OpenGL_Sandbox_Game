@@ -10,14 +10,14 @@ layout(std430, binding = 1) buffer SpriteLightsSSBO {
     ShaderLightingInfo lightMap[];
 };
 
-layout(std140, binding = 0) uniform UBO {
+layout(std140, binding = 2) uniform UB {
 	mat4 u_ViewMatrix;
 	mat4 u_ProjectionMatrix;
 	ivec2 u_WorldSize;
 	float u_DayRatio;
 };
 
-layout (binding = 0) uniform sampler2DArray u_textures[8];
+layout (binding = 0) uniform sampler2DArray u_textures[9];
 
 out vec4 v_FragColor;
 

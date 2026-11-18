@@ -4,7 +4,7 @@ layout (location = 1) in vec2 a_TexUV;
 layout (location = 2) in uint a_TexArrayID;
 layout (location = 3) in uint a_TexID;
 
-layout(std140, binding = 0) uniform UBO {
+layout(std140, binding = 2) uniform UB {
 	mat4 u_ViewMatrix;
 	mat4 u_ProjectionMatrix;
 	ivec2 u_WorldSize;

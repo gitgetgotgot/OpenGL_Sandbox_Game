@@ -21,7 +21,7 @@ namespace Engine::Graphics {
 			uint8_t channels, ResizeStrategy resize_str, std::error_code& ec
 		) = 0;
 		virtual void add_2D_texture(const char* fileName, std::error_code& ec) = 0;
-		virtual void add_2D_texture(const unsigned char* img_buf, int& width, int& height, int& numOfChannels, std::error_code& ec) = 0;
+		virtual void add_2D_texture(const unsigned char* img_buf, int width, int height, int numOfChannels, std::error_code& ec) = 0;
 	protected:
 		uint32_t current_size = 0;
 		uint32_t width, height, depth;

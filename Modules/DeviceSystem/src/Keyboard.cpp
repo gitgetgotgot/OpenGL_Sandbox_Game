@@ -3,19 +3,23 @@
 #include <GLFW/glfw3.h>
 
 bool Keyboard::key_is_pressed(uint16_t key) const {
-    return !keyStatesPrev[key] && keyStatesCurr[key];
+    return !key_states_prev[key] && key_states_curr[key];
 }
 
 bool Keyboard::key_is_released(uint16_t key) const {
-    return keyStatesPrev[key] && !keyStatesCurr[key];
+    return key_states_prev[key] && !key_states_curr[key];
 }
 
 bool Keyboard::key_is_held(uint16_t key) const {
-    return keyStatesPrev[key] && keyStatesCurr[key];
+    return key_states_prev[key] && key_states_curr[key];
 }
 
 bool Keyboard::key_is_idle(uint16_t key) const {
-    return !keyStatesPrev[key] && !keyStatesCurr[key];
+    return !key_states_prev[key] && !key_states_curr[key];
+}
+
+const std::vector<uint32_t>& Keyboard::get_pressed_chars() const {
+    return pressed_chars;
 }
 
 void Keyboard::map_shift_keys() {

@@ -1,11 +1,13 @@
 #include "Core/World/World.h"
 #include <DeviceSystem/DeviceContext.h>
 #include <Utility/TimeManager.h>
-#include <Resources/CoreTags.h>
+#include <Utility/Logger.h>
 #include <Objects/ObjectTypes/MultiBlockInfo.h>
 #include <Objects/ObjectTypes/WeaponInfo.h>
 #include <Objects/ObjectManager.h>
+#include <Resources/CoreTags.h>
 #include <Resources/Sprite.h>
+#include <Resources/TextureArrayMgr.h>
 #include <iostream>
 
 World::~World() {
@@ -18,6 +20,7 @@ World::~World() {
 }
 
 void World::init_render_buffers() {
+	namespace EG = Engine::Graphics;
 	//CoreEntity::EntitySystem::Instance().set_world_data(world_slots, width, height, &object_components);
 
 	//CONSTRAINTS
@@ -25,11 +28,16 @@ void World::init_render_buffers() {
 	const uint32_t MAX_VERTEX_AMOUNT = MAX_SQUARES * 4;
 	const uint32_t MAX_INDEX_AMOUNT = MAX_SQUARES * 6;
 
-	std::filesystem::path vertex_shader_path = "Resources/shaders/world_sprites.vert";
-	std::filesystem::path fragment_shader_path = "Resources/shaders/world_sprites.frag";
-	shader = Engine::Graphics::Renderer::instance->create_ShaderPr(vertex_shader_path, fragment_shader_path);
+	std::error_code ec;
+	std::filesystem::path vertex_shader_path = "Resources/shaders/World/world_sprites.vert";
+	std::filesystem::path fragment_shader_path = "Resources/shaders/World/world_sprites.frag";
+	shader = EG::Renderer::instance->create_ShaderHandle(vertex_shader_path, fragment_shader_path, ec);
+	if (ec) {
+		Engine::Util::Logger::Log("Failed to create World shader handle: " + ec.message());
+		return;
+	}
 
-	ib = Engine::Graphics::Renderer::instance->create_IndexBuffer();
+	ib = EG::Renderer::instance->create_IndexBuffer(ec);
 	uint32_t* sprite_index_buffer = new uint32_t[MAX_INDEX_AMOUNT];
 	for (int i = 0; i < MAX_SQUARES; i++) {
 		sprite_index_buffer[i * 6] = sprite_index_buffer[i * 6 + 3] = i * 4;
@@ -37,51 +45,46 @@ void World::init_render_buffers() {
 		sprite_index_buffer[i * 6 + 1] = sprite_index_buffer[i * 6 + 2] - 1;
 		sprite_index_buffer[i * 6 + 5] = sprite_index_buffer[i * 6 + 2] + 1;
 	}
-	ib->set_data(sprite_index_buffer, MAX_INDEX_AMOUNT * sizeof(uint32_t), Engine::Graphics::IndexBuffer::USAGE_STATIC);
+	ib->set_data(sprite_index_buffer, MAX_INDEX_AMOUNT * sizeof(uint32_t), EG::IndexBuffer::USAGE_STATIC);
 	delete[] sprite_index_buffer;
+
+	vl = EG::Renderer::instance->create_VertexLayout(ec);
+	vl->add_attribute(0, EG::VertexAttributeType::FLOAT_VEC2, sizeof(Vertex2f), offsetof(Vertex2f, pos));
+	vl->add_attribute(1, EG::VertexAttributeType::FLOAT_VEC2, sizeof(Vertex2f), offsetof(Vertex2f, UV));
+	vl->add_attribute(2, EG::VertexAttributeType::UINT, sizeof(Vertex2f), offsetof(Vertex2f, tex_array_id));
+	vl->add_attribute(3, EG::VertexAttributeType::UINT, sizeof(Vertex2f), offsetof(Vertex2f, tex_id));
 
 	for (auto& buf : render_buffers) {
 		buf = new ChunkRenderBuffer;
 		buf->vertices.reserve(MAX_VERTEX_AMOUNT);
-		buf->va = Engine::Graphics::Renderer::instance->create_VertexArray();
-		buf->va->bind();
-		buf->vb = Engine::Graphics::Renderer::instance->create_VertexBuffer();
-		buf->vb->set_data(nullptr, MAX_VERTEX_AMOUNT * sizeof(Vertex2f), Engine::Graphics::VertexBuffer::USAGE_DYNAMIC);
-		ib->bind();
-		buf->va->link_Attribute(0, 2, Engine::Graphics::VertexArray::TYPE_FLOAT, sizeof(Vertex2f), offsetof(Vertex2f, pos));
-		buf->va->link_Attribute(1, 2, Engine::Graphics::VertexArray::TYPE_FLOAT, sizeof(Vertex2f), offsetof(Vertex2f, UV));
-		buf->va->link_Attribute(2, 1, Engine::Graphics::VertexArray::TYPE_UNSIGNED_INT, sizeof(Vertex2f), offsetof(Vertex2f, tex_array_id));
-		buf->va->link_Attribute(3, 1, Engine::Graphics::VertexArray::TYPE_UNSIGNED_INT, sizeof(Vertex2f), offsetof(Vertex2f, tex_id));
-		buf->va->unbind();
-		buf->vb->unbind();
-		ib->unbind();
+		buf->vb = EG::Renderer::instance->create_VertexBuffer(ec);
+		buf->vb->set_data(nullptr, MAX_VERTEX_AMOUNT * sizeof(Vertex2f), EG::VertexBuffer::USAGE_DYNAMIC);
 	}
 
-	sprites_ub = Engine::Graphics::Renderer::instance->create_UniformBuffer();
-	sprites_ub->bind(0);
-	sprites_ub->set_data(nullptr, sizeof(Universal_UBO_Data), Engine::Graphics::UniformBuffer::USAGE_DYNAMIC);
+	ub = EG::Renderer::instance->create_UniformBuffer(ec);
+	ub->set_data(&ub_data, sizeof(World_UB_Data), EG::UniformBuffer::USAGE_DYNAMIC);
+
+	pipeline = EG::Renderer::instance->create_Pipeline(ec);
+	pipeline->init(
+		*shader, *vl,
+		EG::Pipeline::PipelinePrimitives::Triangle, EG::Pipeline::PipelineScissor::Dynamic,
+		EG::Pipeline::PipelineViewport::Dynamic, EG::Pipeline::PipelineBlendMode::Alpha,
+		EG::Pipeline::PipelineDepthMode::ReadAndWrite, EG::Pipeline::PipelineCullMode::Back, ec
+	);
+
+	Engine::Resource::TextureArrayManager::Instance().bind_samplers_to_pipeline(*pipeline);
+	pipeline->bind_uniform_buffer(*ub, 2);
 
 	//camera base options
 	main_camera.zoom = MIN_ZOOM;
 	main_camera.set_ortho_projection(-DeviceContext::display.ratio, DeviceContext::display.ratio, -1.0f, 1.0f);
 
-	sprites_ub_data.day_ratio = 1.0f; //1 for now;
-	sprites_ub_data.world_size = { width, height };
-	sprites_ub_data.viewMatrix = main_camera.viewMatrix;
-	sprites_ub_data.projectionMatrix = main_camera.projectionMatrix;
+	ub_data.day_ratio = 1.0f; //1 for now;
+	ub_data.world_size = { width, height };
+	ub_data.viewMatrix = main_camera.viewMatrix;
+	ub_data.projectionMatrix = main_camera.projectionMatrix;
 
-	//spriteLightMapSSBO = std::make_unique<SSBO>();
-	/*
-	spriteLightMapSSBO->set_persistent_storage_data(nullptr, width * height * sizeof(ShaderLightingInfo));
-	lightMap_data = static_cast<ShaderLightingInfo*>(glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(ShaderLightingInfo) * width * height, GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT));
-	
-	for (int i = 0; i < width; i++) {
-		for (int j = 0; j < height; j++) {
-			lightMap_data[j * width + i] = ShaderLightingInfo(0U, 255U, 0U, 255U, 127U);
-		}
-	}
-	*/
-
+	ub->update_data(&ub_data, sizeof(World_UB_Data));
 }
 
 void World::init_tiles_buffer() {
@@ -106,20 +109,12 @@ void World::init_chunk_buffers() {
 }
 
 void World::uninit() {
+	pipeline.reset();
 	shader.reset();
-	sprites_ub.reset();
+	vl.reset();
+	ub.reset();
 	ib.reset();
-
-	/*
-	spriteLightMapSSBO->bind_SSBO();
-	if (lightMap_data)
-		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-	lightMap_data = nullptr;
-	spriteLightMapSSBO.reset();
-	*/
-
 	for (uint32_t i = 0; i < RENDERABLE_CHUNKS_SIZE; ++i) {
-		render_buffers[i]->va.reset();
 		render_buffers[i]->vb.reset();
 	}
 }
@@ -142,18 +137,18 @@ void World::update() {
 		main_camera.pos.x += speed * Engine::Util::TimeManager::deltaTime * v_multiplier;
 	}
 	//update camera zoom
-	if (DeviceContext::keyBoard.key_is_pressed(Key::KeyPageUp)) {
+	if (DeviceContext::keyBoard.key_is_pressed(Key::Key::KeyPageUp)) {
 		main_camera.zoom += 0.2f;
 		if (main_camera.zoom > MAX_ZOOM) main_camera.zoom = MAX_ZOOM;
 		main_camera.set_ortho_projection(-DeviceContext::display.ratio, DeviceContext::display.ratio, -1.0f, 1.0f);
-		sprites_ub_data.projectionMatrix = main_camera.projectionMatrix;
+		ub_data.projectionMatrix = main_camera.projectionMatrix;
 		std::cout << "camera zoom = " << main_camera.zoom << std::endl;
 	}
 	else if (DeviceContext::keyBoard.key_is_pressed(Key::KeyPageDown)) {
 		main_camera.zoom -= 0.2f;
 		if (main_camera.zoom < MIN_ZOOM) main_camera.zoom = MIN_ZOOM;
 		main_camera.set_ortho_projection(-DeviceContext::display.ratio, DeviceContext::display.ratio, -1.0f, 1.0f);
-		sprites_ub_data.projectionMatrix = main_camera.projectionMatrix;
+		ub_data.projectionMatrix = main_camera.projectionMatrix;
 		std::cout << "camera zoom = " << main_camera.zoom << std::endl;
 	}
 
@@ -165,8 +160,8 @@ void World::update() {
 	main_camera.update_camera();
 
 	//update sprites ubo
-	sprites_ub_data.viewMatrix = main_camera.viewMatrix;
-	sprites_ub->update_data(&sprites_ub_data, sizeof(Universal_UBO_Data));
+	ub_data.viewMatrix = main_camera.viewMatrix;
+	ub->update_data(&ub_data, sizeof(World_UB_Data));
 
 	DeviceContext::mouse.world_x_pos = int(DeviceContext::mouse.ortho_x_pos * main_camera.zoom + main_camera.pos.x);
 	DeviceContext::mouse.world_y_pos = int(DeviceContext::mouse.ortho_y_pos * main_camera.zoom + main_camera.pos.y);
@@ -206,11 +201,12 @@ void World::render(Engine::Graphics::Renderer* renderer) {
 	if (render_min_y < 0) render_min_y = 0;
 	int render_max_y = central_chunk_buf_y + 1;
 	if (render_max_y > 3) render_max_y = 3;
-	shader->use_shader();
+
+	renderer->bind_pipeline(*pipeline);
 	for (int x = render_min_x; x <= render_max_x; x++) {
 		for (int y = render_min_y; y <= render_max_y; y++) {
 			ChunkRenderBuffer& buf = *render_buffers[x * 4 + y];
-			renderer->renderIndexedDataVAOSpecific(*buf.va, buf.index_count);
+			renderer->renderIndexedData(*buf.vb, *ib, buf.index_count);
 		}
 	}
 
@@ -590,50 +586,4 @@ bool World::destroy_tile(uint32_t world_x, uint32_t world_y) {
 		buffer.index_count -= 6;
 	}
 	return true;
-}
-
-void World::save_world_data_in_file(const char* filePath) {
-	/*
-	std::ofstream write(filePath, std::ios::binary);
-	uint16_t write_value = 0;
-
-	write.write(reinterpret_cast<const char*>(&width), sizeof(uint16_t));
-	write.write(reinterpret_cast<const char*>(&height), sizeof(uint16_t));
-	for (int i = 0; i < width; i++) {
-		for (int j = 0; j < height; j++) {
-			uint32_t index = j * width + i;
-			WorldSlot& slot = world_slots[index];
-			Engine::Object::ObjectInfo* obj_info = Engine::Object::ObjectManager::Instance().get_object_info(slot.tile_id);
-			//write tile id
-			write.write(reinterpret_cast<const char*>(&slot.tile_id), sizeof(uint16_t));
-			//write wall id
-			write.write(reinterpret_cast<const char*>(&slot.wall_id), sizeof(uint8_t));
-			//write flags
-			write.write(reinterpret_cast<const char*>(&slot.flags), sizeof(uint8_t));
-
-			if (obj_info->objectType == Engine::Object::ObjectType::isMultiBlockTile) {
-				Engine::Object::ObjectComponent* obj_comp = object_components[index].get();
-				//write_value = obj_comp->get_column();
-				write.write(reinterpret_cast<const char*>(&write_value), sizeof(uint16_t));
-				//write_value = obj_comp->get_line();
-				write.write(reinterpret_cast<const char*>(&write_value), sizeof(uint16_t));
-			}
-			else if (obj_info->objectType == Engine::Object::isMultiBlock) {
-				Engine::Object::ObjectComponent* obj_comp = object_components[index].get();
-				if (obj_info->_has_tag(Engine::Resource::Tag::IS_DOOR)) {
-					//uint8_t door_state = obj_comp->get_door_state();
-					//write.write(reinterpret_cast<const char*>(&door_state), sizeof(uint8_t));
-				}
-				else if (obj_info->_has_tag(Engine::Resource::Tag::IS_CHEST)) {
-					//InventorySlot* chest_slots_ptr = obj_comp->get_chest_slots();
-					for (int c = 0; c < 40; c++) {
-						//write.write(reinterpret_cast<const char*>(&chest_slots_ptr[c].item_id), sizeof(uint16_t));
-						//write.write(reinterpret_cast<const char*>(&chest_slots_ptr[c].amount), sizeof(uint16_t));
-					}
-				}
-			}
-		}
-	}
-	write.close();
-	*/
 }

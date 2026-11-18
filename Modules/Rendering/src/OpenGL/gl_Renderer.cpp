@@ -32,7 +32,7 @@ void Engine::Graphics::OpenGL_Renderer::present_frame(std::error_code& ec) {
 	// OpenGL swap buffers is controlled by GLFW
 }
 
-void Engine::Graphics::OpenGL_Renderer::on_window_resize(uint32_t window_width, uint32_t window_height, PresentMode mode) {
+void Engine::Graphics::OpenGL_Renderer::on_window_resize(uint32_t window_width, uint32_t window_height, uint8_t mode_code) {
 	glViewport(0, 0, window_width, window_height);
 }
 
@@ -75,7 +75,7 @@ std::unique_ptr<Engine::Graphics::ShaderHandle> Engine::Graphics::OpenGL_Rendere
 	const std::filesystem::path& fragment_shader_path,
 	std::error_code& ec
 ) const {
-	return std::make_unique<GL_Shader>(vertex_shader_path, fragment_shader_path);
+	return std::make_unique<GL_Shader>(vertex_shader_path, fragment_shader_path, ec);
 }
 
 std::unique_ptr<Engine::Graphics::VertexLayout> Engine::Graphics::OpenGL_Renderer::create_VertexLayout(std::error_code& ec) const {
@@ -115,7 +115,7 @@ void Engine::Graphics::OpenGL_Renderer::renderIndexedData(
 	const VertexBuffer& vb,
 	const IndexBuffer& ib,
 	uint32_t indexCount,
-	uint32_t baseIndex = 0
+	uint32_t baseIndex
 ) {
 	const auto& gl_vb = static_cast<const GL_VB&>(vb);
 	const auto& gl_ib = static_cast<const GL_IB&>(ib);
@@ -134,7 +134,7 @@ void Engine::Graphics::OpenGL_Renderer::renderInstancedData(
 	const IndexBuffer& ib,
 	uint32_t indexCount,
 	uint32_t instanceCount,
-	uint32_t baseInstance = 0
+	uint32_t baseInstance
 ) {
 	const auto& gl_vb = static_cast<const GL_VB&>(vb);
 	const auto& gl_ib = static_cast<const GL_IB&>(ib);

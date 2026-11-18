@@ -1,7 +1,7 @@
 #pragma once
 #include "Entities/Player.h"
 #include "Entities/EntityBase.h"
-#include <Rendering/Interfaces/Renderer.h>
+#include <Rendering/RHI/Renderer.h>
 #include <Objects/ObjectComponents.h>
 #include "Core/World/WorldData.h"
 
@@ -27,7 +27,7 @@ namespace Engine::Core {
 		void init();
 		void uninit();
 		void update();
-		void render(std::unique_ptr<Engine::Graphics::Renderer>& renderer);
+		void render(std::unique_ptr<Engine::Graphics::Renderer>& renderer) const;
 		void connect_world_data(
 			WorldSlot* world_slots_ptr, uint32_t world_width, uint32_t world_height,
 			std::unordered_map<uint32_t, std::unique_ptr<Engine::Object::ObjectComponent>>* obj_comps_ptr
@@ -42,9 +42,10 @@ namespace Engine::Core {
 		uint32_t world_width = 0, world_height = 0;
 		std::unordered_map<uint32_t, std::unique_ptr<Engine::Object::ObjectComponent>>* obj_comps_ptr;
 
-		std::unique_ptr<Engine::Graphics::ShaderProgram> entity_shader;
-		std::unique_ptr<Engine::Graphics::StorageBuffer> entity_sb;
-		std::unique_ptr<Engine::Graphics::VertexLayout> instance_va;
+		std::unique_ptr<Engine::Graphics::Pipeline> pipeline;
+		std::unique_ptr<Engine::Graphics::ShaderHandle> shader;
+		std::unique_ptr<Engine::Graphics::StorageBuffer> sb;
+		std::unique_ptr<Engine::Graphics::VertexLayout> instance_vl;
 		std::unique_ptr<Engine::Graphics::VertexBuffer> instance_vb;
 		std::unique_ptr<Engine::Graphics::IndexBuffer> instance_ib;
 

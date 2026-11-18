@@ -23,7 +23,7 @@ namespace Engine::Graphics {
 		virtual void start_frame(std::error_code& ec) = 0;
 		virtual void clear(float r, float g, float b) = 0;
 		virtual void present_frame(std::error_code& ec) = 0;
-		virtual void on_window_resize(uint32_t window_width, uint32_t window_height, PresentMode mode) = 0;
+		virtual void on_window_resize(uint32_t window_width, uint32_t window_height, uint8_t mode_code) = 0;
 		virtual void set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
 		virtual void use_depth_test(bool use) = 0;
 		virtual void use_depth_write(bool use) = 0;

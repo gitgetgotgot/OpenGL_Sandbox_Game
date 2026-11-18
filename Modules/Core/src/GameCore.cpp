@@ -6,7 +6,7 @@
 #include "Core/MainMenuUI/MenuUIController.h"
 #include "Core/GameUI/GameUIController.h"
 
-#include <Rendering/Interfaces/Renderer.h>
+#include <Rendering/RHI/Renderer.h>
 #include <UI/UI_System.h>
 #include <Audio/AudioSystem.h>
 #include <Resources/TextureArrayMgr.h>
@@ -42,8 +42,6 @@ void GameEngine::render() {
 		return;
 	}
 	Engine::Graphics::Renderer::instance->clear(0.0, 0.0, 0.0);
-
-	Engine::Resource::TextureArrayManager::Instance().bind_texture_arrays();
 
 	if (game_render_state == Game_State::inGame) {
 		WorldManager::Instance().render(Engine::Graphics::Renderer::instance);
@@ -125,7 +123,7 @@ bool GameEngine::init_main_resources() {
 
 	if (ResourceLoader::Instance().load_minimal_core_resources() == false) {
 		DeviceContext::exit_application();
-		std::println("{}", Engine::Util::Logger::Get_Last_Log_Ref());
+		std::println("{}", Engine::Util::Logger::Get_Last_Log());
 		return false;
 	}
 
@@ -162,7 +160,7 @@ void GameEngine::loading_update() {
 		update_proc = &GameEngine::gameplay_update;
 		if (ResourceLoader::Instance().get_loading_status() == ResourceLoader::LOAD_FAILED) {
 			DeviceContext::exit_application();
-			std::println("{}", Engine::Util::Logger::Get_Last_Log_Ref());
+			std::println("{}", Engine::Util::Logger::Get_Last_Log());
 		}
 	}
 }

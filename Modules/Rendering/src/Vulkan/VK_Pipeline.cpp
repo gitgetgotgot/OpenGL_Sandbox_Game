@@ -214,7 +214,7 @@ void Engine::Graphics::VK_Pipeline::uninit() {
     }
 }
 
-void Engine::Graphics::VK_Pipeline::bind_uniform_buffer(const UniformBuffer& ub, uint32_t binding, uint32_t set) {
+void Engine::Graphics::VK_Pipeline::bind_uniform_buffer(UniformBuffer& ub, uint32_t binding, uint32_t set) const {
     const auto& vk_ub = static_cast<const VK_UB&>(ub);
 
     VkDescriptorBufferInfo buffer_info = vk_ub.get_descriptor_info();
@@ -231,7 +231,7 @@ void Engine::Graphics::VK_Pipeline::bind_uniform_buffer(const UniformBuffer& ub,
     vkUpdateDescriptorSets(device, 1, &descriptor_write, 0, nullptr);
 }
 
-void Engine::Graphics::VK_Pipeline::bind_storage_buffer(const StorageBuffer& sb, uint32_t binding, uint32_t set) {
+void Engine::Graphics::VK_Pipeline::bind_storage_buffer(StorageBuffer& sb, uint32_t binding, uint32_t set) const {
     const auto& vk_sb = static_cast<const VK_SB&>(sb);
 
     VkDescriptorBufferInfo buffer_info = vk_sb.get_descriptor_info();
@@ -248,11 +248,11 @@ void Engine::Graphics::VK_Pipeline::bind_storage_buffer(const StorageBuffer& sb,
     vkUpdateDescriptorSets(device, 1, &descriptor_write, 0, nullptr);
 }
 
-void Engine::Graphics::VK_Pipeline::bind_sampler_2D(const Texture& tex, uint32_t binding, uint32_t set) {
+void Engine::Graphics::VK_Pipeline::bind_sampler_2D(Texture& tex, uint32_t binding, uint32_t set) const {
     
 }
 
-void Engine::Graphics::VK_Pipeline::bind_sampler_2D_array(const TextureArray& tex_arr, uint32_t binding, uint32_t index, uint32_t set) {
+void Engine::Graphics::VK_Pipeline::bind_sampler_2D_array(TextureArray& tex_arr, uint32_t binding, uint32_t index, uint32_t set) const {
     // for Vulkan global samplers array binding also = 0, but it also contains inner array index [0, 7],
     // so use binding = 0 and index = [0, 7]
     const auto& vk_tex_arr = static_cast<const VK_TextureArray&>(tex_arr);

@@ -10,8 +10,8 @@ Engine::Graphics::GL_VL::~GL_VL() {
 }
 
 void Engine::Graphics::GL_VL::add_attribute(uint32_t layout, VertexAttributeType type, size_t stride, size_t offset) {
-	GLint size;
-	GLenum gl_type;
+	GLint size{};
+	GLenum gl_type{};
 	this->stride = stride;
 
 	switch (type) {

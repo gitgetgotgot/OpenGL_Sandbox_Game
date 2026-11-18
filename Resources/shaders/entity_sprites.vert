@@ -13,7 +13,7 @@ layout(std430, binding = 0) buffer EntitySSBO {
     Data objects[];
 };
 
-layout(std140, binding = 0) uniform UBO {
+layout(std140, binding = 0) uniform UB {
 	mat4 u_ViewMatrix;
 	mat4 u_ProjectionMatrix;
 	ivec2 u_WorldSize;

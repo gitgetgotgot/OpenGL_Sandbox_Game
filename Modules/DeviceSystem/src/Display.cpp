@@ -31,7 +31,7 @@ bool DisplayController::setup_monitor_video_modes() {
     return true;
 }
 
-void DisplayController::update_resolution(int width, int height) {
+void DisplayController::update_resolution_callback(int width, int height) {
     this->height = height;
     this->width = width;
     ratio = (float)width / (float)height;
@@ -53,10 +53,13 @@ void DisplayController::toggle_fullscreen(bool state) {
     }
 }
 
-void DisplayController::toggle_VSYNC(bool state) {
-    if (vsync_on == state) return;
-    vsync_on = state;
-    glfwSwapInterval(vsync_on ? 1 : 0);
+void DisplayController::change_present_mode() {
+    if (present_mode == DisplayPresentMode::Immediate) present_mode = DisplayPresentMode::Double;
+    else if (present_mode == DisplayPresentMode::Double) present_mode = DisplayPresentMode::Triple;
+    else present_mode = DisplayPresentMode::Immediate;
+
+    // only used for OpenGL
+    glfwSwapInterval(present_mode == DisplayPresentMode::Double ? 1 : 0);
 }
 
 void DisplayController::change_resolution(bool next) {

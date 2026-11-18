@@ -33,9 +33,9 @@ namespace Engine::Graphics {
 		) = 0;
 		virtual void uninit() = 0;
 		// sets are only available in Vulkan (but they are not used in project's shaders, so they are always 0 here)
-		virtual void bind_uniform_buffer(const UniformBuffer& ub, uint32_t binding = 0, uint32_t set = 0) = 0;
-		virtual void bind_storage_buffer(const StorageBuffer& sb, uint32_t binding = 0, uint32_t set = 0) = 0;
-		virtual void bind_sampler_2D(const Texture& tex, uint32_t binding = 0, uint32_t set = 0) = 0;
-		virtual void bind_sampler_2D_array(const TextureArray& tex_arr, uint32_t binding = 0, uint32_t index, uint32_t set = 0) = 0;
+		virtual void bind_uniform_buffer(UniformBuffer& ub, uint32_t binding = 0, uint32_t set = 0) const = 0;
+		virtual void bind_storage_buffer(StorageBuffer& sb, uint32_t binding = 0, uint32_t set = 0) const = 0;
+		virtual void bind_sampler_2D(Texture& tex, uint32_t binding = 0, uint32_t set = 0) const = 0;
+		virtual void bind_sampler_2D_array(TextureArray& tex_arr, uint32_t binding = 0, uint32_t index = 0, uint32_t set = 0) const = 0;
 	};
 }

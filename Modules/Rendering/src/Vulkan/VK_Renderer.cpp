@@ -637,9 +637,9 @@ void Engine::Graphics::Vulkan_Renderer::present_frame(std::error_code& ec) {
 	current_frame_index = (current_frame_index + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
-void Engine::Graphics::Vulkan_Renderer::on_window_resize(uint32_t window_width, uint32_t window_height, PresentMode mode) {
+void Engine::Graphics::Vulkan_Renderer::on_window_resize(uint32_t window_width, uint32_t window_height, uint8_t mode_code) {
 	std::error_code ec;
-	recreate_Swap_Chain(window_width, window_height, mode, ec);
+	recreate_Swap_Chain(window_width, window_height, static_cast<PresentMode>(mode_code), ec);
 }
 
 void Engine::Graphics::Vulkan_Renderer::set_viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
@@ -677,7 +677,7 @@ std::unique_ptr<Engine::Graphics::ShaderHandle> Engine::Graphics::Vulkan_Rendere
 	const std::filesystem::path& fragment_shader_path,
 	std::error_code& ec
 ) const {
-	return std::make_unique<VK_Shader>(vertex_shader_path, fragment_shader_path, ec);
+	return std::make_unique<VK_Shader>(device, vertex_shader_path, fragment_shader_path, ec);
 }
 
 std::unique_ptr<Engine::Graphics::VertexLayout> Engine::Graphics::Vulkan_Renderer::create_VertexLayout(std::error_code& ec) const {
@@ -701,7 +701,7 @@ std::unique_ptr<Engine::Graphics::StorageBuffer> Engine::Graphics::Vulkan_Render
 }
 
 std::unique_ptr<Engine::Graphics::Texture> Engine::Graphics::Vulkan_Renderer::create_Texture(std::error_code& ec) const {
-	return std::make_unique<gl_Texture>();
+	return std::make_unique<VK_Texture>();
 }
 
 std::unique_ptr<Engine::Graphics::TextureArray> Engine::Graphics::Vulkan_Renderer::create_TextureArray(std::error_code& ec) const {
@@ -717,7 +717,7 @@ void Engine::Graphics::Vulkan_Renderer::renderIndexedData(
 	const VertexBuffer& vb,
 	const IndexBuffer& ib,
 	uint32_t indexCount,
-	uint32_t baseIndex = 0
+	uint32_t baseIndex
 ) {
 	const auto& vk_vb = static_cast<const VK_VB&>(vb);
 	const auto& vk_ib = static_cast<const VK_IB&>(ib);
@@ -741,7 +741,7 @@ void Engine::Graphics::Vulkan_Renderer::renderInstancedData(
 	const IndexBuffer& ib,
 	uint32_t indexCount,
 	uint32_t instanceCount,
-	uint32_t baseInstance = 0
+	uint32_t baseInstance
 ) {
 	const auto& vk_vb = static_cast<const VK_VB&>(vb);
 	const auto& vk_ib = static_cast<const VK_IB&>(ib);

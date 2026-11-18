@@ -22,12 +22,6 @@ namespace Engine::Util {
 			else
 				return logs.back();
 		}
-		inline static const std::string& Get_Last_Log_Ref() {
-			if (logs.empty())
-				return "";
-			else
-				return logs.back();
-		}
 		inline static std::deque<std::string>& Get_Logs() {
 			return logs;
 		}

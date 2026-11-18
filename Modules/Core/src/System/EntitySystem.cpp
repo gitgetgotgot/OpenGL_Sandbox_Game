@@ -5,21 +5,24 @@
 #include <DeviceSystem/DeviceContext.h>
 #include <Utility/TimeManager.h>
 #include <Utility/Math.h>
+#include <Utility/Logger.h>
 #include <Objects/ObjectTypes/BlockInfo.h>
 #include <Objects/ObjectManager.h>
+#include <Resources/TextureArrayMgr.h>
 
 void Engine::Core::EntitySystem::init() {
 	entities.reserve(MAX_ENTITIES_RENDER);
 	entity_render_buf.reserve(MAX_ENTITIES_RENDER);
 	entity_render_buf.resize(MAX_ENTITIES_RENDER);
 
+	std::error_code ec;
 	std::filesystem::path vertex_shader_path = "Resources/shaders/entity_sprites.vert";
 	std::filesystem::path fragment_shader_path = "Resources/shaders/world_sprites.frag";
-	entity_shader = Engine::Graphics::Renderer::instance->create_ShaderPr(vertex_shader_path, fragment_shader_path);
-
-	entity_sb = Engine::Graphics::Renderer::instance->create_StorageBuffer();
-	entity_sb->bind(0);
-	entity_sb->set_data(nullptr, sizeof(EntityRenderData) * MAX_ENTITIES_RENDER, Engine::Graphics::StorageBuffer::USAGE_DYNAMIC);
+	shader = Engine::Graphics::Renderer::instance->create_ShaderHandle(vertex_shader_path, fragment_shader_path, ec);
+	if (ec) {
+		Engine::Util::Logger::Log("Failed to create Entity shader: " + ec.message());
+		return;
+	}
 	
 	float pos[] = {
 		0.0f, 0.0f,
@@ -27,27 +30,46 @@ void Engine::Core::EntitySystem::init() {
 		1.0f, 1.0f,
 		1.0f, 0.0f
 	};
+
 	uint32_t indices[] = {
 		0, 1, 2,
 		0, 2, 3
 	};
-	instance_va = Engine::Graphics::Renderer::instance->create_VertexArray();
-	instance_va->bind();
-	instance_vb = Engine::Graphics::Renderer::instance->create_VertexBuffer();
+
+	instance_vl = Engine::Graphics::Renderer::instance->create_VertexLayout(ec);
+	instance_vl->add_attribute(0, Engine::Graphics::VertexAttributeType::FLOAT_VEC2, sizeof(glm::vec2), 0);
+
+	instance_vb = Engine::Graphics::Renderer::instance->create_VertexBuffer(ec);
 	instance_vb->set_data(pos, sizeof(pos), Engine::Graphics::VertexBuffer::USAGE_STATIC);
-	instance_ib = Engine::Graphics::Renderer::instance->create_IndexBuffer();
+
+	instance_ib = Engine::Graphics::Renderer::instance->create_IndexBuffer(ec);
 	instance_ib->set_data(indices, sizeof(indices), Engine::Graphics::IndexBuffer::USAGE_STATIC);
-	instance_va->link_Attribute(0, 2, Engine::Graphics::VertexArray::TYPE_FLOAT, 2 * sizeof(float), 0);
-	instance_va->unbind();
-	instance_vb->unbind();
-	instance_ib->unbind();
+
+	pipeline = Engine::Graphics::Renderer::instance->create_Pipeline(ec);
+	if (!ec) pipeline->init(
+		*shader, *instance_vl,
+		Engine::Graphics::Pipeline::PipelinePrimitives::Triangle, Engine::Graphics::Pipeline::PipelineScissor::Dynamic,
+		Engine::Graphics::Pipeline::PipelineViewport::Dynamic, Engine::Graphics::Pipeline::PipelineBlendMode::Alpha,
+		Engine::Graphics::Pipeline::PipelineDepthMode::ReadAndWrite, Engine::Graphics::Pipeline::PipelineCullMode::Back, ec
+	);
+
+	// UB
+
+	// SB
+	sb = Engine::Graphics::Renderer::instance->create_StorageBuffer(ec);
+	sb->set_data(nullptr, sizeof(EntityRenderData) * MAX_ENTITIES_RENDER, Engine::Graphics::StorageBuffer::USAGE_DYNAMIC);
+
+	//pipeline->bind_storage_buffer();
+	//pipeline->bind_uniform_buffer();
+	//Engine::Resource::TextureArrayManager::Instance().bind_samplers_to_pipeline(*pipeline);
 }
 
 void Engine::Core::EntitySystem::uninit() {
-	entity_shader.reset();
-	entity_sb.reset();
+	pipeline.reset();
+	shader.reset();
+	sb.reset();
 	instance_ib.reset();
-	instance_va.reset();
+	instance_vl.reset();
 	instance_vb.reset();
 }
 
@@ -194,11 +216,12 @@ void Engine::Core::EntitySystem::update() {
 		render_data.UV.w = sprite.H;
 	}
 
-	entity_sb->update_data(entity_render_buf.data(), entities.size() * sizeof(EntityRenderData));
+	sb->update_data(entity_render_buf.data(), entities.size() * sizeof(EntityRenderData));
 }
 
-void Engine::Core::EntitySystem::render(std::unique_ptr<Engine::Graphics::Renderer>& renderer) {
-	renderer->renderInstancedData(entity_shader, instance_va, instance_vb, instance_ib, 6U, entities.size());
+void Engine::Core::EntitySystem::render(std::unique_ptr<Engine::Graphics::Renderer>& renderer) const {
+	renderer->bind_pipeline(*pipeline);
+	renderer->renderInstancedData(*instance_vb, *instance_ib, 6U, entities.size());
 }
 
 void Engine::Core::EntitySystem::connect_world_data(

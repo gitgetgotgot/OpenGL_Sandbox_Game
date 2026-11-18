@@ -1,5 +1,5 @@
 #pragma once
-#include <Rendering/Interfaces/Renderer.h>
+#include <Rendering/RHI/Renderer.h>
 #include <glm/ext/matrix_float4x4.hpp>
 
 class ParticleEntity {

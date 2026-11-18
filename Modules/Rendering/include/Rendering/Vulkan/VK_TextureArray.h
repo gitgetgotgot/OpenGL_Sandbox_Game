@@ -14,7 +14,7 @@ namespace Engine::Graphics {
 			uint8_t channels, ResizeStrategy resize_str, std::error_code& ec
 		) override;
 		void add_2D_texture(const char* fileName, std::error_code& ec) override;
-		void add_2D_texture(const unsigned char* img_buf, int& width, int& height, int& numOfChannels, std::error_code& ec) override;
+		void add_2D_texture(const unsigned char* img_buf, int width, int height, int numOfChannels, std::error_code& ec) override;
 
 		VkDescriptorImageInfo get_descriptor_info() const;
 	private:

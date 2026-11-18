@@ -8,6 +8,10 @@
 #include <queue>
 #include <atomic>
 
+namespace Engine::Graphics {
+	class Pipeline;
+}
+
 namespace Engine::Resource {
 	class TextureArrayManager {
 
@@ -40,7 +44,7 @@ namespace Engine::Resource {
 		}
 		bool init();
 		void uninit();
-		void bind_texture_arrays();
+		void bind_samplers_to_pipeline(const Engine::Graphics::Pipeline& p);
 		// may have errors while loading data, so return bool
 		bool add_texture_to_queue(const std::filesystem::path& file_path, const std::string& UID);
 		// returns true if all textures are loaded
@@ -60,9 +64,8 @@ namespace Engine::Resource {
 		~TextureArrayManager() = default;
 
 		// resolutions 32x32, 64x64, 128x128, 256x256, 512x512, 1024x1024, 2048x2048, 4096x4096
-		std::unique_ptr<Engine::Graphics::TextureArray> texture_arrays[8];
-		// array for fonts with resolution 1024x1024
-		std::unique_ptr<Engine::Graphics::TextureArray> fonts_texture_array;
+		// last is for SDF text atlases wiht 1024x1024 resolution
+		std::unique_ptr<Engine::Graphics::TextureArray> texture_arrays[9];
 
 		std::unordered_map<std::string, TextureID> UID_to_ID;
 		std::unordered_map<std::string, uint16_t> font_UID_to_ID;

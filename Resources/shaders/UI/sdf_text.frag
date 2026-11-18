@@ -5,10 +5,12 @@ out vec4 v_FragColor;
 in vec2 v_TexUV;
 in vec4 v_TextColor;
 
-layout (binding = 10) uniform sampler2DArray u_textures;
+layout (binding = 0) uniform sampler2DArray u_textures[9];
 
 void main() {
-    float dist = texture(u_textures, vec3(v_TexUV, 0.0)).r;
+    // take last sampler that contains SDF text atlases
+    // for now only one atlas is used in project, so index = 0.0
+    float dist = texture(u_textures[8], vec3(v_TexUV, 0.0)).r;
     
     // automatic antialiasing
     float afWidth = fwidth(dist);

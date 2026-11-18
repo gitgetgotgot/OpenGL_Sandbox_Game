@@ -6,7 +6,7 @@ layout (location = 2) in vec4 a_Color;
 layout (location = 3) in uint a_TexArrayID;
 layout (location = 4) in uint a_TexID;
 
-layout(std140, binding = 1) uniform UI_UBO {
+layout(std140, binding = 1) uniform UI_UB {
 	mat4 u_ViewMatrix;
 	mat4 u_ProjectionMatrix;
 	vec2 u_ContentOffset;
